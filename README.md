@@ -1,11 +1,6 @@
-# test_LBT_PHX_Subclassing
- WIP -Testing Sublcassing of LBT Objects for PHX GH Workflow
-
-Sandbox for testing out workflow when Subclassing LBT/HB Classes. 
+# honeybee_PH
+ WIP - An extension for the [Honeybee](https://github.com/ladybug-tools/honeybee-core) toolkit to allow for Passive House modeling and export to PHPP and WUFI-Passive
 
 # Goal:
 Add custom PHX Attributes to LBT/HB Objects within Rhino/GH. 
-Currently, implemented by packing all PHX related info onto the 'user_data' dict of the LBT object. 
-
-# Trying:
-Can all PHX data be added as normal attributes to the LBT/HB Objects, if those objects are subclassed?
+Currently, implemented in the [PyPH](https://github.com/PH-Tools/PyPH) package by adding all PHX related info onto the 'user_data' dict of the LBT object. 
