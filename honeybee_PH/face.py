@@ -28,11 +28,13 @@ class FacePHProperties(object):
         return "HB-Face Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
-        base = {'_PH': {}}
-        base['_PH']['type'] = 'FacePHProperties' if not \
-            abridged else 'FacePHPropertiesAbridged'
+        d = {}
+        t = 'ModelPHProperties' if not \
+            abridged else 'ModelPHPropertiesAbridged'
+        d.update({'type': t})
+        d.update({'id_num': self.id_num})
 
-        return base
+        return {'PH': d}
 
     @classmethod
     def from_dict(cls, data, host):

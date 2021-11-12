@@ -28,18 +28,20 @@ class ModelPHProperties(object):
         return "HB-Model Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
-        base = {'_PH': {}}
-        base['_PH']['type'] = 'ModelPHProperties' if not \
+        d = {}
+        t = 'ModelPHProperties' if not \
             abridged else 'ModelPHPropertiesAbridged'
+        d.update({'type': t})
+        d.update({'id_num': self.id_num})
 
-        return base
+        return {'PH': d}
 
     @classmethod
-    def from_dict(cls, data, host):
-        assert data['type'] == 'ModelPHProperties', \
-            'Expected ModelPHProperties. Got {}.'.format(data['type'])
+    def from_dict(cls, _dict, host):
+        assert _dict['type'] == 'ModelPHProperties', \
+            'Expected ModelPHProperties. Got {}.'.format(_dict['type'])
 
         new_prop = cls(host)
-        new_prop.id_num = data.get('id_num', 0)
+        new_prop.id_num = _dict.get('id_num', 0)
 
         return new_prop
