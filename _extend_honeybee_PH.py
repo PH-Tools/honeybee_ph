@@ -5,51 +5,52 @@
 
 from honeybee.properties import ModelProperties, RoomProperties, \
     FaceProperties, ApertureProperties
-from honeybee_PH.model import ModelPHProperties
-from honeybee_PH.room import RoomPHProperties
-from honeybee_PH.face import FacePHProperties
-from honeybee_PH.aperture import AperturePHProperties
+from honeybee_ph.model import ModelPhProperties
+from honeybee_ph.room import RoomPhProperties
+from honeybee_ph.face import FacePhProperties
+from honeybee_ph.aperture import AperturePhProperties
+
 
 # Step 1)
-# set a private ._PH attribute on each relevant HB-Core Property class to None
+# set a private ._ph attribute on each relevant HB-Core Property class to None
 
-ModelProperties._PH = None
-RoomProperties._PH = None
-FaceProperties._PH = None
-ApertureProperties._PH = None
+ModelProperties._ph = None
+RoomProperties._ph = None
+FaceProperties._ph = None
+ApertureProperties._ph = None
 
 # Step 2)
 # create methods to define the ._PH property instances on each obj.properties container
 
 
-def model_PH_properties(self):
-    if self._PH is None:
-        self._PH = ModelPHProperties(self.host)
-    return self._PH
+def model_ph_properties(self):
+    if self._ph is None:
+        self._ph = ModelPhProperties(self.host)
+    return self._ph
 
 
-def room_PH_properties(self):
-    if self._PH is None:
-        self._PH = RoomPHProperties(self.host)
-    return self._PH
+def room_ph_properties(self):
+    if self._ph is None:
+        self._ph = RoomPhProperties(self.host)
+    return self._ph
 
 
-def face_PH_properties(self):
-    if self._PH is None:
-        self._PH = FacePHProperties(self.host)
-    return self._PH
+def face_ph_properties(self):
+    if self._ph is None:
+        self._ph = FacePhProperties(self.host)
+    return self._ph
 
 
-def aperture_PH_properties(self):
-    if self._PH is None:
-        self._PH = AperturePHProperties(self.host)
-    return self._PH
+def aperture_ph_properties(self):
+    if self._ph is None:
+        self._ph = AperturePhProperties(self.host)
+    return self._ph
 
 
 # Step 3)
 # add public .PH property methods to the Properties classes
 
-ModelProperties.PH = property(model_PH_properties)
-RoomProperties.PH = property(room_PH_properties)
-FaceProperties.PH = property(face_PH_properties)
-ApertureProperties.PH = property(aperture_PH_properties)
+ModelProperties.ph = property(model_ph_properties)
+RoomProperties.ph = property(room_ph_properties)
+FaceProperties.ph = property(face_ph_properties)
+ApertureProperties.ph = property(aperture_ph_properties)

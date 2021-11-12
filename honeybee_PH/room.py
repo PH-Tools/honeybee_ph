@@ -4,7 +4,7 @@
 """HB-Room Passive House (PH) Properties."""
 
 
-class RoomPHProperties(object):
+class RoomPhProperties(object):
 
     def __init__(self, _host):
         self._host = _host
@@ -16,7 +16,7 @@ class RoomPHProperties(object):
 
     def duplicate(self, new_host=None):
         _host = new_host or self._host
-        new_properties_obj = RoomPHProperties(_host)
+        new_properties_obj = RoomPhProperties(_host)
         new_properties_obj.id_num = self.id_num
 
         return new_properties_obj
@@ -29,17 +29,17 @@ class RoomPHProperties(object):
 
     def to_dict(self, abridged=False):
         d = {}
-        t = 'RoomPHProperties' if not \
-            abridged else 'RoomPHPropertiesAbridged'
+        t = 'RoomPhProperties' if not \
+            abridged else 'RoomPhPropertiesAbridged'
         d.update({'type': t})
         d.update({'id_num': self.id_num})
 
-        return {'PH': d}
+        return {'ph': d}
 
     @classmethod
     def from_dict(cls, _dict, host):
-        assert _dict['type'] == 'RoomPHProperties', \
-            'Expected RoomPHProperties. Got {}.'.format(_dict['type'])
+        assert _dict['type'] == 'RoomPhProperties', \
+            'Expected RoomPhProperties. Got {}.'.format(_dict['type'])
 
         new_prop = cls(host)
         new_prop.id_num = _dict.get('id_num', 0)
