@@ -29,8 +29,8 @@ class AperturePhProperties(object):
 
     def to_dict(self, abridged=False):
         d = {}
-        t = 'ModelPhProperties' if not \
-            abridged else 'ModelPhPropertiesAbridged'
+        t = 'AperturePhProperties' if not \
+            abridged else 'AperturePhPropertiesAbridged'
         d.update({'type': t})
         d.update({'id_num': self.id_num})
 
