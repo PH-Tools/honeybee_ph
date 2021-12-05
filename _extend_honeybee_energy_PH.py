@@ -24,6 +24,7 @@ ApertureProperties._energy._ph = None
 
 
 def face_ph_properties(self):
+    """ insert some kind of 'is opaque' check"""
     if self._energy._ph is None:
         self._energy._ph = OpaqueConstructionPHProperties()
     return FaceEnergyProperties._energy._ph
