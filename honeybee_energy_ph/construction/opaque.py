@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-""" """
+"""Subclassing """
 
 from honeybee.properties import FaceProperties, _Properties
 from honeybee_energy.construction.opaque import OpaqueConstruction

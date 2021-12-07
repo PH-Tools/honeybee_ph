@@ -3,12 +3,16 @@
 
 """"""
 
-from honeybee.properties import ModelProperties, RoomProperties, \
-    FaceProperties, ApertureProperties
-from honeybee_ph.model import ModelPhProperties
-from honeybee_ph.room import RoomPhProperties
-from honeybee_ph.face import FacePhProperties
-from honeybee_ph.aperture import AperturePhProperties
+from honeybee.properties import (
+    ModelProperties,
+    RoomProperties,
+    FaceProperties,
+    ApertureProperties,
+)
+from .model import ModelPhProperties
+from .room import RoomPhProperties
+from .face import FacePhProperties
+from .aperture import AperturePhProperties
 
 
 # Step 1)

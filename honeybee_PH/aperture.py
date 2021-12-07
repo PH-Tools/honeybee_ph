@@ -5,7 +5,6 @@
 
 
 class AperturePhProperties(object):
-
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
@@ -29,19 +28,17 @@ class AperturePhProperties(object):
 
     def to_dict(self, abridged=False):
         d = {}
-        t = 'AperturePhProperties' if not \
-            abridged else 'AperturePhPropertiesAbridged'
-        d.update({'type': t})
-        d.update({'id_num': self.id_num})
+        t = "AperturePhProperties" if not abridged else "AperturePhPropertiesAbridged"
+        d.update({"type": t})
+        d.update({"id_num": self.id_num})
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, data, host):
-        assert data['type'] == 'AperturePhProperties', \
-            'Expected AperturePhProperties. Got {}.'.format(data['type'])
+        assert data["type"] == "AperturePhProperties", "Expected AperturePhProperties. Got {}.".format(data["type"])
 
         new_prop = cls(host)
-        new_prop.id_num = data.get('id_num', 0)
+        new_prop.id_num = data.get("id_num", 0)
 
         return new_prop

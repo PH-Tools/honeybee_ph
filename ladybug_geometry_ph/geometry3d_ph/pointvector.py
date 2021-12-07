@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-""""""
+"""Subclassing"""
 
 from honeybee.properties import _Properties
 from ladybug_geometry.geometry3d.pointvector import Point3D
@@ -26,19 +26,17 @@ class Point3DPHProperties(object):
         return "LBT-Point3D Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
-        base = {'_PH': {}}
-        base['_PH']['type'] = 'Point3DPHProperties' if not \
-            abridged else 'Point3DPHPropertiesAbridged'
+        base = {"_PH": {}}
+        base["_PH"]["type"] = "Point3DPHProperties" if not abridged else "Point3DPHPropertiesAbridged"
 
         return base
 
     @classmethod
     def from_dict(cls, data, host):
-        assert data['type'] == 'Point3DPHProperties', \
-            'Expected Point3DPHProperties. Got {}.'.format(data['type'])
+        assert data["type"] == "Point3DPHProperties", "Expected Point3DPHProperties. Got {}.".format(data["type"])
 
         new_prop = cls(host)
-        new_prop.id_num = data.get('id_num', 0)
+        new_prop.id_num = data.get("id_num", 0)
 
         return new_prop
 
