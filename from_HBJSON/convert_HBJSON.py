@@ -11,13 +11,13 @@ from honeybee_energy.construction.opaque import OpaqueConstruction as HB_OpaqueC
 from honeybee_energy.construction.window import WindowConstruction as HB_WindowConstruction
 from ladybug_geometry.geometry3d.face import Face3D
 
-from honeybee_PH.model import ModelPHProperties
-from honeybee_PH.room import RoomPHProperties
-from honeybee_PH.face import FacePHProperties
-from honeybee_PH.aperture import AperturePHProperties
-from ladybug_geometry_PH.geometry3d_PH.pointvector import PHX_Vertix, Point3DPHProperties
-from honeybee_energy_PH.construction.opaque import PHX_OpaqueConstruction, OpaqueConstructionPHProperties
-from honeybee_energy_PH.construction.window import PHX_WindowConstruction, WindowConstructionPHProperties
+from honeybee_ph.model import ModelPhProperties
+from honeybee_ph.room import RoomPhProperties
+from honeybee_ph.face import FacePhProperties
+from honeybee_ph.aperture import AperturePhProperties
+from ladybug_geometry_ph.geometry3d_ph.pointvector import PHX_Vertix, Point3DPHProperties
+from honeybee_energy_ph.construction.opaque import PHX_OpaqueConstruction, OpaqueConstructionPHProperties
+from honeybee_energy_ph.construction.window import PHX_WindowConstruction, WindowConstructionPHProperties
 from to_WUFI_XML.wufi import Project, Variant
 
 
@@ -57,15 +57,15 @@ def _add_PH_properties_to_obj(_lbt_obj):
         return _lbt_obj
 
     if isinstance(_lbt_obj, HB_Model):
-        _lbt_obj.properties._PH = ModelPHProperties(_lbt_obj)
+        _lbt_obj.properties._PH = ModelPhProperties(_lbt_obj)
     elif isinstance(_lbt_obj, HB_Room):
-        _lbt_obj.properties._PH = RoomPHProperties(_lbt_obj)
+        _lbt_obj.properties._PH = RoomPhProperties(_lbt_obj)
     elif isinstance(_lbt_obj, HB_Face):
-        _lbt_obj.properties._PH = FacePHProperties(_lbt_obj)
+        _lbt_obj.properties._PH = FacePhProperties(_lbt_obj)
     elif isinstance(_lbt_obj, PHX_Vertix):
         _lbt_obj.properties._PH = Point3DPHProperties(_lbt_obj)
     elif isinstance(_lbt_obj, HB_Aperture):
-        _lbt_obj.properties._PH = AperturePHProperties(_lbt_obj)
+        _lbt_obj.properties._PH = AperturePhProperties(_lbt_obj)
     elif isinstance(_lbt_obj, HB_OpaqueConstruction):
         _lbt_obj.properties._PH = OpaqueConstructionPHProperties(_lbt_obj)
     elif isinstance(_lbt_obj, HB_WindowConstruction):
@@ -92,8 +92,7 @@ def _add_PH_Properties_to_HB_Obj_vertices(_hb_obj: HB_Face | HB_Aperture) -> HB_
 
     # -- Create a new PHX Vertix with a properties._PH for each LBT Vert in the Face Geometry
     # ------------------------------------------------------------------
-    new_phx_vertices = [_add_PH_properties_to_obj(
-        PHX_Vertix(v.x, v.y, v.z)) for v in hb_obj.vertices]
+    new_phx_vertices = [_add_PH_properties_to_obj(PHX_Vertix(v.x, v.y, v.z)) for v in hb_obj.vertices]
 
     # -- Re-set the boundary / vertices of the HB-Face._geometry (Face3D)
     # -- This is adapted from ladybug_geometry.geometry3D.face.Face3D.__copy__()

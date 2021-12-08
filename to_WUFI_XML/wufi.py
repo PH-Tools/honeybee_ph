@@ -14,7 +14,7 @@ from honeybee.aperture import Aperture as HB_Aperture
 from honeybee_energy.construction.opaque import OpaqueConstruction
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 
-from ladybug_geometry_PH.geometry3d_PH.pointvector import PHX_Vertix
+from ladybug_geometry_ph.geometry3d_ph.pointvector import PHX_Vertix
 
 # -- Constructions, Assemblies, Materials
 
@@ -52,8 +52,7 @@ class Layer:
 
         elif isinstance(_hb_material, EnergyMaterialNoMass):
             obj.thickness = 0.1  # m = 4". Use as default since No-Mass has no thickness
-            obj.material.conductivity = Layer._conductivity_from_r_value(
-                _hb_material.r_value, obj.thickness)
+            obj.material.conductivity = Layer._conductivity_from_r_value(_hb_material.r_value, obj.thickness)
             obj.material.density = _hb_material.mass_area_density
             obj.material.heat_capacity = _hb_material.area_heat_capacity
 
@@ -182,8 +181,7 @@ class Polygon:
         _hb_face.properties._PH.id_num = obj.id_num
         obj.normal_vector = _hb_face.normal
         obj.vertices = [Vertix.from_LBT_P3D(v) for v in _hb_face.vertices]
-        obj.child_polygon_ids = [
-            aperture.properties._PH.id_num for aperture in _hb_face.apertures]
+        obj.child_polygon_ids = [aperture.properties._PH.id_num for aperture in _hb_face.apertures]
 
         return obj
 
@@ -517,8 +515,7 @@ class Project:
                 hb_const = face.properties.energy.construction
 
                 if hb_const.identifier not in self._assembly_types.keys():
-                    self._assembly_types[hb_const.identifier] = Assembly.from_HB_OpaqueConstruction(
-                        hb_const)
+                    self._assembly_types[hb_const.identifier] = Assembly.from_HB_OpaqueConstruction(hb_const)
 
                 hb_const.properties._PH.id_num = self._assembly_types[hb_const.identifier].id_num
 
