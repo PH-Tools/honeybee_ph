@@ -14,6 +14,7 @@ class AperturePhProperties(object):
         return self._host
 
     def duplicate(self, new_host=None):
+        # type: (AperturePhProperties, Any) -> AperturePhProperties
         _host = new_host or self._host
         new_properties_obj = AperturePhProperties(_host)
         new_properties_obj.id_num = self.id_num
@@ -27,6 +28,7 @@ class AperturePhProperties(object):
         return "HB-Aperture Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
+        # type: (AperturePhProperties, bool) -> dict[str, dict]
         d = {}
         t = "AperturePhProperties" if not abridged else "AperturePhPropertiesAbridged"
         d.update({"type": t})
@@ -36,7 +38,9 @@ class AperturePhProperties(object):
 
     @classmethod
     def from_dict(cls, data, host):
-        assert data["type"] == "AperturePhProperties", "Expected AperturePhProperties. Got {}.".format(data["type"])
+        # type: (AperturePhProperties, dict, Any) -> AperturePhProperties
+        assert data["type"] == "AperturePhProperties", "Expected AperturePhProperties. Got {}.".format(
+            data["type"])
 
         new_prop = cls(host)
         new_prop.id_num = data.get("id_num", 0)

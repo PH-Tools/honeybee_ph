@@ -32,7 +32,8 @@ def _add_node_attributes(_data: to_WUFI_XML.xml_writables.xml_writable, _element
     """
 
     if _data.attr_value is not None:
-        _element.setAttributeNS(None, str(_data.attr_name), str(_data.attr_value))
+        _element.setAttributeNS(
+            None, str(_data.attr_name), str(_data.attr_value))
 
 
 def _add_text_node(_doc: Document, _parent_node: Element, _data: to_WUFI_XML.xml_writables.xml_writable) -> None:
@@ -45,17 +46,22 @@ def _add_text_node(_doc: Document, _parent_node: Element, _data: to_WUFI_XML.xml
         * _data (to_WUFI_XML.xml_writables.xml_writable): The new XML_writable object to add to the 'parent' node.
     """
 
-    txt = _doc.createTextNode(_xml_str(_data.node_value))  # ------------------- 1) Create the new text-node
-    el = _doc.createElementNS(None, _xml_str(_data.node_name))  # -------------- 2) Create a new Element
-    el.appendChild(txt)  # ----------------------------------------------------- 3) Add the text-node to the Element
-    _add_node_attributes(_data, el)  # ----------------------------------------- 4) Add the Optional Node Attributes
-    _parent_node.appendChild(el)  # -------------------------------------------- 5) Add the Element to the parent
+    # ------------------- 1) Create the new text-node
+    txt = _doc.createTextNode(_xml_str(_data.node_value))
+    # -------------- 2) Create a new Element
+    el = _doc.createElementNS(None, _xml_str(_data.node_name))
+    # ----------------------------------------------------- 3) Add the text-node to the Element
+    el.appendChild(txt)
+    # ----------------------------------------- 4) Add the Optional Node Attributes
+    _add_node_attributes(_data, el)
+    # -------------------------------------------- 5) Add the Element to the parent
+    _parent_node.appendChild(el)
 
 
 def _add_children(_doc: Document, _parent_node: Element, _item: to_WUFI_XML.xml_writables.xml_writable) -> None:
     """Adds 'child' nodes to the document recursively.
 
-    Will call PyPH_WUFI.phx_converters..get_PHX_object_as_xml_writables_list() function on any input
+    Will call PyPH_WUFI.ph_converters..get_ph_object_as_xml_writables_list() function on any input
     objects and will walk through all the resulting lists or Objects recursively.
 
     Arguments:
@@ -72,7 +78,8 @@ def _add_children(_doc: Document, _parent_node: Element, _item: to_WUFI_XML.xml_
 
     elif isinstance(_item, to_WUFI_XML.xml_writables.XML_Object):
         # -- Add a new node for the object, then try and add all its fields
-        _new_parent_node = _doc.createElementNS(None, _xml_str(_item.node_name))
+        _new_parent_node = _doc.createElementNS(
+            None, _xml_str(_item.node_name))
         _add_node_attributes(_item, _new_parent_node)
         _parent_node.appendChild(_new_parent_node)
 
@@ -83,7 +90,8 @@ def _add_children(_doc: Document, _parent_node: Element, _item: to_WUFI_XML.xml_
 
     elif isinstance(_item, to_WUFI_XML.xml_writables.XML_List):
         # -- Add a new node for the 'container', and then add each item in the list
-        _new_parent_node = _doc.createElementNS(None, _xml_str(_item.node_name))
+        _new_parent_node = _doc.createElementNS(
+            None, _xml_str(_item.node_name))
         _add_node_attributes(_item, _new_parent_node)
         _parent_node.appendChild(_new_parent_node)
 

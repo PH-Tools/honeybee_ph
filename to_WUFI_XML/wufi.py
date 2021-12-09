@@ -14,7 +14,7 @@ from honeybee.aperture import Aperture as HB_Aperture
 from honeybee_energy.construction.opaque import OpaqueConstruction
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 
-from ladybug_geometry_ph.geometry3d_ph.pointvector import PHX_Vertix
+from ladybug_geometry_ph.geometry3d_ph.pointvector import PH_Point3D
 
 # -- Constructions, Assemblies, Materials
 
@@ -52,7 +52,8 @@ class Layer:
 
         elif isinstance(_hb_material, EnergyMaterialNoMass):
             obj.thickness = 0.1  # m = 4". Use as default since No-Mass has no thickness
-            obj.material.conductivity = Layer._conductivity_from_r_value(_hb_material.r_value, obj.thickness)
+            obj.material.conductivity = Layer._conductivity_from_r_value(
+                _hb_material.r_value, obj.thickness)
             obj.material.density = _hb_material.mass_area_density
             obj.material.heat_capacity = _hb_material.area_heat_capacity
 
@@ -62,7 +63,8 @@ class Layer:
             obj.material.reference_water = 0.0
 
         else:
-            raise TypeError(f"Unrecognized Material type: {type(_hb_material)}.")
+            raise TypeError(
+                f"Unrecognized Material type: {type(_hb_material)}.")
 
         return obj
 
@@ -92,7 +94,8 @@ class Assembly:
         obj = cls()
         obj.id_num = cls._count
         obj.name = _hb_const.display_name
-        obj.layers = [Layer.from_hb_material(layer) for layer in _hb_const.materials]
+        obj.layers = [Layer.from_hb_material(
+            layer) for layer in _hb_const.materials]
 
         return obj
 
@@ -144,11 +147,11 @@ class Vertix:
     z: float = 0.0
 
     @classmethod
-    def from_LBT_P3D(cls, _lbt_Point3D: PHX_Vertix):
+    def from_LBT_P3D(cls, _lbt_Point3D: PH_Point3D):
         obj = cls()
 
         obj.id_num = cls._count
-        _lbt_Point3D.properties._PH.id_num = obj.id_num
+        _lbt_Point3D.properties._ph.id_num = obj.id_num
 
         obj.x = _lbt_Point3D.x
         obj.y = _lbt_Point3D.y
@@ -178,10 +181,11 @@ class Polygon:
         obj = cls()
 
         obj.id_num = cls._count
-        _hb_face.properties._PH.id_num = obj.id_num
+        _hb_face.properties._ph.id_num = obj.id_num
         obj.normal_vector = _hb_face.normal
         obj.vertices = [Vertix.from_LBT_P3D(v) for v in _hb_face.vertices]
-        obj.child_polygon_ids = [aperture.properties._PH.id_num for aperture in _hb_face.apertures]
+        obj.child_polygon_ids = [
+            aperture.properties._ph.id_num for aperture in _hb_face.apertures]
 
         return obj
 
@@ -190,7 +194,7 @@ class Polygon:
         obj = cls()
 
         obj.id_num = cls._count
-        _hb_aperture.properties._PH.id_num = obj.id_num
+        _hb_aperture.properties._ph.id_num = obj.id_num
         obj.normal_vector = _hb_aperture.normal
         obj.vertices = [Vertix.from_LBT_P3D(v) for v in _hb_aperture.vertices]
 
@@ -263,9 +267,9 @@ class Component:
         obj.exposure_interior = obj.hb_face_exposure_int_to_WUFI(_hb_room)
         obj.color_interior = obj.int_color_by_hb_face(_hb_face)
         obj.color_exterior = obj.ext_color_by_hb_face(_hb_face)
-        obj.assembly_type_id_num = _hb_face.properties.energy.construction.properties._PH.id_num
+        obj.assembly_type_id_num = _hb_face.properties.energy.construction.properties._ph.id_num
 
-        obj.polygon_ids = [_hb_face.properties._PH.id_num]
+        obj.polygon_ids = [_hb_face.properties._ph.id_num]
 
         return obj
 
@@ -282,9 +286,9 @@ class Component:
         obj.exposure_interior = obj.hb_face_exposure_int_to_WUFI(_hb_room)
         obj.color_interior = 4  # Window
         obj.color_exterior = 4  # Window
-        obj.window_type_id_num = _aperture.properties.energy.construction.properties._PH.id_num
+        obj.window_type_id_num = _aperture.properties.energy.construction.properties._ph.id_num
 
-        obj.polygon_ids = [_aperture.properties._PH.id_num]
+        obj.polygon_ids = [_aperture.properties._ph.id_num]
 
         return obj
 
@@ -324,7 +328,7 @@ class Component:
 
     def hb_face_exposure_int_to_WUFI(self, _hb_room: HB_Room) -> int:
         """Return the ID number of the Interior-Exposure Zone for the Component."""
-        return _hb_room.properties._PH.id_num
+        return _hb_room.properties._ph.id_num
 
     def int_color_by_hb_face(self, _hb_face: HB_Face) -> int:
         """Return the ID number of the WUFI Standard color to use for the Compo."""
@@ -416,7 +420,7 @@ class Variant:
 
     @classmethod
     def from_room(cls, _hb_room: HB_Room) -> Variant:
-        """Create a new Variant based on a single PHX/Honeybee Room.
+        """Create a new Variant based on a single PH/Honeybee Room.
 
         Arguments:
         ----------
@@ -430,7 +434,7 @@ class Variant:
         obj = cls()
 
         obj.id_num = cls._count
-        _hb_room.properties._PH.id_num = obj.id_num
+        _hb_room.properties._ph.id_num = obj.id_num
 
         obj.name = _hb_room.display_name
 
@@ -445,7 +449,8 @@ class Variant:
         for hb_face in _hb_room.faces:
             # Dev Note: To get the right IDs, have to generate the Children Polys first.
             for aperture in hb_face.apertures:
-                self.graphics3D.polygons.append(Polygon.from_HB_Aperture(aperture))
+                self.graphics3D.polygons.append(
+                    Polygon.from_HB_Aperture(aperture))
 
             self.graphics3D.polygons.append(Polygon.from_HB_Face(hb_face))
 
@@ -515,9 +520,10 @@ class Project:
                 hb_const = face.properties.energy.construction
 
                 if hb_const.identifier not in self._assembly_types.keys():
-                    self._assembly_types[hb_const.identifier] = Assembly.from_HB_OpaqueConstruction(hb_const)
+                    self._assembly_types[hb_const.identifier] = Assembly.from_HB_OpaqueConstruction(
+                        hb_const)
 
-                hb_const.properties._PH.id_num = self._assembly_types[hb_const.identifier].id_num
+                hb_const.properties._ph.id_num = self._assembly_types[hb_const.identifier].id_num
 
         return None
 
@@ -545,7 +551,8 @@ class Project:
                             aperture_const
                         )
 
-                    aperture_const.properties._PH.id_num = self._window_types[aperture_const.identifier].id_num
+                    aperture_const.properties._ph.id_num = self._window_types[
+                        aperture_const.identifier].id_num
 
         return
 

@@ -15,6 +15,7 @@ class ModelPhProperties(object):
         return self._host
 
     def duplicate(self, new_host=None):
+        # type: (ModelPhProperties, Any) -> ModelPhProperties
         _host = new_host or self._host
         new_properties_obj = ModelPhProperties(_host)
         new_properties_obj.id_num = self.id_num
@@ -28,6 +29,7 @@ class ModelPhProperties(object):
         return "HB-Model Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
+        # type: (ModelPhProperties, bool) -> dict[str, dict]
         d = {}
         t = 'ModelPHProperties' if not \
             abridged else 'ModelPhPropertiesAbridged'
@@ -38,6 +40,7 @@ class ModelPhProperties(object):
 
     @classmethod
     def from_dict(cls, _dict, host):
+        # type: (ModelPhProperties, dict, Any) -> ModelPhProperties
         assert _dict['type'] == 'ModelPhProperties', \
             'Expected ModelPhProperties. Got {}.'.format(_dict['type'])
 

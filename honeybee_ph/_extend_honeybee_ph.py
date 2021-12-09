@@ -24,7 +24,7 @@ FaceProperties._ph = None
 ApertureProperties._ph = None
 
 # Step 2)
-# create methods to define the ._PH property instances on each obj.properties container
+# create methods to define the ._ph property instances on each obj.properties container
 
 
 def model_ph_properties(self):

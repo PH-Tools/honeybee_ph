@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.10 -*-
 
-"""Conversion Schemas for how to write PHX/HB objects to WUFI XML"""
+"""Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
 from to_WUFI_XML.wufi import (
     Layer,
@@ -26,18 +26,24 @@ def _Project(_wufi_project: Project) -> list[xml_writable]:
         XML_Node("UnitSystem", _wufi_project.data_version),
         XML_Node("ProgramVersion", _wufi_project.program_version),
         XML_Node("Scope", _wufi_project.scope),
-        XML_Node("DimensionsVisualizedGeometry", _wufi_project.visualized_geometry),
+        XML_Node("DimensionsVisualizedGeometry",
+                 _wufi_project.visualized_geometry),
         XML_Object("ProjectData", _wufi_project.project_data),
-        XML_List("UtilisationPatternsVentilation", _wufi_project.utilisation_patterns_ventilation),
-        XML_List("UtilizationPatternsPH", _wufi_project.utilisation_patterns_ph),
-        XML_List("Variants", [XML_Object("Variant", var, "index", i) for i, var in enumerate(_wufi_project.variants)]),
+        XML_List("UtilisationPatternsVentilation",
+                 _wufi_project.utilisation_patterns_ventilation),
+        XML_List("UtilizationPatternsPH",
+                 _wufi_project.utilisation_patterns_ph),
+        XML_List("Variants", [XML_Object("Variant", var, "index", i)
+                 for i, var in enumerate(_wufi_project.variants)]),
         XML_List(
             "Assemblies",
-            [XML_Object("Assembly", at_id, "index", i) for i, at_id in enumerate(_wufi_project.assembly_types)],
+            [XML_Object("Assembly", at_id, "index", i)
+             for i, at_id in enumerate(_wufi_project.assembly_types)],
         ),
         XML_List(
             "WindowTypes",
-            [XML_Object("WindowType", wt_id, "index", i) for i, wt_id in enumerate(_wufi_project.window_types)],
+            [XML_Object("WindowType", wt_id, "index", i)
+             for i, wt_id in enumerate(_wufi_project.window_types)],
         ),
     ]
 
@@ -65,9 +71,11 @@ def _ProjectData(_project_data: ProjectData) -> list[xml_writable]:
         XML_Node("Responsible_Name", _project_data.responsible.name),
         XML_Node("Responsible_Street", _project_data.responsible.street),
         XML_Node("Responsible_Locality", _project_data.responsible.city),
-        XML_Node("Responsible_PostalCode", _project_data.responsible.post_code),
+        XML_Node("Responsible_PostalCode",
+                 _project_data.responsible.post_code),
         XML_Node("Responsible_Tel", _project_data.responsible.telephone),
-        XML_Node("Responsible_LicenseNr", _project_data.responsible.license_number),
+        XML_Node("Responsible_LicenseNr",
+                 _project_data.responsible.license_number),
         XML_Node("Responsible_Email", _project_data.responsible.email),
     ]
 
@@ -89,8 +97,10 @@ def _Variant(_variant: Variant) -> list[xml_writable]:
 
 def _Graphics3D(_graphics3D: Graphics3D) -> list[xml_writable]:
     return [
-        XML_List("Vertices", [XML_Object("Vertix", var, "index", i) for i, var in enumerate(_graphics3D.vertices)]),
-        XML_List("Polygons", [XML_Object("Polygon", var, "index", i) for i, var in enumerate(_graphics3D.polygons)]),
+        XML_List("Vertices", [XML_Object("Vertix", var, "index", i)
+                 for i, var in enumerate(_graphics3D.vertices)]),
+        XML_List("Polygons", [XML_Object("Polygon", var, "index", i)
+                 for i, var in enumerate(_graphics3D.polygons)]),
     ]
 
 
@@ -101,11 +111,13 @@ def _Polygon(_p: Polygon) -> list[xml_writable]:
         XML_Node("NormalVectorY", _p.normal_vector.y),
         XML_Node("NormalVectorZ", _p.normal_vector.z),
         XML_List(
-            "IdentNrPoints", [XML_Node("IdentNr", v_id, "index", i) for i, v_id in enumerate(_p.vertices_id_numbers)]
+            "IdentNrPoints", [XML_Node("IdentNr", v_id, "index", i)
+                              for i, v_id in enumerate(_p.vertices_id_numbers)]
         ),
         XML_List(
             "IdentNrPolygonsInside",
-            [XML_Node("IdentNr", v_id, "index", i) for i, v_id in enumerate(_p.child_polygon_ids)],
+            [XML_Node("IdentNr", v_id, "index", i)
+             for i, v_id in enumerate(_p.child_polygon_ids)],
         ),
     ]
 
@@ -121,8 +133,10 @@ def _Vertix(_v: Vertix) -> list[xml_writable]:
 
 def _Building(_b: Component) -> list[xml_writable]:
     return [
-        XML_List("Components", [XML_Object("Component", c, "index", i) for i, c in enumerate(_b.components)]),
-        XML_List("Zones", [XML_Object("Zone", z, "index", i) for i, z in enumerate(_b.zones)]),
+        XML_List("Components", [XML_Object("Component", c, "index", i)
+                 for i, c in enumerate(_b.components)]),
+        XML_List("Zones", [XML_Object("Zone", z, "index", i)
+                 for i, z in enumerate(_b.zones)]),
     ]
 
 
@@ -139,7 +153,8 @@ def _Component(_c: Component) -> list[xml_writable]:
         XML_Node("IdentNr_ComponentInnerSurface", _c.interior_attachment_id),
         XML_Node("IdentNrAssembly", _c.assembly_type_id_num),
         XML_Node("IdentNrWindowType", _c.window_type_id_num),
-        XML_List("IdentNrPolygons", [XML_Node("IdentNr", n, "index", i) for i, n in enumerate(_c.polygon_ids)]),
+        XML_List("IdentNrPolygons", [XML_Node(
+            "IdentNr", n, "index", i) for i, n in enumerate(_c.polygon_ids)]),
     ]
 
 
@@ -166,7 +181,8 @@ def _Assembly(_a: Assembly) -> list[xml_writable]:
         XML_Node("Name", _a.name),
         XML_Node("Order_Layers", _a.layer_order),
         XML_Node("Grid_Kind", _a.grid_kind),
-        XML_List("Layers", [XML_Object("Layer", n, "index", i) for i, n in enumerate(_a.layers)]),
+        XML_List("Layers", [XML_Object("Layer", n, "index", i)
+                 for i, n in enumerate(_a.layers)]),
     ]
 
 

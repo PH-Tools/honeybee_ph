@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
-    """Write the PHX 'Project' xml string out to a file.
+    """Write the PH 'Project' xml string out to a file.
 
     Arguments:
     ----------

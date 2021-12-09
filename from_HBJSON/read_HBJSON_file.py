@@ -10,10 +10,12 @@ import honeybee_energy.dictutil as energy_dict_util
 import honeybee_radiance.dictutil as radiance_dict_util
 
 # -------------------------------------------------------------------------------
+
+
 class DeserializationError(Exception):
     def __init__(self, _data):
         self.message = (
-            "Error: Cannot convert input data to HB/PHX Object? Got:\n"
+            "Error: Cannot convert input data to HB/PH Object? Got:\n"
             f"{_data} of type: {type(_data)}. Expected a dict?"
         )
         super(DeserializationError, self).__init__(self.message)
