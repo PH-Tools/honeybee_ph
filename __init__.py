@@ -6,7 +6,7 @@
 from honeybee.logutil import get_logger
 
 
-# load all functions that extends dragonfly core library
+# load all functions that extends honeybee-core library
 import _extend_honeybee_ph
 import _extend_honeybee_energy_ph
 

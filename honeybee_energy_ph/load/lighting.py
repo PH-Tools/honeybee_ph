@@ -3,6 +3,12 @@
 
 """Subclassing Honeybee-Energy | Load | Lighting"""
 
+try:
+    from typing import Any
+except ImportError:
+    # Python 2.7
+    pass
+
 from honeybee.properties import _Properties
 from honeybee_energy.load.lighting import Lighting
 
