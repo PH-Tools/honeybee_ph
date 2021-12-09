@@ -17,7 +17,7 @@ class Point3DPhProperties(object):
     def duplicate(self, new_host=None):
         # type: (Point3DPhProperties, Any) -> Point3DPhProperties
         _host = new_host or self._host
-        new_properties_obj = Point3DPhProperties(_host)
+        new_properties_obj = self.__class__(_host)
         new_properties_obj.id_num = self.id_num
 
         return new_properties_obj
@@ -48,7 +48,7 @@ class Point3DPhProperties(object):
 
 
 class Point3DProperties(_Properties):
-    """Properties container for PH Vertix Objects"""
+    """Properties for LBT Point3D Objects"""
 
     def __repr__(self):
         return "Point3DProperties: {!r}".format(self.host)
