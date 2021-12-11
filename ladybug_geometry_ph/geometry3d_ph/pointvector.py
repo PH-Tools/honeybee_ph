@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""Subclassing"""
+"""Subclassing Ladybug Point3D Object to allow for .properties"""
+
+try:
+    from typing import Any
+except ImportError:
+    pass
 
 from honeybee.properties import _Properties
 from ladybug_geometry.geometry3d.pointvector import Point3D
