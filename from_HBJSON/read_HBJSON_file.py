@@ -4,65 +4,35 @@
 """Functions for importing / translating Honeybee Models into WUFI-JSON """
 
 import json
-from honeybee._base import _Base
+import pathlib
 import honeybee.dictutil as hb_dict_util
-import honeybee_energy.dictutil as energy_dict_util
-import honeybee_radiance.dictutil as radiance_dict_util
-
-# -------------------------------------------------------------------------------
+from honeybee.model import Model as HB_Model
 
 
-class DeserializationError(Exception):
-    def __init__(self, _data):
-        self.message = (
-            "Error: Cannot convert input data to HB/PH Object? Got:\n"
-            f"{_data} of type: {type(_data)}. Expected a dict?"
-        )
-        super(DeserializationError, self).__init__(self.message)
+class HBJSONModelReadError(Exception):
+    def __init__(self, _in):
+        self.message = f"Error: Can only convert a Honeybee 'Model' to WUFI XML.\n"\
+            "Got a Honeybee object of type: {_in}."
+
+        super(HBJSONModelReadError, self).__init__(self.message)
 
 
-def _dict_to_obj(_dict: dict) -> _Base:
-    """Takes a dict and recreates a Honeybee object from it.
+def read_hb_json(_file_address: pathlib.Path) -> HB_Model:
+    """Read in the HB_JSON Model from the Rhino File and convert back into a HB-Model.
 
     Arguments:
     ----------
-        * _dict (dict): The dictionary with attributes for the HB Object
+        _file_address (str): A valid file path for the 'HB_Json' file to read.
 
     Returns:
     --------
-        * (_Base): The re-created Honeybee Object.
-    """
-
-    hb_obj = hb_dict_util.dict_to_object(_dict, False)
-
-    if hb_obj is None:
-        hb_obj = energy_dict_util.dict_to_object(_dict, False)
-
-    if hb_obj is None:
-        hb_obj = radiance_dict_util.dict_to_object(_dict, False)
-
-    if hb_obj is None:
-        raise DeserializationError(_dict)
-    else:
-        return hb_obj
-
-
-def read_hb_json(_file_address: str) -> list:
-    """Read in the HB_JSON from the Rhino File and convert back into HB Objects.
-
-    Arguments:
-    ----------
-        _file_address (str): A valid file path for the 'HB_Json' file to read
-
-    Returns:
-    --------
-        (list): A list of the HB Object(s), rebuilt from the input JSON
+        HB_Model: The Honeybee Model, rebuilt from the HB-JSON file.
     """
 
     with open(_file_address) as json_file:
         data = json.load(json_file)
 
-        if isinstance(data, (tuple, list)):
-            return [_dict_to_obj(_) for _ in data]
-        else:
-            return _dict_to_obj(data)
+    if data.get('type', None) != 'Model':
+        raise HBJSONModelReadError(data.get('type', None))
+
+    return HB_Model.from_dict(data)

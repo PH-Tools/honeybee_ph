@@ -3,19 +3,30 @@
 
 """Subclassing """
 
-from honeybee.properties import FaceProperties, _Properties
+from honeybee.properties import _Properties
 from honeybee_energy.construction.opaque import OpaqueConstruction
 
 
-class OpaqueConstructionPhProperties(FaceProperties):
-    def __init__(self, *args, **kwargs):
-        super(OpaqueConstructionPhProperties, self).__init__(*args, **kwargs)
+class OpaqueConstructionPhProperties:
+    def __init__(self):
         self.id_num = 0
+
+    def __repr__(self):
+        return "{}(id_num={!r})".format(self.__class__.__name__, self.id_num)
 
 
 class OpaqueConstructionProperties(_Properties):
+
+    def __init__(self, host):
+        super(OpaqueConstructionProperties, self).__init__(host)
+        self._ph = OpaqueConstructionPhProperties()
+
+    @property
+    def ph(self):
+        return self._ph
+
     def __repr__(self):
-        return "PH_OpaqueConstructionProperties: {!r}".format(self.host)
+        return "{}(host={!r})".format(self.__class__.__name__, self.host)
 
 
 class PH_OpaqueConstruction(OpaqueConstruction):

@@ -3,11 +3,6 @@
 
 """Subclassing Ladybug Point3D Object to allow for .properties"""
 
-try:
-    from typing import Any
-except ImportError:
-    pass
-
 from honeybee.properties import _Properties
 from ladybug_geometry.geometry3d.pointvector import Point3D
 
@@ -15,48 +10,23 @@ from ladybug_geometry.geometry3d.pointvector import Point3D
 class Point3DPhProperties(object):
     """PH Properties Object for LBT Point3D Objects"""
 
-    def __init__(self, _host):
-        self._host = _host
+    def __init__(self):
         self.id_num = 0
-
-    def duplicate(self, new_host=None):
-        # type: (Point3DPhProperties, Any) -> Point3DPhProperties
-        _host = new_host or self._host
-        new_properties_obj = self.__class__(_host)
-        new_properties_obj.id_num = self.id_num
-
-        return new_properties_obj
-
-    def ToString(self):
-        return self.__repr__()
-
-    def __repr__(self):
-        return "LBT-Point3D Passive House Properties: [host: {}]".format(self.host.display_name)
-
-    def to_dict(self, abridged=False):
-        # type: (Point3DPhProperties, bool) -> dict[str, dict]
-        base = {"_PH": {}}
-        base["_PH"]["type"] = "Point3DPhProperties" if not abridged else "Point3DPhPropertiesAbridged"
-
-        return base
-
-    @classmethod
-    def from_dict(cls, data, host):
-        # type: (Point3DPhProperties, dict, Any) -> Point3DPhProperties
-        assert data["type"] == "Point3DPhProperties", "Expected Point3DPhProperties. Got {}.".format(
-            data["type"])
-
-        new_prop = cls(host)
-        new_prop.id_num = data.get("id_num", 0)
-
-        return new_prop
 
 
 class Point3DProperties(_Properties):
     """Properties for LBT Point3D Objects"""
 
+    def __init__(self, host):
+        super(Point3DProperties, self).__init__(host)
+        self._ph = Point3DPhProperties()
+
+    @property
+    def ph(self):
+        return self._ph
+
     def __repr__(self):
-        return "Point3DProperties: {!r}".format(self.host)
+        return "{}(host={!r})".format(self.__class__.__name__, self.host)
 
 
 class PH_Point3D(Point3D):

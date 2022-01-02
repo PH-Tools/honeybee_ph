@@ -3,6 +3,12 @@
 
 """HB-Aperture Passive House (PH) Properties."""
 
+try:
+    from typing import Any
+except ImportError:
+    # IronPython
+    pass
+
 
 class AperturePhProperties(object):
     def __init__(self, _host):
