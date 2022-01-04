@@ -5,7 +5,6 @@
 
 import json
 import pathlib
-import honeybee.dictutil as hb_dict_util
 from honeybee.model import Model as HB_Model
 
 
@@ -35,4 +34,6 @@ def read_hb_json(_file_address: pathlib.Path) -> HB_Model:
     if data.get('type', None) != 'Model':
         raise HBJSONModelReadError(data.get('type', None))
 
-    return HB_Model.from_dict(data)
+    model = HB_Model.from_dict(data)
+
+    return model

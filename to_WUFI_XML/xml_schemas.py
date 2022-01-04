@@ -16,6 +16,9 @@ from to_WUFI_XML.wufi import (
     Variant,
     WindowType,
     Zone,
+    PassivehouseData,
+    Building,
+    PH_Building,
 )
 from to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
@@ -80,6 +83,33 @@ def _ProjectData(_project_data: ProjectData) -> list[xml_writable]:
     ]
 
 
+def _PH_Building(_ph_bldg: PH_Building) -> list[xml_writable]:
+    return [
+        XML_Node("IdentNr", _ph_bldg._count),
+        XML_Node("BuildingCategory", _ph_bldg.building_category),
+        XML_Node("OccupancyTypeResidential", _ph_bldg.occupancy_type),
+        XML_Node("BuildingStatus", _ph_bldg.building_status),
+        XML_Node("BuildingType", _ph_bldg.building_type),
+        XML_Node("OccupancySettingMethod", _ph_bldg.occupancy_setting_method),
+        XML_Node("NumberUnits", _ph_bldg.num_of_units),
+        XML_Node("CountStories", _ph_bldg.num_of_floors),
+        XML_Node("EnvelopeAirtightnessCoefficient", _ph_bldg.airtightness_q50),
+    ]
+
+
+def _PassivehouseData(_ph_data: PassivehouseData) -> list[xml_writable]:
+    return [
+        XML_Node("PH_CertificateCriteria", _ph_data.ph_certificate_criteria),
+        XML_Node("PH_SelectionTargetData", _ph_data.ph_selection_target_data),
+        XML_Node("AnnualHeatingDemand", _ph_data.annual_heating_demand),
+        XML_Node("AnnualCoolingDemand", _ph_data.annual_cooling_demand),
+        XML_Node("PeakHeatingLoad", _ph_data.peak_heating_load),
+        XML_Node("PeakCoolingLoad", _ph_data.peak_cooling_load),
+        XML_List("PH_Buildings", [XML_Object("PH_Building", obj, "index", i)
+                 for i, obj in enumerate(_ph_data.ph_buildings)]),
+    ]
+
+
 def _Variant(_variant: Variant) -> list[xml_writable]:
 
     return [
@@ -90,7 +120,7 @@ def _Variant(_variant: Variant) -> list[xml_writable]:
         XML_Object("Graphics_3D", _variant.graphics3D),
         XML_Object("Building", _variant.building),
         # XML_Object("ClimateLocation", _variant.climate),
-        # XML_Object("PassivehouseData", temp_PHData),
+        XML_Object("PassivehouseData", _variant.ph_data),
         # XML_Object("HVAC", _variant.mechanicals, _schema_name="_Mechanicals"),
     ]
 
@@ -131,7 +161,7 @@ def _Vertix(_v: Vertix) -> list[xml_writable]:
     ]
 
 
-def _Building(_b: Component) -> list[xml_writable]:
+def _Building(_b: Building) -> list[xml_writable]:
     return [
         XML_List("Components", [XML_Object("Component", c, "index", i)
                  for i, c in enumerate(_b.components)]),

@@ -403,6 +403,35 @@ class Building:
         self.zones.append(Zone.from_hb_room(_hb_room))
 
 
+# --- PH Certification
+@dataclass
+class PH_Building:
+    _count: ClassVar[int] = 0
+    building_category: int = 1
+    occupancy_type: int = 1
+    building_status: int = 1
+    building_type: int = 1
+    num_of_units: int = 1
+    num_of_floors: int = 1
+    occupancy_setting_method: int = 2  # Design
+    airtightness_q50: float = 0.2  # m3/hr-m2-envelope
+
+    def __new__(cls, *args, **kwargs):
+        cls._count += 1
+        return super(PH_Building, cls).__new__(cls, *args, **kwargs)
+
+
+@dataclass
+class PassivehouseData:
+    ph_certificate_criteria: int = 3
+    ph_selection_target_data: int = 2
+    annual_heating_demand: float = 15.0
+    annual_cooling_demand: float = 15.0
+    peak_heating_load: float = 10.0
+    peak_cooling_load: float = 10.0
+    ph_buildings: list[PH_Building] = field(default_factory=list)
+
+
 # --- Variants, Project
 @dataclass
 class Variant:
@@ -413,6 +442,7 @@ class Variant:
     plugin: str = ""
     graphics3D: Graphics3D = field(default_factory=Graphics3D)
     building: Building = field(default_factory=Building)
+    ph_data: PassivehouseData = field(default_factory=PassivehouseData)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -433,14 +463,16 @@ class Variant:
 
         obj = cls()
 
+        # -- Keep all the ID numbers aligned
         obj.id_num = cls._count
-        _hb_room.properties._ph.id_num = obj.id_num
-
+        _hb_room.properties.ph.id_num = obj.id_num
         obj.name = _hb_room.display_name
 
         # -- Build the Variant Elements
         obj.create_geometry_from_hb_room(_hb_room)
         obj.create_building_from_hb_room(_hb_room)
+        obj.create_phius_certification_from_hb_room(_hb_room)
+        obj.create_PH_Building_from_hb_room(_hb_room)
 
         return obj
 
@@ -457,6 +489,27 @@ class Variant:
     def create_building_from_hb_room(self, _hb_room: HB_Room) -> None:
         """Create the 'Building' with all Components and Zones."""
         self.building = Building.from_hb_room(_hb_room)
+
+    def create_phius_certification_from_hb_room(self, _hb_room: HB_Room) -> None:
+        self.ph_data.ph_certificate_criteria = _hb_room.properties.ph.ph_segment_data.ph_certification.certification_criteria
+        self.ph_data.ph_selection_target_data = _hb_room.properties.ph.ph_segment_data.ph_certification.localization_selection_type
+        self.ph_data.annual_heating_demand = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_heating_demand
+        self.ph_data.annual_cooling_demand = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_cooling_demand
+        self.ph_data.peak_heating_load = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_heating_load
+        self.ph_data.peak_cooling_load = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_cooling_load
+
+    def create_PH_Building_from_hb_room(self, _hb_room: HB_Room) -> None:
+        ph_building = PH_Building()
+
+        ph_building.building_category = _hb_room.properties.ph.ph_segment_data.usage_type.number
+        ph_building.occupancy_type = _hb_room.properties.ph.ph_segment_data.occupancy_type.number
+        ph_building.building_status = _hb_room.properties.ph.ph_segment_data.ph_certification.building_status.number
+        ph_building.building_type = _hb_room.properties.ph.ph_segment_data.ph_certification.building_type.number
+        ph_building.num_of_units = _hb_room.properties.ph.ph_segment_data.num_dwelling_units
+        ph_building.num_of_floors = _hb_room.properties.ph.ph_segment_data.num_floor_levels
+
+        # Not clear why this is a list in the WUFI file? When would there be more than one?
+        self.ph_data.ph_buildings.append(ph_building)
 
 
 @dataclass

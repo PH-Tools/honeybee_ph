@@ -18,13 +18,13 @@ from .aperture import AperturePhProperties
 # Step 1)
 # set a private ._ph attribute on each relevant HB-Core Property class to None
 
-ModelProperties._ph = None
-RoomProperties._ph = None
-FaceProperties._ph = None
-ApertureProperties._ph = None
+setattr(ModelProperties, '_ph', None)
+setattr(RoomProperties, '_ph', None)
+setattr(FaceProperties, '_ph', None)
+setattr(ApertureProperties, '_ph', None)
 
 # Step 2)
-# create methods to define the ._ph property instances on each obj.properties container
+# create methods to define the public .ph property instances on each obj.properties container
 
 
 def model_ph_properties(self):
@@ -52,9 +52,8 @@ def aperture_ph_properties(self):
 
 
 # Step 3)
-# add public .PH property methods to the Properties classes
-
-ModelProperties.ph = property(model_ph_properties)
-RoomProperties.ph = property(room_ph_properties)
-FaceProperties.ph = property(face_ph_properties)
-ApertureProperties.ph = property(aperture_ph_properties)
+# add public .ph property methods to the Properties classes
+setattr(ModelProperties, 'ph', property(model_ph_properties))
+setattr(RoomProperties, 'ph', property(room_ph_properties))
+setattr(FaceProperties, 'ph', property(face_ph_properties))
+setattr(ApertureProperties, 'ph', property(aperture_ph_properties))

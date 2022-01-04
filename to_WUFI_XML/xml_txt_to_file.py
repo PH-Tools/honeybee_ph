@@ -9,6 +9,7 @@ from datetime import datetime
 import os
 import shutil
 from pathlib import Path
+from rich import print
 
 
 def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
@@ -56,4 +57,4 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
         with open(save_address_2, "w", encoding="utf8") as f:
             f.writelines(_xml_text)
 
-    print("> Successfully wrote to file.")
+    print("[bold green]> Successfully wrote to file.[/bold green]")
