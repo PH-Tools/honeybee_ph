@@ -4,6 +4,7 @@
 """Building 'Segment' Level Data Attributes"""
 
 from honeybee_ph.phius import PhiusCertifiction
+from honeybee_ph.climate import Climate
 from honeybee_ph_utils.enumerables import CustomEnum
 
 
@@ -67,6 +68,7 @@ class BldgSegment:
         self.usage_type = UsageType("RESIDENTIAL")
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
+        self.climate = Climate()
         self.ph_certification = PhiusCertifiction()
         self.set_points = SetPoints()
 
@@ -79,6 +81,7 @@ class BldgSegment:
         d['usage_type'] = self.usage_type.to_dict()
         d['num_floor_levels'] = self.num_floor_levels
         d['num_dwelling_units'] = self.num_dwelling_units
+        d['climate'] = self.climate.to_dict()
         d['ph_certification'] = self.ph_certification.to_dict()
         d['set_points'] = self.set_points.to_dict()
 
@@ -94,6 +97,7 @@ class BldgSegment:
         obj.usage_type = UsageType.from_dict(_dict.get('usage_type', {}))
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
+        obj.climate = Climate.from_dict(_dict.get('climate', {}))
         obj.ph_certification = PhiusCertifiction.from_dict(
             _dict.get('ph_certification', {}))
         obj.set_points = SetPoints.from_dict(_dict.get('set_points', {}))

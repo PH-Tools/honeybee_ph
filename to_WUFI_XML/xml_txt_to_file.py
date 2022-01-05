@@ -38,9 +38,10 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
     # -- Make subdirs as needed
     os.makedirs(save_dir, exist_ok=True)
 
+    save_address_1 = os.path.join(save_dir, save_filename)
+    save_address_2 = os.path.join(save_dir, save_filename_clean)
+
     try:
-        save_address_1 = os.path.join(save_dir, save_filename)
-        save_address_2 = os.path.join(save_dir, save_filename_clean)
         with open(save_address_1, "w", encoding="utf8") as f:
             f.writelines(_xml_text)
 
@@ -50,8 +51,8 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
     except PermissionError:
         # - In case the file is being used by WUFI or something else, make a new copy.
         print(
-            f"Target file: {save_filename} is currently being used by another process and is protected.\n"
-            f"Writing to a new file: {save_address_2}"
+            f"[bold]> Target file: [/bold]./{save_address_1} is currently being used by another process and is protected.\n"
+            f"[bold]> Writing to a new file: [/bold]./{save_address_2}"
         )
 
         with open(save_address_2, "w", encoding="utf8") as f:

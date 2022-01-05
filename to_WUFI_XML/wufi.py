@@ -16,6 +16,7 @@ from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 
 from ladybug_geometry_ph.geometry3d_ph.pointvector import PH_Point3D
 
+# -----------------------------------------------------------------------------
 # -- Constructions, Assemblies, Materials
 
 
@@ -136,8 +137,10 @@ class WindowType:
 
         return obj
 
-
+# -----------------------------------------------------------------------------
 # -- Geometry
+
+
 @dataclass
 class Vertix:
     _count: ClassVar[int] = 0
@@ -213,8 +216,10 @@ class Graphics3D:
     def vertices(self):
         return [vertix for polygon in self.polygons for vertix in polygon.vertices]
 
-
+# -----------------------------------------------------------------------------
 # -- Building
+
+
 @dataclass
 class Zone:
     _count: ClassVar[int] = 0
@@ -402,8 +407,10 @@ class Building:
     def create_zones_from_hb_room(self, _hb_room: HB_Room) -> None:
         self.zones.append(Zone.from_hb_room(_hb_room))
 
-
+# -----------------------------------------------------------------------------
 # --- PH Certification
+
+
 @dataclass
 class PH_Building:
     _count: ClassVar[int] = 0
@@ -431,8 +438,71 @@ class PassivehouseData:
     peak_cooling_load: float = 10.0
     ph_buildings: list[PH_Building] = field(default_factory=list)
 
+# -----------------------------------------------------------------------------
+# -- Climate
 
+
+@dataclass
+class Ground:
+    ground_thermal_conductivity: float = 2
+    ground_heat_capacitiy: float = 1000
+    ground_density: float = 2000
+    depth_groundwater: float = 3
+    flow_rate_groundwater: float = 0.05
+
+
+@dataclass
+class Location:
+    latitude: float = 40.6
+    longitude: float = -73.8
+    weather_station_elevation: float = 3.0
+    climate_zone: int = 1
+    hours_from_UTC: int = -4
+
+
+@dataclass
+class PeakLoad:
+    temp: float = 0
+    rad_north: float = 0
+    rad_east: float = 0
+    rad_south: float = 0
+    rad_west: float = 0
+    rad_global: float = 0
+
+
+@dataclass
+class PH_ClimateLocation:
+    selection: int = 6
+    selection_pe_co2_factor: int = 1
+    daily_temp_swing: float = 8.0
+    avg_wind_speed: float = 4.0
+    location: Location = field(default_factory=Location)
+    ground: Ground = field(default_factory=Ground)
+
+    monthly_temperature_air: list[float] = field(default_factory=list)
+    monthly_temperature_dewpoint: list[float] = field(default_factory=list)
+    monthly_temperature_sky: list[float] = field(default_factory=list)
+
+    monthly_radiation_north: list[float] = field(default_factory=list)
+    monthly_radiation_east: list[float] = field(default_factory=list)
+    monthly_radiation_south: list[float] = field(default_factory=list)
+    monthly_radiation_west: list[float] = field(default_factory=list)
+    monthly_radiation_global: list[float] = field(default_factory=list)
+
+    peak_heating_1: PeakLoad = field(default_factory=PeakLoad)
+    peak_heating_2: PeakLoad = field(default_factory=PeakLoad)
+    peak_cooling: PeakLoad = field(default_factory=PeakLoad)
+
+
+@dataclass
+class ClimateLocation:
+    selection: int = 1
+    ph_climate_location: PH_ClimateLocation = PH_ClimateLocation()
+
+# -----------------------------------------------------------------------------
 # --- Variants, Project
+
+
 @dataclass
 class Variant:
     _count: ClassVar[int] = 0
@@ -443,6 +513,7 @@ class Variant:
     graphics3D: Graphics3D = field(default_factory=Graphics3D)
     building: Building = field(default_factory=Building)
     ph_data: PassivehouseData = field(default_factory=PassivehouseData)
+    climate: ClimateLocation = ClimateLocation()
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -473,6 +544,7 @@ class Variant:
         obj.create_building_from_hb_room(_hb_room)
         obj.create_phius_certification_from_hb_room(_hb_room)
         obj.create_PH_Building_from_hb_room(_hb_room)
+        obj.create_climate_from_hb_room(_hb_room)
 
         return obj
 
@@ -510,6 +582,60 @@ class Variant:
 
         # Not clear why this is a list in the WUFI file? When would there be more than one?
         self.ph_data.ph_buildings.append(ph_building)
+
+    def create_climate_from_hb_room(self, _hb_room: HB_Room) -> None:
+        ud_climate = _hb_room.properties.ph.ph_segment_data.climate
+
+        # -- Basics
+        self.climate.ph_climate_location.daily_temp_swing = ud_climate.summer_daily_temperature_swing
+        self.climate.ph_climate_location.avg_wind_speed = ud_climate.average_wind_speed
+
+        # -- Location
+        self.climate.ph_climate_location.location.latitude = ud_climate.location.latitude
+        self.climate.ph_climate_location.location.longitude = ud_climate.location.longitude
+        self.climate.ph_climate_location.location.weather_station_elevation = ud_climate.location.weather_station_elevation
+        self.climate.ph_climate_location.location.climate_zone = ud_climate.location.longitude
+        self.climate.ph_climate_location.location.hours_from_UTC = ud_climate.location.hours_from_UTC
+
+        # -- Ground
+        self.climate.ph_climate_location.ground.ground_thermal_conductivity = ud_climate.ground.ground_thermal_conductivity
+        self.climate.ph_climate_location.ground.ground_heat_capacitiy = ud_climate.ground.ground_heat_capacitiy
+        self.climate.ph_climate_location.ground.ground_density = ud_climate.ground.ground_density
+        self.climate.ph_climate_location.ground.depth_groundwater = ud_climate.ground.depth_groundwater
+        self.climate.ph_climate_location.ground.flow_rate_groundwater = ud_climate.ground.flow_rate_groundwater
+
+        # -- Monthly Values
+        self.climate.ph_climate_location.monthly_temperature_air = ud_climate.monthly_temperature_air.values
+        self.climate.ph_climate_location.monthly_temperature_dewpoint = ud_climate.monthly_temperature_dewpoint.values
+        self.climate.ph_climate_location.monthly_temperature_sky = ud_climate.monthly_temperature_sky.values
+
+        self.climate.ph_climate_location.monthly_radiation_north = ud_climate.monthly_radiation_north.values
+        self.climate.ph_climate_location.monthly_radiation_east = ud_climate.monthly_radiation_east.values
+        self.climate.ph_climate_location.monthly_radiation_south = ud_climate.monthly_radiation_south.values
+        self.climate.ph_climate_location.monthly_radiation_west = ud_climate.monthly_radiation_west.values
+        self.climate.ph_climate_location.monthly_radiation_global = ud_climate.monthly_radiation_global.values
+
+        # -- Peak Load Values
+        self.climate.ph_climate_location.peak_heating_1.temp = ud_climate.peak_heating_1.temp
+        self.climate.ph_climate_location.peak_heating_1.rad_north = ud_climate.peak_heating_1.rad_north
+        self.climate.ph_climate_location.peak_heating_1.rad_east = ud_climate.peak_heating_1.rad_east
+        self.climate.ph_climate_location.peak_heating_1.rad_south = ud_climate.peak_heating_1.rad_south
+        self.climate.ph_climate_location.peak_heating_1.rad_west = ud_climate.peak_heating_1.rad_west
+        self.climate.ph_climate_location.peak_heating_1.rad_global = ud_climate.peak_heating_1.rad_global
+
+        self.climate.ph_climate_location.peak_heating_2.temp = ud_climate.peak_heating_2.temp
+        self.climate.ph_climate_location.peak_heating_2.rad_north = ud_climate.peak_heating_2.rad_north
+        self.climate.ph_climate_location.peak_heating_2.rad_east = ud_climate.peak_heating_2.rad_east
+        self.climate.ph_climate_location.peak_heating_2.rad_south = ud_climate.peak_heating_2.rad_south
+        self.climate.ph_climate_location.peak_heating_2.rad_west = ud_climate.peak_heating_2.rad_west
+        self.climate.ph_climate_location.peak_heating_2.rad_global = ud_climate.peak_heating_2.rad_global
+
+        self.climate.ph_climate_location.peak_cooling.temp = ud_climate.peak_cooling.temp
+        self.climate.ph_climate_location.peak_cooling.rad_north = ud_climate.peak_cooling.rad_north
+        self.climate.ph_climate_location.peak_cooling.rad_east = ud_climate.peak_cooling.rad_east
+        self.climate.ph_climate_location.peak_cooling.rad_south = ud_climate.peak_cooling.rad_south
+        self.climate.ph_climate_location.peak_cooling.rad_west = ud_climate.peak_cooling.rad_west
+        self.climate.ph_climate_location.peak_cooling.rad_global = ud_climate.peak_cooling.rad_global
 
 
 @dataclass

@@ -1,5 +1,17 @@
+try:
+    from itertools import izip as zip
+except ImportError:
+    pass  # Python3
 
-class Climate_MonthlyValueCollection:
+
+class InvalidMonthlyDataError(Exception):
+    def __init__(self, _in):
+        self.message = "Error: Monthly data should be a collection of 12 numeric items.\n"\
+            "Got {} of length: {}".format(_in, len(_in))
+        super(InvalidMonthlyDataError, self).__init__(self.message)
+
+
+class Climate_MonthlyValueCollection(object):
     """Collection class to organize monthly cliamte values"""
 
     months = [
@@ -18,8 +30,8 @@ class Climate_MonthlyValueCollection:
     ]
 
     def __init__(self):
-        for month in self.months:
-            setattr(self, month, 0)
+        for month_name in self.months:
+            setattr(self, month_name, 0)
 
     @property
     def values(self):
@@ -28,10 +40,10 @@ class Climate_MonthlyValueCollection:
     @values.setter
     def values(self, _in):
         if (_in is None) or (len(_in) != 12):
-            return
+            raise InvalidMonthlyDataError(_in)
 
-        for i, month in enumerate(self.months):
-            setattr(self, month, _in[i])
+        for val, month_name in zip(_in, self.months):
+            setattr(self, month_name, val)
 
     def to_dict(self):
         # type: () -> dict
@@ -62,7 +74,7 @@ class Climate_MonthlyValueCollection:
         return str(self)
 
 
-class Climate_PeakLoadCollection:
+class Climate_PeakLoadCollection(object):
     """Collection class to orgaize peak load weather data"""
 
     def __init__(self):
@@ -108,7 +120,7 @@ class Climate_PeakLoadCollection:
         return str(self)
 
 
-class Climate_Location:
+class Climate_Location(object):
     def __init__(self):
         # NYC Default
         self.latitude = 40.6
@@ -152,7 +164,7 @@ class Climate_Location:
         return str(self)
 
 
-class Climate_Ground:
+class Climate_Ground(object):
     def __init__(self):
         self.ground_thermal_conductivity = 2
         self.ground_heat_capacitiy = 1000
@@ -195,7 +207,7 @@ class Climate_Ground:
         return str(self)
 
 
-class Climate:
+class Climate(object):
     def __init__(self):
         self.name = None
         self.summer_daily_temperature_swing = 8  # Deg K
