@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.10 -*-
 
-"""
-Functions for writing a Text XML file out to disk.
-"""
+"""Functions for writing XML Text out to a file on disk."""
 
 from datetime import datetime
 import os
@@ -13,7 +11,7 @@ from rich import print
 
 
 def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
-    """Write the PH 'Project' xml string out to a file.
+    """Write xml text out to the specified file.
 
     Arguments:
     ----------
@@ -23,6 +21,12 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
     Returns:
     --------
         * None
+
+    Raises:
+    -------
+        * PermissionError: If the target file can't be overwriten for some reason. ie: if it's
+            open and being read by another program or application. In this case, will write out
+            to a new file with a unique time-stamped name instead.
     """
 
     def clean_filename(_file_address):

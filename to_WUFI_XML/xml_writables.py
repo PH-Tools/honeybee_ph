@@ -3,17 +3,20 @@
 
 """Classes used to build XML Node Objects which are used during XML Output"""
 
-from typing import Union, Iterable, Any
+from typing import Union, Collection, Any
 
 # Type Alias
-xml_writable = Union[str, float, int, bool, None]
+xml_valid = Union[str, float, int, bool, None]
 
 
 class XML_Node:
     """A single node text/numeric item. Optional Attribute data"""
 
     def __init__(
-        self, _node_name: str, _node_value: xml_writable, _attr_name: str = None, _attr_value: xml_writable = None
+        self, _node_name: str,
+        _node_value: xml_valid,
+        _attr_name: str = None,
+        _attr_value: xml_valid = None
     ):
         self.node_name = _node_name
         self.node_value = _node_value
@@ -25,7 +28,10 @@ class XML_List:
     """A List of XML Writable objects. Used to add 'count' info to the list parent node"""
 
     def __init__(
-        self, _node_name: str, _node_items: Iterable, _attr_name: str = "count", _attr_value: xml_writable = None
+        self, _node_name: str,
+        _node_items: Collection,
+        _attr_name: str = "count",
+        _attr_value: xml_valid = None
     ):
         self.node_name = _node_name
         self.node_items = _node_items
@@ -53,7 +59,7 @@ class XML_Object:
         _node_name: str,
         _node_object: Any,
         _attr_name: str = None,
-        _attr_value: xml_writable = None,
+        _attr_value: xml_valid = None,
         _schema_name: str = None,
     ):
         """

@@ -23,13 +23,18 @@ def get_HB_object_conversion_schema(_hb_object, _schema_name: str | None) -> Cal
 
     Arguments:
     ----------
-        * _hb_object (?): The Honeybee-object to find the WUFI-XML data schema for.
+        * _hb_object (Any): The Object to find the WUFI-XML write schema for.
         * _schema_name (str | None): Optional user-defined name of the XML schema to use.
             If None is supplied, will use the object name preceded by an underscore. Ie:
             "Room" will search for "_Room".
     Returns:
     --------
         * schema_function (Callable[])
+
+    Raises:
+    -------
+        * NoXMLSchemaFoundError: If no valid XML conversion schema is found for the 
+            designated object.
     """
 
     # -- Schema Name
@@ -39,7 +44,8 @@ def get_HB_object_conversion_schema(_hb_object, _schema_name: str | None) -> Cal
     # -- Schema Function
     schema_function = getattr(to_WUFI_XML.xml_schemas, _schema_name, None)
     if not schema_function:
-        raise NoXMLSchemaFoundError(to_WUFI_XML.xml_schemas, _hb_object, _schema_name)
+        raise NoXMLSchemaFoundError(
+            to_WUFI_XML.xml_schemas, _hb_object, _schema_name)
 
     return schema_function
 
