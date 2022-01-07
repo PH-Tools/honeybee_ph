@@ -31,8 +31,10 @@ def get_room_exposed_faces(_hb_room):
 
         new_face = original_face.duplicate()
 
-        # TODO: This should not be needed? Why isn't duplicate() working right?
+        # TODO: This should not be needed? Why isn't duplicate() working right and duping the properties?
         new_face._properties._energy = original_face.properties.energy.duplicate()
+        new_face._properties._radiance = original_face.properties.radiance.duplicate()
+        new_face._properties._ph = original_face.properties.ph.duplicate()
 
         exposed_faces.append(new_face)
 

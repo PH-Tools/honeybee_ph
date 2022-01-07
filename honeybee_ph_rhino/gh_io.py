@@ -159,11 +159,11 @@ class IGH:
 
         Arguments:
         ----------
-            _rh_obj_guids list(Rhino Guid): The Rhino Guid(s) of the Object/Elements.
+            _rh_obj_guids (list[Rhino Guid]): The Rhino Guid(s) of the Object/Elements.
 
         Returns:
         --------
-            output_list list[dict]: A list of dictionaries, each with all the data found
+            output_list (list[dict]): A list of dictionaries, each with all the data found
                 in the Rhino object's UserText library.
         """
 
@@ -445,3 +445,18 @@ def input_to_int(IGH, _input_value, _default=None):
             return int(r[0])
         except ValueError as e2:
             raise SelectionInputError(_input_value)
+
+
+def clean_get(_list, _i, _default=None):
+    """Get list item cleanly based on index pos. If IndexError, try getting list[0]
+
+    This is useful for ghcomponents with multiple list inputs whch are sometimes  
+    the same length, and sometimes not the same length.
+    """
+    try:
+        return _list[_i]
+    except IndexError:
+        try:
+            return _list[0]
+        except IndexError:
+            return _default

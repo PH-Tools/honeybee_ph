@@ -30,7 +30,12 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-
+    "HBPH - Create Spaces": {
+        "NickName": "PH Spaces",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
 }
 
 
