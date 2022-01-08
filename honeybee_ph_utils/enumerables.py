@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""A simplified custom Enum class since IronPython sucks so bad and doesn't have 
-an enum module for some inexplicable reason. God I can't wait for PY3....
-"""
+"""A simplified custom Enum class since IronPython doesn't have an enum."""
 
 try:
     from typing import Any
@@ -30,6 +28,10 @@ class CustomEnum(object):
     @value.setter
     def value(self, _in):
         # type: (Any) -> None
+        """Allows the user to set the .value as one of the allowed values. If an 
+            integer is passed in, will attempt to find the corresponding value from the 
+            allowed-values list (1-based, ie: user-input '1' -> self.allowed.index(0) ).
+        """
         if str(_in).upper() in self.allowed:
             self._value = str(_in).upper()
         else:
@@ -40,6 +42,8 @@ class CustomEnum(object):
 
     @property
     def number(self):
+        # type: () -> int
+        """Returns the index pos of self.value (1-based)"""
         return self.allowed.index(self._value) + 1
 
     def __str__(self):
@@ -52,13 +56,13 @@ class CustomEnum(object):
         return str(self)
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> dict[str, Any]
         d = {}
         d['_value'] = self.value
         return d
 
     @classmethod
     def from_dict(cls, _dict):
-        # type: (dict) -> CustomEnum
+        # type: (dict[str, Any]) -> CustomEnum
         obj = cls(_dict.get('_value'))
         return obj

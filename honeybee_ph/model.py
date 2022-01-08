@@ -45,8 +45,9 @@ class ModelPhProperties(object):
         return self.__repr__()
 
     def _get_bldg_segment_dicts(self):
-        # type: () -> list[dict]
-        """Return a dict of all the bldg_segments found on the model rooms.
+        # type: () -> list[dict[str, Any]]
+        """Return a list of all the bldg_segments found on the model's rooms as dicts. 
+            This is used when writing an 'Abridged' HBJSON file.
 
         Arguments:
         ----------
@@ -54,20 +55,23 @@ class ModelPhProperties(object):
 
         Returns:
         --------
-            * list: A list of all the bldg_segments found on the rooms as dicts.
+            * list[dict]: A list of all the bldg_segments found on the model's 
+                rooms as dicts.
         """
         return [hb_room.properties.ph.ph_bldg_segment.to_dict() for hb_room in self.host.rooms]
 
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
-        d = {}
-        t = 'ModelPHProperties' if not \
-            abridged else 'ModelPhPropertiesAbridged'
-        d['type'] = t
-        d['id_num'] = self.id_num
 
-        # -- Add all the bldg_segment objects to the dict
-        d['bldg_segments'] = self._get_bldg_segment_dicts()
+        d = {}
+        if abridged == False:
+            d['type'] = 'ModelPhPropertiesAbridged'
+            d['id_num'] = self.id_num
+            d['bldg_segments'] = self._get_bldg_segment_dicts()
+        else:
+            d['type'] = 'ModelPHProperties'
+            d['id_num'] = self.id_num
+            d['bldg_segments'] = []
 
         return {'ph': d}
 
@@ -84,22 +88,22 @@ class ModelPhProperties(object):
 
     @staticmethod
     def load_properties_from_dict(data):
-        # type: (dict) -> tuple
-        """Load model .ph properties of a dictionary into Python objects.
+        # type: (dict[str, dict]) -> tuple[dict, dict]
+        """Load the HB-Model .ph properties from an HB-Model dictionary as Python objects.
 
-        Loaded objects include .......
+        Loaded objects include: BldgSegment.......
 
-        The function is called when re-serializing a Model object from a dictionary
-        to load honeybee_ph objects into their Python object form before
-        applying them to the Model geometry.
+        The function is called when re-serializing an HB-Model object from a 
+        dictionary. It will load honeybee_ph entities as Python objects and returns
+        a tuple of dictionaries with all the de-serialized Honeybee-PH objects.
 
         Arguments:
         ----------
             data: A dictionary representation of an entire honeybee-core Model.
-                Note that this dictionary must have ModelPhProperties in order
-                for this method to successfully load the .ph properties.
+                 Note that this dictionary must have ModelPhProperties 
+                in order for this method to successfully apply the .ph properties.
 
-                Note: data.keys() will include: 
+                Note: data is an HB-Model dict and .keys() will include: 
                 [
                     'display_name', 'identifier', 'tolerance', 
                     'angle_tolerance', 'rooms', 'type', 'version', 
@@ -108,7 +112,7 @@ class ModelPhProperties(object):
 
         Returns:
         --------
-            * tuple[dict, dict]
+            * tuple[dict, dict]: A tuple of dictionaries with all the Honeybee-PH objects.
         """
         assert 'ph' in data['properties'], \
             'HB-Model Dictionary possesses no ModelPhProperties?'
@@ -117,19 +121,28 @@ class ModelPhProperties(object):
         for seg in data['properties']['ph']['bldg_segments']:
             bldg_segments[seg['identifier']] = BldgSegment.from_dict(seg)
 
-        return {}, bldg_segments
+        # TODO: Spaces
+        spaces = {}
+
+        return spaces, bldg_segments
 
     def apply_properties_from_dict(self, data):
         # type: (dict[str, Any]) -> None
         """Apply the .ph properties of a dictionary to the host Model of this object.
 
+        This method is called when the HB-Model is de-serialized from a dict back into 
+        a Python object. In an 'Abridged' HBJSON file, all the property information 
+        is stored at the model level, not at the sub-model object level. In that case, 
+        this method is used to apply the right property data back onto all the sub-model  
+        objects (faces, rooms, apertures, etc).
+
         Arguments:
         ----------
-            * data (dict[str, Any]): A dictionary representation of an entire 
-                honeybee-core Model. Note that this dictionary must have ModelPhProperties 
+            * data (dict[str, Any]): A dictionary representation of an entire honeybee-core
+                Model. Note that this dictionary must have ModelPhProperties 
                 in order for this method to successfully apply the .ph properties.
 
-                Note: data.keys() will include: 
+                Note: data is an HB-Model dict and .keys() will include: 
                 [
                     'display_name', 'identifier', 'tolerance', 
                     'angle_tolerance', 'rooms', 'type', 'version', 
@@ -141,17 +154,19 @@ class ModelPhProperties(object):
             * None
         """
         assert 'ph' in data['properties'], \
-            'Dictionary possesses no ModelPhProperties.'
+            'Dictionary possesses no ModelPhProperties?'
 
-        # re-build all of the .ph property objects from the HB-Model dict
+        # re-build all of the .ph property objects from the HB-Model dict as python objects
         spaces, bldg_segments = self.load_properties_from_dict(data)
 
         # collect lists of .ph property dictionaries at the sub-model level (room, face, etc)
         room_ph_dicts, face_ph_dicts, shd_ph_dicts, ap_ph_dicts, dr_ph_dicts = \
             extensionutil.model_extension_dicts(data, 'ph', [], [], [], [], [])
 
-        # apply the .ph properties to all the objects in the Model
+        # apply the .ph properties to all the sub-model objects in the HB-Model
         for room, room_dict in zip(self.host.rooms, room_ph_dicts):
             if not room_dict:
                 continue
             room.properties.ph.apply_properties_from_dict(room_dict, bldg_segments)
+
+        # TODO: all the rest (apertures, faces, etc...)

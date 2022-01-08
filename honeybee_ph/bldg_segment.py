@@ -43,11 +43,11 @@ class UsageType(CustomEnum):
 
 class SetPoints:
     def __init__(self):
-        self.winter = 20
-        self.summer = 25
+        self.winter = 20.0
+        self.summer = 25.0
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> dict[str, float]
         d = {}
 
         d['winter'] = self.winter
@@ -57,11 +57,11 @@ class SetPoints:
 
     @classmethod
     def from_dict(cls, _dict):
-        # type: (dict) -> SetPoints
+        # type: (dict[str, float]) -> SetPoints
         obj = cls()
 
-        obj.winter = _dict.get('winter')
-        obj.summer = _dict.get('summer')
+        obj.winter = _dict.get('winter', 20.0)
+        obj.summer = _dict.get('summer', 25.0)
 
         return obj
 

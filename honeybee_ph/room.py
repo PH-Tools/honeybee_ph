@@ -77,12 +77,12 @@ class RoomPhProperties(object):
 
         Arguments:
         ----------
-            * room_prop_dict (dict): A RoomPhProperties dictionary loaded from 
-                the room object iteself. Unabridged or Abridged. In Abridged form, this 
-                will just include the 'ph_bldg_segment_id' reference instead of the
-                the entire dataset.
+            * room_prop_dict (dict): A RoomPhPropertiesAbridged dictionary loaded from 
+                the room object itself. Unabridged. In Abridged form, this 
+                dict will just include the 'ph_bldg_segment_id' reference instead of the
+                the entire properties data dict.
             * bldg_segments (dict[str: BldgSegment]): A dict of the BldgSegment 
-                objects found at the Model level. Segment id is used as the key.
+                objects found at the Model level. Segment-id is used as the key.
 
         Returns:
         --------
