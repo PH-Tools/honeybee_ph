@@ -6,13 +6,6 @@
 from rich import print
 import pathlib
 
-# -- runs the __init__ startup routines for all the HB modules
-# -- which adds the .ph properties slot to all HB Objects
-import honeybee
-import honeybee_ph
-import honeybee_energy
-import honeybee_energy_ph
-
 import from_HBJSON.read_HBJSON_file
 import from_HBJSON.convert_HBJSON
 import to_WUFI_XML.xml_builder
