@@ -10,9 +10,17 @@ class _Base(object):
     """PHX Object Base class."""
 
     def __init__(self):
-        self.identifier = uuid.uuid4()
+        self._identifier = uuid.uuid4()
         self.user_data = {}
         self._display_name = self.identifier
+
+    @property
+    def identifier(self):
+        return str(self._identifier)
+
+    @identifier.setter
+    def identifier(self, _in):
+        self._identifier = _in
 
     @property
     def display_name(self):

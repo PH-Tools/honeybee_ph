@@ -9,6 +9,7 @@ from honeybee.properties import (
     FaceProperties,
     ApertureProperties,
 )
+
 from .properties_space import SpaceProperties
 from .model import ModelPhProperties
 from .room import RoomPhProperties

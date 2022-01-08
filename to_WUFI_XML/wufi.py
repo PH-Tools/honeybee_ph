@@ -569,28 +569,28 @@ class Variant:
         self.building = Building.from_hb_room(_hb_room)
 
     def create_phius_certification_from_hb_room(self, _hb_room: HB_Room) -> None:
-        self.ph_data.ph_certificate_criteria = _hb_room.properties.ph.ph_segment_data.ph_certification.certification_criteria
-        self.ph_data.ph_selection_target_data = _hb_room.properties.ph.ph_segment_data.ph_certification.localization_selection_type
-        self.ph_data.annual_heating_demand = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_heating_demand
-        self.ph_data.annual_cooling_demand = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_cooling_demand
-        self.ph_data.peak_heating_load = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_heating_load
-        self.ph_data.peak_cooling_load = _hb_room.properties.ph.ph_segment_data.ph_certification.PHIUS2021_cooling_load
+        self.ph_data.ph_certificate_criteria = _hb_room.properties.ph.ph_bldg_segment.ph_certification.certification_criteria
+        self.ph_data.ph_selection_target_data = _hb_room.properties.ph.ph_bldg_segment.ph_certification.localization_selection_type
+        self.ph_data.annual_heating_demand = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_demand
+        self.ph_data.annual_cooling_demand = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_cooling_demand
+        self.ph_data.peak_heating_load = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_load
+        self.ph_data.peak_cooling_load = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_cooling_load
 
     def create_PH_Building_from_hb_room(self, _hb_room: HB_Room) -> None:
         ph_building = PH_Building()
 
-        ph_building.building_category = _hb_room.properties.ph.ph_segment_data.usage_type.number
-        ph_building.occupancy_type = _hb_room.properties.ph.ph_segment_data.occupancy_type.number
-        ph_building.building_status = _hb_room.properties.ph.ph_segment_data.ph_certification.building_status.number
-        ph_building.building_type = _hb_room.properties.ph.ph_segment_data.ph_certification.building_type.number
-        ph_building.num_of_units = _hb_room.properties.ph.ph_segment_data.num_dwelling_units
-        ph_building.num_of_floors = _hb_room.properties.ph.ph_segment_data.num_floor_levels
+        ph_building.building_category = _hb_room.properties.ph.ph_bldg_segment.usage_type.number
+        ph_building.occupancy_type = _hb_room.properties.ph.ph_bldg_segment.occupancy_type.number
+        ph_building.building_status = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_status.number
+        ph_building.building_type = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_type.number
+        ph_building.num_of_units = _hb_room.properties.ph.ph_bldg_segment.num_dwelling_units
+        ph_building.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
 
         # Not clear why this is a list in the WUFI file? When would there be more than one?
         self.ph_data.ph_buildings.append(ph_building)
 
     def create_climate_from_hb_room(self, _hb_room: HB_Room) -> None:
-        ud_climate = _hb_room.properties.ph.ph_segment_data.climate
+        ud_climate = _hb_room.properties.ph.ph_bldg_segment.climate
 
         # -- Basics
         self.climate.ph_climate_location.daily_temp_swing = ud_climate.summer_daily_temperature_swing

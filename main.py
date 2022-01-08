@@ -6,6 +6,13 @@
 from rich import print
 import pathlib
 
+# -- runs the __init__ startup routines for all the HB modules
+# -- which adds the .ph properties slot to all HB Objects
+import honeybee
+import honeybee_ph
+import honeybee_energy
+import honeybee_energy_ph
+
 import from_HBJSON.read_HBJSON_file
 import from_HBJSON.convert_HBJSON
 import to_WUFI_XML.xml_builder
@@ -13,8 +20,8 @@ import to_WUFI_XML.xml_txt_to_file
 
 # --- Input / Output file Path
 # ------------------------------------------------------------------------------
-SOURCE_FILE = pathlib.Path("sample", "hbjson", "Townsend_St_Input_220105.hbjson")
-TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Townsend_St_Input_220105.xml")
+SOURCE_FILE = pathlib.Path("sample", "hbjson", "Townsend_St_Input_220108.hbjson")
+TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Townsend_St_Input_220108.xml")
 
 # --- Read in an existing HB_JSON and re-build the HB Objects
 # ------------------------------------------------------------------------------
