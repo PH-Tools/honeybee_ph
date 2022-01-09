@@ -11,7 +11,8 @@ except ImportError:
 
 class ValueNotAllowedError(Exception):
     def __init__(self, _in, _enum):
-        self.message = 'Value: {} not allowed for enum {}'.format(str(_in), _enum)
+        self.message = 'Value: {} not allowed for enum {}'.format(
+            str(_in), _enum)
         super(ValueNotAllowedError, self).__init__(self.message)
 
 
@@ -27,7 +28,7 @@ class CustomEnum(object):
 
     @value.setter
     def value(self, _in):
-        # type: (Any) -> None
+        # type: (str | int) -> None
         """Allows the user to set the .value as one of the allowed values. If an 
             integer is passed in, will attempt to find the corresponding value from the 
             allowed-values list (1-based, ie: user-input '1' -> self.allowed.index(0) ).
@@ -36,7 +37,8 @@ class CustomEnum(object):
             self._value = str(_in).upper()
         else:
             try:
-                self._value = self.allowed[int(_in) - 1]
+                input = int(_in) - 1
+                self._value = self.allowed[input]
             except:
                 raise ValueNotAllowedError(_in, self)
 
