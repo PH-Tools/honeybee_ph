@@ -3,10 +3,10 @@ try:
 except ImportError:
     pass  # Python 2.7
 
-from honeybee.properties import _Properties
+from honeybee import properties
 
 
-class SpaceProperties(_Properties):
+class SpaceProperties(properties._Properties):
     """Honeybee-PH Space Properties.
 
     Space properties. This class will be extended by extensions.

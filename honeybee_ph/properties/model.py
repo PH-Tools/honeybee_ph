@@ -14,7 +14,7 @@ except ImportError:
 
 
 from honeybee import extensionutil
-from honeybee_ph.bldg_segment import BldgSegment
+from honeybee_ph import bldg_segment
 
 
 class ModelPhProperties(object):
@@ -119,7 +119,7 @@ class ModelPhProperties(object):
 
         bldg_segments = {}
         for seg in data['properties']['ph']['bldg_segments']:
-            bldg_segments[seg['identifier']] = BldgSegment.from_dict(seg)
+            bldg_segments[seg['identifier']] = bldg_segment.BldgSegment.from_dict(seg)
 
         # TODO: Spaces
         spaces = {}

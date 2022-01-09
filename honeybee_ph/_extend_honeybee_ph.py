@@ -10,12 +10,12 @@ from honeybee.properties import (
     ApertureProperties,
 )
 
-from .properties_space import SpaceProperties
-from .model import ModelPhProperties
-from .room import RoomPhProperties
-from .face import FacePhProperties
-from .aperture import AperturePhProperties
-from .properties_space import SpacePhProperties
+from .properties.space import SpaceProperties
+from .properties.model import ModelPhProperties
+from .properties.room import RoomPhProperties
+from .properties.face import FacePhProperties
+from .properties.aperture import AperturePhProperties
+from .properties.space import SpacePhProperties
 
 # Step 1)
 # set a private ._ph attribute on each relevant HB-Core Property class to None

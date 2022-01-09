@@ -1,18 +1,18 @@
 from functools import partial
 from collections import defaultdict
 from functools import reduce
-from honeybee_ph_rhino.gh_io import clean_get, IGH
-import honeybee_ph.space
+from honeybee_ph_rhino import gh_io
+from honeybee_ph import space
 
 
 def create_volumes(_floor_segments, _heights):
-    # type (list, list) -> list[honeybee_ph.space.SpaceVolume]
+    # type (list, list) -> list[space.SpaceVolume]
     volumes = []
     for i, flr_seg in enumerate(_floor_segments):
-        new_volume = honeybee_ph.space.SpaceVolume()
+        new_volume = space.SpaceVolume()
 
         new_volume.floor.floor_segments.append(flr_seg)
-        new_volume.avg_ceiling_height = clean_get(_heights, i, 2.5)
+        new_volume.avg_ceiling_height = gh_io.clean_get(_heights, i, 2.5)
 
         volumes.append(new_volume)
     return volumes
@@ -22,28 +22,28 @@ def create_spaces(_volumes, _space_names, _space_numbers):
     # type: (list, list, list) -> list
     spaces = []
     for i, volume in enumerate(_volumes):
-        space = honeybee_ph.space.Space()
+        new_space = space.Space()
 
-        space.volumes.append(volume)
-        space.name = clean_get(_space_names, i, 'unnamed_room_{}'.format(i))
-        space.number = clean_get(_space_numbers, i, '00')
+        new_space.volumes.append(volume)
+        new_space.name = gh_io.clean_get(_space_names, i, 'unnamed_room_{}'.format(i))
+        new_space.number = gh_io.clean_get(_space_numbers, i, '00')
 
-        spaces.append(space)
+        spaces.append(new_space)
 
     return spaces
 
 
 def merge_spaces(IGH, space_1, space_2):
-    # type: (IGH, honeybee_ph.space.Space, honeybee_ph.space.Space) -> honeybee_ph.space.Space
+    # type: (gh_io.IGH, space.Space, space.Space) -> space.Space
     """Combine two Spaces into a single new space."""
 
     # TODO: Merge Spaces, join Floor Surfaces, etc...
 
-    return honeybee_ph.space.Space()
+    return space.Space()
 
 
 def merge_spaces_by_name(IGH, _spaces):
-    # type: (IGH, list[honeybee_ph.space.Space]) -> list[honeybee_ph.space.Space]
+    # type: (gh_io.IGH, list[space.Space]) -> list[space.Space]
 
     # -- Group the spaces by full-name. ie: "101-Kitchen", etc
     space_groups = defaultdict(list)

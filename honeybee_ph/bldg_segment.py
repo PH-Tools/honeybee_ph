@@ -8,13 +8,11 @@ try:
 except ImportError:
     pass  # Python2.7
 
-from honeybee_ph._base import _Base
-from honeybee_ph.phius import PhiusCertifiction
-from honeybee_ph.climate import Climate
-from honeybee_ph_utils.enumerables import CustomEnum
+from honeybee_ph import _base, phius, climate
+from honeybee_ph_utils import enumerables
 
 
-class OccupancyType(CustomEnum):
+class OccupancyType(enumerables.CustomEnum):
     allowed = [
         "RESIDENTIAL",
         "",
@@ -30,7 +28,7 @@ class OccupancyType(CustomEnum):
         self.value = _value
 
 
-class UsageType(CustomEnum):
+class UsageType(enumerables.CustomEnum):
     allowed = [
         "RESIDENTIAL",
         "NON-RESIDENTIAL",
@@ -66,7 +64,7 @@ class SetPoints:
         return obj
 
 
-class BldgSegment(_Base):
+class BldgSegment(_base._Base):
 
     def __init__(self):
         super(BldgSegment, self).__init__()
@@ -75,8 +73,8 @@ class BldgSegment(_Base):
         self.usage_type = UsageType("RESIDENTIAL")
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
-        self.climate = Climate()
-        self.ph_certification = PhiusCertifiction()
+        self.climate = climate.Climate()
+        self.ph_certification = phius.PhiusCertifiction()
         self.set_points = SetPoints()
 
     def to_dict(self):
@@ -106,8 +104,8 @@ class BldgSegment(_Base):
         obj.usage_type = UsageType.from_dict(_dict.get('usage_type', {}))
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
-        obj.climate = Climate.from_dict(_dict.get('climate', {}))
-        obj.ph_certification = PhiusCertifiction.from_dict(
+        obj.climate = climate.Climate.from_dict(_dict.get('climate', {}))
+        obj.ph_certification = phius.PhiusCertifiction.from_dict(
             _dict.get('ph_certification', {}))
         obj.set_points = SetPoints.from_dict(_dict.get('set_points', {}))
 

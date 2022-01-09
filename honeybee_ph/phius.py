@@ -3,10 +3,10 @@
 
 """Phius Certification Data Class"""
 
-from honeybee_ph_utils.enumerables import CustomEnum
+from honeybee_ph_utils import enumerables
 
 
-class BuildingStatus(CustomEnum):
+class BuildingStatus(enumerables.CustomEnum):
     allowed = [
         "IN_PLANNING",
         "UNDER_CONSTRUCTION",
@@ -18,7 +18,7 @@ class BuildingStatus(CustomEnum):
         self.value = _value
 
 
-class BuildingType(CustomEnum):
+class BuildingType(enumerables.CustomEnum):
     allowed = [
         "NEW_CONSTRUCTION",
         "RETROFIT",

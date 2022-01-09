@@ -1,8 +1,13 @@
-from honeybee_ph._base import _Base
-from honeybee_ph.properties_space import SpaceProperties
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
+
+from honeybee_ph import _base
+from honeybee_ph.properties import space
 
 
-class SpaceFloorSegment(_Base):
+class SpaceFloorSegment(_base._Base):
     def __init__(self):
         self.geometry = None
         self.weighting_factor = 1.0
@@ -31,7 +36,7 @@ class SpaceFloorSegment(_Base):
         return str(self)
 
 
-class SpaceFloor(_Base):
+class SpaceFloor(_base._Base):
     def __init__(self):
         self.floor_segments = []
 
@@ -57,7 +62,7 @@ class SpaceFloor(_Base):
         return str(self)
 
 
-class SpaceVolume(_Base):
+class SpaceVolume(_base._Base):
     def __init__(self):
         self.floor = SpaceFloor()
         self._geometry = None
@@ -85,7 +90,7 @@ class SpaceVolume(_Base):
         return str(self)
 
 
-class Space(_Base):
+class Space(_base._Base):
 
     def __init__(self, _host=None):
         super(Space, self).__init__()
@@ -98,7 +103,7 @@ class Space(_Base):
         self.volume = 0.0
         self.volumes = []
         self.program = None
-        self.properties = SpaceProperties(self)
+        self.properties = space.SpaceProperties(self)
 
     @property
     def full_name(self):

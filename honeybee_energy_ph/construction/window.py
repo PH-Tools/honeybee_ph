@@ -3,8 +3,8 @@
 
 """ """
 
-from honeybee.properties import FaceProperties, _Properties
-from honeybee_energy.construction.window import WindowConstruction as HB_WindowConstruction
+from honeybee import properties
+from honeybee_energy.construction import window
 
 
 class WindowConstructionPhProperties:
@@ -15,7 +15,7 @@ class WindowConstructionPhProperties:
         return "{}(id_num={!r})".format(self.__class__.__name__, self.id_num)
 
 
-class WindowConstructionProperties(_Properties):
+class WindowConstructionProperties(properties._Properties):
 
     def __init__(self, host):
         super(WindowConstructionProperties, self).__init__(host)
@@ -29,7 +29,7 @@ class WindowConstructionProperties(_Properties):
         return "{}(host={!r})".format(self.__class__.__name__, self.host)
 
 
-class PH_WindowConstruction(HB_WindowConstruction):
+class PH_WindowConstruction(window.WindowConstruction):
     """Subclass honeybee_energy's WindowConstruction so it can have .properties"""
 
     __slots__ = ("_properties",)
@@ -44,7 +44,7 @@ class PH_WindowConstruction(HB_WindowConstruction):
 
     @classmethod
     def from_hb_construction(cls, _hb_construction):
-        # type: (HB_WindowConstruction) -> PH_WindowConstruction
+        # type: (window.WindowConstruction) -> PH_WindowConstruction
         obj = cls(
             _hb_construction.identifier,
             _hb_construction.materials,

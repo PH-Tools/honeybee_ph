@@ -3,7 +3,6 @@
 
 """Functions to merged / join together Honeybee Rooms into a single new Honeybee Room."""
 
-from collections import namedtuple
 import honeybee.room
 import honeybee.face
 from honeybee.boundarycondition import Outdoors, Ground

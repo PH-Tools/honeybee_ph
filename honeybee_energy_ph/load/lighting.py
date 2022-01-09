@@ -9,8 +9,8 @@ except ImportError:
     # Python 2.7
     pass
 
-from honeybee.properties import _Properties
-from honeybee_energy.load.lighting import Lighting
+from honeybee import properties
+from honeybee_energy.load import lighting
 
 
 class LightingPhProperties(object):
@@ -53,7 +53,7 @@ class LightingPhProperties(object):
         return new_prop
 
 
-class LightingProperties(_Properties):
+class LightingProperties(properties._Properties):
     """Properties for HBE Lighting Objects"""
 
     def __repr__(self):
@@ -74,7 +74,7 @@ class LightingProperties(_Properties):
         return base
 
 
-class PH_Lighting(Lighting):
+class PH_Lighting(lighting.Lighting):
     __slots__ = ("_properties",)
 
     def __init__(self, *args, **kwargs):

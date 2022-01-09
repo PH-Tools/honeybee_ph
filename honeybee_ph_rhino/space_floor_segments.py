@@ -1,6 +1,6 @@
 from collections import namedtuple
-import honeybee_ph_rhino.gh_io
-from honeybee_ph.space import SpaceFloorSegment
+from honeybee_ph_rhino import gh_io
+from honeybee_ph import space
 
 # -- Temporary dataclasses to organize input data
 VentilationData = namedtuple('VentilationData', ['v_sup', 'v_eta', 'v_trans'])
@@ -9,7 +9,7 @@ FloorSegmentData = namedtuple(
 
 
 def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
-    # type: (honeybee_ph_rhino.gh_io.IGH, list, str) -> list[FloorSegmentData]
+    # type: (gh_io.IGH, list, str) -> list[FloorSegmentData]
 
     if not isinstance(_input_objects, (list, tuple, set)):
         _input_objects = [_input_objects]
@@ -41,10 +41,10 @@ def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
 
 
 def create_floor_segments(_flr_seg_input_data, _weighting_factors):
-    # type: (list[FloorSegmentData], list[float]) -> list[SpaceFloorSegment]
+    # type: (list[FloorSegmentData], list[float]) -> list[space.SpaceFloorSegment]
     flr_segments = []
     for i, data in enumerate(_flr_seg_input_data):
-        new_flr_segment = SpaceFloorSegment()
+        new_flr_segment = space.SpaceFloorSegment()
 
         # -- In case the weighting factors klen doesn't match
         # -- first try and use the input at index=0, then the default (1.0)

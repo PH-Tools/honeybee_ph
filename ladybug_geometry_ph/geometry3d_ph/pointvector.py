@@ -3,8 +3,8 @@
 
 """Subclassing Ladybug Point3D Object to allow for .properties"""
 
-from honeybee.properties import _Properties
-from ladybug_geometry.geometry3d.pointvector import Point3D
+from honeybee import properties
+from ladybug_geometry.geometry3d.pointvector import Point3D as LB_Point3D
 
 
 class Point3DPhProperties(object):
@@ -14,7 +14,7 @@ class Point3DPhProperties(object):
         self.id_num = 0
 
 
-class Point3DProperties(_Properties):
+class Point3DProperties(properties._Properties):
     """Properties for LBT Point3D Objects"""
 
     def __init__(self, host):
@@ -29,7 +29,7 @@ class Point3DProperties(_Properties):
         return "{}(host={!r})".format(self.__class__.__name__, self.host)
 
 
-class PH_Point3D(Point3D):
+class PH_Point3D(LB_Point3D):
     """Subclass Point3D so it can have properties"""
 
     __slots__ = ("_properties",)

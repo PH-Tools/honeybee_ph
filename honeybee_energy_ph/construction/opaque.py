@@ -3,8 +3,8 @@
 
 """Subclassing """
 
-from honeybee.properties import _Properties
-from honeybee_energy.construction.opaque import OpaqueConstruction
+from honeybee import properties
+from honeybee_energy.construction import opaque
 
 
 class OpaqueConstructionPhProperties:
@@ -15,7 +15,7 @@ class OpaqueConstructionPhProperties:
         return "{}(id_num={!r})".format(self.__class__.__name__, self.id_num)
 
 
-class OpaqueConstructionProperties(_Properties):
+class OpaqueConstructionProperties(properties._Properties):
 
     def __init__(self, host):
         super(OpaqueConstructionProperties, self).__init__(host)
@@ -29,7 +29,7 @@ class OpaqueConstructionProperties(_Properties):
         return "{}(host={!r})".format(self.__class__.__name__, self.host)
 
 
-class PH_OpaqueConstruction(OpaqueConstruction):
+class PH_OpaqueConstruction(opaque.OpaqueConstruction):
     """Subclass honeybee_energy's OpaqueConstruction so it can have .properties"""
 
     __slots__ = ("_properties",)
@@ -44,7 +44,7 @@ class PH_OpaqueConstruction(OpaqueConstruction):
 
     @classmethod
     def from_hb_construction(cls, _hb_construction):
-        # type: (OpaqueConstruction) -> PH_OpaqueConstruction
+        # type: (opaque.OpaqueConstruction) -> PH_OpaqueConstruction
         obj = cls(
             _hb_construction.identifier,
             _hb_construction.materials,
