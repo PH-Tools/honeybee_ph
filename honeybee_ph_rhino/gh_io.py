@@ -8,14 +8,21 @@ could figure out how to get Rhino dependancies to be recognized by testing frame
 probably would not need something like this? I suppose it does help reduce coupling?
 """
 try:
+    from typing import Any
+except ImportError:
+    pass  # Python 3
+
+try:
     from itertools import izip as zip
 except ImportError:
     # Python3+
     pass
+
 from contextlib import contextmanager
 from copy import deepcopy
 
 import honeybee.face
+from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_rhino.togeometry import (
     to_face3d,
     to_linesegment3d,
@@ -198,15 +205,20 @@ class IGH:
         return output_list
 
     def convert_to_LBT_geom(self, _inputs):
-        # type: (list) -> list
+        # type: (list) -> list[list]
         """Converts a list of RH- or GH-Geometry into a list of LBT-Geometry. If
             input is a string, boolean or number, will just return that without converting.
+
+            Note: The return is a list of lists since the lbt converter might return 
+            triangulated faces in some cases.
+
         Arguments:
         ----------
             * _inputs (list): The Rhino items / objects to try and convert
+
         Returns:
         --------
-            * list: The input (RH/GH) geometry, converted to LBT-Geometry
+            * list[list]: The input (RH/GH) geometry, converted to LBT-Geometry
         """
 
         if not isinstance(_inputs, list):
@@ -374,6 +386,15 @@ class IGH:
 
         return new_LBT_face3ds
 
+    def extrude_Face3D_WorldZ(self, _face3D, _dist=2.5):
+        # type: (list[Face3D], float) -> list[Face3D]
+        """Returns a list of Face3D surfaces representing a closed brep extrusion of the base Face3D"""
+        extrusion_vector = self.grasshopper_components.UnitZ(_dist)
+        rh_brep = from_face3d(_face3D)
+        volume_geom = self.grasshopper_components.Extrude(rh_brep, extrusion_vector)
+
+        return self.convert_to_LBT_geom(volume_geom)[0]
+
     def warning(self, _in):
         """Raise a runtime Warning message on the GH Component"""
         if not _in:
@@ -439,24 +460,35 @@ def input_to_int(IGH, _input_value, _default=None):
 
     try:
         return int(_input_value)
-    except ValueError as e:
+    except ValueError:
         try:
             r = str(_input_value).split("-")
             return int(r[0])
-        except ValueError as e2:
+        except ValueError:
             raise SelectionInputError(_input_value)
 
 
 def clean_get(_list, _i, _default=None):
+    # type: (list[Any], int, Any) -> Any
     """Get list item cleanly based on index pos. If IndexError, try getting list[0]
 
     This is useful for ghcomponents with multiple list inputs whch are sometimes  
     the same length, and sometimes not the same length.
+
+    Arguments:
+    ---------
+        * _list: Any iterable to get the item from.
+        * _i (int): The index position to try and get
+        * _default (Any): The optional deault value to use if _list[0] fails.
+
+    Returns:
+    --------
+        * Any
     """
     try:
         return _list[_i]
-    except IndexError:
+    except ValueError:
         try:
             return _list[0]
-        except IndexError:
+        except ValueError:
             return _default

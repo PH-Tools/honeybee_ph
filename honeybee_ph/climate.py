@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""Passive-House Style Monthly Climate Data"""
+
 try:
     from itertools import izip as zip
 except ImportError:

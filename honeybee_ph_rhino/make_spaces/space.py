@@ -44,6 +44,7 @@ def merge_spaces(IGH, space_1, space_2):
 
 def merge_spaces_by_name(IGH, _spaces):
     # type: (gh_io.IGH, list[space.Space]) -> list[space.Space]
+    """Group spaces by their fullnames and merge each group together"""
 
     # -- Group the spaces by full-name. ie: "101-Kitchen", etc
     space_groups = defaultdict(list)

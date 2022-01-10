@@ -3,6 +3,11 @@
 
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
 
+try:
+    from typing import Any
+except:
+    pass  # IronPython
+
 from honeybee_ph import _base
 from honeybee_ph.properties import space
 
@@ -38,18 +43,31 @@ class SpaceFloorSegment(_base._Base):
 
 class SpaceFloor(_base._Base):
     def __init__(self):
-        self.floor_segments = []
+        self._floor_segments = []
+        self.geometry = None
+
+    def add_floor_segment(self, _floor_seg):
+        # type: (SpaceFloorSegment) -> None
+        if not _floor_seg:
+            return
+        self._floor_segments.append(_floor_seg)
+
+    @property
+    def floor_segments(self):
+        return self._floor_segments
 
     def to_dict(self):
         # type: () -> dict
         d = {}
-
+        d['floor_segments'] = [seg.to_dict() for seg in self.floor_segments]
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (dict[str, Any]) -> SpaceFloor
         new_obj = cls()
-
+        for seg_dict in _input_dict.get('floor_segments', []):
+            new_obj.add_floor_segment(SpaceFloorSegment.from_dict(seg_dict))
         return new_obj
 
     def __str__(self):
@@ -65,7 +83,7 @@ class SpaceFloor(_base._Base):
 class SpaceVolume(_base._Base):
     def __init__(self):
         self.floor = SpaceFloor()
-        self._geometry = None
+        self.geometry = None
         self.avg_ceiling_height = 2.5  # m
 
     def to_dict(self):
@@ -74,7 +92,7 @@ class SpaceVolume(_base._Base):
 
         return d
 
-    @classmethod
+    @ classmethod
     def from_dict(cls, _input_dict):
         new_obj = cls()
 
@@ -105,7 +123,7 @@ class Space(_base._Base):
         self.program = None
         self.properties = space.SpaceProperties(self)
 
-    @property
+    @ property
     def full_name(self):
         return "{}-{}".format(self.number, self.name)
 
@@ -117,11 +135,11 @@ class Space(_base._Base):
 
         return d
 
-    @property
+    @ property
     def display_name(self):
         return "{}: {}-{}".format(self.__class__.__name__, self.number, self.name)
 
-    @classmethod
+    @ classmethod
     def from_dict(cls, _input_dict, _host):
         new_obj = cls(_host)
 
