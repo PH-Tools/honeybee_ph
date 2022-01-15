@@ -14,8 +14,10 @@ except ImportError:
     pass  # Python 3
 
 from collections import namedtuple
-
+from ladybug_geometry.geometry3d import face, pointvector
+from ladybug_rhino.fromgeometry import from_point3d, from_face3d
 from honeybee_ph_rhino import gh_io
+from honeybee_ph import space
 
 # -- Temporary dataclasses to organize input data
 VentilationData = namedtuple('VentilationData', ['v_sup', 'v_eta', 'v_trans'])
@@ -23,8 +25,8 @@ FloorSegmentData = namedtuple(
     'FloorSegmentData', ['name', 'number', 'full_name', 'ventilation_flow_rates', 'geometry'])
 
 
-def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
-    # type: (gh_io.IGH, list, str) -> list[FloorSegmentData]
+def handle_floor_seg_user_input(IGH, _flr_segments, _input_name):
+    # type: (gh_io.IGH, list[Any], str) -> list[FloorSegmentData]
     """Try and read in all the user-supplied input data for the GH-Component input ndoe and organize the data.
 
     Will try and read in all the inputs of whatever type and get as much data as possibe. If the input objects
@@ -34,7 +36,7 @@ def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
     Arguments:
     ----------
         * IGH (gh_io.IGH): The Grasshopper Interface object.
-        * _input_objects (list[]): A list of the user-supplied input data / Geometry.
+        * _flr_segments (list[Any]): A list of the user-supplied input data / Geometry.
         * _input_name (str): The name of the GH-Component input node to read input data from.
 
     Returns:
@@ -42,8 +44,8 @@ def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
         * list[FloorSegmentData]: A list of FloorSegmentData objects with user inputs organized.
     """
 
-    if not isinstance(_input_objects, (list, tuple, set)):
-        _input_objects = [_input_objects]
+    if not isinstance(_flr_segments, (list, tuple, set)):
+        _flr_segments = [_flr_segments]
 
     # -- Get the GH-Component Input Object Attribute UserText values (if any)
     input_index_number = IGH.gh_compo_find_input_index_by_name(_input_name)
@@ -52,7 +54,7 @@ def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
 
     # -- Build the FloorSegmentData objects, organize all the attributes.
     floor_segment_input_data = []
-    for data_dict, geom in zip(input_data, _input_objects):
+    for data_dict, geom in zip(input_data, _flr_segments):
         segment_vent_data = VentilationData(
             data_dict.get('V_sup'),
             data_dict.get('V_eta'),
@@ -72,26 +74,65 @@ def handle_floor_seg_user_input(IGH, _input_objects, _input_name):
 
     return floor_segment_input_data
 
-# TODO: verify this can be removed safely?
-# def create_floor_segments(_flr_seg_input_data, _weighting_factors):
-#     # type: (list[FloorSegmentData], list[float]) -> list[space.SpaceFloorSegment]
-#     flr_segments = []
-#     for i, data in enumerate(_flr_seg_input_data):
-#         new_flr_segment = space.SpaceFloorSegment()
 
-#         # -- In case the weighting factors klen doesn't match
-#         # -- first try and use the input at index=0, then the default (1.0)
-#         try:
-#             seg_weighting_fac = _weighting_factors[i]
-#         except IndexError:
-#             try:
-#                 seg_weighting_fac = _weighting_factors[0]
-#             except IndexError:
-#                 seg_weighting_fac = 1.0
+def calc_reference_point(IGH, _face3D):
+    # type: (gh_io.IGH, face.Face3D) -> pointvector.Point3D
+    """Find the 'reference point' for a Face3D.
 
-#         new_flr_segment.weighting_factor = seg_weighting_fac
-#         new_flr_segment.geometry = data.geometry
+    For rectangular Face3D objects, this is the center point. For irregular shaped Face3D
+    objects ('L', 'T', 'O', etc...) this will use the Rhino 'PullPoint' to project the 
+    center to the nearest surface edge. This ensure thats the reference point is always
+    'on' the Face3D itself.
 
-#         flr_segments.append(new_flr_segment)
+    Arguments:
+    ----------
+        * IGH (gh_io.IGH): The Grasshopper Interface object.
+        * _face3D (face.Face3D): The Ladybug Face3D object.
 
-#     return flr_segments
+    Returns:
+    -------
+        * (pointvector.Point3D): The Reference Point
+    """
+
+    # -- Find the normal centerpoint of the surface
+    face_cent_rh_pt = from_point3d(_face3D.center)
+    face_rh = from_face3d(_face3D)
+    new_cp = IGH.grasshopper_components.PullPoint(face_cent_rh_pt, face_rh).closest_point
+
+    return pointvector.Point3D(new_cp.X, new_cp.Y, new_cp.Z)
+
+
+def create_floor_segment_from_rhino_geom(IGH, _flr_segment_geom):
+    # type: (gh_io.IGH, list[Any]) -> list[space.SpaceFloorSegment]
+    """Return a list of SpaceFloorSegments created from Rhino geometry.
+
+    Arguments:
+    ----------
+        * IGH (gh_io.IGH): The Grasshopper Interface Object.
+        * _flr_segment_geom (list[Any]): A list of Rhino Geometry representing
+            the floor-segments.
+
+    Returns:
+    --------
+        * list[space.SpaceFloorSegment]: A list of the new SpaceFloorSegments 
+            created from the input Rhino geometry.
+    """
+
+    # -- Convert the input surfaces to LBT Geom
+    # -- Note: convert_to_LBT_geom() returns a list of lists since the
+    # -- to_face3d might return a list of triangulated srfcs sometimes.
+    lbt_face_3ds = IGH.convert_to_LBT_geom(_flr_segment_geom)
+
+    # TODO: probably need to type check of validate that they are all
+    # Face3Ds here before moving on? Give useful warnings.
+
+    # -- Create new SpaceFloorSegments for each surface input
+    flr_segments = []
+    for face_3d_list in lbt_face_3ds:
+        for face_3d in face_3d_list:
+            new_segment = space.SpaceFloorSegment()
+            new_segment.geometry = face_3d
+            new_segment.reference_point = calc_reference_point(IGH, face_3d)
+            flr_segments.append(new_segment)
+
+    return flr_segments

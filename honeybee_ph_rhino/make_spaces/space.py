@@ -1,117 +1,71 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""Functions to create 'Space' objects from Rhino/Grasshopper inputs."""
+"""Functions to Add Spaces onto Honeybee Rooms."""
 
-from functools import partial
-from collections import defaultdict
-from functools import reduce
-from honeybee_ph_rhino import gh_io
+from collections import namedtuple
+
 from honeybee_ph import space
+from honeybee import room
 
 
-def create_volumes(_floor_segments, _heights):
-    # type (list, list) -> list[space.SpaceVolume]
-    """Create new SpaceVolume objects for a list of SpaceFloorSegments.
+class HostRoomNotFoundError(Exception):
+    def __init__(self, _spaces):
+        self.space_list = ["{}, ".format(space_data.space.full_name)
+                           for space_data in _spaces]
+        self.message = 'Error: Host Honeybee-Rooms not found for the spaces: {}'.format(
+            self.space_list)
+        super(HostRoomNotFoundError, self).__init__(self.message)
+
+
+SpaceData = namedtuple('SpaceData', ['space', 'reference_points'])
+
+
+def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms):
+    # type: (list[space.Space], list[room.Room]) -> list[room.Room]
+    """Sorts a list of Spaces, checks which are 'in' which HB-Room, and adds the space to that room.
 
     Arguments:
     ----------
-        * _floor_segments (list[space.SpaceFloorSegments]): A list of the SpaceFloorSegments to create
-            SpaceVolume objects from.
-        * _heights (list[float]): A list of the heights for each of the SpaceVolumes.
+        * _spaces (list[space.Space]) A list of Spaces.
+        * _hb_rooms (list[room.Room]): A list of Honeybee Rooms.
 
     Returns:
     --------
-        * list[space.SpaceVolume]: A list of SpaceVolume objects created.
+        (list[room.Room]): A list of Honeybee rooms with Spaces added to them. 
     """
 
-    volumes = []
-    for i, flr_seg in enumerate(_floor_segments):
-        new_volume = space.SpaceVolume()
-
-        new_volume.floor.floor_segments.append(flr_seg)
-
-        # default height = 2.5m
-        new_volume.avg_ceiling_height = gh_io.clean_get(_heights, i, 2.5)
-
-        volumes.append(new_volume)
-    return volumes
-
-
-def create_spaces(_volumes, _space_names, _space_numbers):
-    # type: (list[space.SpaceVolume], list[str], list[str]) -> list[space.Space]
-    """Create new Space objects for a list of SpaceVolumes input.
-
-    Arguments:
-    ----------
-        * _volumes (list[SpaceVolume]): A list of the SpaceVolume objects to create Spaces from.
-        * _space_names (list[str]): A list of the space names like "Kitchen", "Restroom", etc..
-        * _space_numnbers (list[str]): A list of the space numbers like "101", "102", etc.
-
-    Returns:
-    --------
-        * list[space.Space]: A list of the Space objects created.
-    """
-
-    spaces = []
-    for i, volume in enumerate(_volumes):
-        new_space = space.Space()
-
-        new_space.volumes.append(volume)
-        new_space.name = gh_io.clean_get(
-            _space_names, i, 'unnamed_room_{}'.format(i))
-        new_space.number = gh_io.clean_get(_space_numbers, i, '00')
-
-        spaces.append(new_space)
-
-    return spaces
-
-
-def merge_spaces(IGH, space_1, space_2):
-    # type: (gh_io.IGH, space.Space, space.Space) -> space.Space
-    """Combine two Spaces into a single new space.
-
-    Arguments:
-    ----------
-        * IGH: The Grasshopper Interface object
-        * space_1 (space.Space):
-        * space_2 (space.Space):
-
-    Return:
-    -------
-        space.Space: 
-    """
-
-    # TODO: Merge Spaces, join Floor Surfaces, etc...
-
-    return space.Space()
-
-
-def merge_spaces_by_name(IGH, _spaces):
-    # type: (gh_io.IGH, list[space.Space]) -> list[space.Space]
-    """Group spaces by their fullnames and merge each group together
-
-    Arguments:
-    ----------
-        * gh_io.IGH: The Grasshopper Interface Object.
-        * _spaces (list[space.Space]): A list of Space objects to try and group/merge.
-
-    Returns:
-    --------
-        * list[space.Space] A list of new Space objects.
-    """
-
-    # -- Group the spaces by full-name. ie: "101-Kitchen", etc
-    space_groups = defaultdict(list)
+    # -- Organize the spaces into a dict and pull out the reference points
+    # -- This is done to avoide re-collecting the points at each is_point_inside
+    # -- check and so that 'del' can be used to speed up the hosting checks.
+    spaces_dict = {}
     for space in _spaces:
-        space_groups[space.full_name].append(space)
+        spaces_dict[id(space)] = SpaceData(space, [pt for pt in space.reference_points])
 
-    # -- Merge the groups of spaces together
-    # -- Note: Pass the IGH to merge ahead of time uing partial since
-    # -- reduce requires a two-argument function.
-    _merge_with_IGH = partial(merge_spaces, IGH)
-    spaces_ = []
-    for space_group in space_groups.values():
-        spaces_.append(reduce(_merge_with_IGH, space_group))
+    # -- Duplicate HB Rooms to ensure no confilcts
+    hb_rooms = [rm.duplicate() for rm in _hb_rooms]
 
-    return spaces_
+    # -- Add the spaces to the host-rooms
+    new_rooms = []
+    for room in hb_rooms:
+
+        # -- See if any of the Space Reference points are inside the Room Geometry
+        for space_data_id, space_data in spaces_dict.items():
+            for pt in space_data.reference_points:
+                if room.geometry.is_point_inside(pt):
+                    sp = space_data.space
+                    sp.host = room
+                    room.properties.ph.add_new_space(sp)
+
+                    # -- to speed up further checks
+                    del spaces_dict[space_data_id]
+                    break
+
+        new_rooms.append(room)
+
+    # -- There should not be any spaces left in the dict if all were
+    # -- hosted properly. Raise warning error if any are un-hosted?
+    if spaces_dict:
+        raise HostRoomNotFoundError(spaces_dict.values())
+
+    return new_rooms

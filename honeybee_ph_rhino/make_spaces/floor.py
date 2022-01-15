@@ -11,6 +11,7 @@ except ImportError:
 from collections import defaultdict
 
 from honeybee_ph_rhino import gh_io
+from honeybee_ph_rhino.make_spaces import floor_segment
 from honeybee_ph import space
 
 
@@ -127,32 +128,23 @@ def build_floors_from_segments(IGH, _flr_segments):
     return new_floors
 
 
-def space_floor_from_rh_geom(IGH, _flr_srfcs):
+def space_floor_from_rh_geom(IGH, _flr_segment_geom):
     # type: (gh_io.IGH, list[Any]) -> list[space.SpaceFloor]
     """Return a list of new SpaceFloors built from a list of Rhino floor-segment Geometry.
 
     Arguments:
     ----------
         * IGH (gh_io.IGH): Honeybee-PH Grasshopper Interface Object.
-        * _flr_srfcs (list[Any]): A list of the Rhino Geometry to use for the Floor Segments.
+        * _flr_segment_geom (list[Any]): A list of the Rhino Geometry representing the FloorSegments.
 
     Returns:
     --------
         * list[space.SpaceFloor]: A list of the SpaceFloor objects built from the Rhino Geometry.
     """
 
-    # -- Convert the surfaces to LBT Geom
-    # -- Note: convert_to_LBT_geom() returns a list of lists since the
-    # -- to_face3d might return a list of triangulated srfcs sometimes.
-    lbt_face_3ds = IGH.convert_to_LBT_geom(_flr_srfcs)
-
-    # -- Create new SpaceFloorSegments for each surface input
-    flr_segments = []
-    for face_3d_list in lbt_face_3ds:
-        for face_3d in face_3d_list:
-            new_segment = space.SpaceFloorSegment()
-            new_segment.geometry = face_3d
-            flr_segments.append(new_segment)
+    # -- Build the new SpaceFloorSegments from the Rhino Geometry
+    flr_segments = floor_segment.create_floor_segment_from_rhino_geom(
+        IGH, _flr_segment_geom)
 
     # -- Build the new SpaceFloors from the new SpaceFloorSegments
     new_floors = build_floors_from_segments(IGH, flr_segments)

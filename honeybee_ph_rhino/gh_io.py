@@ -216,7 +216,7 @@ class IGH:
         return output_list
 
     def convert_to_LBT_geom(self, _inputs):
-        # type: (list) -> list[list]
+        # type: (list[Any]) -> list[list]
         """Converts a list of RH- or GH-Geometry into a list of LBT-Geometry. If
             input is a string, boolean or number, will just return that without converting.
 
@@ -225,7 +225,7 @@ class IGH:
 
         Arguments:
         ----------
-            * _inputs (list): The Rhino items / objects to try and convert
+            * _inputs (list[Any]): The Rhino items / objects to try and convert
 
         Returns:
         --------

@@ -9,6 +9,7 @@ except ImportError:
     pass  # Python2.7
 
 from honeybee_ph.bldg_segment import BldgSegment
+from honeybee_ph import space
 
 
 class RoomPhProperties(object):
@@ -16,7 +17,7 @@ class RoomPhProperties(object):
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
-        self._spaces = []
+        self._spaces = list()
         self.ph_bldg_segment = BldgSegment()
 
     @property
@@ -33,7 +34,8 @@ class RoomPhProperties(object):
         _host = new_host or self._host
         new_properties_obj = RoomPhProperties(_host)
         new_properties_obj.id_num = self.id_num
-        new_properties_obj._spaces = self._spaces
+        for space in self._spaces:
+            new_properties_obj._spaces.append(space)
         new_properties_obj.ph_bldg_segment = self.ph_bldg_segment
 
         return new_properties_obj
@@ -92,3 +94,8 @@ class RoomPhProperties(object):
         room_ph_bldg_segment_id = room_prop_dict.get('ph_bldg_segment_id', None)
         if room_ph_bldg_segment_id:
             self.ph_bldg_segment = bldg_segments[room_ph_bldg_segment_id]
+
+    def add_new_space(self, _new_space):
+        # type: (space.Space) -> None
+        if _new_space:
+            self._spaces.append(_new_space)
