@@ -87,11 +87,11 @@ def calc_reference_point(IGH, _face3D):
     Arguments:
     ----------
         * IGH (gh_io.IGH): The Grasshopper Interface object.
-        * _face3D (face.Face3D): The Ladybug Face3D object.
+        * _face3D (face.Face3D): The Ladybug Face3D object for the SpaceFloorSegment.
 
     Returns:
     -------
-        * (pointvector.Point3D): The Reference Point
+        * (pointvector.Point3D): The Reference Point found.
     """
 
     # -- Find the normal centerpoint of the surface

@@ -8,35 +8,34 @@ from honeybee_ph_rhino import gh_io
 from ladybug_geometry.geometry3d.face import Face3D
 
 
-def create_volume_geometry(IGH, _volume):
-    # type: (gh_io.IGH, space.SpaceVolume) -> list[Face3D]
-    volume_geometry = IGH.extrude_Face3D_WorldZ(
-        _volume.floor.geometry, _volume.avg_ceiling_height)
-
-    return volume_geometry
-
-
 def volumes_from_floors(IGH, _floors, _heights):
     # type: (gh_io.IGH, list[space.SpaceFloor], list[float]) -> list[space.SpaceVolume]
-    """
+    """Create new SpaceVolume objects based on a list of input SpaceFloors.
 
     Arguments:
     ----------
         * IGH (gh_io.IGH): Honeybee-PH Grasshopper Interface Object.
-        * _floors ([list[space.SpaceFloor]):
-        * _heights ():
+        * _floors ([list[space.SpaceFloor]): A list of SpaceFloor objects to 
+            build the volumes from.
+        * _heights (list[float]): A list of heights to extrude the Volume to.
 
     Returns:
     --------
-        * list[space.SpaceVolumes]
+        * list[space.SpaceVolumes]: A list of new SpaceVolume objects.
     """
 
     volumes = []
     for i, flr in enumerate(_floors):
+        # -- Set up some of the variables
+        height = gh_io.clean_get(_heights, i, 2.5)
+        geom = IGH.extrude_Face3D_WorldZ(flr.geometry, height)
+
+        # -- Build the new SpaceVolume
         new_volume = space.SpaceVolume()
         new_volume.floor = flr
-        new_volume.avg_ceiling_height = gh_io.clean_get(_heights, i, 2.5)
-        new_volume.geometry = create_volume_geometry(IGH, new_volume)
+        new_volume.avg_ceiling_height = height
+        new_volume.geometry = geom
+
         volumes.append(new_volume)
 
     return volumes
