@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""Functions to create new Floors based on Rhino Geometry input"""
+"""Functions to create new SpaceFloor objects based on Rhino / Grasshopper inputs"""
 
 try:
     from typing import Any

@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""Functions to handle climate-data Grasshopper intputs."""
+
 import honeybee_ph.climate
 
 

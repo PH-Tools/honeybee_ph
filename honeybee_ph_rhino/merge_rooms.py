@@ -40,7 +40,7 @@ def get_room_exposed_faces(_hb_room):
     return exposed_faces
 
 
-def merge(_room_list, _room_name):
+def merge(_room_list, _room_name='__merged_room__'):
     # type: (list[honeybee.room.Room], str) -> tuple[honeybee.room.Room, list[honeybee.face.Face]]
     """Merges two or more Honeybee Rooms into a single Honeyebee Room. This will 
     ignore any 'interior' Honeybee-Faces with a 'Surface' boundary condition and will only
@@ -49,11 +49,13 @@ def merge(_room_list, _room_name):
     Arguments:
     ----------
         * _room_list (list[honeybee.room.Room]): A list of the Honeybee Rooms to merge.
-        * _room_name (str): The name to give to the new Honeybee Room.
+        * _room_name (str): default='__merged_room__' The name to give to the new Honeybee Room.
 
     Returns:
     --------
-        * honeybee.room.Room: The new Honeybee Room.
+        * (honeybee.room.Room, list[honeybee.face.Face]): tuple with:
+            [0]: The new Honeybee Room.
+            [1]: A list of the exposed faces
     """
 
     exposed_faces = []

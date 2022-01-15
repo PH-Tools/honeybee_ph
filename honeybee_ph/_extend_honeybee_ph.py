@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-""""""
+"""This is called during __init__ and extends the base honeybee class Properties with a new ._ph slot"""
 
 from honeybee.properties import (
     ModelProperties,

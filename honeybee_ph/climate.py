@@ -7,6 +7,7 @@ try:
     from itertools import izip as zip
 except ImportError:
     pass  # Python3
+from honeybee_ph import _base
 
 
 class InvalidMonthlyDataError(Exception):
@@ -16,7 +17,7 @@ class InvalidMonthlyDataError(Exception):
         super(InvalidMonthlyDataError, self).__init__(self.message)
 
 
-class Climate_MonthlyValueCollection(object):
+class Climate_MonthlyValueCollection(_base._Base):
     """Collection class to organize monthly cliamte values"""
 
     months = [
@@ -35,6 +36,7 @@ class Climate_MonthlyValueCollection(object):
     ]
 
     def __init__(self):
+        super(Climate_MonthlyValueCollection, self).__init__()
         for month_name in self.months:
             setattr(self, month_name, 0)
 
@@ -79,10 +81,11 @@ class Climate_MonthlyValueCollection(object):
         return str(self)
 
 
-class Climate_PeakLoadCollection(object):
+class Climate_PeakLoadCollection(_base._Base):
     """Collection class to orgaize peak load weather data"""
 
     def __init__(self):
+        super(Climate_PeakLoadCollection, self).__init__()
         self.temp = 0
         self.rad_north = 0
         self.rad_east = 0
@@ -125,8 +128,9 @@ class Climate_PeakLoadCollection(object):
         return str(self)
 
 
-class Climate_Location(object):
+class Climate_Location(_base._Base):
     def __init__(self):
+        super(Climate_Location, self).__init__()
         # NYC Default
         self.latitude = 40.6
         self.longitude = -73.8
@@ -153,24 +157,17 @@ class Climate_Location(object):
 
         new_obj.latitude = _input_dict.get("latitude")
         new_obj.longitude = _input_dict.get("longitude")
-        new_obj.weather_station_elevation = _input_dict.get("weather_station_elevation")
+        new_obj.weather_station_elevation = _input_dict.get(
+            "weather_station_elevation")
         new_obj.climate_zone = _input_dict.get("climate_zone")
         new_obj.hours_from_UTC = _input_dict.get("hours_from_UTC")
 
         return new_obj
 
-    def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
 
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)
-
-
-class Climate_Ground(object):
+class Climate_Ground(_base._Base):
     def __init__(self):
+        super(Climate_Ground, self).__init__()
         self.ground_thermal_conductivity = 2
         self.ground_heat_capacitiy = 1000
         self.ground_density = 2000
@@ -195,25 +192,19 @@ class Climate_Ground(object):
 
         new_obj.ground_thermal_conductivity = _input_dict.get(
             "ground_thermal_conductivity")
-        new_obj.ground_heat_capacitiy = _input_dict.get("ground_heat_capacitiy")
+        new_obj.ground_heat_capacitiy = _input_dict.get(
+            "ground_heat_capacitiy")
         new_obj.ground_density = _input_dict.get("ground_density")
         new_obj.depth_groundwater = _input_dict.get("depth_groundwater")
-        new_obj.flow_rate_groundwater = _input_dict.get("flow_rate_groundwater")
+        new_obj.flow_rate_groundwater = _input_dict.get(
+            "flow_rate_groundwater")
 
         return new_obj
 
-    def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
 
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)
-
-
-class Climate(object):
+class Climate(_base._Base):
     def __init__(self):
+        super(Climate, self).__init__()
         self.name = None
         self.summer_daily_temperature_swing = 8  # Deg K
         self.average_wind_speed = 4
@@ -273,8 +264,10 @@ class Climate(object):
             "summer_daily_temperature_swing")
         new_obj.average_wind_speed = _input_dict.get("average_wind_speed")
 
-        new_obj.location = Climate_Location.from_dict(_input_dict.get("location", {}))
-        new_obj.ground = Climate_Ground.from_dict(_input_dict.get("ground", {}))
+        new_obj.location = Climate_Location.from_dict(
+            _input_dict.get("location", {}))
+        new_obj.ground = Climate_Ground.from_dict(
+            _input_dict.get("ground", {}))
 
         new_obj.monthly_temperature_air = Climate_MonthlyValueCollection.from_dict(
             _input_dict.get("monthly_temperature_air", {})
@@ -313,12 +306,3 @@ class Climate(object):
             _input_dict.get("peak_cooling", {}))
 
         return new_obj
-
-    def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
-
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)

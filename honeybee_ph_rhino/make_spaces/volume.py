@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-""" """
+"""Functions to create SpaceVolume objects from Rhino/Grasshopper inputs."""
 
 from honeybee_ph import space
 from honeybee_ph_rhino import gh_io

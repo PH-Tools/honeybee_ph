@@ -39,8 +39,9 @@ class UsageType(enumerables.CustomEnum):
         self.value = _value
 
 
-class SetPoints:
+class SetPoints(_base._Base):
     def __init__(self):
+        super(SetPoints, self).__init__()
         self.winter = 20.0
         self.summer = 25.0
 
@@ -100,7 +101,8 @@ class BldgSegment(_base._Base):
 
         obj.identifier = _dict.get('identifier')
         obj.name = _dict.get('name')
-        obj.occupancy_type = OccupancyType.from_dict(_dict.get('occupancy_type', {}))
+        obj.occupancy_type = OccupancyType.from_dict(
+            _dict.get('occupancy_type', {}))
         obj.usage_type = UsageType.from_dict(_dict.get('usage_type', {}))
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
@@ -110,12 +112,3 @@ class BldgSegment(_base._Base):
         obj.set_points = SetPoints.from_dict(_dict.get('set_points', {}))
 
         return obj
-
-    def __str__(self):
-        return "{}()".format(self.__class__.__name__)
-
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)

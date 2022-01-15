@@ -4,6 +4,7 @@
 """Phius Certification Data Class"""
 
 from honeybee_ph_utils import enumerables
+from honeybee_ph import _base
 
 
 class BuildingStatus(enumerables.CustomEnum):
@@ -30,8 +31,9 @@ class BuildingType(enumerables.CustomEnum):
         self.value = _value
 
 
-class PhiusCertifiction:
+class PhiusCertifiction(_base._Base):
     def __init__(self):
+        super(PhiusCertifiction, self).__init__()
         self.certification_criteria = 3
         self.localization_selection_type = 2
 
@@ -89,21 +91,26 @@ class PhiusCertifiction:
         obj = cls()
 
         obj.certification_criteria = _dict.get('certification_criteria')
-        obj.localization_selection_type = _dict.get('localization_selection_type')
+        obj.localization_selection_type = _dict.get(
+            'localization_selection_type')
 
         obj.PHIUS2021_heating_demand = _dict.get('PHIUS2021_heating_demand')
         obj.PHIUS2021_cooling_demand = _dict.get('PHIUS2021_cooling_demand')
         obj.PHIUS2021_heating_load = _dict.get('PHIUS2021_heating_load')
         obj.PHIUS2021_cooling_load = _dict.get('PHIUS2021_cooling_load')
 
-        obj.building_status = BuildingStatus.from_dict(_dict.get('building_status', {}))
-        obj.building_type = BuildingType.from_dict(_dict.get('building_type', {}))
+        obj.building_status = BuildingStatus.from_dict(
+            _dict.get('building_status', {}))
+        obj.building_type = BuildingType.from_dict(
+            _dict.get('building_type', {}))
 
         obj.int_gains_evap_per_person = _dict.get('int_gains_evap_per_person')
         obj.int_gains_flush_heat_loss = _dict.get('int_gains_flush_heat_loss')
         obj.int_gains_num_toilets = _dict.get('int_gains_num_toilets')
-        obj.int_gains_toilet_room_util_pat = _dict.get('int_gains_toilet_room_util_pat')
-        obj.int_gains_use_school_defaults = _dict.get('int_gains_use_school_defaults')
+        obj.int_gains_toilet_room_util_pat = _dict.get(
+            'int_gains_toilet_room_util_pat')
+        obj.int_gains_use_school_defaults = _dict.get(
+            'int_gains_use_school_defaults')
         obj.int_gains_dhw_marginal_perf_ratio = _dict.get(
             'int_gains_dhw_marginal_perf_ratio')
 

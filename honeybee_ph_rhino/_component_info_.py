@@ -1,4 +1,11 @@
-RELEASE_VERSION = "PyPH v0.1"
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""Names and meta-data for all the Honeybee-PH Grasshopper Components.
+These are called when the component is instantiated within the Grasshopper canvas.
+"""
+
+RELEASE_VERSION = "HONEYBEE-PH v0.1"
 CATEGORY = "Honeybee-PH"
 SUB_CATGORIES = {
     4: "04 | Honeybee-PH",
@@ -10,38 +17,39 @@ COMPONENT_PARAMS = {
         "NickName": "Merge HB Rooms",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 1,
+        "SubCategory": 4,
     },
     "HBPH - Bldg Segment": {
         "NickName": "PH Bldg Segment",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 1,
+        "SubCategory": 4,
     },
     "HBPH - Phius Certification": {
         "NickName": "Phius Cert.",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 1,
+        "SubCategory": 4,
     },
     "HBPH - Phius Climate": {
         "NickName": "PH Climate",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 1,
+        "SubCategory": 4,
     },
     "HBPH - Create Spaces": {
         "NickName": "PH Spaces",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 1,
+        "SubCategory": 4,
     },
 }
 
 
 class ComponentNameError(Exception):
     def __init__(self, _name, error):
-        self.message = 'Error: Cannot get Component Params for: "{}"'.format(_name)
+        self.message = 'Error: Cannot get Component Params for: "{}"'.format(
+            _name)
         print(error)
         super(ComponentNameError, self).__init__(self.message)
 
@@ -53,7 +61,7 @@ def set_component_params(ghenv, dev=False):
 
     Arguments:
     __________
-        * ghenv: The Grasshopper Component 'ghenv' variable
+        * ghenv: The Grasshopper Component 'ghenv' variable.
         * dev: (str | bool) Default=False. If False, will use the RELEASE_VERSION value as the
             'message' shown on the bottom of the component in the Grasshopper scene.
             If a string is passed in, will use that for the 'message' shown instead.
@@ -65,7 +73,8 @@ def set_component_params(ghenv, dev=False):
 
     try:
         compo_name = ghenv.Component.Name
-        sub_cat_num = COMPONENT_PARAMS.get(compo_name, {}).get("SubCategory")
+        sub_cat_num = COMPONENT_PARAMS.get(
+            compo_name, {}).get("SubCategory", 1)
         sub_cat_name = SUB_CATGORIES.get(sub_cat_num)
     except Exception as e:
         raise ComponentNameError(compo_name, e)
@@ -79,7 +88,8 @@ def set_component_params(ghenv, dev=False):
     ghenv.Component.Message = msg
 
     # ------ Set the othere stuff
-    ghenv.Component.NickName = COMPONENT_PARAMS.get(compo_name, {}).get("NickName")
+    ghenv.Component.NickName = COMPONENT_PARAMS.get(
+        compo_name, {}).get("NickName")
     ghenv.Component.Category = CATEGORY
     ghenv.Component.SubCategory = sub_cat_name
     ghenv.Component.IconDisplayMode = ghenv.Component.IconDisplayMode.application

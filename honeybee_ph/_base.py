@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""Base class for Honeybee-PH Objects."""
+"""Base class for Honeybee-PH Objects with some generic methods and attributes."""
 
 import uuid
 

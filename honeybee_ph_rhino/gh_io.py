@@ -102,6 +102,17 @@ class IGH:
             'Error: The input node "{}" cannot be founnd?'.format(_input_name))
 
     def gh_compo_get_input_for_node_number(self, _node_number):
+        # type: (int) -> GH_Structure[IGH_Goo]
+        """Returns the 'VolatileData' for a GH-Component's Input Param.
+
+        Arguments:
+        ----------
+            * _node_number (int): The number of the GH-Component Input Node to read.
+
+        Returns:
+        --------
+            * (GH_Structure[IGH_Goo]): The 'VolatileData' of the GH-Component Input Node.
+        """
         return self.ghenv.Component.Params.Input[_node_number].VolatileData
 
     def gh_compo_get_input_guids(self, _input_index_number, _branch_num=0):

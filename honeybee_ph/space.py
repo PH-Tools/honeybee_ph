@@ -14,6 +14,7 @@ from honeybee_ph.properties import space
 
 class SpaceFloorSegment(_base._Base):
     def __init__(self):
+        super(SpaceFloorSegment, self).__init__()
         self.geometry = None
         self.weighting_factor = 1.0
 
@@ -43,6 +44,7 @@ class SpaceFloorSegment(_base._Base):
 
 class SpaceFloor(_base._Base):
     def __init__(self):
+        super(SpaceFloor, self).__init__()
         self._floor_segments = []
         self.geometry = None
 
@@ -82,6 +84,7 @@ class SpaceFloor(_base._Base):
 
 class SpaceVolume(_base._Base):
     def __init__(self):
+        super(SpaceVolume, self).__init__()
         self.floor = SpaceFloor()
         self.geometry = None
         self.avg_ceiling_height = 2.5  # m
