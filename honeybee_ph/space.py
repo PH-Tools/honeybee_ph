@@ -8,6 +8,7 @@ try:
 except:
     pass  # IronPython
 
+from xml.sax.handler import property_interning_dict
 from honeybee_ph import _base
 from honeybee_ph.properties import space
 from ladybug_geometry import geometry3d
@@ -65,7 +66,7 @@ class SpaceFloor(_base._Base):
     def __init__(self):
         super(SpaceFloor, self).__init__()
         self._floor_segments = list()  # list[geometry3d.Face3D]
-        self.geometry = list()  # list[geometry3d.Face3D]
+        self.geometry = None  # geometry3d.Face3D
 
     @property
     def reference_points(self):
@@ -97,7 +98,7 @@ class SpaceFloor(_base._Base):
         d = {}
 
         d['floor_segments'] = [seg.to_dict() for seg in self.floor_segments]
-        d['geometry'] = [geom.to_dict() for geom in self.geometry]
+        d['geometry'] = self.geometry.to_dict()
 
         return d
 
@@ -106,10 +107,9 @@ class SpaceFloor(_base._Base):
         # type: (dict[str, Any]) -> SpaceFloor
         new_obj = cls()
 
-        geom_dicts = _input_dict.get('geometry', [])
-        for geom_dict in geom_dicts:
-            geom = geometry3d.Face3D.from_dict(geom_dict)
-            new_obj.geometry.append(geom)
+        geom_dict = _input_dict.get('geometry', None)
+        if geom_dict:
+            new_obj.geometry = geometry3d.Face3D.from_dict(geom_dict)
 
         flr_seg_dicts = _input_dict.get('floor_segments', [])
         for seg_dict in flr_seg_dicts:
@@ -177,7 +177,7 @@ class Space(_base._Base):
     def __init__(self, _host=None):
         super(Space, self).__init__()
         self.quantity = 1
-        self.type = 99  # -- User-Defined
+        self.wufi_type = 99  # -- User-Defined
         self.name = ''
         self.number = ''
         self.host = _host
@@ -186,6 +186,14 @@ class Space(_base._Base):
         self._volumes = list()
         self.program = None
         self.properties = space.SpaceProperties(self)
+
+    @property
+    def avg_clear_height(self):
+        return 99
+
+    @property
+    def weighted_floor_area(self):
+        return 99
 
     @property
     def reference_points(self):
@@ -226,7 +234,7 @@ class Space(_base._Base):
         d = {}
 
         d['quantity'] = self.quantity
-        d['type'] = self.type
+        d['wufi_type'] = self.wufi_type
         d['name'] = self.name
         d['number'] = self.number
         d['volume'] = self.volume
@@ -245,7 +253,7 @@ class Space(_base._Base):
         new_obj = cls(_host)
 
         new_obj.quantity = _input_dict.get("quantity")
-        new_obj.type = _input_dict.get("type")
+        new_obj.wufi_type = _input_dict.get("wufi_type")
         new_obj.name = _input_dict.get("name")
         new_obj.number = _input_dict.get("number")
         new_obj.volume = _input_dict.get("volume")

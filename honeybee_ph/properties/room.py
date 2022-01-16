@@ -96,9 +96,15 @@ class RoomPhProperties(object):
             * None
         """
 
+        # -- Set the bldg-segment attributes from the values stored at the 'Model' level
         room_ph_bldg_segment_id = room_prop_dict.get('ph_bldg_segment_id', None)
         if room_ph_bldg_segment_id:
             self.ph_bldg_segment = bldg_segments[room_ph_bldg_segment_id]
+
+        # -- Rebuild the Spaces hosted on the roome
+        space_dicts = room_prop_dict.get('spaces', [])
+        for space_dict in space_dicts:
+            self.add_new_space(space.Space.from_dict(space_dict, self.host))
 
     def add_new_space(self, _new_space):
         # type: (space.Space) -> None

@@ -19,6 +19,7 @@ from honeybee.face import Face as HB_Face
 from honeybee.aperture import Aperture as HB_Aperture
 from honeybee_energy.construction.opaque import OpaqueConstruction
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
+from honeybee_ph import space
 
 from ladybug_geometry_ph.geometry3d_ph.pointvector import PH_Point3D
 
@@ -222,6 +223,34 @@ class Graphics3D:
     def vertices(self):
         return [vertix for polygon in self.polygons for vertix in polygon.vertices]
 
+
+# -----------------------------------------------------------------------------
+# -- Spaces / RoomVentilation
+class Room:
+    _count: ClassVar[int] = 0
+    id_num: int = 0
+    name: str = 'Unnamed_Space'
+    wufi_type: int = 99  # User Determined
+    quantity: int = 1
+    area: float = 0.0
+    clear_height: float = 2.5
+
+    def __new__(cls, *args, **kwargs):
+        cls._count += 1
+        return super(Room, cls).__new__(cls, *args, **kwargs)
+
+    @classmethod
+    def from_space(cls, _space: space.Space) -> Room:
+        obj = cls()
+
+        obj.name = _space.full_name
+        obj.wufi_type = _space.wufi_type
+        obj.quantity = _space.quantity
+        obj.area = _space.weighted_floor_area
+        obj.clear_height = _space.avg_clear_height
+
+        return obj
+
 # -----------------------------------------------------------------------------
 # -- Building
 
@@ -231,6 +260,7 @@ class Zone:
     _count: ClassVar[int] = 0
     id_num: int = 0
     name: str = ""
+    spaces: list[Room] = field(default_factory=list)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -242,6 +272,10 @@ class Zone:
 
         obj.id_num = cls._count
         obj.name = _hb_room.display_name
+
+        # -- Sort the room order by full_name, then add to the Zone.spaces
+        obj.spaces = [Room.from_space(sp) for sp in sorted(
+            _hb_room.properties.ph.spaces, key=lambda x: x.full_name)]
 
         return obj
 

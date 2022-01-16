@@ -15,7 +15,7 @@ from to_WUFI_XML.wufi import (
     ProjectData,
     Variant,
     WindowType,
-    Zone,
+    Zone, Room,
     PassivehouseData,
     Building,
     PH_Building, ClimateLocation, PH_ClimateLocation,
@@ -265,10 +265,29 @@ def _Component(_c: Component) -> list[xml_writable]:
     ]
 
 
+def _Room(_r: Room) -> list[xml_writable]:
+    return [
+        XML_Node('Name', _r.name),
+        XML_Node('Type', _r.wufi_type),
+        XML_Node('IdentNrUtilizationPatternVent', 'Test'),
+        XML_Node('IdentNrVentilationUnit', 'Test'),
+        XML_Node('Quantity', _r.quantity),
+        XML_Node('AreaRoom', _r.area, "unit", "m²"),
+        XML_Node('ClearRoomHeight', _r.clear_height, "unit", "m"),
+        XML_Node('DesignVolumeFlowRateSupply', 'Test', "unit", "m³/h"),
+        XML_Node('DesignVolumeFlowRateExhaust', 'Test', "unit", "m³/h"),
+        XML_Node('SupplyFlowRateUserDef', 'Test', "unit", "m³/h"),
+        XML_Node('ExhaustFlowRateUserDef', 'Test', "unit", "m³/h"),
+        XML_Node('DesignFlowInterzonalUserDef', 'Test', "unit", "m³/h"),
+    ]
+
+
 def _Zone(_z: Zone) -> list[xml_writable]:
     return [
         XML_Node("Name", _z.name),
         XML_Node("IdentNr", _z.id_num),
+        XML_List("RoomsVentilation", [XML_Object("Room", rm, "index", i)
+                                      for i, rm in enumerate(_z.spaces)]),
         # XML_Node("GrossVolume_Selection", ),
         # XML_Node("GrossVolume", ),
         # XML_Node("NetVolume_Selection", ),
