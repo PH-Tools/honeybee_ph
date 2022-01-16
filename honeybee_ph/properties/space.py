@@ -30,11 +30,20 @@ class SpaceProperties(properties._Properties):
             include: A list of keys to be included in dictionary.
                 If None all the available keys will be included.
         """
-        base = {'type': 'SpaceProperties'} if not abridged else \
-            {'type': 'SpacePropertiesAbridged'}
+        d = {}
+        if abridged == False:
+            d['type'] = 'SpaceProperties'
+        else:
+            d['type'] = 'SpacePropertiesAbridged'
 
-        base = self._add_extension_attr_to_dict(base, abridged, include)
-        return base
+        d = self._add_extension_attr_to_dict(d, abridged, include)
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict, _host):
+        new_obj = cls(_host)
+
+        return new_obj
 
     def add_prefix(self, prefix):
         """Change the identifier extension attributes unique to this object by adding a prefix.

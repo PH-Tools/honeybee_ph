@@ -40,7 +40,7 @@ class Material:
 @dataclass
 class Layer:
     thickness: float = 0.0
-    material: Material = Material()
+    material: Material = field(default_factory=Material)
 
     @classmethod
     def from_hb_material(cls, _hb_material: (EnergyMaterial | EnergyMaterialNoMass)) -> Layer:
@@ -497,13 +497,14 @@ class PH_ClimateLocation:
 
     peak_heating_1: PeakLoad = field(default_factory=PeakLoad)
     peak_heating_2: PeakLoad = field(default_factory=PeakLoad)
-    peak_cooling: PeakLoad = field(default_factory=PeakLoad)
+    peak_cooling_1: PeakLoad = field(default_factory=PeakLoad)
+    peak_cooling_2: PeakLoad = field(default_factory=PeakLoad)
 
 
 @dataclass
 class ClimateLocation:
     selection: int = 1
-    ph_climate_location: PH_ClimateLocation = PH_ClimateLocation()
+    ph_climate_location: PH_ClimateLocation = field(default_factory=PH_ClimateLocation)
 
 # -----------------------------------------------------------------------------
 # --- Variants, Project
@@ -519,7 +520,7 @@ class Variant:
     graphics3D: Graphics3D = field(default_factory=Graphics3D)
     building: Building = field(default_factory=Building)
     ph_data: PassivehouseData = field(default_factory=PassivehouseData)
-    climate: ClimateLocation = ClimateLocation()
+    climate: ClimateLocation = field(default_factory=ClimateLocation)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -636,12 +637,19 @@ class Variant:
         self.climate.ph_climate_location.peak_heating_2.rad_west = ud_climate.peak_heating_2.rad_west
         self.climate.ph_climate_location.peak_heating_2.rad_global = ud_climate.peak_heating_2.rad_global
 
-        self.climate.ph_climate_location.peak_cooling.temp = ud_climate.peak_cooling.temp
-        self.climate.ph_climate_location.peak_cooling.rad_north = ud_climate.peak_cooling.rad_north
-        self.climate.ph_climate_location.peak_cooling.rad_east = ud_climate.peak_cooling.rad_east
-        self.climate.ph_climate_location.peak_cooling.rad_south = ud_climate.peak_cooling.rad_south
-        self.climate.ph_climate_location.peak_cooling.rad_west = ud_climate.peak_cooling.rad_west
-        self.climate.ph_climate_location.peak_cooling.rad_global = ud_climate.peak_cooling.rad_global
+        self.climate.ph_climate_location.peak_cooling_1.temp = ud_climate.peak_cooling_1.temp
+        self.climate.ph_climate_location.peak_cooling_1.rad_north = ud_climate.peak_cooling_1.rad_north
+        self.climate.ph_climate_location.peak_cooling_1.rad_east = ud_climate.peak_cooling_1.rad_east
+        self.climate.ph_climate_location.peak_cooling_1.rad_south = ud_climate.peak_cooling_1.rad_south
+        self.climate.ph_climate_location.peak_cooling_1.rad_west = ud_climate.peak_cooling_1.rad_west
+        self.climate.ph_climate_location.peak_cooling_1.rad_global = ud_climate.peak_cooling_1.rad_global
+
+        self.climate.ph_climate_location.peak_cooling_2.temp = ud_climate.peak_cooling_2.temp
+        self.climate.ph_climate_location.peak_cooling_2.rad_north = ud_climate.peak_cooling_2.rad_north
+        self.climate.ph_climate_location.peak_cooling_2.rad_east = ud_climate.peak_cooling_2.rad_east
+        self.climate.ph_climate_location.peak_cooling_2.rad_south = ud_climate.peak_cooling_2.rad_south
+        self.climate.ph_climate_location.peak_cooling_2.rad_west = ud_climate.peak_cooling_2.rad_west
+        self.climate.ph_climate_location.peak_cooling_2.rad_global = ud_climate.peak_cooling_2.rad_global
 
 
 @dataclass
@@ -652,7 +660,7 @@ class ProjectData_Agent:
     post_code: str = ""
     telephone: str = ""
     email: str = ""
-    license_number = ""
+    license_number: str = ""
 
 
 @dataclass

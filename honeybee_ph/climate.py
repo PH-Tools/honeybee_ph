@@ -225,7 +225,8 @@ class Climate(_base._Base):
 
         self.peak_heating_1 = Climate_PeakLoadCollection()
         self.peak_heating_2 = Climate_PeakLoadCollection()
-        self.peak_cooling = Climate_PeakLoadCollection()
+        self.peak_cooling_1 = Climate_PeakLoadCollection()
+        self.peak_cooling_2 = Climate_PeakLoadCollection()
 
     def to_dict(self):
         # type: () -> dict
@@ -251,7 +252,8 @@ class Climate(_base._Base):
 
         d["peak_heating_1"] = self.peak_heating_1.to_dict()
         d["peak_heating_2"] = self.peak_heating_2.to_dict()
-        d["peak_cooling"] = self.peak_cooling.to_dict()
+        d["peak_cooling_1"] = self.peak_cooling_1.to_dict()
+        d["peak_cooling_2"] = self.peak_cooling_2.to_dict()
 
         return d
 
@@ -302,7 +304,9 @@ class Climate(_base._Base):
             _input_dict.get("peak_heating_1", {}))
         new_obj.peak_heating_2 = Climate_PeakLoadCollection.from_dict(
             _input_dict.get("peak_heating_2", {}))
-        new_obj.peak_cooling = Climate_PeakLoadCollection.from_dict(
-            _input_dict.get("peak_cooling", {}))
+        new_obj.peak_cooling_1 = Climate_PeakLoadCollection.from_dict(
+            _input_dict.get("peak_cooling_1", {}))
+        new_obj.peak_cooling_2 = Climate_PeakLoadCollection.from_dict(
+            _input_dict.get("peak_cooling_2", {}))
 
         return new_obj

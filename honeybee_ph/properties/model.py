@@ -55,10 +55,11 @@ class ModelPhProperties(object):
 
         Returns:
         --------
-            * list[dict]: A list of all the bldg_segments found on the model's 
+            * list[dict[str, Any]]: A list of all the bldg_segments found on the model's 
                 rooms as dicts.
         """
-        return [hb_room.properties.ph.ph_bldg_segment.to_dict() for hb_room in self.host.rooms]
+        segments = {rm.properties.ph.ph_bldg_segment for rm in self.host.rooms}
+        return [seg.to_dict() for seg in segments]
 
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]

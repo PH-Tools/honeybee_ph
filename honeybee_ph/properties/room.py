@@ -34,8 +34,8 @@ class RoomPhProperties(object):
         _host = new_host or self._host
         new_properties_obj = RoomPhProperties(_host)
         new_properties_obj.id_num = self.id_num
-        for space in self._spaces:
-            new_properties_obj._spaces.append(space)
+        for sp in self._spaces:
+            new_properties_obj._spaces.append(sp)
         new_properties_obj.ph_bldg_segment = self.ph_bldg_segment
 
         return new_properties_obj
@@ -49,6 +49,8 @@ class RoomPhProperties(object):
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, Any]
         d = {}
+
+        d['spaces'] = [sp.to_dict() for sp in self.spaces]
 
         if abridged == False:
             d['type'] = 'RoomPhProperties'
@@ -70,6 +72,9 @@ class RoomPhProperties(object):
         new_prop.id_num = _dict.get('id_num', 0)
         new_prop.ph_bldg_segment = BldgSegment.from_dict(
             _dict.get('ph_bldg_segment', {}))
+
+        for sp in (space.Space.from_dict(d, host) for d in _dict.get('spaces', [])):
+            new_prop.add_new_space(sp)
 
         return new_prop
 

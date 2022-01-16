@@ -165,13 +165,19 @@ def _PH_ClimateLocation(_climate: PH_ClimateLocation) -> list[xml_writable]:
         XML_Node('WestSolarRadiationHeating2', _climate.peak_heating_2.rad_west),
         XML_Node('GlobalSolarRadiationHeating2', _climate.peak_heating_2.rad_global),
 
-        XML_Node('TemperatureHeating2', _climate.peak_cooling.temp),
-        XML_Node('NorthSolarRadiationHeating2', _climate.peak_cooling.rad_north),
-        XML_Node('EastSolarRadiationHeating2', _climate.peak_cooling.rad_east),
-        XML_Node('SouthSolarRadiationHeating2', _climate.peak_cooling.rad_south),
-        XML_Node('WestSolarRadiationHeating2', _climate.peak_cooling.rad_west),
-        XML_Node('GlobalSolarRadiationHeating2', _climate.peak_cooling.rad_global),
+        XML_Node('TemperatureCooling', _climate.peak_cooling_1.temp),
+        XML_Node('NorthSolarRadiationCooling', _climate.peak_cooling_1.rad_north),
+        XML_Node('EastSolarRadiationCooling', _climate.peak_cooling_1.rad_east),
+        XML_Node('SouthSolarRadiationCooling', _climate.peak_cooling_1.rad_south),
+        XML_Node('WestSolarRadiationCooling', _climate.peak_cooling_1.rad_west),
+        XML_Node('GlobalSolarRadiationCooling', _climate.peak_cooling_1.rad_global),
 
+        XML_Node('TemperatureCooling2', _climate.peak_cooling_2.temp),
+        XML_Node('NorthSolarRadiationCooling2', _climate.peak_cooling_2.rad_north),
+        XML_Node('EastSolarRadiationCooling2', _climate.peak_cooling_2.rad_east),
+        XML_Node('SouthSolarRadiationCooling2', _climate.peak_cooling_2.rad_south),
+        XML_Node('WestSolarRadiationCooling2', _climate.peak_cooling_2.rad_west),
+        XML_Node('GlobalSolarRadiationCooling2', _climate.peak_cooling_2.rad_global),
     ]
 
 
@@ -183,7 +189,6 @@ def _ClimateLocation(_climate: ClimateLocation) -> list[xml_writable]:
 
 
 def _Variant(_variant: Variant) -> list[xml_writable]:
-
     return [
         XML_Node("IdentNr", _variant.id_num),
         XML_Node("Name", _variant.name),
