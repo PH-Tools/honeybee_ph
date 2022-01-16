@@ -21,6 +21,11 @@ class SpaceFloorSegment(_base._Base):
         self.reference_point = None
         self.weighting_factor = 1.0
 
+    @property
+    def weighted_area(self):
+        # type: () -> float
+        return self.geometry.area * self.weighting_factor
+
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
@@ -72,6 +77,11 @@ class SpaceFloor(_base._Base):
     def reference_points(self):
         # type() -> list[geometry3d.Point3D]
         return [seg.reference_point for seg in self.floor_segments]
+
+    @property
+    def weighted_area(self):
+        # type: () ->  float
+        return sum((seg.weighted_area for seg in self.floor_segments))
 
     def add_floor_segment(self, _floor_seg):
         # type: (SpaceFloorSegment) -> None
@@ -135,6 +145,11 @@ class SpaceVolume(_base._Base):
         self.geometry = list()
 
     @property
+    def weighted_floor_area(self):
+        # type: () -> float
+        return self.floor.weighted_area
+
+    @property
     def reference_points(self):
         # type() -> list[geometry3d.Point3D]
         return self.floor.reference_points
@@ -189,11 +204,19 @@ class Space(_base._Base):
 
     @property
     def avg_clear_height(self):
-        return 99
+        # type: () -> float
+
+        # -- Calc the floor-area-weighted height for each volume
+        total_weighted_height = 0
+        for vol in self.volumes:
+            total_weighted_height += vol.weighted_floor_area * vol.avg_ceiling_height
+
+        return total_weighted_height / self.weighted_floor_area
 
     @property
     def weighted_floor_area(self):
-        return 99
+        # type: () -> float
+        return sum((vol.weighted_floor_area for vol in self.volumes))
 
     @property
     def reference_points(self):
