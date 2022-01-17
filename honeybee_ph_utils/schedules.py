@@ -32,7 +32,8 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
 
     # -------------------------------------------------------------------------
     # 1) Calc the Peak Airflow Loads (for Ventilation, for Occupancy)
-    vent_m3s_total, occ_m3s_total = ventilation.hb_room_peak_airflows(_hb_room)
+    vent_m3s_total = ventilation.hb_room_peal_ventilation_airflow_by_zone(_hb_room)
+    occ_m3s_total = ventilation.hb_room_peak_ventilation_airflow_by_occupancy(_hb_room)
 
     # -------------------------------------------------------------------------
     # 2) Get the Occupancy + Ventilation Schedules hourly value generators

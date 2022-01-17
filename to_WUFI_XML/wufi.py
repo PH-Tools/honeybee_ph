@@ -20,8 +20,10 @@ from honeybee.aperture import Aperture as HB_Aperture
 from honeybee_energy.construction.opaque import OpaqueConstruction
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 from honeybee_ph import space
+from honeybee_ph_utils import ventilation
 
 from ladybug_geometry_ph.geometry3d_ph.pointvector import PH_Point3D
+
 
 # -----------------------------------------------------------------------------
 # -- Constructions, Assemblies, Materials
@@ -144,6 +146,7 @@ class WindowType:
 
         return obj
 
+
 # -----------------------------------------------------------------------------
 # -- Geometry
 
@@ -225,7 +228,21 @@ class Graphics3D:
 
 
 # -----------------------------------------------------------------------------
+# -- Ventilation
+
+
+@dataclass
+class VentilationLoad:
+    flow_supply: float = 0.0
+    flow_extract: float = 0.0
+    flow_trasfer: float = 0.0
+
+
+# -----------------------------------------------------------------------------
 # -- RoomVentilation (HB-PH Space)
+
+
+@dataclass
 class RoomVentilation:
     _count: ClassVar[int] = 0
     id_num: int = 0
@@ -235,6 +252,7 @@ class RoomVentilation:
     weighted_floor_area: float = 0.0
     net_volume: float = 0.0
     clear_height: float = 2.5
+    ventilation_load: VentilationLoad = field(default_factory=VentilationLoad)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -243,7 +261,6 @@ class RoomVentilation:
     @classmethod
     def from_space(cls, _space: space.Space) -> RoomVentilation:
         obj = cls()
-        # print(_space.full_name, _space.weighted_floor_area)
 
         obj.name = _space.full_name
         obj.wufi_type = _space.wufi_type
@@ -252,7 +269,13 @@ class RoomVentilation:
         obj.clear_height = _space.avg_clear_height
         obj.net_volume = _space.net_volume
 
+        peak_airflow_rate = ventilation.hb_room_peak_ventilation_airflow_total(
+            _space.host) * 3600  # m3/s --> m3/h
+        obj.ventilation_load.flow_supply = peak_airflow_rate
+        obj.ventilation_load.flow_extract = peak_airflow_rate
+
         return obj
+
 
 # -----------------------------------------------------------------------------
 # -- Building
@@ -462,6 +485,7 @@ class Building:
     def create_zones_from_hb_room(self, _hb_room: HB_Room) -> None:
         self.zones.append(Zone.from_hb_room(_hb_room))
 
+
 # -----------------------------------------------------------------------------
 # --- PH Certification
 
@@ -492,6 +516,7 @@ class PassivehouseData:
     peak_heating_load: float = 10.0
     peak_cooling_load: float = 10.0
     ph_buildings: list[PH_Building] = field(default_factory=list)
+
 
 # -----------------------------------------------------------------------------
 # -- Climate
@@ -554,6 +579,7 @@ class PH_ClimateLocation:
 class ClimateLocation:
     selection: int = 1
     ph_climate_location: PH_ClimateLocation = field(default_factory=PH_ClimateLocation)
+
 
 # -----------------------------------------------------------------------------
 # --- Variants, Project

@@ -202,7 +202,6 @@ class Space(_base._Base):
         self.host = _host
 
         self._volumes = list()
-        self.program = None
         self.properties = space.SpaceProperties(self)
 
     @property
@@ -269,7 +268,6 @@ class Space(_base._Base):
         d['name'] = self.name
         d['number'] = self.number
         d['volumes'] = [vol.to_dict() for vol in self.volumes]
-        d['program'] = self.program
         d['properties'] = self.properties.to_dict()
 
         return d
@@ -288,7 +286,6 @@ class Space(_base._Base):
         new_obj.number = _input_dict.get("number")
         new_obj.add_new_volumes([SpaceVolume.from_dict(d)
                                 for d in _input_dict.get("volumes", [])])
-        new_obj.program = _input_dict.get("program")
         new_obj.properties = space.SpaceProperties.from_dict(
             _input_dict.get("properties", {}), _host=new_obj)
 

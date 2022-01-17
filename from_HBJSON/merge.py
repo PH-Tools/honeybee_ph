@@ -69,7 +69,7 @@ def merge_rooms(_hb_rooms: list[room.Room]) -> room.Room:
     )
 
     # -- Set the new Room's properties based on the reference room
-    # -- DevNote: _duplicate_extension_attr doesn't work. Will duplicate the spaces
+    # -- Dev. Note: _duplicate_extension_attr doesn't work. Will duplicate the spaces
     # -- on the reference room.
     # -- Do we really need to call this? What is getting missed if we don't?
     # new_room._properties._duplicate_extension_attr(reference_room._properties)
@@ -80,7 +80,8 @@ def merge_rooms(_hb_rooms: list[room.Room]) -> room.Room:
     for hb_room in _hb_rooms:
         for existing_space in hb_room.properties.ph.spaces:
             # -- Preserve the original Room's energy properties on the space
-            existing_space.properties._energy = hb_room.properties._energy
+            existing_space.properties._energy = hb_room.properties._energy.duplicate(
+                new_host=existing_space)
             new_room.properties.ph.add_new_space(existing_space)
 
     return new_room
