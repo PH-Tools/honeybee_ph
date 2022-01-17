@@ -97,14 +97,17 @@ class SpacePhProperties(object):
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
         d = {}
-        t = 'SpacePhProperties' if not \
-            abridged else 'SpacePhPropertiesAbridged'
-        d.update({'type': t})
-        d.update({'id_num': self.id_num})
+
+        if abridged:
+            d['type'] = 'SpacePhPropertiesAbridged'
+        else:
+            d['type'] = 'SpacePhProperties'
+
+        d['id_num'] = self.id_num
 
         return {'ph': d}
 
-    @classmethod
+    @ classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> SpacePhProperties
         assert 'SpacePhProperties' in data['type'], \

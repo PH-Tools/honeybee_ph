@@ -79,6 +79,8 @@ def merge_rooms(_hb_rooms: list[room.Room]) -> room.Room:
     # -- not all the spaces will transfer over.
     for hb_room in _hb_rooms:
         for existing_space in hb_room.properties.ph.spaces:
+            # -- Preserve the original Room's energy properties on the space
+            existing_space.properties._energy = hb_room.properties._energy
             new_room.properties.ph.add_new_space(existing_space)
 
     return new_room
