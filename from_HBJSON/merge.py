@@ -69,7 +69,10 @@ def merge_rooms(_hb_rooms: list[room.Room]) -> room.Room:
     )
 
     # -- Set the new Room's properties based on the reference room
-    new_room._properties._duplicate_extension_attr(reference_room._properties)
+    # -- DevNote: _duplicate_extension_attr doesn't work. Will duplicate the spaces
+    # -- on the reference room.
+    # -- Do we really need to call this? What is getting missed if we don't?
+    # new_room._properties._duplicate_extension_attr(reference_room._properties)
 
     # -- Collect all the spaces from the input rooms and add to the new room
     # -- Dev Note: this has to be done AFTER the _duplicate_extension_attr() otherwise

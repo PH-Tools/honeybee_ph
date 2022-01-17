@@ -13,8 +13,8 @@ import to_WUFI_XML.xml_txt_to_file
 
 # --- Input / Output file Path
 # ------------------------------------------------------------------------------
-SOURCE_FILE = pathlib.Path("sample", "hbjson", "Townsend_St_Input_220116.hbjson")
-TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Townsend_St_Input_220116.xml")
+SOURCE_FILE = pathlib.Path("sample", "hbjson", "Townsend_St_Input_220117.hbjson")
+TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Townsend_St_Input_220117.xml")
 
 # --- Read in an existing HB_JSON and re-build the HB Objects
 # ------------------------------------------------------------------------------

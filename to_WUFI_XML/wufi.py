@@ -225,29 +225,30 @@ class Graphics3D:
 
 
 # -----------------------------------------------------------------------------
-# -- Spaces / RoomVentilation
-class Room:
+# -- RoomVentilation (HB-PH Space)
+class RoomVentilation:
     _count: ClassVar[int] = 0
     id_num: int = 0
     name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1
-    area_net_weighted: float = 0.0
+    weighted_floor_area: float = 0.0
     net_volume: float = 0.0
     clear_height: float = 2.5
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
-        return super(Room, cls).__new__(cls, *args, **kwargs)
+        return super(RoomVentilation, cls).__new__(cls, *args, **kwargs)
 
     @classmethod
-    def from_space(cls, _space: space.Space) -> Room:
+    def from_space(cls, _space: space.Space) -> RoomVentilation:
         obj = cls()
+        # print(_space.full_name, _space.weighted_floor_area)
 
         obj.name = _space.full_name
         obj.wufi_type = _space.wufi_type
         obj.quantity = _space.quantity
-        obj.area_net_weighted = _space.weighted_floor_area
+        obj.weighted_floor_area = _space.weighted_floor_area
         obj.clear_height = _space.avg_clear_height
         obj.net_volume = _space.net_volume
 
@@ -264,10 +265,10 @@ class Zone:
     name: str = ""
     volume_gross: float = 0.0
     volume_net: float = 0.0
-    floor_area_net: float = 0.0
+    weighted_net_floor_area: float = 0.0
     clearance_height: float = 2.5
     specific_heat_capacity: float = 132
-    wufi_rooms: list[Room] = field(default_factory=list)
+    wufi_rooms: list[RoomVentilation] = field(default_factory=list)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -280,12 +281,15 @@ class Zone:
         obj.id_num = cls._count
         obj.name = _hb_room.display_name
 
-        # -- Sort the room order by full_name, then add to the Zone.spaces
-        obj.wufi_rooms = [Room.from_space(sp) for sp in sorted(
-            _hb_room.properties.ph.spaces, key=lambda x: x.full_name)]
+        # -- Sort the room order by full_name
+        sorted_spaces = sorted(_hb_room.properties.ph.spaces, key=lambda x: x.full_name)
+
+        # -- Create a new WUFI-RoomVentilation for each space
+        obj.wufi_rooms = [RoomVentilation.from_space(sp) for sp in sorted_spaces]
 
         obj.volume_gross = _hb_room.volume
-        obj.floor_area_net = sum((rm.area_net_weighted for rm in obj.wufi_rooms))
+        obj.weighted_net_floor_area = sum(
+            (rm.weighted_floor_area for rm in obj.wufi_rooms))
         obj.volume_net = sum((rm.net_volume for rm in obj.wufi_rooms))
 
         return obj

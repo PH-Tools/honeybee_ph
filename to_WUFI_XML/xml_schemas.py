@@ -15,7 +15,7 @@ from to_WUFI_XML.wufi import (
     ProjectData,
     Variant,
     WindowType,
-    Zone, Room,
+    Zone, RoomVentilation,
     PassivehouseData,
     Building,
     PH_Building, ClimateLocation, PH_ClimateLocation,
@@ -265,14 +265,14 @@ def _Component(_c: Component) -> list[xml_writable]:
     ]
 
 
-def _Room(_r: Room) -> list[xml_writable]:
+def _RoomVentilation(_r: RoomVentilation) -> list[xml_writable]:
     return [
         XML_Node('Name', _r.name),
         XML_Node('Type', _r.wufi_type),
         XML_Node('IdentNrUtilizationPatternVent', 'Test'),
         XML_Node('IdentNrVentilationUnit', 'Test'),
         XML_Node('Quantity', _r.quantity),
-        XML_Node('AreaRoom', _r.area_net_weighted, "unit", "m²"),
+        XML_Node('AreaRoom', _r.weighted_floor_area, "unit", "m²"),
         XML_Node('ClearRoomHeight', _r.clear_height, "unit", "m"),
         XML_Node('DesignVolumeFlowRateSupply', 'Test', "unit", "m³/h"),
         XML_Node('DesignVolumeFlowRateExhaust', 'Test', "unit", "m³/h"),
@@ -293,7 +293,7 @@ def _Zone(_z: Zone) -> list[xml_writable]:
         XML_Node("NetVolume_Selection", 6),
         XML_Node("NetVolume", _z.volume_net),
         XML_Node("FloorArea_Selection", 6),
-        XML_Node("FloorArea", _z.floor_area_net),
+        XML_Node("FloorArea", _z.weighted_net_floor_area),
         XML_Node("ClearanceHeight_Selection", 1),
         XML_Node("ClearanceHeight", _z.clearance_height),
         XML_Node("SpecificHeatCapacity_Selection", 2),
