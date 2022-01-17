@@ -145,6 +145,10 @@ class SpaceVolume(_base._Base):
         self.geometry = list()
 
     @property
+    def net_volume(self):
+        return self.weighted_floor_area * self.avg_ceiling_height
+
+    @property
     def weighted_floor_area(self):
         # type: () -> float
         return self.floor.weighted_area
@@ -197,10 +201,14 @@ class Space(_base._Base):
         self.number = ''
         self.host = _host
 
-        self.volume = 0.0
         self._volumes = list()
         self.program = None
         self.properties = space.SpaceProperties(self)
+
+    @property
+    def net_volume(self):
+        # type: () -> float
+        return sum([vol.net_volume for vol in self.volumes])
 
     @property
     def avg_clear_height(self):
@@ -260,7 +268,6 @@ class Space(_base._Base):
         d['wufi_type'] = self.wufi_type
         d['name'] = self.name
         d['number'] = self.number
-        d['volume'] = self.volume
         d['volumes'] = [vol.to_dict() for vol in self.volumes]
         d['program'] = self.program
         d['properties'] = self.properties.to_dict()
@@ -279,7 +286,6 @@ class Space(_base._Base):
         new_obj.wufi_type = _input_dict.get("wufi_type")
         new_obj.name = _input_dict.get("name")
         new_obj.number = _input_dict.get("number")
-        new_obj.volume = _input_dict.get("volume")
         new_obj.add_new_volumes([SpaceVolume.from_dict(d)
                                 for d in _input_dict.get("volumes", [])])
         new_obj.program = _input_dict.get("program")

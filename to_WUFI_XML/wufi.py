@@ -232,7 +232,8 @@ class Room:
     name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1
-    area: float = 0.0
+    area_net_weighted: float = 0.0
+    net_volume: float = 0.0
     clear_height: float = 2.5
 
     def __new__(cls, *args, **kwargs):
@@ -246,8 +247,9 @@ class Room:
         obj.name = _space.full_name
         obj.wufi_type = _space.wufi_type
         obj.quantity = _space.quantity
-        obj.area = _space.weighted_floor_area
+        obj.area_net_weighted = _space.weighted_floor_area
         obj.clear_height = _space.avg_clear_height
+        obj.net_volume = _space.net_volume
 
         return obj
 
@@ -260,7 +262,12 @@ class Zone:
     _count: ClassVar[int] = 0
     id_num: int = 0
     name: str = ""
-    spaces: list[Room] = field(default_factory=list)
+    volume_gross: float = 0.0
+    volume_net: float = 0.0
+    floor_area_net: float = 0.0
+    clearance_height: float = 2.5
+    specific_heat_capacity: float = 132
+    wufi_rooms: list[Room] = field(default_factory=list)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
@@ -274,8 +281,12 @@ class Zone:
         obj.name = _hb_room.display_name
 
         # -- Sort the room order by full_name, then add to the Zone.spaces
-        obj.spaces = [Room.from_space(sp) for sp in sorted(
+        obj.wufi_rooms = [Room.from_space(sp) for sp in sorted(
             _hb_room.properties.ph.spaces, key=lambda x: x.full_name)]
+
+        obj.volume_gross = _hb_room.volume
+        obj.floor_area_net = sum((rm.area_net_weighted for rm in obj.wufi_rooms))
+        obj.volume_net = sum((rm.net_volume for rm in obj.wufi_rooms))
 
         return obj
 
