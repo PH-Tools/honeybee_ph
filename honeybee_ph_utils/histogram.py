@@ -8,11 +8,11 @@ try:
 except:
     pass  # IronPython
 
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
 
 def generate_histogram(_data, _num_bins):
-    # type: (Collection[float], int) -> dict[int, dict]
+    # type: (Collection[float], int) -> dict[int, dict[str, float]]
     """Creates a Histogram of input data, in n-bins.
 
     Arguments:
@@ -22,16 +22,12 @@ def generate_histogram(_data, _num_bins):
 
     Returns:
     --------
-        * dict[int, dict]: ie: 
-            {0:
-                {
-                    'average_value':12,
-                    'frequency':0.25,
-                }, 
-            1:{
-                ...
+        * dict[int, dict[str, float]]: ie: 
+            {
+                0: {'average_value'=12.0, 'frequency'=0.25},
+                1: {'average_value'=6.0, 'frequency'=0.34},
+                2: ...
             },
-            ...}
     """
 
     # -- Bin the data
@@ -49,10 +45,12 @@ def generate_histogram(_data, _num_bins):
             binned_data[bin].append(d)
 
     # -- Format the data for output
+
     output = {}
     for k, v in binned_data.items():
         output[k] = {
-            "average_value": (sum(v) / len(v)) if len(v) > 0 else 0,
-            "frequency": len(v) / len(_data),
+            'average_value': (sum(v) / len(v)) if len(v) > 0 else 0,
+            'frequency': len(v) / len(_data)
         }
+
     return output

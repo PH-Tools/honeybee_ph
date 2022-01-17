@@ -54,8 +54,9 @@ def convert_HB_model_to_WUFI_Project(_hb_model: model.Model) -> Project:
     """
 
     project = Project()
-    project.add_opaque_assemblies_from_HB_model(_hb_model)
-    project.add_transparent_assemblies_from_HB_Model(_hb_model)
+    project.build_opaque_assemblies_from_HB_model(_hb_model)
+    project.build_transparent_assemblies_from_HB_Model(_hb_model)
+    project.build_util_patterns_ventilation_from_HB_Model(_hb_model)
 
     # -- Merge the rooms together by their Building Segment, Add to the Project
     for room_group in sort_hb_rooms_by_bldg_segment(_hb_model.rooms):

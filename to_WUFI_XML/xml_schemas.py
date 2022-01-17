@@ -15,7 +15,7 @@ from to_WUFI_XML.wufi import (
     ProjectData,
     Variant,
     WindowType,
-    Zone, RoomVentilation,
+    Zone, RoomVentilation, UtilizationPatternVent,
     PassivehouseData,
     Building,
     PH_Building, ClimateLocation, PH_ClimateLocation,
@@ -33,7 +33,8 @@ def _Project(_wufi_project: Project) -> list[xml_writable]:
                  _wufi_project.visualized_geometry),
         XML_Object("ProjectData", _wufi_project.project_data),
         XML_List("UtilisationPatternsVentilation",
-                 _wufi_project.utilisation_patterns_ventilation),
+                 [XML_Object("UtilizationPatternVent", pat, "index", i)
+                  for i, pat in enumerate(_wufi_project.utilisation_patterns_ventilation)]),
         XML_List("UtilizationPatternsPH",
                  _wufi_project.utilisation_patterns_ph),
         XML_List("Variants", [XML_Object("Variant", var, "index", i)
@@ -48,6 +49,23 @@ def _Project(_wufi_project: Project) -> list[xml_writable]:
             [XML_Object("WindowType", wt_id, "index", i)
              for i, wt_id in enumerate(_wufi_project.window_types)],
         ),
+    ]
+
+
+def _UtilizationPatternVent(_util_pat: UtilizationPatternVent) -> list[xml_writable]:
+    return [
+        XML_Node("Name", _util_pat.name),
+        XML_Node("IdentNr", _util_pat.id_num),
+        XML_Node("OperatingDays", _util_pat.operating_days),
+        XML_Node("OperatingWeeks", _util_pat.operating_weeks),
+        XML_Node("Maximum_DOS", _util_pat.operating_periods.high.period_operating_hours),
+        XML_Node("Maximum_PDF", _util_pat.operating_periods.high.period_operation_speed),
+        XML_Node("Standard_DOS", _util_pat.operating_periods.standard.period_operating_hours),
+        XML_Node("Standard_PDF", _util_pat.operating_periods.standard.period_operation_speed),
+        XML_Node("Basic_DOS", _util_pat.operating_periods.basic.period_operating_hours),
+        XML_Node("Basic_PDF", _util_pat.operating_periods.basic.period_operation_speed),
+        XML_Node("Minimum_DOS", _util_pat.operating_periods.minimum.period_operating_hours),
+        XML_Node("Minimum_PDF  ", _util_pat.operating_periods.minimum.period_operation_speed),
     ]
 
 

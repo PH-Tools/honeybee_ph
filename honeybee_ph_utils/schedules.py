@@ -6,9 +6,39 @@
 from honeybee import room
 from honeybee_ph_utils import ventilation, histogram
 
+# Temporary to organize outputs
+
+
+class SchedItem:
+    def __init__(self, _av, _fr):
+        # type: (float, float) -> None
+        self.period_speed = _av
+        self.period_operating_hours = _fr
+
+    def __str__(self):
+        return '{}(average_value={!r}, frequency={!r})'.format(self.__class__.__name__, self.period_speed, self.period_operating_hours)
+
+    def __repr__(self):
+        return str(self)
+
+
+class FourPartSched:
+    def __init__(self, _h, _s, _b, _m):
+        # type: (SchedItem, SchedItem, SchedItem, SchedItem) -> None
+        self.high = _h
+        self.standard = _s
+        self.basic = _b
+        self.minimum = _m
+
+    def __str__(self):
+        return '{}({!r}, {!r}, {!r}, {!r})'.format(self.__class__.__name__, self.high, self.standard, self.basic, self.minimum)
+
+    def __repr__(self):
+        return str(self)
+
 
 def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
-    # type: (room.Room, bool) -> dict
+    # type: (room.Room, bool) -> FourPartSched
     """Returns a WUFI-Style four_part schedule values for the Ventilation airflow, based on the HB Room.
 
     Arguments:
@@ -20,19 +50,18 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
 
     Returns:
     --------
-        * dict: The four_part Sched values. * dict: ie: 
-        {0:{
-            'average_value':12, # <-- (default = meters/second)
-            'frequency':0.25},
-        1:{
-            ...
-        }, 
-        ...}
+        * namedtuple: ie:
+            (
+                high=('average_value':18, 'frequency':0.25),
+                standard=('average_value':12, 'frequency':0.25),
+                basic=('average_value':10, 'frequency':0.25),
+                minimum=('average_value':8, 'frequency':0.25),
+            )
     """
 
     # -------------------------------------------------------------------------
     # 1) Calc the Peak Airflow Loads (for Ventilation, for Occupancy)
-    vent_m3s_total = ventilation.hb_room_peal_ventilation_airflow_by_zone(_hb_room)
+    vent_m3s_total = ventilation.hb_room_peak_ventilation_airflow_by_zone(_hb_room)
     occ_m3s_total = ventilation.hb_room_peak_ventilation_airflow_by_occupancy(_hb_room)
 
     # -------------------------------------------------------------------------
@@ -63,7 +92,12 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
     # 4) Calc the Percentage of Peak airflow for each hourly value
     peak_total_m3s = vent_m3s_total + occ_m3s_total
     if peak_total_m3s == 0:
-        return {0: {"average_value": 1.0, "frequency": 1.0}}
+        return FourPartSched(
+            SchedItem(1.0, 1.0),
+            SchedItem(0.0, 0.0),
+            SchedItem(0.0, 0.0),
+            SchedItem(0.0, 0.0)
+        )
 
     hourly_total_vent_percentage_rate = [
         (a + b) / peak_total_m3s for a, b in zip(hourly_m3s_for_vent, hourly_m3s_for_occ)
@@ -71,9 +105,30 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
 
     #  ------------------------------------------------------------------------
     # 6) Histogram that shit
+    # -- Average_value = the speed, 'frequency' = hours per day
     four_part_sched_dict = histogram.generate_histogram(
         _data=hourly_total_vent_percentage_rate,
         _num_bins=4,
     )
 
-    return four_part_sched_dict
+    # --- Organize Output
+    output = FourPartSched(
+        SchedItem(
+            four_part_sched_dict.get(0, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(0, {}).get('average_value', 0),
+        ),
+        SchedItem(
+            four_part_sched_dict.get(1, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(1, {}).get('average_value', 0),
+        ),
+        SchedItem(
+            four_part_sched_dict.get(2, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(2, {}).get('average_value', 0),
+        ),
+        SchedItem(
+            four_part_sched_dict.get(3, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(3, {}).get('average_value', 0),
+        )
+    )
+
+    return output

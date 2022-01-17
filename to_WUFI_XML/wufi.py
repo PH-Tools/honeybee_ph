@@ -10,6 +10,7 @@ for writing to file, and these xml-schemas contain the actual WUFI XML node name
 """
 
 from __future__ import annotations
+from collections import defaultdict
 from typing import Any, ClassVar
 from dataclasses import dataclass, field
 
@@ -21,9 +22,86 @@ from honeybee_energy.construction.opaque import OpaqueConstruction
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 from honeybee_ph import space
 from honeybee_ph_utils import ventilation
-
+from honeybee_ph_utils import schedules
 from ladybug_geometry_ph.geometry3d_ph.pointvector import PH_Point3D
 
+
+# -----------------------------------------------------------------------------
+# -- Utiliztion Patterns
+
+
+@dataclass
+class UtilPat_Vent_Collection:
+    patterns: dict = field(default_factory=dict)
+
+    def add_new_util_pat_from_hb_room(self, _hb_room):
+        """Create and add a new Utilization Pattern based on the _hb_room input
+
+        Arguments:
+        ----------
+            *
+
+        Returns:
+        --------
+            *
+        """
+
+        if _hb_room.properties.energy.ventilation.identifier in self.patterns.keys():
+            # -- If the pattern already exists in the collection, skip it to save time.
+            return
+
+        # --
+        new_util_pattern = UtilizationPatternVent()
+        new_util_pattern.id_num = new_util_pattern._count
+        new_util_pattern.name = _hb_room.properties.energy.ventilation.display_name
+
+        # --
+        wufi_sched = schedules.calc_four_part_vent_sched_values_from_hb_room(_hb_room)
+        new_util_pattern.operating_periods.high.period_operating_hours = wufi_sched.high.period_speed
+        new_util_pattern.operating_periods.high.period_operation_speed = wufi_sched.high.period_operating_hours
+        new_util_pattern.operating_periods.standard.period_operating_hours = wufi_sched.standard.period_speed
+        new_util_pattern.operating_periods.standard.period_operation_speed = wufi_sched.standard.period_operating_hours
+        new_util_pattern.operating_periods.basic.period_operating_hours = wufi_sched.basic.period_speed
+        new_util_pattern.operating_periods.basic.period_operation_speed = wufi_sched.basic.period_operating_hours
+        new_util_pattern.operating_periods.minimum.period_operating_hours = wufi_sched.minimum.period_speed
+        new_util_pattern.operating_periods.minimum.period_operation_speed = wufi_sched.minimum.period_operating_hours
+
+        self.patterns[_hb_room.properties.energy.ventilation.identifier] = new_util_pattern
+
+    def __len__(self):
+        return len(self.patterns.keys())
+
+    def __iter__(self):
+        for v in self.patterns.values():
+            yield v
+
+
+@dataclass
+class Vent_OperatingPeriod:
+    period_operating_hours: float = 0.0  # hours/period
+    period_operation_speed: float = 0.0  # % of peak design airflow
+
+
+@dataclass
+class Vent_UtilPeriods:
+    high: Vent_OperatingPeriod = field(default_factory=Vent_OperatingPeriod)
+    standard: Vent_OperatingPeriod = field(default_factory=Vent_OperatingPeriod)
+    basic: Vent_OperatingPeriod = field(default_factory=Vent_OperatingPeriod)
+    minimum: Vent_OperatingPeriod = field(default_factory=Vent_OperatingPeriod)
+
+
+@dataclass
+class UtilizationPatternVent:
+    _count = 0
+    name: str = '__unamed_vent_pattern__'
+    id_num: int = 0
+    operating_days: int = 7
+    operating_weeks: int = 52
+    operating_periods: Vent_UtilPeriods = field(default_factory=Vent_UtilPeriods)
+
+    def __new__(cls, *args, **kwargs):
+        cls._count += 1
+        return super(UtilizationPatternVent, cls).__new__(cls, *args, **kwargs)
 
 # -----------------------------------------------------------------------------
 # -- Constructions, Assemblies, Materials
@@ -757,7 +835,8 @@ class Project:
 
     _assembly_types: dict[str, Assembly] = field(default_factory=dict)
     _window_types: dict[str, Any] = field(default_factory=dict)
-    utilisation_patterns_ventilation: list = field(default_factory=list)
+    utilisation_patterns_ventilation: UtilPat_Vent_Collection = field(
+        default_factory=UtilPat_Vent_Collection)
     utilisation_patterns_ph: list = field(default_factory=list)
     variants: list = field(default_factory=list)
 
@@ -769,7 +848,7 @@ class Project:
     scope: int = 3
     visualized_geometry: int = 2
 
-    def add_opaque_assemblies_from_HB_model(self, _hb_model: HB_Model) -> None:
+    def build_opaque_assemblies_from_HB_model(self, _hb_model: HB_Model) -> None:
         """Adds all of an HB Model's Opaque Constructions to the Project's _assembly_types dict
 
         Will also align the id_nums of the face's Construction with the Assembly in the Project dict.
@@ -795,7 +874,7 @@ class Project:
 
         return None
 
-    def add_transparent_assemblies_from_HB_Model(self, _hb_model: HB_Model) -> None:
+    def build_transparent_assemblies_from_HB_Model(self, _hb_model: HB_Model) -> None:
         """Adds all of the Transparent (window) Constructions from a HB Model the Project's _window_types dict
 
         Will also align the id_nums of the Aperture Construction's with the WindowType in the Project dict.
@@ -823,6 +902,10 @@ class Project:
                         aperture_const.identifier].id_num
 
         return
+
+    def build_util_patterns_ventilation_from_HB_Model(self, _hb_model: HB_Model) -> None:
+        for hb_room in _hb_model.rooms:
+            self.utilisation_patterns_ventilation.add_new_util_pat_from_hb_room(hb_room)
 
     @property
     def assembly_types(self):
