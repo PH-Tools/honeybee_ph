@@ -32,7 +32,7 @@ class Point3DProperties(properties._Properties):
 class PH_Point3D(LB_Point3D):
     """Subclass Point3D so it can have properties"""
 
-    __slots__ = ("_properties",)
+    #__slots__ = ("_properties",)
 
     def __init__(self, _x, _y, _z):
         super(PH_Point3D, self).__init__(x=_x, y=_y, z=_z)

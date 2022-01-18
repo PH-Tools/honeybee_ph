@@ -6,8 +6,7 @@
 from rich import print
 import pathlib
 
-import from_HBJSON.read_HBJSON_file
-import from_HBJSON.convert_HBJSON
+from from_HBJSON import read_HBJSON_file, creat_project
 import to_WUFI_XML.xml_builder
 import to_WUFI_XML.xml_txt_to_file
 
@@ -20,11 +19,10 @@ TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Townsend_St_Input_220117.x
 # ------------------------------------------------------------------------------
 print("[bold red]- [/bold red]" * 50)
 print(f"[bold]> Reading in the HBJSON file: [/bold]./{SOURCE_FILE}")
-hb_model = from_HBJSON.read_HBJSON_file.read_hb_json(SOURCE_FILE)
+hb_model = read_HBJSON_file.read_hb_json(SOURCE_FILE)
 
 # --- Generate the WUFI Project file.
-hb_model = from_HBJSON.convert_HBJSON.add_PH_Properties_to_model(hb_model)
-wufi_Project = from_HBJSON.convert_HBJSON.convert_HB_model_to_WUFI_Project(hb_model)
+wufi_Project = creat_project.convert_HB_model_to_WUFI_Project(hb_model)
 
 # # --- Output the WUFI Project as an XML Text File
 # # ----------------------------------------------------------------------------
