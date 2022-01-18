@@ -6,8 +6,6 @@
 from honeybee import room
 from honeybee_ph_utils import ventilation, histogram
 
-# Temporary to organize outputs
-
 
 class SchedItem:
     def __init__(self, _av, _fr):

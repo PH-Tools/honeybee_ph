@@ -22,6 +22,8 @@ from to_WUFI_XML.wufi import (
 )
 from to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
+TOL = 2  # Value tolerance for rounding. ie; 9.84318191919 -> 9.84
+
 
 def _Project(_wufi_project: Project) -> list[xml_writable]:
     return [
@@ -53,19 +55,20 @@ def _Project(_wufi_project: Project) -> list[xml_writable]:
 
 
 def _UtilizationPatternVent(_util_pat: UtilizationPatternVent) -> list[xml_writable]:
+    op_periods = _util_pat.operating_periods
     return [
         XML_Node("Name", _util_pat.name),
         XML_Node("IdentNr", _util_pat.id_num),
         XML_Node("OperatingDays", _util_pat.operating_days),
         XML_Node("OperatingWeeks", _util_pat.operating_weeks),
-        XML_Node("Maximum_DOS", _util_pat.operating_periods.high.period_operating_hours),
-        XML_Node("Maximum_PDF", _util_pat.operating_periods.high.period_operation_speed),
-        XML_Node("Standard_DOS", _util_pat.operating_periods.standard.period_operating_hours),
-        XML_Node("Standard_PDF", _util_pat.operating_periods.standard.period_operation_speed),
-        XML_Node("Basic_DOS", _util_pat.operating_periods.basic.period_operating_hours),
-        XML_Node("Basic_PDF", _util_pat.operating_periods.basic.period_operation_speed),
-        XML_Node("Minimum_DOS", _util_pat.operating_periods.minimum.period_operating_hours),
-        XML_Node("Minimum_PDF  ", _util_pat.operating_periods.minimum.period_operation_speed),
+        XML_Node("Maximum_DOS", round(op_periods.high.period_operating_hours, TOL)),
+        XML_Node("Maximum_PDF", round(op_periods.high.period_operation_speed, TOL)),
+        XML_Node("Standard_DOS", round(op_periods.standard.period_operating_hours, TOL)),
+        XML_Node("Standard_PDF", round(op_periods.standard.period_operation_speed, TOL)),
+        XML_Node("Basic_DOS", round(op_periods.basic.period_operating_hours, TOL)),
+        XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL)),
+        XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL)),
+        XML_Node("Minimum_PDF  ", round(op_periods.minimum.period_operation_speed, TOL)),
     ]
 
 
@@ -293,12 +296,12 @@ def _RoomVentilation(_r: RoomVentilation) -> list[xml_writable]:
         XML_Node('AreaRoom', _r.weighted_floor_area, "unit", "m²"),
         XML_Node('ClearRoomHeight', _r.clear_height, "unit", "m"),
         XML_Node('DesignVolumeFlowRateSupply',
-                 _r.ventilation_load.flow_supply, "unit", "m³/h"),
+                 round(_r.ventilation_load.flow_supply, TOL), "unit", "m³/h"),
         XML_Node('DesignVolumeFlowRateExhaust',
-                 _r.ventilation_load.flow_extract, "unit", "m³/h"),
-        XML_Node('SupplyFlowRateUserDef', 'Test', "unit", "m³/h"),
-        XML_Node('ExhaustFlowRateUserDef', 'Test', "unit", "m³/h"),
-        XML_Node('DesignFlowInterzonalUserDef', 'Test', "unit", "m³/h"),
+                 round(_r.ventilation_load.flow_extract, TOL), "unit", "m³/h"),
+        # XML_Node('SupplyFlowRateUserDef', 'Test', "unit", "m³/h"),
+        # XML_Node('ExhaustFlowRateUserDef', 'Test', "unit", "m³/h"),
+        # XML_Node('DesignFlowInterzonalUserDef', 'Test', "unit", "m³/h"),
     ]
 
 
