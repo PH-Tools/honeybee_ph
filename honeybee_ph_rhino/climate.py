@@ -38,11 +38,18 @@ def parse_copy_from_excel(_ph_climate, _input):
     _ph_climate.peak_heating_2.rad_west = data[4][13]
     _ph_climate.peak_heating_2.rad_global = data[5][13]
 
-    _ph_climate.peak_cooling.temp = data[0][14]
-    _ph_climate.peak_cooling.rad_north = data[1][14]
-    _ph_climate.peak_cooling.rad_east = data[2][14]
-    _ph_climate.peak_cooling.rad_south = data[3][14]
-    _ph_climate.peak_cooling.rad_west = data[4][14]
-    _ph_climate.peak_cooling.rad_global = data[5][14]
+    _ph_climate.peak_cooling_1.temp = data[0][14]
+    _ph_climate.peak_cooling_1.rad_north = data[1][14]
+    _ph_climate.peak_cooling_1.rad_east = data[2][14]
+    _ph_climate.peak_cooling_1.rad_south = data[3][14]
+    _ph_climate.peak_cooling_1.rad_west = data[4][14]
+    _ph_climate.peak_cooling_1.rad_global = data[5][14]
+
+    _ph_climate.peak_cooling_2.temp = data[0][14]
+    _ph_climate.peak_cooling_2.rad_north = data[1][14]
+    _ph_climate.peak_cooling_2.rad_east = data[2][14]
+    _ph_climate.peak_cooling_2.rad_south = data[3][14]
+    _ph_climate.peak_cooling_2.rad_west = data[4][14]
+    _ph_climate.peak_cooling_2.rad_global = data[5][14]
 
     return _ph_climate

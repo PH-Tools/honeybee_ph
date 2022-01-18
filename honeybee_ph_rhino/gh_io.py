@@ -456,6 +456,7 @@ def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
 
 
 def input_to_int(IGH, _input_value, _default=None):
+    # type: (IGH, Any, Any) -> int | None
     """For 'selection' type inputs, clean and convert input to int.
 
     ie: if the Grasshopper input allows:
@@ -463,7 +464,6 @@ def input_to_int(IGH, _input_value, _default=None):
         "2-A Second Type"
 
     will strip the string part and return just the integer value, or error.
-
     """
 
     if _input_value is None:

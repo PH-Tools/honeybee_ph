@@ -9,7 +9,17 @@ from from_HBJSON import create_building, create_geometry
 
 
 def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Gets all the geometry from an HB Room, adds it to _variant.graphics3D"""
+    """Gets all the geometry from an HB Room, adds it to _variant.graphics3D
+
+    Arguments:
+    ----------
+        *
+
+    Returns:
+    --------
+        *
+    """
+
     for hb_face in _hb_room.faces:
         # Dev Note: To get the right IDs, have to generate the Children Polys first.
         for aperture in hb_face.apertures:
@@ -21,7 +31,16 @@ def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -
 
 
 def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Create the 'Building' with all Components and Zones."""
+    """Create the 'Building' with all Components and Zones.
+
+    Arguments:
+    ----------
+        *
+
+    Returns:
+    --------
+        *
+    """
     _variant.building.add_components(
         create_building.create_components_from_hb_room(_hb_room))
     _variant.building.add_zones(
@@ -29,6 +48,16 @@ def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) ->
 
 
 def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """
+
+    Arguments:
+    ----------
+        *
+
+    Returns:
+    --------
+        *
+    """
     _variant.ph_data.ph_certificate_criteria = _hb_room.properties.ph.ph_bldg_segment.ph_certification.certification_criteria
     _variant.ph_data.ph_selection_target_data = _hb_room.properties.ph.ph_bldg_segment.ph_certification.localization_selection_type
     _variant.ph_data.annual_heating_demand = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_demand
@@ -38,6 +67,16 @@ def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: ro
 
 
 def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """
+
+    Arguments:
+    ----------
+        *
+
+    Returns:
+    --------
+        *
+    """
     ph_building = certification.PH_Building()
 
     ph_building.building_category = _hb_room.properties.ph.ph_bldg_segment.usage_type.number
@@ -52,6 +91,16 @@ def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room)
 
 
 def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """
+
+    Arguments:
+    ----------
+        *
+
+    Returns:
+    --------
+        *
+    """
     ud_climate = _hb_room.properties.ph.ph_bldg_segment.climate
 
     # -- Basics
