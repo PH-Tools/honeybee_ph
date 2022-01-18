@@ -3,29 +3,17 @@
 
 """Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
-from to_WUFI_XML.wufi import (
-    Layer,
-    Material,
-    Assembly,
-    Component,
-    Polygon,
-    Vertix,
-    Graphics3D,
-    Project,
-    ProjectData,
-    Variant,
-    WindowType,
-    Zone, RoomVentilation, UtilizationPatternVent,
-    PassivehouseData,
-    Building,
-    PH_Building, ClimateLocation, PH_ClimateLocation,
-)
+from PHX import project, building, certification, climate, constructions, geometry, schedules, ventilation
+
 from to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
 TOL = 2  # Value tolerance for rounding. ie; 9.84318191919 -> 9.84
 
 
-def _Project(_wufi_project: Project) -> list[xml_writable]:
+# -- PROJECT --
+
+
+def _Project(_wufi_project: project.Project) -> list[xml_writable]:
     return [
         XML_Node("DataVersion", _wufi_project.data_version),
         XML_Node("UnitSystem", _wufi_project.data_version),
@@ -54,25 +42,21 @@ def _Project(_wufi_project: Project) -> list[xml_writable]:
     ]
 
 
-def _UtilizationPatternVent(_util_pat: UtilizationPatternVent) -> list[xml_writable]:
-    op_periods = _util_pat.operating_periods
+def _Variant(_variant: project.Variant) -> list[xml_writable]:
     return [
-        XML_Node("Name", _util_pat.name),
-        XML_Node("IdentNr", _util_pat.id_num),
-        XML_Node("OperatingDays", _util_pat.operating_days),
-        XML_Node("OperatingWeeks", _util_pat.operating_weeks),
-        XML_Node("Maximum_DOS", round(op_periods.high.period_operating_hours, TOL)),
-        XML_Node("Maximum_PDF", round(op_periods.high.period_operation_speed, TOL)),
-        XML_Node("Standard_DOS", round(op_periods.standard.period_operating_hours, TOL)),
-        XML_Node("Standard_PDF", round(op_periods.standard.period_operation_speed, TOL)),
-        XML_Node("Basic_DOS", round(op_periods.basic.period_operating_hours, TOL)),
-        XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL)),
-        XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL)),
-        XML_Node("Minimum_PDF  ", round(op_periods.minimum.period_operation_speed, TOL)),
+        XML_Node("IdentNr", _variant.id_num),
+        XML_Node("Name", _variant.name),
+        XML_Node("Remarks", _variant.remarks),
+        XML_Node("PlugIn", _variant.plugin),
+        XML_Object("Graphics_3D", _variant.graphics3D),
+        XML_Object("Building", _variant.building),
+        XML_Object("ClimateLocation", _variant.climate),
+        XML_Object("PassivehouseData", _variant.ph_data),
+        # XML_Object("HVAC", _variant.mechanicals, _schema_name="_Mechanicals"),
     ]
 
 
-def _ProjectData(_project_data: ProjectData) -> list[xml_writable]:
+def _ProjectData(_project_data: project.ProjectData) -> list[xml_writable]:
     return [
         XML_Node("Year_Construction", _project_data.year_constructed),
         XML_Node("OwnerIsClient", _project_data.owner_is_client),
@@ -104,7 +88,60 @@ def _ProjectData(_project_data: ProjectData) -> list[xml_writable]:
     ]
 
 
-def _PH_Building(_ph_bldg: PH_Building) -> list[xml_writable]:
+# -- BUILDING --
+
+
+def _Building(_b: building.Building) -> list[xml_writable]:
+    return [
+        XML_List("Components", [XML_Object("Component", c, "index", i)
+                 for i, c in enumerate(_b.components)]),
+        XML_List("Zones", [XML_Object("Zone", z, "index", i)
+                 for i, z in enumerate(_b.zones)]),
+    ]
+
+
+def _Zone(_z: building.Zone) -> list[xml_writable]:
+    return [
+        XML_Node("Name", _z.name),
+        XML_Node("IdentNr", _z.id_num),
+        XML_List("RoomsVentilation", [XML_Object("Room", rm, "index", i)
+                                      for i, rm in enumerate(_z.wufi_rooms)]),
+        XML_Node("GrossVolume_Selection", 6),
+        XML_Node("GrossVolume", _z.volume_gross),
+        XML_Node("NetVolume_Selection", 6),
+        XML_Node("NetVolume", _z.volume_net),
+        XML_Node("FloorArea_Selection", 6),
+        XML_Node("FloorArea", _z.weighted_net_floor_area),
+        XML_Node("ClearanceHeight_Selection", 1),
+        XML_Node("ClearanceHeight", _z.clearance_height),
+        XML_Node("SpecificHeatCapacity_Selection", 2),
+        XML_Node("SpecificHeatCapacity", _z.specific_heat_capacity),
+        XML_Node("IdentNrPH_Building", 1),
+    ]
+
+
+def _Component(_c: building.Component) -> list[xml_writable]:
+    return [
+        XML_Node("IdentNr", _c.id_num),
+        XML_Node("Name", _c.name),
+        XML_Node("Visual", True),
+        XML_Node("Type", _c.type),
+        XML_Node("IdentNrColorI", _c.color_interior),
+        XML_Node("IdentNrColorE", _c.color_exterior),
+        XML_Node("InnerAttachment", _c.exposure_interior),
+        XML_Node("OuterAttachment", _c.exposure_exterior),
+        XML_Node("IdentNr_ComponentInnerSurface", _c.interior_attachment_id),
+        XML_Node("IdentNrAssembly", _c.assembly_type_id_num),
+        XML_Node("IdentNrWindowType", _c.window_type_id_num),
+        XML_List("IdentNrPolygons", [XML_Node(
+            "IdentNr", n, "index", i) for i, n in enumerate(_c.polygon_ids)]),
+    ]
+
+
+# -- CERTIFICATION --
+
+
+def _PH_Building(_ph_bldg: certification.PH_Building) -> list[xml_writable]:
     return [
         XML_Node("IdentNr", _ph_bldg._count),
         XML_Node("BuildingCategory", _ph_bldg.building_category),
@@ -118,7 +155,7 @@ def _PH_Building(_ph_bldg: PH_Building) -> list[xml_writable]:
     ]
 
 
-def _PassivehouseData(_ph_data: PassivehouseData) -> list[xml_writable]:
+def _PassivehouseData(_ph_data: certification.PassivehouseData) -> list[xml_writable]:
     return [
         XML_Node("PH_CertificateCriteria", _ph_data.ph_certificate_criteria),
         XML_Node("PH_SelectionTargetData", _ph_data.ph_selection_target_data),
@@ -131,7 +168,10 @@ def _PassivehouseData(_ph_data: PassivehouseData) -> list[xml_writable]:
     ]
 
 
-def _PH_ClimateLocation(_climate: PH_ClimateLocation) -> list[xml_writable]:
+# -- CLIMATE --
+
+
+def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> list[xml_writable]:
     return [
         XML_Node('Selection', _climate.selection),
         XML_Node('SelectionPECO2Factor', _climate.selection_pe_co2_factor),
@@ -202,28 +242,17 @@ def _PH_ClimateLocation(_climate: PH_ClimateLocation) -> list[xml_writable]:
     ]
 
 
-def _ClimateLocation(_climate: ClimateLocation) -> list[xml_writable]:
+def _ClimateLocation(_climate: climate.ClimateLocation) -> list[xml_writable]:
     return [
         XML_Node('Selection', _climate.selection),
         XML_Object('PH_ClimateLocation', _climate.ph_climate_location)
     ]
 
 
-def _Variant(_variant: Variant) -> list[xml_writable]:
-    return [
-        XML_Node("IdentNr", _variant.id_num),
-        XML_Node("Name", _variant.name),
-        XML_Node("Remarks", _variant.remarks),
-        XML_Node("PlugIn", _variant.plugin),
-        XML_Object("Graphics_3D", _variant.graphics3D),
-        XML_Object("Building", _variant.building),
-        XML_Object("ClimateLocation", _variant.climate),
-        XML_Object("PassivehouseData", _variant.ph_data),
-        # XML_Object("HVAC", _variant.mechanicals, _schema_name="_Mechanicals"),
-    ]
+# -- GEOMETRY --
 
 
-def _Graphics3D(_graphics3D: Graphics3D) -> list[xml_writable]:
+def _Graphics3D(_graphics3D: geometry.Graphics3D) -> list[xml_writable]:
     return [
         XML_List("Vertices", [XML_Object("Vertix", var, "index", i)
                  for i, var in enumerate(_graphics3D.vertices)]),
@@ -232,7 +261,7 @@ def _Graphics3D(_graphics3D: Graphics3D) -> list[xml_writable]:
     ]
 
 
-def _Polygon(_p: Polygon) -> list[xml_writable]:
+def _Polygon(_p: geometry.Polygon) -> list[xml_writable]:
     return [
         XML_Node("IdentNr", _p.id_num),
         XML_Node("NormalVectorX", _p.normal_vector.x),
@@ -250,7 +279,7 @@ def _Polygon(_p: Polygon) -> list[xml_writable]:
     ]
 
 
-def _Vertix(_v: Vertix) -> list[xml_writable]:
+def _Vertix(_v: geometry.Vertix) -> list[xml_writable]:
     return [
         XML_Node("IdentNr", _v.id_num),
         XML_Node("X", _v.x),
@@ -259,34 +288,63 @@ def _Vertix(_v: Vertix) -> list[xml_writable]:
     ]
 
 
-def _Building(_b: Building) -> list[xml_writable]:
+# -- CONSTRUCTIONS --
+
+
+def _Assembly(_a: constructions.Assembly) -> list[xml_writable]:
     return [
-        XML_List("Components", [XML_Object("Component", c, "index", i)
-                 for i, c in enumerate(_b.components)]),
-        XML_List("Zones", [XML_Object("Zone", z, "index", i)
-                 for i, z in enumerate(_b.zones)]),
+        XML_Node("IdentNr", _a.id_num),
+        XML_Node("Name", _a.name),
+        XML_Node("Order_Layers", _a.layer_order),
+        XML_Node("Grid_Kind", _a.grid_kind),
+        XML_List("Layers", [XML_Object("Layer", n, "index", i)
+                 for i, n in enumerate(_a.layers)]),
     ]
 
 
-def _Component(_c: Component) -> list[xml_writable]:
+def _Layer(_l: constructions.Layer) -> list[xml_writable]:
     return [
-        XML_Node("IdentNr", _c.id_num),
-        XML_Node("Name", _c.name),
-        XML_Node("Visual", True),
-        XML_Node("Type", _c.type),
-        XML_Node("IdentNrColorI", _c.color_interior),
-        XML_Node("IdentNrColorE", _c.color_exterior),
-        XML_Node("InnerAttachment", _c.exposure_interior),
-        XML_Node("OuterAttachment", _c.exposure_exterior),
-        XML_Node("IdentNr_ComponentInnerSurface", _c.interior_attachment_id),
-        XML_Node("IdentNrAssembly", _c.assembly_type_id_num),
-        XML_Node("IdentNrWindowType", _c.window_type_id_num),
-        XML_List("IdentNrPolygons", [XML_Node(
-            "IdentNr", n, "index", i) for i, n in enumerate(_c.polygon_ids)]),
+        XML_Node("Thickness", _l.thickness),
+        XML_Object("Material", _l.material),
     ]
 
 
-def _RoomVentilation(_r: RoomVentilation) -> list[xml_writable]:
+def _Material(_m: constructions.Material) -> list[xml_writable]:
+    return [
+        XML_Node("Mass", _m.name),
+        XML_Node("ThermalConductivity", _m.conductivity),
+        XML_Node("BulkDensity", _m.density),
+        XML_Node("Porosity", _m.porosity),
+        XML_Node("HeatCapacity", _m.heat_capacity),
+        XML_Node("WaterVaporResistance", _m.water_vapor_resistance),
+        XML_Node("ReferenceW", _m.reference_water),
+    ]
+
+
+def _WindowType(_wt: constructions.WindowType) -> list[xml_writable]:
+    return [
+        XML_Node("IdentNr", _wt.id_num),
+        XML_Node("Name", _wt.name),
+        XML_Node("Uw_Detailed>", _wt.use_detailed_uw),
+        XML_Node("GlazingFrameDetailed", _wt.use_detailed_frame),
+        XML_Node("U_Value", _wt.u_value_window),
+        XML_Node("U_Value_Glazing", _wt.u_value_glass),
+        XML_Node("U_Value_Frame", _wt.u_value_frame),
+        XML_Node("Frame_Width_Left", _wt.frame_width_left),
+        XML_Node("Frame_Psi_Left", _wt.frame_psi_inst_left),
+        XML_Node("Frame_U_Left", _wt.frame_u_value_left),
+        XML_Node("FrameFactor", _wt.frame_factor),
+        XML_Node("Glazing_Psi_Left", _wt.frame_psi_g_left),
+        XML_Node("SHGC_Hemispherical", _wt.glass_g_value),
+        XML_Node("MeanEmissivity", _wt.glass_mean_emissivity),
+        XML_Node("g_Value", _wt.glass_g_value),
+    ]
+
+
+# -- VENTILATION --
+
+
+def _RoomVentilation(_r: ventilation.RoomVentilation) -> list[xml_writable]:
     return [
         XML_Node('Name', _r.name),
         XML_Node('Type', _r.wufi_type),
@@ -305,71 +363,19 @@ def _RoomVentilation(_r: RoomVentilation) -> list[xml_writable]:
     ]
 
 
-def _Zone(_z: Zone) -> list[xml_writable]:
+def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> list[xml_writable]:
+    op_periods = _util_pat.operating_periods
     return [
-        XML_Node("Name", _z.name),
-        XML_Node("IdentNr", _z.id_num),
-        XML_List("RoomsVentilation", [XML_Object("Room", rm, "index", i)
-                                      for i, rm in enumerate(_z.wufi_rooms)]),
-        XML_Node("GrossVolume_Selection", 6),
-        XML_Node("GrossVolume", _z.volume_gross),
-        XML_Node("NetVolume_Selection", 6),
-        XML_Node("NetVolume", _z.volume_net),
-        XML_Node("FloorArea_Selection", 6),
-        XML_Node("FloorArea", _z.weighted_net_floor_area),
-        XML_Node("ClearanceHeight_Selection", 1),
-        XML_Node("ClearanceHeight", _z.clearance_height),
-        XML_Node("SpecificHeatCapacity_Selection", 2),
-        XML_Node("SpecificHeatCapacity", _z.specific_heat_capacity),
-        XML_Node("IdentNrPH_Building", 1),
-    ]
-
-
-def _Assembly(_a: Assembly) -> list[xml_writable]:
-    return [
-        XML_Node("IdentNr", _a.id_num),
-        XML_Node("Name", _a.name),
-        XML_Node("Order_Layers", _a.layer_order),
-        XML_Node("Grid_Kind", _a.grid_kind),
-        XML_List("Layers", [XML_Object("Layer", n, "index", i)
-                 for i, n in enumerate(_a.layers)]),
-    ]
-
-
-def _Layer(_l: Layer) -> list[xml_writable]:
-    return [
-        XML_Node("Thickness", _l.thickness),
-        XML_Object("Material", _l.material),
-    ]
-
-
-def _Material(_m: Material) -> list[xml_writable]:
-    return [
-        XML_Node("Mass", _m.name),
-        XML_Node("ThermalConductivity", _m.conductivity),
-        XML_Node("BulkDensity", _m.density),
-        XML_Node("Porosity", _m.porosity),
-        XML_Node("HeatCapacity", _m.heat_capacity),
-        XML_Node("WaterVaporResistance", _m.water_vapor_resistance),
-        XML_Node("ReferenceW", _m.reference_water),
-    ]
-
-
-def _WindowType(_wt: WindowType) -> list[xml_writable]:
-    return [
-        XML_Node("IdentNr", _wt.id_num),
-        XML_Node("Name", _wt.name),
-        XML_Node("Uw_Detailed>", _wt.use_detailed_uw),
-        XML_Node("GlazingFrameDetailed", _wt.use_detailed_frame),
-        XML_Node("U_Value", _wt.u_value_window),
-        XML_Node("U_Value_Glazing", _wt.u_value_glass),
-        XML_Node("U_Value_Frame", _wt.u_value_frame),
-        XML_Node("Frame_Width_Left", _wt.frame_width_left),
-        XML_Node("Frame_Psi_Left", _wt.frame_psi_inst_left),
-        XML_Node("Frame_U_Left", _wt.frame_u_value_left),
-        XML_Node("FrameFactor", _wt.frame_factor),
-        XML_Node("Glazing_Psi_Left", _wt.frame_psi_g_left),
-        XML_Node("SHGC_Hemispherical", _wt.glass_g_value),
-        XML_Node("MeanEmissivity", _wt.glass_mean_emissivity),
-        XML_Node("g_Value", _wt.glass_g_value),
+        XML_Node("Name", _util_pat.name),
+        XML_Node("IdentNr", _util_pat.id_num),
+        XML_Node("OperatingDays", _util_pat.operating_days),
+        XML_Node("OperatingWeeks", _util_pat.operating_weeks),
+        XML_Node("Maximum_DOS", round(op_periods.high.period_operating_hours, TOL)),
+        XML_Node("Maximum_PDF", round(op_periods.high.period_operation_speed, TOL)),
+        XML_Node("Standard_DOS", round(op_periods.standard.period_operating_hours, TOL)),
+        XML_Node("Standard_PDF", round(op_periods.standard.period_operation_speed, TOL)),
+        XML_Node("Basic_DOS", round(op_periods.basic.period_operating_hours, TOL)),
+        XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL)),
+        XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL)),
+        XML_Node("Minimum_PDF  ", round(op_periods.minimum.period_operation_speed, TOL)),
     ]

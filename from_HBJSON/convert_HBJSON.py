@@ -11,7 +11,7 @@ from ladybug_geometry.geometry3d import face
 from ladybug_geometry_ph.geometry3d_ph.pointvector import PH_Point3D
 from honeybee_energy_ph.construction.opaque import PH_OpaqueConstruction
 from honeybee_energy_ph.construction.window import PH_WindowConstruction
-from to_WUFI_XML.wufi import Project, Variant
+from PHX.project import Project, Variant
 from from_HBJSON import merge
 
 

@@ -5,7 +5,7 @@
 
 from typing import Union
 from xml.dom.minidom import Document, Element
-from to_WUFI_XML.wufi import Project
+from PHX.project import Project
 import to_WUFI_XML.xml_writables
 import to_WUFI_XML.xml_converter
 
