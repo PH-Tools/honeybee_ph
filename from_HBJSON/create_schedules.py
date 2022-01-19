@@ -44,11 +44,11 @@ def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPat
 
 
 def build_util_patterns_ventilation_from_HB_Model(_project: project.Project, _hb_model: model.Model) -> None:
-    """Build the Utilization Pattern collection for Ventilation patterns.
+    """Build the Utilization Pattern collection for Ventilation patterns and add to the PHX-Project.
 
     Arguments:
     ----------
-        * _project (project.Project):
+        * _project (project.Project): The PHX-Project to add the new Utilization Patterns to.
         * _hb_model (model.Model): 
 
     Returns:

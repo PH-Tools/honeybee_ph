@@ -18,7 +18,7 @@ def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
 
     Returns:
     --------
-        * ventilation.RoomVentilation: The new Room with attributes based on the Honeybee Space.
+        * ventilation.RoomVentilation: The new PHX-Room with attributes based on the Honeybee Space.
     """
 
     new_room = ventilation.RoomVentilation()

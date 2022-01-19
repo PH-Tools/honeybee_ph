@@ -69,7 +69,7 @@ def build_layer_from_hb_material(_hb_material: (EnergyMaterial | EnergyMaterialN
 
 
 def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> None:
-    """Adds all of an HB Model's Opaque Constructions to the Project's _assembly_types dict
+    """Build Opaque Constructions from Honeybee Faces and add to the PHX-Project.
 
     Will also align the id_nums of the face's Construction with the Assembly in the Project dict.
 
@@ -103,7 +103,7 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
 
 
 def build_transparent_assemblies_from_HB_Model(_project, _hb_model: model.Model) -> None:
-    """Adds all of the Transparent (window) Constructions from a HB Model the Project's _window_types dict
+    """Create Transparent Constructions from an HB Model and add to the PHX-Project
 
     Will also align the id_nums of the Aperture Construction's with the WindowType in the Project dict.
 

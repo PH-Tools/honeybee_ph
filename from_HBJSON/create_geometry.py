@@ -32,7 +32,7 @@ def create_PHX_Vertix_from_LBT_P3D(_lbt_Point3D: pointvector.PH_Point3D) -> geom
 
 
 def create_PHX_Polyon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geometry.Polygon:
-    """
+    """Return a new PHX-Polygon based on a honeybee-aperture.
 
     Arguments:
     ----------
@@ -54,7 +54,7 @@ def create_PHX_Polyon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geome
 
 
 def create_PHX_Polyon_from_hb_face(_hb_face: face.Face) -> geometry.Polygon:
-    """
+    """Return a new PHX-Polygon based on a honeybee-face.
 
     Arguments:
     ----------

@@ -9,15 +9,16 @@ from from_HBJSON import create_building, create_geometry
 
 
 def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Gets all the geometry from an HB Room, adds it to _variant.graphics3D
+    """Create geometry from a Honeybee-Room and add the geometry to the PHX-Variant.
 
     Arguments:
     ----------
-        *
+        * _variant (project.Variant): The PHX-Variant to add the Geometry to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source for the geometry.
 
     Returns:
     --------
-        *
+        * None
     """
 
     for hb_face in _hb_room.faces:
@@ -31,15 +32,16 @@ def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -
 
 
 def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Create the 'Building' with all Components and Zones.
+    """Create the  PHX-Building with all Components and Zones based on a Honeybee-Room.
 
     Arguments:
     ----------
-        *
+        * _variaint (project.Variant): The PHX-Variant to add the building to.
+        * _hb_room (room.Room): The honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * None
     """
     _variant.building.add_components(
         create_building.create_components_from_hb_room(_hb_room))
@@ -48,16 +50,18 @@ def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) ->
 
 
 def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """
+    """Copy PHX-Phius Certification from a Honeybee-Rooom over to a PHX-Variant.
 
     Arguments:
     ----------
-        *
+        * _variant (project.Variant): The PHX-Variant to add the PHX-Phius Certification to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * None
     """
+
     _variant.ph_data.ph_certificate_criteria = _hb_room.properties.ph.ph_bldg_segment.ph_certification.certification_criteria
     _variant.ph_data.ph_selection_target_data = _hb_room.properties.ph.ph_bldg_segment.ph_certification.localization_selection_type
     _variant.ph_data.annual_heating_demand = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_demand
@@ -65,17 +69,20 @@ def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: ro
     _variant.ph_data.peak_heating_load = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_load
     _variant.ph_data.peak_cooling_load = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_cooling_load
 
+    return None
+
 
 def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """
+    """Create and add a PHX PH-Building to a PHX-Variant.
 
     Arguments:
     ----------
-        *
+        * _variant (project.Variant): The PHX-Variant to add the PH-Building to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * None
     """
     ph_building = certification.PH_Building()
 
@@ -89,17 +96,20 @@ def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room)
     # Not clear why this is a list in the WUFI file? When would there be more than one?
     _variant.ph_data.ph_buildings.append(ph_building)
 
+    return None
+
 
 def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """
+    """Copy PHX-Climate info from a Honeybee-Room over to a PHX-Variant.
 
     Arguments:
     ----------
-        *
+        * _variant (project.Variant): The PHX0-Variant to add the climate data to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * None
     """
     ud_climate = _hb_room.properties.ph.ph_bldg_segment.climate
 
@@ -161,9 +171,11 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
     _variant.climate.ph_climate_location.peak_cooling_2.rad_west = ud_climate.peak_cooling_2.rad_west
     _variant.climate.ph_climate_location.peak_cooling_2.rad_global = ud_climate.peak_cooling_2.rad_global
 
+    return None
+
 
 def from_hb_room(_hb_room: room.Room) -> project.Variant:
-    """Create a new PHX Variant based on a single PH/Honeybee Room.
+    """Create a new PHX-Variant based on a single PH/Honeybee Room.
 
     Arguments:
     ----------

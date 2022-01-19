@@ -4,16 +4,16 @@
 """Functions for importing / translating Honeybee Models into WUFI-JSON """
 
 # -- Dev Note: Required to import all the base packages to run the __init__ startup routines
-# -- which adds the .ph properties slot to all HB Objects. This must be done before
+# -- which ensures that .ph properties slot is added to all HB Objects. This must be done before
 # -- running read_hb_json to ensure there is a place for all the .ph properties to go.
-# -- Dev Note: Do not remove.
+# -- Dev Note: Do not remove --
 import honeybee
 import honeybee_ph
 import honeybee_energy
 import honeybee_energy_ph
 import ladybug_geometry
 import ladybug_geometry_ph
-# -- Dev Note: Do not remove.
+# -- Dev Note: Do not remove --
 
 
 import json

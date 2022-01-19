@@ -2,27 +2,34 @@
 # -*- Python Version: 3.10 -*-
 
 """Functions to build PHX-Building from Honeybee Rooms"""
+from typing import Any
 
 from honeybee import room, aperture, face
 from PHX import building
 from from_HBJSON import create_rooms
 
 
-def get_wufi_enum(_schema_nm, _key, _default, _sub_schema=None):
+def get_wufi_enum(_schema_nm: str, _key: str, _default: Any, _sub_schema: str | None = None) -> int:
     """Convert Honeybe attribute values into corresponding WUFI integer enums.
 
     Arguments:
     ----------
-        *
+        * _schema_nm (str): The primary schema-key to lookup
+        * _key (str): The secondary key to look up in the designated schema-dict.
+        * default (Any): The default value to return if no schema is found mathcing
+            the key(s) input
+        * _sub_schema (str | None): The secondary key to lookup within the designated
+            schema.
 
     Returns:
     --------
-        *
+        * int: The WUFI integer corresponding to the input key(s) or the default
+            value is none found in the schema.
     """
 
     schemas = {
-        'face_type': {
-            "Wall": 1,
+        'face_type': {  # <---- _schema_nm
+            "Wall": 1,  # <---- _key
             "RoofCeiling": 1,
             "Floor": 1,
             "AirBoundary": 3,
@@ -33,7 +40,7 @@ def get_wufi_enum(_schema_nm, _key, _default, _sub_schema=None):
             "Surface": -3,
         },
         'color_interior': {
-            "Wall": {
+            "Wall": {  # <------ _sub_schema
                 "Outdoors": 1,
                 "Surface": 3,
                 "Ground": 1,
@@ -76,15 +83,16 @@ def get_wufi_enum(_schema_nm, _key, _default, _sub_schema=None):
 
 
 def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.Component:
-    """Create a new Component based on a Honeybee Aperture.
+    """Create a new Transparent (window) Component based on a Honeybee Aperture.
 
     Arguments:
     ----------
-        *
+        * _aperture (aperture.Aperture): The Honeybee-Aperture to use as the source.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * building.Component: A new Transparent (window) Component.
     """
     new_compo = building.Component()
 
@@ -106,15 +114,16 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
 
 
 def create_component_from_opaue_face(_hb_face: face.Face, _hb_room: room.Room) -> building.Component:
-    """Returns a new Component based on a Honeybee Face
+    """Returns a new Opaque Component based on a Honeybee Face,
 
     Arguments:
     ----------
-        *
+        * _hb_face (face.Face): The Honeybee-Face to use as the source.
+        * _hb_room (room.Room)L The Honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * building.Component: The new Opaque Component.
     """
     new_compo = building.Component()
 
@@ -136,15 +145,15 @@ def create_component_from_opaue_face(_hb_face: face.Face, _hb_room: room.Room) -
 
 
 def create_components_from_hb_room(_hb_room: room.Room) -> list[building.Component]:
-    """
+    """Create new Opaque and Transparent PHX-Components based on Honeybee-Room Faces.
 
     Arguments:
     ----------
-        *
+        * _hb_room (room.Room): The honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * list[building.Component]: A list of the new PHX-Components.
     """
     compos = []
     for hb_face in _hb_room:
@@ -157,15 +166,15 @@ def create_components_from_hb_room(_hb_room: room.Room) -> list[building.Compone
 
 
 def create_zones_from_hb_room(_hb_room: room.Room) -> building.Zone:
-    """
+    """Create a new PHX-Zone based on a honeybee-Room.
 
     Arguments:
     ----------
-        *
+        * _hb_room (room.Room): The honeybee-Room to use as the source.
 
     Returns:
     --------
-        *
+        * building.Zone: The new PHX-Zone object.
     """
     new_zone = building.Zone()
 
@@ -179,6 +188,7 @@ def create_zones_from_hb_room(_hb_room: room.Room) -> building.Zone:
     new_zone.wufi_rooms = [create_rooms.create_room_from_space(sp)
                            for sp in sorted_spaces]
 
+    # -- Set Zone properties
     new_zone.volume_gross = _hb_room.volume
     new_zone.weighted_net_floor_area = sum(
         (rm.weighted_floor_area for rm in new_zone.wufi_rooms))
