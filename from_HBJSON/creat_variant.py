@@ -31,13 +31,15 @@ def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -
             create_geometry.create_PHX_Polyon_from_hb_face(hb_face))
 
 
-def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
+def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room, group_components: bool = False) -> None:
     """Create the  PHX-Building with all Components and Zones based on a Honeybee-Room.
 
     Arguments:
     ----------
         * _variaint (project.Variant): The PHX-Variant to add the building to.
         * _hb_room (room.Room): The honeybee-Room to use as the source.
+        * group_components (bool): defauly=False. Set to true to have the converter
+            group the components by assembly-type.
 
     Returns:
     --------
@@ -47,6 +49,9 @@ def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room) ->
         create_building.create_components_from_hb_room(_hb_room))
     _variant.building.add_zones(
         create_building.create_zones_from_hb_room(_hb_room))
+
+    if group_components:
+        _variant.building.group_components_by_assembly()
 
 
 def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
@@ -174,12 +179,14 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
     return None
 
 
-def from_hb_room(_hb_room: room.Room) -> project.Variant:
+def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project.Variant:
     """Create a new PHX-Variant based on a single PH/Honeybee Room.
 
     Arguments:
     ----------
         * _hb_room (honeybee.room.Room): The honeybee room to base the Variant on.
+        * group_components (bool): defauly=False. Set to true to have the converter
+            group the components by assembly-type.
 
     Returns:
     --------
@@ -195,7 +202,7 @@ def from_hb_room(_hb_room: room.Room) -> project.Variant:
 
     # -- Build the Variant Elements
     add_geometry_from_hb_rooms(new_variant, _hb_room)
-    add_building_from_hb_room(new_variant, _hb_room)
+    add_building_from_hb_room(new_variant, _hb_room, group_components)
     add_phius_certification_from_hb_room(new_variant, _hb_room)
     add_PH_Building_from_hb_room(new_variant, _hb_room)
     add_climate_from_hb_room(new_variant, _hb_room)

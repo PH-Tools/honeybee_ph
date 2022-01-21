@@ -6,6 +6,9 @@
 from __future__ import annotations
 from typing import ClassVar, Collection
 from dataclasses import dataclass, field
+from collections import defaultdict
+from functools import reduce
+import operator
 
 from PHX import ventilation
 
@@ -46,6 +49,11 @@ class Component:
         cls._count += 1
         return super(Component, cls).__new__(cls, *args, **kwargs)
 
+    def __add__(self, other):
+        self.name = 'Merged_Component'
+        self.polygon_ids += other.polygon_ids
+        return self
+
 
 @dataclass
 class Building:
@@ -67,3 +75,19 @@ class Building:
 
         for zone in _zones:
             self.zones.append(zone)
+
+    def group_components_by_assembly(self):
+        # -- Group the components by their unique key / type
+        new_component_groups = defaultdict(list)
+        for c in self.components:
+            type_key = f'{c.type}-{c.exposure_interior}-{c.interior_attachment_id}-'\
+                f'{c.exposure_exterior}-{c.assembly_type_id_num}-{c.window_type_id_num}'
+            new_component_groups[type_key].append(c)
+
+        # -- Create new components from the group
+        grouped_components = []
+        for component_group in new_component_groups.values():
+            grouped_components.append(reduce(operator.add, component_group))
+
+        # -- Reset the Building's Components
+        self.components = grouped_components

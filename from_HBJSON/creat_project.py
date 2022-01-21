@@ -39,12 +39,14 @@ def sort_hb_rooms_by_bldg_segment(_hb_rooms: tuple[room.Room]) -> list[list[room
     return list(rooms_by_segment.values())
 
 
-def convert_HB_model_to_WUFI_Project(_hb_model: model.Model) -> Project:
+def convert_HB_model_to_WUFI_Project(_hb_model: model.Model, group_components: bool = False) -> Project:
     """Return a complete WUFI Project object with values based on the HB Model
 
     Arguments:
     ----------
         * _hb_model (model.Model): The Honeybee Model to base the WUFI Project on
+        * group_components (bool): defauly=False. Set to true to have the converter
+            group the components by assembly-type.
 
     Returns:
     --------
@@ -59,7 +61,7 @@ def convert_HB_model_to_WUFI_Project(_hb_model: model.Model) -> Project:
     # -- Merge the rooms together by their Building Segment, Add to the Project
     for room_group in sort_hb_rooms_by_bldg_segment(_hb_model.rooms):
         merged_hb_room = merge.merge_rooms(room_group)
-        new_variant = creat_variant.from_hb_room(merged_hb_room)
+        new_variant = creat_variant.from_hb_room(merged_hb_room, group_components)
         project.add_new_variant(new_variant)
 
     return project
