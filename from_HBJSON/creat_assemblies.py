@@ -18,10 +18,9 @@ def _conductivity_from_r_value(_r_value: float, _thickness: float) -> float:
 
     Returns:
     --------
-        * float: The Conductivity value of the layer. 
+        * float: The Conductivity value of the layer.
     """
-    conductance = 1 / _r_value
-    conductivity = conductance / _thickness
+    conductivity = _thickness / _r_value
     return conductivity
 
 

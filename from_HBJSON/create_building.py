@@ -113,7 +113,7 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     return new_compo
 
 
-def create_component_from_opaue_face(_hb_face: face.Face, _hb_room: room.Room) -> building.Component:
+def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) -> building.Component:
     """Returns a new Opaque Component based on a Honeybee Face,
 
     Arguments:
@@ -160,7 +160,7 @@ def create_components_from_hb_room(_hb_room: room.Room) -> list[building.Compone
         for aperture in hb_face.apertures:
             compos.append(create_component_from_aperture(aperture, _hb_room))
 
-        compos.append(create_component_from_opaue_face(hb_face, _hb_room))
+        compos.append(create_component_from_opaque_face(hb_face, _hb_room))
 
     return compos
 
