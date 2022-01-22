@@ -7,28 +7,55 @@ from collections import namedtuple
 
 from honeybee_ph import space
 from honeybee import room
-
-
-class HostRoomNotFoundError(Exception):
-    def __init__(self, _spaces):
-        self.space_list = ["{}, ".format(space_data.space.full_name)
-                           for space_data in _spaces]
-        self.message = 'Error: Host Honeybee-Rooms not found for the spaces: {}'.format(
-            self.space_list)
-        super(HostRoomNotFoundError, self).__init__(self.message)
+from honeybee_ph_rhino import gh_io
+from ladybug_rhino.fromgeometry import from_point3d
+from ladybug_rhino.togeometry import to_point3d
 
 
 SpaceData = namedtuple('SpaceData', ['space', 'reference_points'])
 
 
+def offset_space_reference_points(IGH, _space, _dist=0):
+    # type (gh_io.IGH, space.Space) -> space.Space
+    """Move the Space's floor segments 'up' in the world-Z some distance. This is
+        useful since if the reference point is directly 'on' the honeybee-Room's floor 
+        surface, sometimes it will not test as 'inside' correctly. Tolerance issue?
+
+    Arguments:
+    ----------
+        * IGH (gh_io.IGH): The Grasshopper ingerface object.
+        * _space (space.Space): A Space to operate on.
+        * _dist (float): A distance to offset the reference point.
+
+    Returns:
+    --------
+        * space.Space: A copy of the input Space with the floor-segment reference 
+            points modified.
+    """
+
+    if _dist == 0:
+        return _space
+
+    new_space = _space.duplicate()
+    for volume in new_space.volumes:
+        for seg in volume.floor._floor_segments:
+            seg.reference_point = to_point3d(
+                IGH.grasshopper_components.Move(
+                    from_point3d(seg.reference_point),
+                    IGH.grasshopper_components.UnitZ(_dist)).geometry
+            )
+    return new_space
+
+
 def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms):
-    # type: (list[space.Space], list[room.Room]) -> list[room.Room]
+    # type: (list[space.Space], list[room.Room]) -> tuple[list[room.Room], list[SpaceData]]
     """Sorts a list of Spaces, checks which are 'in' which HB-Room, and adds the space to that room.
 
     Arguments:
     ----------
         * _spaces (list[space.Space]) A list of Spaces.
         * _hb_rooms (list[room.Room]): A list of Honeybee Rooms.
+
 
     Returns:
     --------
@@ -65,7 +92,9 @@ def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms):
 
     # -- There should not be any spaces left in the dict if all were
     # -- hosted properly. Raise warning error if any are un-hosted?
+    un_hosted_spaces = []
     if spaces_dict:
-        raise HostRoomNotFoundError(spaces_dict.values())
+        for space in spaces_dict.values():
+            un_hosted_spaces.append(space)
 
-    return new_rooms
+    return new_rooms, un_hosted_spaces

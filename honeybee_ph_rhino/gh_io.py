@@ -406,6 +406,14 @@ class IGH:
 
         return self.convert_to_LBT_geom(volume_geom)[0]
 
+    def error(self, _in):
+        """Raise a runtime Error message on the GH Component"""
+        if not _in:
+            return None
+        else:
+            level = self.Grasshopper.Kernel.GH_RuntimeMessageLevel.Error
+            self.ghenv.Component.AddRuntimeMessage(level, _in)
+
     def warning(self, _in):
         """Raise a runtime Warning message on the GH Component"""
         if not _in:

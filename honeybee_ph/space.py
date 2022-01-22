@@ -8,7 +8,6 @@ try:
 except:
     pass  # IronPython
 
-from xml.sax.handler import property_interning_dict
 from honeybee_ph import _base
 from honeybee_ph.properties import space
 from ladybug_geometry import geometry3d
@@ -55,10 +54,24 @@ class SpaceFloorSegment(_base._Base):
 
         return new_obj
 
+    def duplicate(self):
+        new_obj = self.__class__()
+
+        if self.geometry:
+            new_obj.geometry = self.geometry.duplicate()
+
+        if self.reference_point:
+            new_obj.reference_point = self.reference_point.duplicate()
+
+        new_obj.weighting_factor = self.weighting_factor
+
+        return new_obj
+
     def __str__(self):
-        return '{}(weighting_factor={!r}, geometry={!r})'.format(self.__class__.__name__,
-                                                                 self.weighting_factor,
-                                                                 self.geometry)
+        return '{}(weighting_factor={!r}, geometry={!r}, reference_point={!r})'.format(self.__class__.__name__,
+                                                                                       self.weighting_factor,
+                                                                                       self.geometry,
+                                                                                       self.reference_point)
 
     def __repr__(self):
         return str(self)
@@ -103,12 +116,21 @@ class SpaceFloor(_base._Base):
     def floor_segments(self):
         return self._floor_segments
 
+    def duplicate(self):
+        # type: () -> SpaceFloor
+        new_floor = self.__class__()
+        if self.geometry:
+            new_floor.geometry = self.geometry.duplicate()
+        for seg in self.floor_segments:
+            new_floor.add_floor_segment(seg.duplicate())
+        return new_floor
+
     def to_dict(self):
         # type: () -> dict
         d = {}
 
         d['floor_segments'] = [seg.to_dict() for seg in self.floor_segments]
-        d['geometry'] = self.geometry.to_dict()
+        d['geometry'] = self.geometry.to_dict() if self.geometry else None
 
         return d
 
@@ -158,6 +180,14 @@ class SpaceVolume(_base._Base):
         # type() -> list[geometry3d.Point3D]
         return self.floor.reference_points
 
+    def duplicate(self):
+        new_volume = self.__class__()
+        new_volume.avg_ceiling_height = self.avg_ceiling_height
+        new_volume.floor = self.floor.duplicate()
+        if self.geometry:
+            new_volume.geometry = [geo.duplicate() for geo in self.geometry]
+        return new_volume
+
     def to_dict(self):
         # type: () -> dict
         d = {}
@@ -168,7 +198,7 @@ class SpaceVolume(_base._Base):
 
         return d
 
-    @ classmethod
+    @classmethod
     def from_dict(cls, _input_dict):
         new_obj = cls()
 
@@ -259,6 +289,23 @@ class Space(_base._Base):
     def full_name(self):
         return "{}-{}".format(self.number, self.name)
 
+    def duplicate(self, _host=None):
+        # type: (Any) -> Space
+        new_space = self.__class__()
+        if _host:
+            new_space.host = _host
+        else:
+            new_space.host = self.host
+
+        new_space.quantity = self.quantity
+        new_space.wufi_type = self.wufi_type
+        new_space.name = self.name
+        new_space.number = self.number
+        new_space.add_new_volumes([vol.duplicate() for vol in self.volumes])
+        new_space.properties = self.properties
+
+        return new_space
+
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
@@ -278,6 +325,7 @@ class Space(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict, _host):
+        # type: (dict, Any) -> Space
         new_obj = cls(_host)
 
         new_obj.quantity = _input_dict.get("quantity")

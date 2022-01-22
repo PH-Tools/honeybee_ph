@@ -107,7 +107,7 @@ class SpacePhProperties(object):
 
         return {'ph': d}
 
-    @ classmethod
+    @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> SpacePhProperties
         assert 'SpacePhProperties' in data['type'], \
