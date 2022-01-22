@@ -26,6 +26,12 @@ class RoomPhProperties(object):
         return self._spaces
 
     @property
+    def total_space_floor_area(self):
+        # type: () -> float
+        """The total unweighted floor-area of all spaces hosted by the honeybee-Room."""
+        return sum((sp.floor_area for sp in self.spaces))
+
+    @property
     def host(self):
         return self._host
 

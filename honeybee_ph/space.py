@@ -21,9 +21,22 @@ class SpaceFloorSegment(_base._Base):
         self.weighting_factor = 1.0
 
     @property
-    def weighted_area(self):
+    def weighted_floor_area(self):
+        """The floor area of the floor segment weighted by any reduction factors (iFCA, TFA)"""
         # type: () -> float
-        return self.geometry.area * self.weighting_factor
+        if self.geometry:
+            return self.geometry.area * self.weighting_factor
+        else:
+            return 0
+
+    @property
+    def floor_area(self):
+        """The floor area of the floor segment UN-weighted by any reduction factors (iFCA, TFA)"""
+        # type: () -> float
+        if self.geometry:
+            return self.geometry.area
+        else:
+            return 0
 
     def to_dict(self):
         # type: () -> dict[str, Any]
@@ -92,9 +105,16 @@ class SpaceFloor(_base._Base):
         return [seg.reference_point for seg in self.floor_segments]
 
     @property
-    def weighted_area(self):
+    def weighted_floor_area(self):
         # type: () ->  float
-        return sum((seg.weighted_area for seg in self.floor_segments))
+        """The total floor area of all floor segments, weighted by any reduction factors (iFCA, TFA)"""
+        return sum((seg.weighted_floor_area for seg in self.floor_segments))
+
+    @property
+    def floor_area(self):
+        """The total floor area of all floor segments, UN-weighted by any reduction factors (iFCA, TFA)"""
+        # type: () ->  float
+        return sum((seg.floor_area for seg in self.floor_segments))
 
     def add_floor_segment(self, _floor_seg):
         # type: (SpaceFloorSegment) -> None
@@ -173,7 +193,14 @@ class SpaceVolume(_base._Base):
     @property
     def weighted_floor_area(self):
         # type: () -> float
-        return self.floor.weighted_area
+        """The total floor area of all floor segments in the Volume, weighted by any reduction factors (iFCA, TFA)"""
+        return self.floor.weighted_floor_area
+
+    @property
+    def floor_area(self):
+        # type: () -> float
+        """The total floor area of all floor segments in the Volume, UN-weighted by any reduction factors (iFCA, TFA)"""
+        return self.floor.floor_area
 
     @property
     def reference_points(self):
@@ -242,8 +269,8 @@ class Space(_base._Base):
     @property
     def avg_clear_height(self):
         # type: () -> float
+        """Returns the average floor-area-weighted height of all the Volumes in the Space"""
 
-        # -- Calc the floor-area-weighted height for each volume
         total_weighted_height = 0
         for vol in self.volumes:
             total_weighted_height += vol.weighted_floor_area * vol.avg_ceiling_height
@@ -253,7 +280,14 @@ class Space(_base._Base):
     @property
     def weighted_floor_area(self):
         # type: () -> float
+        """The total floor area of all floor segments in the Space, weighted by any reduction factors (iFCA, TFA)"""
         return sum((vol.weighted_floor_area for vol in self.volumes))
+
+    @property
+    def floor_area(self):
+        # type: () -> float
+        """The total floor area of all floor segments in the Space, UN-weighted by any reduction factors (iFCA, TFA)"""
+        return sum((vol.floor_area for vol in self.volumes))
 
     @property
     def reference_points(self):

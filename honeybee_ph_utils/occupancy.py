@@ -7,6 +7,27 @@ from honeybee import room
 import statistics
 
 
+def hb_room_ppl_per_area(_hb_room):
+    # type: (room.Room) -> float
+    """Returns a honeybee-Room's occupancy load (people_per_area).
+
+    Note all  honeybee-Rooms have an occupancy (stairs, etc) and so if there is 
+    no energy.pepple found, will return 0
+
+    Arguments:
+    ----------
+        * _hb_room (honeybee.room.Room): The honeyebee-Room to get the value for.
+
+    Returns:
+    --------
+        * (float): The honeybee-Room's occupancy load (people_per_area)
+    """
+    try:
+        return _hb_room.properties.energy.people.people_per_area
+    except AttributeError:
+        return 0.0
+
+
 def hb_room_peak_occupancy(_hb_room):
     # type: (room.Room) ->  float
     """Returns a peak occupancy (# ppl) of a honeybee-Room. 

@@ -7,6 +7,37 @@ from honeybee import room
 from honeybee_ph_utils import occupancy
 
 
+def hb_room_vent_flowrates(_hb_room):
+    # type: (room.Room) -> tuple[float, float, float, float]
+    """Return the honeybee-Room's four ventilation flow rates in m3/s, or 0 if no ventilation 
+        program is found on the room.
+
+    Arguments:
+    ----------
+        * _hb_room (honeybee.room.Room): The honeyebee-Room to get the value for.
+
+    Returns:
+    --------
+        * tuple[float, float, float, float]: 
+            - [0] (m3s): The honeybee-Room's ventilation flow_per_person
+            - [1] (m3s): The honeybee-Room's ventilation flow_per_area
+            - [2] (m3s): The honeybee-Room's ventilation flow_by_air_changes_per_hour
+            - [3] (m3s): The honeybee-Room's ventilation flow_per_zone
+    """
+    vent_program = _hb_room.properties.energy.ventilation
+
+    if vent_program is None:
+        # -- Not all programs have a ventilation. If so, return 0 for all flows.
+        return (0.0, 0.0, 0.0, 0.0)
+    else:
+        return (
+            vent_program.flow_per_person,
+            vent_program.flow_per_area,
+            vent_program.air_changes_per_hour * _hb_room.volume / 3600,
+            vent_program.flow_per_zone
+        )
+
+
 def hb_room_peak_ventilation_airflow_by_zone(_hb_room):
     # type: (room.Room) -> float
     """Return the Peak Ventilation Airflow (m3/s) for the 'Zone' related elements of a honeybee-Room.
@@ -76,4 +107,5 @@ def hb_room_peak_ventilation_airflow_total(_hb_room):
 
     vent_m3s_total = hb_room_peak_ventilation_airflow_by_zone(_hb_room)
     occ_m3s_total = hb_room_peak_ventilation_airflow_by_occupancy(_hb_room)
+
     return vent_m3s_total + occ_m3s_total

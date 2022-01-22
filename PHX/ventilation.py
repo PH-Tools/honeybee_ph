@@ -22,6 +22,7 @@ class RoomVentilation:
     name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1
+    floor_area: float = 0.0
     weighted_floor_area: float = 0.0
     net_volume: float = 0.0
     clear_height: float = 2.5
