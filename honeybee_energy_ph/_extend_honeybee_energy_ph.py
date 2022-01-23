@@ -7,6 +7,15 @@ from honeybee_ph.properties.space import SpaceProperties
 from honeybee_energy_ph.properties.space import SpaceEnergyProperties
 from honeybee_energy_ph.properties.ruleset import ScheduleRulesetPhProperties, ScheduleRulesetProperties
 
+# -- Shadow the ScheduleRuleset within the honeybee_energy.schedule.dictutil module.
+# -- This is done so that the the .properties.ph can be added in when de-serializing from dict.
+# -- Have to do it this way since honeybee_energy objects do not have any built-in extensible
+# -- slots like .properties already present.
+from honeybee_energy_ph.schedule.ruleset import PH_ScheduleRuleset
+import honeybee_energy.schedule.dictutil
+honeybee_energy.schedule.dictutil.ScheduleRuleset = PH_ScheduleRuleset
+
+
 # Step 1)
 # set a private ._ph attribute on each relevant HB-Energy Property class to None
 setattr(SpaceProperties, '_energy', None)

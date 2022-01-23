@@ -40,6 +40,16 @@ def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPat
     # -- Ensure that the hours add up to 24
     new_util_pattern.force_max_utilization_hours()
 
+    # -- Add in any PH-style data from the PH-schedule.properties (if any)
+    try:
+        ph_sched_props = _hb_room.properties.energy.ventilation.schedule.properties.ph
+    except AttributeError:
+        ph_sched_props = None
+    if ph_sched_props:
+        print('!>>>', ph_sched_props.operating_days_wk)
+        new_util_pattern.operating_days = ph_sched_props.operating_days_wk
+        new_util_pattern.operating_weeks = ph_sched_props.operating_wks_yr
+
     return new_util_pattern
 
 

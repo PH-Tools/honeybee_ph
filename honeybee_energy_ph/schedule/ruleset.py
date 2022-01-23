@@ -17,9 +17,9 @@ from honeybee_energy.schedule.ruleset import ScheduleRuleset
 
 
 class PH_ScheduleRuleset_FromDictError(Exception):
-    def __init__(self, _input_type):
-        self.msg = 'Error: from_dict expected "PH_ScheduleRuleset" or'\
-            '"PH_ScheduleRulesetAbridged". Got: {}'.format(_input_type)
+    def __init__(self, _expected_type, _input_type):
+        self.msg = 'Error: from_dict expected "{}". Got: {}'.format(
+            _expected_type, _input_type)
         super(PH_ScheduleRuleset_FromDictError, self).__init__(self.msg)
 
 
@@ -45,7 +45,7 @@ class PH_ScheduleRuleset(ScheduleRuleset):
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, Any]
         d = super(PH_ScheduleRuleset, self).to_dict(abridged)
-        d['type'] = "PH_ScheduleRulesetAbridged" if abridged else "PH_ScheduleRuleset"
+        d['type'] = "ScheduleRulesetAbridged" if abridged else "ScheduleRuleset"
         d['properties'] = self.properties.to_dict(abridged)
 
         return d
@@ -55,11 +55,9 @@ class PH_ScheduleRuleset(ScheduleRuleset):
         # type: (Any) -> PH_ScheduleRuleset
         data = data.copy()
 
-        if data['type'] == 'PH_ScheduleRuleset':
-            # -- Reset the type before passing over to the parent.
-            data['type'] = 'ScheduleRuleset'
-        else:
-            raise PH_ScheduleRuleset_FromDictError(data.get('type'))
+        if data['type'] != 'ScheduleRuleset':
+            raise PH_ScheduleRuleset_FromDictError(
+                'PH_ScheduleRuleset', data.get('type'))
 
         ph_ruleset = super(PH_ScheduleRuleset, cls).from_dict(data)
         if data['properties']['type'] == 'ScheduleRulesetProperties':
@@ -71,16 +69,20 @@ class PH_ScheduleRuleset(ScheduleRuleset):
     def from_dict_abridged(cls, data, schedule_type_limits):
         # type: (Any, Any) -> PH_ScheduleRuleset
         data = data.copy()
-        if data['type'] == 'PH_ScheduleRulesetAbridged':
+
+        if data['type'] == 'ScheduleRulesetAbridged':
             # -- Reset the type before passing to the parent.
             data['type'] = 'ScheduleRulesetAbridged'
         else:
-            raise DataTypeError(data.get('type'))
+            raise PH_ScheduleRuleset_FromDictError(
+                'ScheduleRulesetAbridged', data.get('type'))
 
-        new_obj = super(PH_ScheduleRuleset, cls).from_dict_abridged(
+        ph_ruleset = super(PH_ScheduleRuleset, cls).from_dict_abridged(
             data, schedule_type_limits)
+        if data['properties']['type'] == 'SchdeduleRulesetPropertiesAbridged':
+            ph_ruleset.properties._load_extension_attr_from_dict(data['properties'])
 
-        return new_obj
+        return ph_ruleset
 
     def ToString(self):
         """Overwrite .NET ToString."""

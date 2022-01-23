@@ -12,9 +12,10 @@ from honeybee import properties
 
 
 class ScheduleRulesetPhProperties_FromDictError(Exception):
-    def __init__(self, _input_type):
-        self.msg = 'Error: Expected "type" of "" or "". Got: {}'.format(_input_type)
-        super(DataTypeError, self).__init__(self, msg)
+    def __init__(self, _expected_types, _input_type):
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
+            _expected_types[0], _expected_types[1], _input_type)
+        super(ScheduleRulesetPhProperties_FromDictError, self).__init__(self.msg)
 
 
 class ScheduleRulesetPhProperties(object):
@@ -43,8 +44,10 @@ class ScheduleRulesetPhProperties(object):
     @classmethod
     def from_dict(cls, _dict, host):
         # type: (dict, Any) -> ScheduleRulesetPhProperties
-        if _dict['type'] != 'ScheduleRulesetPhProperties':
-            raise ScheduleRulesetPhProperties_FromDictError(_dict['type'])
+        valid_types = ('ScheduleRulesetPhProperties',
+                       'ScheduleRulesetPhPropertiesAbridged')
+        if _dict['type'] not in valid_types:
+            raise ScheduleRulesetPhProperties_FromDictError(valid_types, _dict['type'])
 
         new_prop = cls(host)
         new_prop.operating_days_wk = _dict['operating_days_wk']
@@ -53,6 +56,7 @@ class ScheduleRulesetPhProperties(object):
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
+
         return
 
     def ToString(self):
