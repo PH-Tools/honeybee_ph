@@ -46,7 +46,6 @@ def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPat
     except AttributeError:
         ph_sched_props = None
     if ph_sched_props:
-        print('!>>>', ph_sched_props.operating_days_wk)
         new_util_pattern.operating_days = ph_sched_props.operating_days_wk
         new_util_pattern.operating_weeks = ph_sched_props.operating_wks_yr
 
