@@ -18,6 +18,7 @@ class SpaceProperties(properties._Properties):
         space = Space()
         space.properties -> SpaceProperties
         space.properties.ph -> SpacePhProperties
+        space.properties.energy -> SpaceEnergyProperties
     """
 
     def to_dict(self, abridged=False, include=None):
