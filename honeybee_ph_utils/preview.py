@@ -31,12 +31,14 @@ def object_preview(_obj, _full=False, _level=1):
 
     for k, v in _obj.__dict__.items():
         if not _full:
-            # Skipe over some of the basic Honeybee-PH back-end attributes
+            # Skip over some of the basic Honeybee-PH back-end attributes
             if type(v) == type(uuid.uuid4()):
                 continue
             if "identifier" in k:
                 continue
             if "user_data" == k:
+                continue
+            if "_host" == k:
                 continue
 
         if hasattr(v, "__dict__"):

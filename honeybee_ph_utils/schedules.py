@@ -112,20 +112,20 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
     # --- Organize Output
     output = FourPartSched(
         SchedItem(
-            four_part_sched_dict.get(0, {}).get('frequency', 0) * 24,
             four_part_sched_dict.get(0, {}).get('average_value', 0),
+            four_part_sched_dict.get(0, {}).get('frequency', 0) * 24,
         ),
         SchedItem(
-            four_part_sched_dict.get(1, {}).get('frequency', 0) * 24,
             four_part_sched_dict.get(1, {}).get('average_value', 0),
+            four_part_sched_dict.get(1, {}).get('frequency', 0) * 24,
         ),
         SchedItem(
-            four_part_sched_dict.get(2, {}).get('frequency', 0) * 24,
             four_part_sched_dict.get(2, {}).get('average_value', 0),
+            four_part_sched_dict.get(2, {}).get('frequency', 0) * 24,
         ),
         SchedItem(
-            four_part_sched_dict.get(3, {}).get('frequency', 0) * 24,
             four_part_sched_dict.get(3, {}).get('average_value', 0),
+            four_part_sched_dict.get(3, {}).get('frequency', 0) * 24,
         )
     )
 

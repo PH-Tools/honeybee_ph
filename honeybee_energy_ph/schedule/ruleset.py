@@ -60,7 +60,7 @@ class PH_ScheduleRuleset(ScheduleRuleset):
                 'PH_ScheduleRuleset', data.get('type'))
 
         ph_ruleset = super(PH_ScheduleRuleset, cls).from_dict(data)
-        if data['properties']['type'] == 'ScheduleRulesetProperties':
+        if data.get('properties', {}).get('type') == 'ScheduleRulesetProperties':
             ph_ruleset.properties._load_extension_attr_from_dict(data['properties'])
 
         return ph_ruleset
@@ -79,7 +79,7 @@ class PH_ScheduleRuleset(ScheduleRuleset):
 
         ph_ruleset = super(PH_ScheduleRuleset, cls).from_dict_abridged(
             data, schedule_type_limits)
-        if data['properties']['type'] == 'SchdeduleRulesetPropertiesAbridged':
+        if data.get('properties', {}).get('type') == 'SchdeduleRulesetPropertiesAbridged':
             ph_ruleset.properties._load_extension_attr_from_dict(data['properties'])
 
         return ph_ruleset

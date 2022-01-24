@@ -27,27 +27,35 @@ def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPat
     new_util_pattern.name = _hb_room.properties.energy.ventilation.display_name
 
     # --
-    wufi_sched = calc_four_part_vent_sched_values_from_hb_room(_hb_room)
-    new_util_pattern.operating_periods.high.period_operating_hours = wufi_sched.high.period_speed
-    new_util_pattern.operating_periods.high.period_operation_speed = wufi_sched.high.period_operating_hours
-    new_util_pattern.operating_periods.standard.period_operating_hours = wufi_sched.standard.period_speed
-    new_util_pattern.operating_periods.standard.period_operation_speed = wufi_sched.standard.period_operating_hours
-    new_util_pattern.operating_periods.basic.period_operating_hours = wufi_sched.basic.period_speed
-    new_util_pattern.operating_periods.basic.period_operation_speed = wufi_sched.basic.period_operating_hours
-    new_util_pattern.operating_periods.minimum.period_operating_hours = wufi_sched.minimum.period_speed
-    new_util_pattern.operating_periods.minimum.period_operation_speed = wufi_sched.minimum.period_operating_hours
-
-    # -- Ensure that the hours add up to 24
-    new_util_pattern.force_max_utilization_hours()
-
-    # -- Add in any PH-style data from the PH-schedule.properties (if any)
     try:
+        # -- Set from Passive House style detsiled user-inputs
         ph_sched_props = _hb_room.properties.energy.ventilation.schedule.properties.ph
-    except AttributeError:
-        ph_sched_props = None
-    if ph_sched_props:
+
         new_util_pattern.operating_days = ph_sched_props.operating_days_wk
         new_util_pattern.operating_weeks = ph_sched_props.operating_wks_yr
+
+        new_util_pattern.operating_periods.high.period_operating_hours = ph_sched_props.operating_period_high.operation_hours
+        new_util_pattern.operating_periods.high.period_operation_speed = ph_sched_props.operating_period_high.operation_fraction
+        new_util_pattern.operating_periods.standard.period_operating_hours = ph_sched_props.operating_period_standard.operation_hours
+        new_util_pattern.operating_periods.standard.period_operation_speed = ph_sched_props.operating_period_standard.operation_fraction
+        new_util_pattern.operating_periods.basic.period_operating_hours = ph_sched_props.operating_period_basic.operation_hours
+        new_util_pattern.operating_periods.basic.period_operation_speed = ph_sched_props.operating_period_basic.operation_fraction
+        new_util_pattern.operating_periods.minimum.period_operating_hours = ph_sched_props.operating_period_minimum.operation_hours
+        new_util_pattern.operating_periods.minimum.period_operation_speed = ph_sched_props.operating_period_minimum.operation_fraction
+    except AttributeError:
+        # If no detiled user-data is found, calc the 4-part values from the HB Schedule instead.
+        wufi_sched = calc_four_part_vent_sched_values_from_hb_room(_hb_room)
+        new_util_pattern.operating_periods.high.period_operating_hours = wufi_sched.high.period_operating_hours
+        new_util_pattern.operating_periods.high.period_operation_speed = wufi_sched.high.period_speed
+        new_util_pattern.operating_periods.standard.period_operating_hours = wufi_sched.standard.period_operating_hours
+        new_util_pattern.operating_periods.standard.period_operation_speed = wufi_sched.standard.period_speed
+        new_util_pattern.operating_periods.basic.period_operating_hours = wufi_sched.basic.period_operating_hours
+        new_util_pattern.operating_periods.basic.period_operation_speed = wufi_sched.basic.period_speed
+        new_util_pattern.operating_periods.minimum.period_operating_hours = wufi_sched.minimum.period_operating_hours
+        new_util_pattern.operating_periods.minimum.period_operation_speed = wufi_sched.minimum.period_speed
+
+    # -- Ensure that the operting hours add up to exactly 24
+    new_util_pattern.force_max_utilization_hours()
 
     return new_util_pattern
 
