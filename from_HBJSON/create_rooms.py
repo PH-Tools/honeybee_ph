@@ -47,7 +47,6 @@ def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
     --------
         * ventilation.RoomVentilation: The new PHX-Room with attributes based on the Honeybee Space.
     """
-
     new_room = ventilation.RoomVentilation()
 
     new_room.name = _space.full_name
@@ -57,6 +56,8 @@ def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
     new_room.weighted_floor_area = _space.weighted_floor_area
     new_room.clear_height = _space.avg_clear_height
     new_room.net_volume = _space.net_volume
+
+    new_room.vent_pattern_id_num = _space.host.properties.energy.ventilation.schedule.properties.ph.id_num
 
     space_peak_flow_rate = calc_space_ventilation_flow_rate(_space)
     new_room.ventilation_load.flow_supply = space_peak_flow_rate

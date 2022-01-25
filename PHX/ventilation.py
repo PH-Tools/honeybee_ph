@@ -18,7 +18,7 @@ class VentilationLoad:
 @dataclass
 class RoomVentilation:
     _count: ClassVar[int] = 0
-    id_num: int = 0
+    vent_pattern_id_num: int = 0
     name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1

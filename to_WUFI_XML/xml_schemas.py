@@ -348,7 +348,7 @@ def _RoomVentilation(_r: ventilation.RoomVentilation) -> list[xml_writable]:
     return [
         XML_Node('Name', _r.name),
         XML_Node('Type', _r.wufi_type),
-        XML_Node('IdentNrUtilizationPatternVent', 'Test'),
+        XML_Node('IdentNrUtilizationPatternVent', _r.vent_pattern_id_num),
         XML_Node('IdentNrVentilationUnit', 'Test'),
         XML_Node('Quantity', _r.quantity),
         XML_Node('AreaRoom', _r.weighted_floor_area, "unit", "m²"),

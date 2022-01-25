@@ -21,7 +21,7 @@ class ScheduleRulesetPhProperties_FromDictError(Exception):
 class OperationPeriod(object):
     """Operating Period PH info (operation-hours/day and operation-fraction)"""
 
-    def __init__(self, _operation_hours=0, _operation_fraction=0.0):
+    def __init__(self, _operation_hours=0.0, _operation_fraction=0.0):
         self.operation_hours = _operation_hours
         self.operation_fraction = _operation_fraction
 
@@ -50,18 +50,79 @@ class OperationPeriod(object):
             self.__class__.__name__, self.operation_hours, self.operation_fraction)
 
 
+class OperatingPeriodCollection(object):
+    def __init__(self):
+        self.high = None
+        self.standard = None
+        self.basic = None
+        self.minimum = None
+
+    def __nonzero__(self):
+        # type: () -> bool
+        if not self.high and not self.standard and not self.basic and not self.minimum:
+            return False
+        else:
+            return True
+
+    def __bool__(self):
+        return self.__nonzero__()
+
+    def __iter__(self):
+        # type: () -> OperationPeriod
+        for _ in [self.high, self.standard, self.basic, self.minimum]:
+            yield _
+
+    def __len__(self):
+        return 4
+
+    def to_dict(self):
+        # type: () -> dict[str, Any]
+        d = {}
+
+        if self.high:
+            d['high'] = self.high.to_dict()
+        if self.standard:
+            d['standard'] = self.standard.to_dict()
+        if self.basic:
+            d['basic'] = self.basic.to_dict()
+        if self.minimum:
+            d['minimum'] = self.minimum.to_dict()
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict[str, Any]) -> OperatingPeriodCollection
+        new_obj = OperatingPeriodCollection()
+
+        high_dict = _input_dict.get('high', None)
+        if high_dict:
+            new_obj.high = OperationPeriod.from_dict(high_dict)
+
+        standard_dict = _input_dict.get('standard', None)
+        if standard_dict:
+            new_obj.standard = OperationPeriod.from_dict(standard_dict)
+
+        basic_dict = _input_dict.get('basic', None)
+        if basic_dict:
+            new_obj.basic = OperationPeriod.from_dict(basic_dict)
+
+        minimum_dict = _input_dict.get('minimum', None)
+        if minimum_dict:
+            new_obj.minimum = OperationPeriod.from_dict(minimum_dict)
+
+        return new_obj
+
+
 class ScheduleRulesetPhProperties(object):
     """Honeybee-PH ScheduleRulesetPhProperties for logging PH-style schedule data."""
 
     def __init__(self, _host):
         self._host = _host
+        self.id_num = 0
         self.operating_days_wk = 7.0
         self.operating_wks_yr = 24.0
-
-        self.operating_period_high = OperationPeriod()
-        self.operating_period_standard = OperationPeriod()
-        self.operating_period_basic = OperationPeriod()
-        self.operating_period_minimum = OperationPeriod()
+        self.operating_periods = OperatingPeriodCollection()
 
     @property
     def host(self):
@@ -71,18 +132,14 @@ class ScheduleRulesetPhProperties(object):
     def annual_average_operating_fraction(self):
         # type: () -> float
         """Returns the annual average operating fraction."""
+        if not self.operating_periods:
+            return 0
+
         annual_oprating_days = self.operating_days_wk * self.operating_wks_yr
-
-        wtd_high = self.operating_period_high.operation_hours * \
-            self.operating_period_high.operation_fraction * annual_oprating_days
-        wtd_standard = self.operating_period_standard.operation_hours * \
-            self.operating_period_standard.operation_fraction * annual_oprating_days
-        wtd_basic = self.operating_period_basic.operation_hours * \
-            self.operating_period_basic.operation_fraction * annual_oprating_days
-        wtd_minimum = self.operating_period_minimum.operation_hours * \
-            self.operating_period_minimum.operation_fraction * annual_oprating_days
-
-        wtd_total = wtd_high + wtd_standard + wtd_basic + wtd_minimum
+        wtd_total = 0
+        for op_period in self.operating_periods:
+            if op_period:
+                wtd_total += op_period.operation_hours * op_period.operation_fraction * annual_oprating_days
         annual_operating_hours = annual_oprating_days * 24
         wtd_annual_avg = wtd_total / annual_operating_hours
 
@@ -91,10 +148,10 @@ class ScheduleRulesetPhProperties(object):
     def validate_operating_period_hours(self):
         # type: () -> str | None
         """Returns a warning if the total operating period hours do not equal 24."""
-        total_hours = self.operating_period_high.operation_hours +\
-            self.operating_period_standard.operation_hours +\
-            self.operating_period_basic.operation_hours +\
-            self.operating_period_minimum.operation_hours
+        total_hours = 0
+        for op_period in self.operating_periods:
+            if op_period:
+                total_hours += op_period.operation_hours
 
         if abs(24 - total_hours) > 0.001:
             return 'Error: Total Operating Hours={}, not 24?'.format(total_hours)
@@ -109,12 +166,10 @@ class ScheduleRulesetPhProperties(object):
         else:
             d['type'] = 'ScheduleRulesetPhProperties'
 
+        d['id_num'] = self.id_num
         d['operating_days_wk'] = self.operating_days_wk
         d['operating_wks_yr'] = self.operating_wks_yr
-        d['operation_period_high'] = self.operating_period_high.to_dict()
-        d['operation_period_standard'] = self.operating_period_standard.to_dict()
-        d['operation_period_basic'] = self.operating_period_basic.to_dict()
-        d['operation_period_minimum'] = self.operating_period_minimum.to_dict()
+        d['operating_periods'] = self.operating_periods.to_dict()
 
         return {'ph': d}
 
@@ -127,17 +182,11 @@ class ScheduleRulesetPhProperties(object):
             raise ScheduleRulesetPhProperties_FromDictError(valid_types, _dict['type'])
 
         new_prop = cls(host)
+        new_prop.id_num = _dict['id_num']
         new_prop.operating_days_wk = _dict['operating_days_wk']
         new_prop.operating_wks_yr = _dict['operating_wks_yr']
-        new_prop.operating_period_high = OperationPeriod.from_dict(
-            _dict['operation_period_high'])
-        new_prop.operating_period_standard = OperationPeriod.from_dict(
-            _dict['operation_period_standard'])
-        new_prop.operating_period_basic = OperationPeriod.from_dict(
-            _dict['operation_period_basic'])
-        new_prop.operating_period_minimum = OperationPeriod.from_dict(
-            _dict['operation_period_minimum'])
-
+        new_prop.operating_periods = OperatingPeriodCollection.from_dict(
+            _dict.get('operating_periods', {}))
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
