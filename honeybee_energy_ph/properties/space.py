@@ -1,7 +1,7 @@
 try:
     from typing import Any
 except:
-    pass  # ItonPython
+    pass  # IronPython
 
 from honeybee import properties
 

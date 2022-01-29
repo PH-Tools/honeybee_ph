@@ -8,8 +8,6 @@ try:
 except:
     pass  # IronPython
 
-from honeybee import properties
-
 
 class ScheduleRulesetPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
@@ -196,45 +194,6 @@ class ScheduleRulesetPhProperties(object):
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
-
-    def __repr__(self):
-        """Properties representation."""
-        return '{}'.format(self.__class__.__name__)
-
-
-class ScheduleRulesetProperties(properties._Properties):
-    """Honeybee-Energy Ruleset Properties.
-
-    Ruleset properties. This class will be extended by extensions.
-
-    Usage:
-
-    .. code-block:: python
-
-        ruleset = PH_ScheduleRuleset()
-        ruleset.properties -> ScheduleRulesetProperties
-        ruleset.properties.ph -> ScheduleRulesetPhProperties
-    """
-
-    def to_dict(self, abridged=False, include=None):
-        # type: (bool, Any | None) -> dict[str, Any]
-        """Convert properties to dictionary.
-
-        Args:
-            abridged: Boolean to note whether the full dictionary describing the
-                object should be returned (False) or just an abridged version (True).
-                Default: False.
-            include: A list of keys to be included in dictionary.
-                If None all the available keys will be included.
-        """
-        d = {}
-        if abridged == False:
-            d['type'] = 'ScheduleRulesetProperties'
-        else:
-            d['type'] = 'SchdeduleRulesetPropertiesAbridged'
-
-        d = self._add_extension_attr_to_dict(d, abridged, include)
-        return d
 
     def __repr__(self):
         """Properties representation."""

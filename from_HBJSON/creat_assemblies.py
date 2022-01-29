@@ -96,7 +96,7 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
                 # -- Add the assembly to the Project
                 _project.add_new_assembly(hb_const.identifier, new_assembly)
 
-            hb_const.properties._ph.id_num = _project._assembly_types[hb_const.identifier].id_num
+            hb_const.properties.ph.id_num = _project._assembly_types[hb_const.identifier].id_num
 
     return None
 
@@ -129,7 +129,7 @@ def build_transparent_assemblies_from_HB_Model(_project, _hb_model: model.Model)
 
                     _project._window_types[aperture_const.identifier] = new_aperture_constr
 
-                aperture_const.properties._ph.id_num = _project._window_types[
+                aperture_const.properties.ph.id_num = _project._window_types[
                     aperture_const.identifier].id_num
 
     return None

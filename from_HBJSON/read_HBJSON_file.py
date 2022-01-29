@@ -22,8 +22,8 @@ import pathlib
 from honeybee import model
 from honeybee import face
 
-from honeybee_energy_ph.construction.opaque import PH_OpaqueConstruction
-from honeybee_energy_ph.construction.window import PH_WindowConstruction
+# from honeybee_energy_ph.properties.construction.opaque import PH_OpaqueConstruction
+# from honeybee_energy_ph.properties.construction.window import PH_WindowConstruction
 from ladybug_geometry_ph.geometry3d_ph import pointvector
 
 
@@ -65,8 +65,8 @@ def convert_face_3d(_lbt_geom: face.Face3D) -> face.Face3D:
     return _new_lbt_face3D
 
 
-def add_PH_Properties_to_model(_model: model.Model) -> model.Model:
-    """Walk through the entire HB-Model and convert HB-Objects as needed so that
+def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
+    """Walk through the entire HB-Model and convert LBT geometry as needed so that
     they all have a '.properties.ph' slot on them if they need it. This function 
     will also convert over all the LBT-Vertices to PH-Vertices so that things like 
     the ID-Number can be tracked.
@@ -85,24 +85,12 @@ def add_PH_Properties_to_model(_model: model.Model) -> model.Model:
         new_room = room.duplicate()
         new_faces = []
         for hb_face in new_room.faces:
-            # -- convert face's construction
-            hb_const = hb_face.properties.energy.construction
-            if not hasattr(hb_const, 'properties'):
-                ph_const = PH_OpaqueConstruction.from_hb_construction(hb_const)
-                hb_face.properties.energy.construction = ph_const
-
             # -- convert face's geometry
             new_hb_face = hb_face.duplicate()
             new_hb_face._geometry = convert_face_3d(hb_face.geometry)
 
             new_apertures = []
             for aperture in hb_face.apertures:
-                # -- convert aperture's construction
-                hb_const = aperture.properties.energy.construction
-                if not hasattr(hb_const, 'properties'):
-                    ph_const = PH_WindowConstruction.from_hb_construction(hb_const)
-                    aperture.properties.energy.construction = ph_const
-
                 # -- convert aperture's geometry
                 new_aperture = aperture.duplicate()
                 new_aperture._geometry = convert_face_3d(aperture.geometry)
@@ -139,5 +127,5 @@ def read_hb_json(_file_address: pathlib.Path) -> model.Model:
 
     # -- Clean up the model, addd the .ph properties
     new_hb_model = model.Model.from_dict(data)
-    new_hb_model = add_PH_Properties_to_model(new_hb_model)
+    new_hb_model = convert_model_LBT_geometry(new_hb_model)
     return new_hb_model

@@ -7,7 +7,7 @@ from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identi
 from honeybee import model, room
 from PHX import schedules, project
 from honeybee_ph_utils.schedules import calc_four_part_vent_sched_values_from_hb_room
-from honeybee_energy_ph.schedule import ruleset
+from honeybee_energy.schedule import ruleset
 
 
 def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPatternVent:
@@ -68,7 +68,7 @@ def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPat
     return new_util_pattern
 
 
-def add_default_vent_schedule(_hb_model: model.Model, _sched: ruleset.PH_ScheduleRuleset) -> model.Model:
+def add_default_vent_schedule(_hb_model: model.Model, _sched: ruleset.ScheduleRuleset) -> model.Model:
     """Add a default ventilation.schedule is the room has None. 
 
     Some HB Programs do not have a ventilation.schedule. I *think* this means 
@@ -77,7 +77,7 @@ def add_default_vent_schedule(_hb_model: model.Model, _sched: ruleset.PH_Schedul
     Arguments:
     ----------
         * _hb_model (model.Model):
-        * _sched (ruleset.PH_ScheduleRuleset)
+        * _sched (ScheduleRuleset)
 
     Returns:
     --------
@@ -107,7 +107,7 @@ def build_util_patterns_ventilation_from_HB_Model(_project: project.Project, _hb
     """
     # -- FIRST: Havr to clean up the HB-ventilation schedules where they are missing.
     type_limit = schedule_type_limit_by_identifier('Fractional')
-    default_ventilation_schedule = ruleset.PH_ScheduleRuleset.from_constant_value(
+    default_ventilation_schedule = ruleset.ScheduleRuleset.from_constant_value(
         'default_schedule', 1.0, type_limit)
     _hb_model = add_default_vent_schedule(_hb_model, default_ventilation_schedule)
 
