@@ -68,19 +68,22 @@ def merge_rooms(_hb_rooms: list[room.Room]) -> room.Room:
         faces=exposed_faces,
     )
 
-    # -- Set the new Room's properties based on the reference room
-    # -- Dev. Note: _duplicate_extension_attr doesn't work. Will duplicate the spaces
-    # -- on the reference room.
-    # -- Do we really need to call this? What is getting missed if we don't?
-    # new_room._properties._duplicate_extension_attr(reference_room._properties)
+    # -- Set the new Room's properties.ph to match the 'reference' room
+    dup_ph_prop = reference_room._properties.ph.duplicate(
+        new_room._properties.ph, include_spaces=False)
+    setattr(new_room._properties, '_ph', dup_ph_prop)
 
-    # -- Collect all the spaces from the input rooms and add to the new room
-    # -- Dev Note: this has to be done AFTER the _duplicate_extension_attr() otherwise
-    # -- not all the spaces will transfer over.
+    # -- Then, collect all the spaces from the input rooms and add to the NEW room
+    # -- DEVELOPER NOTE: this has to be done AFTER the duplicate()
+    # -- call, otherwise not all the spaces will transfer over properly.
     for hb_room in _hb_rooms:
         for existing_space in hb_room.properties.ph.spaces:
-            # -- Preserve the original Room's energy properties on the space
+            # -- Preserve the original HB-Room's energy and ph properties over
+            # -- on the space. We need to do this cus' the HB-Room is being removed
+            # -- and we want to presever HVAC and program info for the spaces.
             existing_space.properties._energy = hb_room.properties._energy.duplicate(
+                new_host=existing_space)
+            existing_space.properties._ph = hb_room.properties._ph.duplicate(
                 new_host=existing_space)
             new_room.properties.ph.add_new_space(existing_space)
 

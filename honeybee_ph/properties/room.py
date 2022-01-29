@@ -35,13 +35,16 @@ class RoomPhProperties(object):
     def host(self):
         return self._host
 
-    def duplicate(self, new_host=None):
-        # type: (Any) -> RoomPhProperties
+    def duplicate(self, new_host=None, include_spaces=True):
+        # type: (Any, bool) -> RoomPhProperties
         _host = new_host or self._host
         new_properties_obj = RoomPhProperties(_host)
         new_properties_obj.id_num = self.id_num
-        for sp in self._spaces:
-            new_properties_obj._spaces.append(sp)
+
+        if include_spaces:
+            for sp in self._spaces:
+                new_properties_obj._spaces.append(sp)
+
         new_properties_obj.ph_bldg_segment = self.ph_bldg_segment
 
         return new_properties_obj
@@ -50,7 +53,7 @@ class RoomPhProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return "Room Passive House Properties: [host: {}]".format(self.host.display_name)
+        return "{}: [host: {}]".format(self.__class__.__name__, self.host)
 
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, Any]

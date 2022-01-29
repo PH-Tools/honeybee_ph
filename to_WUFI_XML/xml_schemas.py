@@ -245,7 +245,26 @@ def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> list[xml_writab
 def _ClimateLocation(_climate: climate.ClimateLocation) -> list[xml_writable]:
     return [
         XML_Node('Selection', _climate.selection),
-        XML_Object('PH_ClimateLocation', _climate.ph_climate_location)
+        # XML_Node('IDNr_DB', _climate.),
+        # XML_Node('Name_DB', _climate.),
+        # XML_Node('Comment_DB', _climate.),
+        XML_Node('Latitude_DB', _climate.ph_climate_location.location.latitude, 'unit', "°"),
+        XML_Node('Longitude_DB', _climate.ph_climate_location.location.longitude,  'unit', "°"),
+        XML_Node(
+            'HeightNN_DB', _climate.ph_climate_location.location.weather_station_elevation, 'unit', "m"),
+        XML_Node('dUTC_DB', _climate.ph_climate_location.location.hours_from_UTC),
+        # XML_Node('FileName_DB', _climate.),
+        # XML_Node('Type_DB', _climate.),
+        # XML_Node('CatalogueNr_DB', _climate.),
+        # XML_Node('MapNr_DB', _climate.),
+        XML_Node('Albedo', -2, 'choice', "User defined"),
+        XML_Node('GroundReflShort', 0.2, 'unit', "-"),
+        XML_Node('GroundReflLong', 0.1, 'unit', "-"),
+        XML_Node('GroundEmission', 0.9, 'unit', "-"),
+        XML_Node('CloudIndex', 0.66, 'unit', "-"),
+        XML_Node('CO2concenration', 350, 'unit', "mg/m³"),
+        XML_Node('Unit_CO2concentration', 48, 'choice', "ppmv"),
+        XML_Object('PH_ClimateLocation', _climate.ph_climate_location),
     ]
 
 
