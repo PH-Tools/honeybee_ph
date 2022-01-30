@@ -43,6 +43,38 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Vent. Schedule": {
+        "NickName": "PH Vent. Sched.",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Operation Period": {
+        "NickName": "PH Op. Period",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    # -- Spaces
+    "HBPH - Get FloorSegment Data": {
+        "NickName": "Get Seg. Data",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create Spaces": {
+        "NickName": "Create PH Spaces",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Add Spaces": {
+        "NickName": "Add PH Spaces",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+
 }
 
 
