@@ -41,7 +41,7 @@ class IdealAirSystemPhProperties(object):
 
         d['id_num'] = self.id_num
         d['ventilator_id_num'] = self.id_num
-        if self.ventilation_system:
+        if self.ventilation_system is not None:
             d['ventilation_system'] = self.ventilation_system.to_dict()
         else:
             d['ventilation_system'] = None
@@ -59,8 +59,11 @@ class IdealAirSystemPhProperties(object):
         new_prop = cls(host)
         new_prop.id_num = _dict['id_num']
         new_prop.ventilator_id_num = _dict['ventilator_id_num']
-        new_prop.ventilation_system = ventilation.PhVentilationSystem.from_dict(
-            _dict.get('ventilation_system', None))
+
+        vent_system_dict = _dict.get('ventilation_system', None)
+        if vent_system_dict:
+            new_prop.ventilation_system = ventilation.PhVentilationSystem.from_dict(
+                vent_system_dict)
 
         return new_prop
 

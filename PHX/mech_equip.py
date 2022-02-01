@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar, Any
 
 
-class MechanicalEquipment:
+class PhxMechanicalEquipment:
     _count: int = 0
 
     def __init__(self):
@@ -15,12 +15,13 @@ class MechanicalEquipment:
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
-        return super(MechanicalEquipment, cls).__new__(cls, *args, **kwargs)
+        return super(PhxMechanicalEquipment, cls).__new__(cls, *args, **kwargs)
 
 
-class Ventilator(MechanicalEquipment):
+class PhxVentilator(PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
+        self.quantity: int = 1
         self.system_type_num: int = 1
         self.system_type_str: str = 'Mechanical ventilation'
         self.device_type_num: int = 1
@@ -28,10 +29,13 @@ class Ventilator(MechanicalEquipment):
         self.heat_recovery_efficiency: float = 0.0
         self.moisture_recovery_efficiency: float = 0.0
         self.fan_power: float = 0.55
+        self.frost_protection_reqd: bool = True
+        self.frost_temp: float = -5.0
+        self.in_conditioned_space: bool = True
 
 
 @dataclass
-class ZoneCoverage:
+class PhxZoneCoverage:
     zone_num: int = 1
     heating: int = 1
     cooling: int = 1
@@ -41,7 +45,7 @@ class ZoneCoverage:
 
 
 @dataclass
-class MechanicalEquipmentCollection:
+class PhxMechanicalEquipmentCollection:
     """A collection of all the mechanical equipment (ERV, DHW, etc..) in the project"""
     _count: ClassVar[int] = 0
     id_num: int = 0
@@ -49,7 +53,7 @@ class MechanicalEquipmentCollection:
     sys_type_num: int = 1
     sys_type_str: str = "User defined (ideal system)"
 
-    zone_coverage: ZoneCoverage = field(default_factory=ZoneCoverage)
+    zone_coverage: PhxZoneCoverage = field(default_factory=PhxZoneCoverage)
     _equipment: dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -58,15 +62,15 @@ class MechanicalEquipmentCollection:
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
-        return super(MechanicalEquipmentCollection, cls).__new__(cls, *args, **kwargs)
+        return super(PhxMechanicalEquipmentCollection, cls).__new__(cls, *args, **kwargs)
 
     def equipment_in_collection(self, _equipment_key) -> bool:
         return _equipment_key in self._equipment.keys()
 
-    def get_mech_equipment_by_key(self, _key: str) -> MechanicalEquipment | None:
+    def get_mech_equipment_by_key(self, _key: str) -> PhxMechanicalEquipment | None:
         return self._equipment.get(_key, None)
 
-    def add_new_mech_equipment(self, _key: str, _equipment: MechanicalEquipment) -> None:
+    def add_new_mech_equipment(self, _key: str, _equipment: PhxMechanicalEquipment) -> None:
         """
 
         Arguments:

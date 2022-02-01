@@ -15,6 +15,7 @@ class Ventilator:
         self.sensible_heat_recovery = 0.0
         self.latent_heat_recovery = 0.0
         self.electric_efficiency = 0.55
+        self.frost_protection_reqd = True
         self.temperature_below_defrost_used = -5
         self.in_conditioned_space = True
 
@@ -26,6 +27,7 @@ class Ventilator:
         d['sensible_heat_recovery'] = self.sensible_heat_recovery
         d['latent_heat_recovery'] = self.latent_heat_recovery
         d['electric_efficiency'] = self.electric_efficiency
+        d['frost_protection_reqd'] = self.frost_protection_reqd
         d['temperature_below_defrost_used'] = self.temperature_below_defrost_used
         d['in_conditioned_space'] = self.in_conditioned_space
 
@@ -40,6 +42,7 @@ class Ventilator:
         obj.sensible_heat_recovery = _input_dict['sensible_heat_recovery']
         obj.latent_heat_recovery = _input_dict['latent_heat_recovery']
         obj.electric_efficiency = _input_dict['electric_efficiency']
+        obj.frost_protection_reqd = _input_dict['frost_protection_reqd']
         obj.temperature_below_defrost_used = _input_dict['temperature_below_defrost_used']
         obj.in_conditioned_space = _input_dict['in_conditioned_space']
 

@@ -451,7 +451,7 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> list
 # -- HVAC --
 
 
-def _ZoneCoverage(_zc: mech_equip.ZoneCoverage) -> list[xml_writable]:
+def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> list[xml_writable]:
     return [
         XML_Node("IdentNrZone", _zc.zone_num),
         XML_Node("CoverageHeating", _zc.zone_num),
@@ -464,16 +464,24 @@ def _ZoneCoverage(_zc: mech_equip.ZoneCoverage) -> list[xml_writable]:
 
 @dataclass
 class Temp_PH_Params:
+    quantity: int = 1
     heat_recovery_efficiency: float = 0.0
     moisture_recovery_efficiency: float = 0.0
     fan_power: float = 0.55
+    frost_protection_reqd: bool = True
+    frost_temp: float = -5.0
+    in_conditioned_space: bool = True
 
 
-def _Device_Ventilator(_d: mech_equip.Ventilator) -> list[xml_writable]:
+def _Device_Ventilator(_d: mech_equip.PhxVentilator) -> list[xml_writable]:
     ph_params = Temp_PH_Params()
+    ph_params.quantity = _d.quantity
     ph_params.heat_recovery_efficiency = _d.heat_recovery_efficiency
     ph_params.moisture_recovery_efficiency = _d.moisture_recovery_efficiency
     ph_params.fan_power = _d.fan_power
+    ph_params.frost_protection_reqd = _d.frost_protection_reqd
+    ph_params.frost_temp = _d.frost_temp
+    ph_params.in_conditioned_space = _d.in_conditioned_space
 
     return [
         XML_Node("Name", _d.name),
@@ -497,15 +505,16 @@ def _Device_Ventilator(_d: mech_equip.Ventilator) -> list[xml_writable]:
 
 def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> list[xml_writable]:
     return [
+        XML_Node("Quantity", _params.quantity),
         XML_Node("HumidityRecoveryEfficiency", _params.moisture_recovery_efficiency),
-        XML_Node("ElectricEfficiency", _params.fan_power, "unit", "Wh/m³"),
-        # XML_Node("FrostProtection", _params.),
-        # XML_Node("Quantity", _params.),
+        XML_Node("ElectricEfficiency", _params.fan_power),
+        XML_Node("DefrostRequired", _params.frost_protection_reqd),
+        XML_Node("FrostProtection", _params.frost_protection_reqd),
+        XML_Node("TemperatureBelowDefrostUsed", _params.frost_temp),
+        XML_Node("InConditionedSpace", _params.in_conditioned_space),
         # XML_Node("SubsoilHeatExchangeEfficiency", _params.),
         # XML_Node("VolumeFlowRateFrom", "unit","m³/h", _params.),
         # XML_Node("VolumeFlowRateTo", "unit","m³/h", _params.),
-        # XML_Node("TemperatureBelowDefrostUsed" ,"unit","°C", _params.),
-        # XML_Node("DefrostRequired", _params.),
         # XML_Node("NoSummerBypass", _params.),
         # XML_Node("Maximum_VOS", _params.),
         # XML_Node("Maximum_PP", _params.),
@@ -517,15 +526,14 @@ def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> list[xml_writable]:
         # XML_Node("Minimum_PP", _params.),
         # XML_Node("AuxiliaryEnergy", _params.),
         # XML_Node("AuxiliaryEnergyDHW", _params.),
-        # XML_Node("InConditionedSpace", _params.),
     ]
 
 
-def _Device_ElecResistance(_d: mech_equip.MechanicalEquipment) -> list[xml_writable]:
+def _Device_ElecResistance(_d: mech_equip.PhxMechanicalEquipment) -> list[xml_writable]:
     return []
 
 
-def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.MechanicalEquipmentCollection) -> list[xml_writable]:
+def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollection) -> list[xml_writable]:
     devices = {
         1: '_Device_Ventilator',
         2: '_Device_ElecResistance',

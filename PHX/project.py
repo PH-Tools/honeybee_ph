@@ -22,8 +22,8 @@ class Variant:
     ph_data: certification.PassivehouseData = field(
         default_factory=certification.PassivehouseData)
     climate: climate.ClimateLocation = field(default_factory=climate.ClimateLocation)
-    mech_systems: mech_equip.MechanicalEquipmentCollection = field(
-        default_factory=mech_equip.MechanicalEquipmentCollection)
+    mech_systems: mech_equip.PhxMechanicalEquipmentCollection = field(
+        default_factory=mech_equip.PhxMechanicalEquipmentCollection)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
