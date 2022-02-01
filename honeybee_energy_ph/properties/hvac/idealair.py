@@ -8,6 +8,8 @@ try:
 except:
     pass  # IronPython
 
+from honeybee_energy_ph.hvac import ventilation
+
 
 class IdealAirSystemPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
@@ -23,6 +25,7 @@ class IdealAirSystemPhProperties(object):
         self._host = _host
         self.id_num = 0
         self.ventilator_id_num = 0
+        self.ventilation_system = None
 
     @property
     def host(self):
@@ -38,6 +41,10 @@ class IdealAirSystemPhProperties(object):
 
         d['id_num'] = self.id_num
         d['ventilator_id_num'] = self.id_num
+        if self.ventilation_system:
+            d['ventilation_system'] = self.ventilation_system.to_dict()
+        else:
+            d['ventilation_system'] = None
 
         return {'ph': d}
 
@@ -52,6 +59,8 @@ class IdealAirSystemPhProperties(object):
         new_prop = cls(host)
         new_prop.id_num = _dict['id_num']
         new_prop.ventilator_id_num = _dict['ventilator_id_num']
+        new_prop.ventilation_system = ventilation.PhVentilationSystem.from_dict(
+            _dict.get('ventilation_system', None))
 
         return new_prop
 

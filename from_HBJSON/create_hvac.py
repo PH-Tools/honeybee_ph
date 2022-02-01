@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.10 -*-
 
-"""Functions to create PhX-HVAC objects from Honeybee-Energy HVAC"""
+"""Functions to create PHX-HVAC objects from Honeybee-Energy HVAC"""
 
 from PHX import mech_equip
 from honeybee_ph import space
