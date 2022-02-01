@@ -18,7 +18,6 @@ class VentilationLoad:
 @dataclass
 class RoomVentilation:
     _count: ClassVar[int] = 0
-    vent_pattern_id_num: int = 0
     name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1
@@ -26,6 +25,10 @@ class RoomVentilation:
     weighted_floor_area: float = 0.0
     net_volume: float = 0.0
     clear_height: float = 2.5
+
+    # -- Ventilation related items
+    vent_unit_id_num: int = 0
+    vent_pattern_id_num: int = 0
     ventilation_load: VentilationLoad = field(default_factory=VentilationLoad)
 
     def __new__(cls, *args, **kwargs):

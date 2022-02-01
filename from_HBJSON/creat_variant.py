@@ -4,8 +4,8 @@
 """Functions to build PHX-Variant from Honeybee Rooms"""
 
 from honeybee import room
-from PHX import project, certification
-from from_HBJSON import create_building, create_geometry
+from PHX import project, certification, ground
+from from_HBJSON import create_building, create_geometry, create_hvac
 
 
 def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
@@ -98,6 +98,10 @@ def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room)
     ph_building.num_of_units = _hb_room.properties.ph.ph_bldg_segment.num_dwelling_units
     ph_building.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
 
+    # TODO: Foundations. For now: set to None
+    none_foundation = ground.Foundation()
+    ph_building.foundations.append(none_foundation)
+
     # Not clear why this is a list in the WUFI file? When would there be more than one?
     _variant.ph_data.ph_buildings.append(ph_building)
 
@@ -109,7 +113,7 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
 
     Arguments:
     ----------
-        * _variant (project.Variant): The PHX0-Variant to add the climate data to.
+        * _variant (project.Variant): The PHX-Variant to add the climate data to.
         * _hb_room (room.Room): The Honeybee-Room to use as the source.
 
     Returns:
@@ -179,6 +183,38 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
     return None
 
 
+def add_hvac_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Add new HVAC (Ventilation, DHW, etc) Systems to the Variant based on the HB-Rooms.
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The PHX-Variant to add the new hvac systems to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
+
+    Returns:
+    --------
+        * None
+    """
+
+    for space in _hb_room.properties._ph.spaces:
+        # -- Build the ventilator
+        # -- Use the normal Ideal Air unique key, but remove the name so can group
+        vent_key = str(space.host.properties.energy.hvac._IdealAirSystem__key()[1:])
+
+        if _variant.mech_systems.equipment_in_collection(vent_key):
+            # -- If the ventilator already exists, just use that one.
+            space_ventilator = _variant.mech_systems.get_mech_equipment_by_key(vent_key)
+        else:
+            # -- otherwise, build a new PH-Ventilator from the HB-hvac
+            space_ventilator = create_hvac.build_phx_ventilator(space)
+            _variant.mech_systems.add_new_mech_equipment(vent_key, space_ventilator)
+
+        # -- Set the space host-room's ventilator-ID-number to match the new ventilator
+        space.host.properties.energy.hvac.properties.ph.ventilator_id_num = space_ventilator.id_num
+
+    return None
+
+
 def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project.Variant:
     """Create a new PHX-Variant based on a single PH/Honeybee Room.
 
@@ -200,7 +236,8 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     _hb_room.properties.ph.id_num = new_variant.id_num
     new_variant.name = _hb_room.display_name
 
-    # -- Build the Variant Elements
+    # -- Build the Variant Elements (order matters)
+    add_hvac_systems_from_hb_rooms(new_variant, _hb_room)
     add_geometry_from_hb_rooms(new_variant, _hb_room)
     add_building_from_hb_room(new_variant, _hb_room, group_components)
     add_phius_certification_from_hb_room(new_variant, _hb_room)

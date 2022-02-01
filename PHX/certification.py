@@ -19,6 +19,7 @@ class PH_Building:
     num_of_floors: int = 1
     occupancy_setting_method: int = 2  # Design
     airtightness_q50: float = 0.2  # m3/hr-m2-envelope
+    foundations: list = field(default_factory=list)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1

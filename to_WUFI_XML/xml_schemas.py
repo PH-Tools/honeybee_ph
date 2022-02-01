@@ -3,8 +3,10 @@
 
 """Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
-from PHX import project, building, certification, climate, constructions, geometry, schedules, ventilation
+from dataclasses import dataclass
 
+from PHX import ground, mech_equip, project, building, certification, \
+    climate, constructions, geometry, schedules, ventilation
 from to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
 TOL = 2  # Value tolerance for rounding. ie; 9.84318191919 -> 9.84
@@ -52,7 +54,8 @@ def _Variant(_variant: project.Variant) -> list[xml_writable]:
         XML_Object("Building", _variant.building),
         XML_Object("ClimateLocation", _variant.climate),
         XML_Object("PassivehouseData", _variant.ph_data),
-        # XML_Object("HVAC", _variant.mechanicals, _schema_name="_Mechanicals"),
+        XML_Object("HVAC", _variant.mech_systems,
+                   _schema_name='_HVAC_Collection'),
     ]
 
 
@@ -152,6 +155,8 @@ def _PH_Building(_ph_bldg: certification.PH_Building) -> list[xml_writable]:
         XML_Node("NumberUnits", _ph_bldg.num_of_units),
         XML_Node("CountStories", _ph_bldg.num_of_floors),
         XML_Node("EnvelopeAirtightnessCoefficient", _ph_bldg.airtightness_q50),
+        XML_List('FoundationInterfaces', [XML_Object('FoundationInterface', f, 'index', i, _schema_name='_FoundationInterface')
+                                          for i, f in enumerate(_ph_bldg.foundations)]),
     ]
 
 
@@ -165,6 +170,49 @@ def _PassivehouseData(_ph_data: certification.PassivehouseData) -> list[xml_writ
         XML_Node("PeakCoolingLoad", _ph_data.peak_cooling_load),
         XML_List("PH_Buildings", [XML_Object("PH_Building", obj, "index", i)
                  for i, obj in enumerate(_ph_data.ph_buildings)]),
+    ]
+
+
+# -- FOUNDATIONS --
+
+def _FoundationInterface(_f: ground.Foundation) -> list[xml_writable]:
+    return [
+        XML_Node("Name", ''),
+        XML_Node("SettingFloorSlabType", _f.floor_setting_num,
+                 'choice', _f.floor_setting_str),
+        XML_Node("FloorSlabType", _f.floor_type_num, 'choice', _f.floor_type_str),
+
+        # XML_Node("PositionPerimeterInsulation", 1),
+        # XML_Node("PerimeterInsulationWidthDepth", 1),
+        # XML_Node("ThicknessPerimeterInsulation", 1),
+        # XML_Node("ConductivityPerimeterInsulation", 1),
+        # XML_Node("PhaseShiftMonths", 1),
+        # XML_Node("HarmonicFraction", 1),
+        # XML_Node("BasementVentilationACH", 1),
+        # XML_Node("DepthBasementBelowGroundSurface_Selection", 1),
+        # XML_Node("DepthBasementBelowGroundSurface", 1),
+        # XML_Node("HeightBasementWallAboveGrade_Selection", 1),
+        # XML_Node("HeightBasementWallAboveGrade", 1),
+        # XML_Node("CrawlspaceVentOpenings_Selection", 1),
+        # XML_Node("CrawlspaceVentOpenings", 1),
+        # XML_Node("FloorSlabArea_Selection", 1),
+        # XML_Node("FloorSlabArea", 1),
+        # XML_Node("U_ValueBasementSlab_Selection", 1),
+        # XML_Node("U_ValueBasementSlab", 1),
+        # XML_Node("FloorCeilingArea_Selection", 1),
+        # XML_Node("FloorCeilingArea", 1),
+        # XML_Node("U_ValueCeilingToUnheatedCellar_Selection", 1),
+        # XML_Node("U_ValueCeilingToUnheatedCellar", 1),
+        # XML_Node("U_ValueBasementWall_Selection", 1),
+        # XML_Node("U_ValueBasementWall", 1),
+        # XML_Node("U_ValueWallAboveGround_Selection", 1),
+        # XML_Node("U_ValueWallAboveGround", 1),
+        # XML_Node("FloorSlabPerimeter_Selection", 1),
+        # XML_Node("FloorSlabPerimeter", 1),
+        # XML_Node("BasementVolume_Selection", 1),
+        # XML_Node("BasementVolume", 1),
+        # XML_Node("U_ValueCrawlspaceFloor_Selection", 1),
+        # XML_Node("U_ValueCrawlspaceFloor", 1),
     ]
 
 
@@ -368,7 +416,7 @@ def _RoomVentilation(_r: ventilation.RoomVentilation) -> list[xml_writable]:
         XML_Node('Name', _r.name),
         XML_Node('Type', _r.wufi_type),
         XML_Node('IdentNrUtilizationPatternVent', _r.vent_pattern_id_num),
-        XML_Node('IdentNrVentilationUnit', 'Test'),
+        XML_Node('IdentNrVentilationUnit', _r.vent_unit_id_num),
         XML_Node('Quantity', _r.quantity),
         XML_Node('AreaRoom', _r.weighted_floor_area, "unit", "m²"),
         XML_Node('ClearRoomHeight', _r.clear_height, "unit", "m"),
@@ -397,4 +445,105 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> list
         XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL)),
         XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL)),
         XML_Node("Minimum_PDF  ", round(op_periods.minimum.period_operation_speed, TOL)),
+    ]
+
+
+# -- HVAC --
+
+
+def _ZoneCoverage(_zc: mech_equip.ZoneCoverage) -> list[xml_writable]:
+    return [
+        XML_Node("IdentNrZone", _zc.zone_num),
+        XML_Node("CoverageHeating", _zc.zone_num),
+        XML_Node("CoverageCooling", _zc.zone_num),
+        XML_Node("CoverageVentilation", _zc.zone_num),
+        XML_Node("CoverageHumidification", _zc.zone_num),
+        XML_Node("CoverageDehumidification", _zc.zone_num),
+    ]
+
+
+@dataclass
+class Temp_PH_Params:
+    heat_recovery_efficiency: float = 0.0
+    moisture_recovery_efficiency: float = 0.0
+    fan_power: float = 0.55
+
+
+def _Device_Ventilator(_d: mech_equip.Ventilator) -> list[xml_writable]:
+    ph_params = Temp_PH_Params()
+    ph_params.heat_recovery_efficiency = _d.heat_recovery_efficiency
+    ph_params.moisture_recovery_efficiency = _d.moisture_recovery_efficiency
+    ph_params.fan_power = _d.fan_power
+
+    return [
+        XML_Node("Name", _d.name),
+        XML_Node("IdentNr", _d.id_num),
+        XML_Node("SystemType", _d.system_type_num, 'choice', _d.system_type_str),
+        XML_Node("TypeDevice", _d.device_type_num, 'choice', _d.device_type_str),
+        XML_Node("UsedFor_Heating", False),
+        XML_Node("UsedFor_DHW", False),
+        XML_Node("UsedFor_Cooling", False),
+        XML_Node("UsedFor_Ventilation", True),
+        XML_Node("UsedFor_Humidification", False),
+        XML_Node("UsedFor_Dehumidification", False),
+        XML_Node("UseOptionalClimate", False),
+        XML_Node("IdentNr_OptionalClimate", -1),
+        XML_Node("HeatRecovery", _d.heat_recovery_efficiency),
+        XML_Node("MoistureRecovery ", _d.moisture_recovery_efficiency),
+        XML_Object('PH_Parameters', ph_params,
+                   _schema_name='_Device_Ventilator_PH_Params')
+    ]
+
+
+def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> list[xml_writable]:
+    return [
+        XML_Node("HumidityRecoveryEfficiency", _params.moisture_recovery_efficiency),
+        XML_Node("ElectricEfficiency", _params.fan_power, "unit", "Wh/m³"),
+        # XML_Node("FrostProtection", _params.),
+        # XML_Node("Quantity", _params.),
+        # XML_Node("SubsoilHeatExchangeEfficiency", _params.),
+        # XML_Node("VolumeFlowRateFrom", "unit","m³/h", _params.),
+        # XML_Node("VolumeFlowRateTo", "unit","m³/h", _params.),
+        # XML_Node("TemperatureBelowDefrostUsed" ,"unit","°C", _params.),
+        # XML_Node("DefrostRequired", _params.),
+        # XML_Node("NoSummerBypass", _params.),
+        # XML_Node("Maximum_VOS", _params.),
+        # XML_Node("Maximum_PP", _params.),
+        # XML_Node("Standard_VOS", _params.),
+        # XML_Node("Standard_PP", _params.),
+        # XML_Node("Basic_VOS", _params.),
+        # XML_Node("Basic_PP", _params.),
+        # XML_Node("Minimum_VOS", _params.),
+        # XML_Node("Minimum_PP", _params.),
+        # XML_Node("AuxiliaryEnergy", _params.),
+        # XML_Node("AuxiliaryEnergyDHW", _params.),
+        # XML_Node("InConditionedSpace", _params.),
+    ]
+
+
+def _Device_ElecResistance(_d: mech_equip.MechanicalEquipment) -> list[xml_writable]:
+    return []
+
+
+def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.MechanicalEquipmentCollection) -> list[xml_writable]:
+    devices = {
+        1: '_Device_Ventilator',
+        2: '_Device_ElecResistance',
+    }
+
+    return [
+        XML_Node("Name", _hvac_system.name),
+        XML_Node("Type", _hvac_system.sys_type_num, 'choice', _hvac_system.sys_type_str),
+        XML_Node("IdentNr", _hvac_system.id_num),
+        XML_List('ZonesCoverage', [XML_Object("ZoneCoverage", n, "index", i)
+                 for i, n in enumerate([_hvac_system.zone_coverage])]),
+        XML_List('Devices', [XML_Object("Device", d, "index", i, _schema_name=devices[d.device_type_num])
+                 for i, d in enumerate(_hvac_system.equipment)]),
+    ]
+
+
+def _HVAC_Collection(_hvac) -> list[xml_writable]:
+    return [
+        XML_List("Systems", [XML_Object("System", n, "index", i, _schema_name='_WUFI_HVAC_SystemGroup')
+                 for i, n in enumerate([_hvac])]),
     ]

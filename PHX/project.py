@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Any, ClassVar
 from dataclasses import dataclass, field
 
-from PHX import building, geometry, climate, certification, constructions, schedules
+from PHX import mech_equip, building, geometry, climate, certification, constructions, schedules
 
 
 @dataclass
@@ -22,6 +22,8 @@ class Variant:
     ph_data: certification.PassivehouseData = field(
         default_factory=certification.PassivehouseData)
     climate: climate.ClimateLocation = field(default_factory=climate.ClimateLocation)
+    mech_systems: mech_equip.MechanicalEquipmentCollection = field(
+        default_factory=mech_equip.MechanicalEquipmentCollection)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
