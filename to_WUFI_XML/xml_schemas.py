@@ -26,9 +26,9 @@ def _Project(_wufi_project: project.Project) -> list[xml_writable]:
         XML_Object("ProjectData", _wufi_project.project_data),
         XML_List("UtilisationPatternsVentilation",
                  [XML_Object("UtilizationPatternVent", pat, "index", i)
-                  for i, pat in enumerate(_wufi_project.utilisation_patterns_ventilation)]),
-        XML_List("UtilizationPatternsPH",
-                 _wufi_project.utilisation_patterns_ph),
+                  for i, pat in enumerate(_wufi_project.utilization_patterns_ventilation)]),
+        XML_List("UtilizationPatternVent",
+                 _wufi_project.utilization_patterns_ph),
         XML_List("Variants", [XML_Object("Variant", var, "index", i)
                  for i, var in enumerate(_wufi_project.variants)]),
         XML_List(
@@ -444,7 +444,7 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> list
         XML_Node("Basic_DOS", round(op_periods.basic.period_operating_hours, TOL)),
         XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL)),
         XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL)),
-        XML_Node("Minimum_PDF  ", round(op_periods.minimum.period_operation_speed, TOL)),
+        XML_Node("Minimum_PDF", round(op_periods.minimum.period_operation_speed, TOL)),
     ]
 
 

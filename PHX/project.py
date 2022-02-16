@@ -60,9 +60,9 @@ class Project:
 
     _assembly_types: dict[str, constructions.Assembly] = field(default_factory=dict)
     _window_types: dict[str, Any] = field(default_factory=dict)
-    utilisation_patterns_ventilation: schedules.UtilPat_Vent_Collection = field(
+    utilization_patterns_ventilation: schedules.UtilPat_Vent_Collection = field(
         default_factory=schedules.UtilPat_Vent_Collection)
-    utilisation_patterns_ph: list = field(default_factory=list)
+    utilization_patterns_ph: list = field(default_factory=list)
     variants: list = field(default_factory=list)
 
     project_data: ProjectData = field(default_factory=ProjectData)

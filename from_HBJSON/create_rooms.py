@@ -37,7 +37,7 @@ def calc_space_ventilation_flow_rate(_space: space.Space) -> float:
 
 
 def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
-    """Create a new RoomVentialtion object with attributes based on a Honeybee-PH Space
+    """Create a new RoomVentilation object with attributes based on a Honeybee-PH Space
 
     Arguments:
     ----------

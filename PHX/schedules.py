@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 class UtilPat_Vent_Collection:
     patterns: dict = field(default_factory=dict)
 
-    def add_new_util_pattern(self, _util_pattern: UtilizationPatternVent) -> None:
+    def add_new_util_pattern(self, _util_pattern: UtilizationPatternVent | None) -> None:
         """Add a new Utilization Pattern to the Collection.
 
         Arguments:
@@ -23,6 +23,9 @@ class UtilPat_Vent_Collection:
         --------
             * None
         """
+        if _util_pattern is None:
+            return
+
         self.patterns[_util_pattern.identifier] = _util_pattern
 
     def key_is_in_collection(self, _id) -> bool:
