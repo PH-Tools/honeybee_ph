@@ -41,10 +41,10 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
 
     Arguments:
     ----------
-        * _hb_room (): The Honyebee Room to build the schedule for.
-        * _use_dcv (bool): Use Demand-Controled Ventilation? default=True. Set 'True' in
+        * _hb_room (): The Honeybee Room to build the schedule for.
+        * _use_dcv (bool): Use Demand-Controlled Ventilation? default=True. Set 'True' in
             order to take the Occupancy Schedule and Airflow-per-person loads into account.
-            If False, will asssume constant airflow for occupancy-related ventilation loads.
+            If False, will assume constant airflow for occupancy-related ventilation loads.
 
     Returns:
     --------
@@ -64,7 +64,7 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
 
     # -------------------------------------------------------------------------
     # 2) Get the Occupancy + Ventilation Schedules hourly value generators
-    # -- Use try/ excpting since some honeybee programs don't have these attrs.
+    # -- Use try/ excepting since some honeybee programs don't have these attrs.
     # -- If schedule is missing, use a default constant value (1) schedule.
     try:
         schd_occ_values = _hb_room.properties.energy.people.occupancy_schedule.values()
@@ -78,13 +78,16 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
 
     # -------------------------------------------------------------------------
     # 3) Calc the Hourly Airflows, taking the Schedules into account
-    hourly_m3s_for_vent = (vent_m3s_total * _ for _ in schd_vent_values)
+    # Note: Should BOTH the by_zone AND the by_person flow-rates be modulated?
+    # currently yes: both are being affected. Should ONLY the by_person rates be affected?
     if _use_dcv:
         # -- YES DCV = Modulate the flow rates based on occupancy level.
         hourly_m3s_for_occ = (occ_m3s_total * _ for _ in schd_occ_values)
+        hourly_m3s_for_vent = (vent_m3s_total * _ for _ in schd_vent_values)
     else:
-        # -- No DCVC = Use constant flow rate, regardless of occupancy level.
+        # -- No DCV = Use constant flow rate, regardless of occupancy level.
         hourly_m3s_for_occ = (occ_m3s_total * 1 for _ in schd_occ_values)
+        hourly_m3s_for_vent = (vent_m3s_total * 1 for _ in schd_vent_values)
 
     #  ------------------------------------------------------------------------
     # 4) Calc the Percentage of Peak airflow for each hourly value

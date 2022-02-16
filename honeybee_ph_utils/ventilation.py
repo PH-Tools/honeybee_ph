@@ -24,11 +24,15 @@ def hb_room_vent_flowrates(_hb_room):
             - [2] (m3s): The honeybee-Room's ventilation flow_by_air_changes_per_hour
             - [3] (m3s): The honeybee-Room's ventilation flow_per_zone
     """
-    vent_program = _hb_room.properties.energy.ventilation
+    default_flow_rates = (0.0, 0.0, 0.0, 0.0)
+    try:
+        vent_program = _hb_room.properties.energy.ventilation
+    except:
+        return default_flow_rates
 
     if vent_program is None:
         # -- Not all programs have a ventilation. If so, return 0 for all flows.
-        return (0.0, 0.0, 0.0, 0.0)
+        return default_flow_rates
     else:
         return (
             vent_program.flow_per_person,

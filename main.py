@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.10 -*-
 
-"""Run script to convert an HBJSON file over to WUIF XML format."""
+"""Run script to convert an HBJSON file over to WUFI XML format."""
 
 from rich import print
 import pathlib
@@ -12,8 +12,8 @@ import to_WUFI_XML.xml_txt_to_file
 
 # --- Input / Output file Path
 # -----------------------------------------------------------------------------
-SOURCE_FILE = pathlib.Path("sample", "hbjson", "Undercliff_220215.hbjson")
-TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Undercliff_220215.xml")
+SOURCE_FILE = pathlib.Path("sample", "hbjson", "Undercliff_220216.hbjson")
+TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Undercliff_220216.xml")
 
 # --- Read in an existing HB_JSON and re-build the HB Objects
 # -----------------------------------------------------------------------------
