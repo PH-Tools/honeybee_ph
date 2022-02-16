@@ -9,7 +9,7 @@ from honeybee import model
 from honeybee import room
 
 from PHX.project import Project
-from from_HBJSON import create_assemblies, create_variant, merge
+from from_HBJSON import create_assemblies, create_variant, merge, create_shades
 from from_HBJSON import create_schedules
 
 
@@ -62,6 +62,7 @@ def convert_HB_model_to_WUFI_Project(_hb_model: model.Model, group_components: b
     for room_group in sort_hb_rooms_by_bldg_segment(_hb_model.rooms):
         merged_hb_room = merge.merge_rooms(room_group)
         new_variant = create_variant.from_hb_room(merged_hb_room, group_components)
+        create_shades.add_model_shades_to_variant(new_variant, _hb_model)
         project.add_new_variant(new_variant)
 
     return project

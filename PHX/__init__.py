@@ -8,11 +8,12 @@ Project
     ├---Utilization Patterns (Passive House)
     ├---Assembly Types
     ├---Window Types
-    └---Variants
+    └---Variants (Building-Segment)
         ├---Climate
         ├---Graphics3D
         └---Building
             ├---Components
+            ├---Shades (Components)
             └---Zones
                 └---Rooms
 """

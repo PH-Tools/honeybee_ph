@@ -3,7 +3,6 @@
 
 """Functions used to create Project elements from the Honeybee-Model"""
 
-from pydoc import Doc, doc
 from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identifier
 from honeybee import model, room
 from PHX import schedules, project

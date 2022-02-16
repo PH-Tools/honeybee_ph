@@ -221,7 +221,7 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     Arguments:
     ----------
         * _hb_room (honeybee.room.Room): The honeybee room to base the Variant on.
-        * group_components (bool): defauly=False. Set to true to have the converter
+        * group_components (bool): default=False. Set to true to have the converter
             group the components by assembly-type.
 
     Returns:

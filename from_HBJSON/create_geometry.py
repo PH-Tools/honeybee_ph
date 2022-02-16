@@ -3,7 +3,7 @@
 
 """Functions for building PHX-Geometry from Ladybug / Honeybee Geometry."""
 
-from honeybee import aperture, face
+from honeybee import aperture, face, shade
 from ladybug_geometry_ph.geometry3d_ph import pointvector
 from PHX import geometry
 
@@ -72,5 +72,28 @@ def create_PHX_Polyon_from_hb_face(_hb_face: face.Face) -> geometry.Polygon:
     new_polygon.vertices = [create_PHX_Vertix_from_LBT_P3D(v) for v in _hb_face.vertices]
     new_polygon.child_polygon_ids = [aperture.properties.ph.id_num
                                      for aperture in _hb_face.apertures]
+
+    return new_polygon
+
+
+def create_PHX_Polygon_from_hb_shade(_hb_shade: shade.Shade) -> geometry.Polygon:
+    """Returns a new PHX-Polygon based on a honeybee-shade.
+
+    Arguments:
+    ----------
+        * _hb_shade (shade.Shade): The Honeybee Shade to build the new PHX-Polygon from.
+
+    Returns:
+    --------
+        * geometry.Polygon: The new PHX-Polygon created from the Honeybee-Shade.
+
+    """
+    new_polygon = geometry.Polygon()
+
+    new_polygon.id_num = geometry.Polygon._count
+    _hb_shade.properties.ph.id_num = new_polygon.id_num
+    new_polygon.normal_vector = _hb_shade.normal
+    new_polygon.vertices = [create_PHX_Vertix_from_LBT_P3D(
+        v) for v in _hb_shade.vertices]
 
     return new_polygon

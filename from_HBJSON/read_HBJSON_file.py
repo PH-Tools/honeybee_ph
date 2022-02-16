@@ -104,6 +104,15 @@ def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
 
     _model._rooms = new_rooms
 
+    # -- convert the orphaned-shades
+    new_shades = []
+    for shade in _model.orphaned_shades:
+        new_shade = shade.duplicate()
+        new_shade._geometry = convert_face_3d(new_shade.geometry)
+        new_shades.append(new_shade)
+
+    _model._orphaned_shades = new_shades
+
     return _model
 
 
