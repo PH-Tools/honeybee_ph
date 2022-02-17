@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """PHX Geometry Classes"""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Collection
+from typing import Any, ClassVar, Collection, List, Union
 
 
 @dataclass
@@ -25,11 +25,11 @@ class Polygon:
     _count: ClassVar[int] = 0
     id_num: int = 0
     normal_vector: Any = None
-    vertices: list[Vertix] = field(default_factory=list)
-    child_polygon_ids: list[int] = field(default_factory=list)
+    vertices: List[Vertix] = field(default_factory=list)
+    child_polygon_ids: List[int] = field(default_factory=list)
 
     @property
-    def vertices_id_numbers(self) -> list[int]:
+    def vertices_id_numbers(self) -> List[int]:
         return [v.id_num for v in self.vertices]
 
     def __new__(cls, *args, **kwargs):
@@ -39,13 +39,13 @@ class Polygon:
 
 @dataclass
 class Graphics3D:
-    polygons: list[Polygon] = field(default_factory=list)
+    polygons: List[Polygon] = field(default_factory=list)
 
     @property
     def vertices(self):
         return [vertix for polygon in self.polygons for vertix in polygon.vertices]
 
-    def add_polygons(self, _polygons: list[Polygon] | Polygon) -> None:
+    def add_polygons(self, _polygons: Union[List[Polygon], Polygon]) -> None:
         if not isinstance(_polygons, Collection):
             _polygons = [_polygons]
 

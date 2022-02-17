@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Functions used to create Project elements from the Honeybee-Model"""
 
 from honeybee import model
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 from PHX import constructions
+from typing import Union
 
 
 def _conductivity_from_r_value(_r_value: float, _thickness: float) -> float:
@@ -24,7 +25,7 @@ def _conductivity_from_r_value(_r_value: float, _thickness: float) -> float:
     return conductivity
 
 
-def build_layer_from_hb_material(_hb_material: (EnergyMaterial | EnergyMaterialNoMass)) -> constructions.Layer:
+def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMaterialNoMass]) -> constructions.Layer:
     """Returns a new PHX-Layer with attributes based on a Honeybee-Material.
 
     Arguments:

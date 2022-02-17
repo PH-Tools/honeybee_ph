@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Run script to convert an HBJSON file over to WUFI XML format."""
 

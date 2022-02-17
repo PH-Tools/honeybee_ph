@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Functions used to merge Honeybee-Rooms together"""
-
+from typing import List
 from honeybee import room, face
 from honeybee.boundarycondition import Outdoors, Ground
 from honeybee_energy.boundarycondition import Adiabatic
 
 
-def get_room_exposed_faces(_hb_room: room.Room) -> list[face.Face3D]:
+def get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
     """Returns a list of the exposed Honeybee Faces of a Honeybee Room. Exposed 
     faces are faces with a Boundary Condition of: 'Outdoors', 'Ground' or 'Adiabatic'.
 
@@ -41,7 +41,7 @@ def get_room_exposed_faces(_hb_room: room.Room) -> list[face.Face3D]:
     return exposed_faces
 
 
-def merge_rooms(_hb_rooms: list[room.Room]) -> room.Room:
+def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
     """Merge together a group of Honeybee Rooms into a new single HB Room. 
 
     This will 

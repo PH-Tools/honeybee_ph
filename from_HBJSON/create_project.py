@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Functions used to convert a standard HBJSON Model over to WUFI Objects"""
 
 from collections import defaultdict
+from typing import Tuple, List
 
 from honeybee import model
 from honeybee import room
@@ -20,7 +21,7 @@ class MissingPropertiesError(Exception):
         super().__init__(self.message)
 
 
-def sort_hb_rooms_by_bldg_segment(_hb_rooms: tuple[room.Room]) -> list[list[room.Room]]:
+def sort_hb_rooms_by_bldg_segment(_hb_rooms: Tuple[room.Room]) -> List[List[room.Room]]:
     """Returns Groups of Honeybee-Rooms broken up by properties.ph.ph_bldg_segment.identifier.
 
     Arguments:

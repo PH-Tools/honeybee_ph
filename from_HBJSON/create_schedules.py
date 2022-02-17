@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Functions used to create Project elements from the Honeybee-Model"""
 
+from typing import Optional
 from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identifier
 from honeybee import model, room
 from PHX import schedules, project
@@ -135,7 +136,7 @@ def _create_vent_pattern_from_ph_style(_hb_room: room.Room) -> schedules.Utiliza
     return new_util_pattern
 
 
-def build_util_pat_from_hb_room(_hb_room: room.Room) -> schedules.UtilizationPatternVent | None:
+def build_util_pat_from_hb_room(_hb_room: room.Room) -> Optional[schedules.UtilizationPatternVent]:
     """Build a new Ventilation Utilization Schedule based on a Honeybee-Room's energy.ventilation values.
 
     Arguments:

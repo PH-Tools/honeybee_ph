@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """"""
-
+from typing import Optional, List
 from collections.abc import Callable
+
 import to_WUFI_XML.xml_schemas
 from to_WUFI_XML.xml_writables import xml_writable
 
@@ -18,7 +19,7 @@ class NoXMLSchemaFoundError(Exception):
         super(NoXMLSchemaFoundError, self).__init__(self.message)
 
 
-def get_HB_object_conversion_schema(_hb_object, _schema_name: str | None) -> Callable:
+def get_HB_object_conversion_schema(_hb_object, _schema_name: Optional[str]) -> Callable:
     """Returns the appropriate XML write schema function for the Honeybee-object.
 
     Arguments:
@@ -50,7 +51,7 @@ def get_HB_object_conversion_schema(_hb_object, _schema_name: str | None) -> Cal
     return schema_function
 
 
-def convert_HB_object_to_xml_writables_list(_hb_object, _schema_nm: str | None = None) -> list[xml_writable]:
+def convert_HB_object_to_xml_writables_list(_hb_object, _schema_nm: Optional[str] = None) -> List[xml_writable]:
     """Returns a list of the Honeybee-Object's Properties in WUFI-XML format.
 
         * _hb_object (?): The Honeybee-object to convert into XML text.

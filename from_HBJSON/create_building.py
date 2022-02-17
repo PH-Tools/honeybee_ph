@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Functions to build PHX-Building from Honeybee Rooms"""
-from typing import Any
+from typing import Any, Optional, List
 
 from honeybee import room, aperture, face
 from PHX import building
 from from_HBJSON import create_rooms
 
 
-def get_wufi_enum(_schema_nm: str, _key: str, _default: Any, _sub_schema: str | None = None) -> int:
+def get_wufi_enum(_schema_nm: str, _key: str, _default: Any, _sub_schema: Optional[str] = None) -> int:
     """Convert Honeybe attribute values into corresponding WUFI integer enums.
 
     Arguments:
@@ -144,7 +144,7 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
     return new_compo
 
 
-def create_components_from_hb_room(_hb_room: room.Room) -> list[building.Component]:
+def create_components_from_hb_room(_hb_room: room.Room) -> List[building.Component]:
     """Create new Opaque and Transparent PHX-Components based on Honeybee-Room Faces.
 
     Arguments:

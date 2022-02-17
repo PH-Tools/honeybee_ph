@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
 from dataclasses import dataclass
+from typing import List
 
 from PHX import ground, mech_equip, project, building, certification, \
     climate, constructions, geometry, schedules, ventilation
@@ -15,7 +16,7 @@ TOL = 2  # Value tolerance for rounding. ie; 9.84318191919 -> 9.84
 # -- PROJECT --
 
 
-def _Project(_wufi_project: project.Project) -> list[xml_writable]:
+def _Project(_wufi_project: project.Project) -> List[xml_writable]:
     return [
         XML_Node("DataVersion", _wufi_project.data_version),
         XML_Node("UnitSystem", _wufi_project.data_version),
@@ -44,7 +45,7 @@ def _Project(_wufi_project: project.Project) -> list[xml_writable]:
     ]
 
 
-def _Variant(_variant: project.Variant) -> list[xml_writable]:
+def _Variant(_variant: project.Variant) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _variant.id_num),
         XML_Node("Name", _variant.name),
@@ -59,7 +60,7 @@ def _Variant(_variant: project.Variant) -> list[xml_writable]:
     ]
 
 
-def _ProjectData(_project_data: project.ProjectData) -> list[xml_writable]:
+def _ProjectData(_project_data: project.ProjectData) -> List[xml_writable]:
     return [
         XML_Node("Year_Construction", _project_data.year_constructed),
         XML_Node("OwnerIsClient", _project_data.owner_is_client),
@@ -94,7 +95,7 @@ def _ProjectData(_project_data: project.ProjectData) -> list[xml_writable]:
 # -- BUILDING --
 
 
-def _Building(_b: building.Building) -> list[xml_writable]:
+def _Building(_b: building.Building) -> List[xml_writable]:
     return [
         XML_List("Components", [XML_Object("Component", c, "index", i)
                  for i, c in enumerate(_b.components)]),
@@ -103,7 +104,7 @@ def _Building(_b: building.Building) -> list[xml_writable]:
     ]
 
 
-def _Zone(_z: building.Zone) -> list[xml_writable]:
+def _Zone(_z: building.Zone) -> List[xml_writable]:
     return [
         XML_Node("Name", _z.name),
         XML_Node("IdentNr", _z.id_num),
@@ -123,7 +124,7 @@ def _Zone(_z: building.Zone) -> list[xml_writable]:
     ]
 
 
-def _Component(_c: building.Component) -> list[xml_writable]:
+def _Component(_c: building.Component) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _c.id_num),
         XML_Node("Name", _c.name),
@@ -144,7 +145,7 @@ def _Component(_c: building.Component) -> list[xml_writable]:
 # -- CERTIFICATION --
 
 
-def _PH_Building(_ph_bldg: certification.PH_Building) -> list[xml_writable]:
+def _PH_Building(_ph_bldg: certification.PH_Building) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _ph_bldg._count),
         XML_Node("BuildingCategory", _ph_bldg.building_category),
@@ -160,7 +161,7 @@ def _PH_Building(_ph_bldg: certification.PH_Building) -> list[xml_writable]:
     ]
 
 
-def _PassivehouseData(_ph_data: certification.PassivehouseData) -> list[xml_writable]:
+def _PassivehouseData(_ph_data: certification.PassivehouseData) -> List[xml_writable]:
     return [
         XML_Node("PH_CertificateCriteria", _ph_data.ph_certificate_criteria),
         XML_Node("PH_SelectionTargetData", _ph_data.ph_selection_target_data),
@@ -175,7 +176,7 @@ def _PassivehouseData(_ph_data: certification.PassivehouseData) -> list[xml_writ
 
 # -- FOUNDATIONS --
 
-def _FoundationInterface(_f: ground.Foundation) -> list[xml_writable]:
+def _FoundationInterface(_f: ground.Foundation) -> List[xml_writable]:
     return [
         XML_Node("Name", ''),
         XML_Node("SettingFloorSlabType", _f.floor_setting_num,
@@ -219,7 +220,7 @@ def _FoundationInterface(_f: ground.Foundation) -> list[xml_writable]:
 # -- CLIMATE --
 
 
-def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> list[xml_writable]:
+def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> List[xml_writable]:
     return [
         XML_Node('Selection', _climate.selection),
         XML_Node('SelectionPECO2Factor', _climate.selection_pe_co2_factor),
@@ -290,7 +291,7 @@ def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> list[xml_writab
     ]
 
 
-def _ClimateLocation(_climate: climate.ClimateLocation) -> list[xml_writable]:
+def _ClimateLocation(_climate: climate.ClimateLocation) -> List[xml_writable]:
     return [
         XML_Node('Selection', _climate.selection),
         # XML_Node('IDNr_DB', _climate.),
@@ -319,7 +320,7 @@ def _ClimateLocation(_climate: climate.ClimateLocation) -> list[xml_writable]:
 # -- GEOMETRY --
 
 
-def _Graphics3D(_graphics3D: geometry.Graphics3D) -> list[xml_writable]:
+def _Graphics3D(_graphics3D: geometry.Graphics3D) -> List[xml_writable]:
     return [
         XML_List("Vertices", [XML_Object("Vertix", var, "index", i)
                  for i, var in enumerate(_graphics3D.vertices)]),
@@ -328,7 +329,7 @@ def _Graphics3D(_graphics3D: geometry.Graphics3D) -> list[xml_writable]:
     ]
 
 
-def _Polygon(_p: geometry.Polygon) -> list[xml_writable]:
+def _Polygon(_p: geometry.Polygon) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _p.id_num),
         XML_Node("NormalVectorX", _p.normal_vector.x),
@@ -346,7 +347,7 @@ def _Polygon(_p: geometry.Polygon) -> list[xml_writable]:
     ]
 
 
-def _Vertix(_v: geometry.Vertix) -> list[xml_writable]:
+def _Vertix(_v: geometry.Vertix) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _v.id_num),
         XML_Node("X", _v.x),
@@ -358,7 +359,7 @@ def _Vertix(_v: geometry.Vertix) -> list[xml_writable]:
 # -- CONSTRUCTIONS --
 
 
-def _Assembly(_a: constructions.Assembly) -> list[xml_writable]:
+def _Assembly(_a: constructions.Assembly) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _a.id_num),
         XML_Node("Name", _a.name),
@@ -369,14 +370,14 @@ def _Assembly(_a: constructions.Assembly) -> list[xml_writable]:
     ]
 
 
-def _Layer(_l: constructions.Layer) -> list[xml_writable]:
+def _Layer(_l: constructions.Layer) -> List[xml_writable]:
     return [
         XML_Node("Thickness", _l.thickness),
         XML_Object("Material", _l.material),
     ]
 
 
-def _Material(_m: constructions.Material) -> list[xml_writable]:
+def _Material(_m: constructions.Material) -> List[xml_writable]:
     return [
         XML_Node("Mass", _m.name),
         XML_Node("ThermalConductivity", _m.conductivity),
@@ -388,7 +389,7 @@ def _Material(_m: constructions.Material) -> list[xml_writable]:
     ]
 
 
-def _WindowType(_wt: constructions.WindowType) -> list[xml_writable]:
+def _WindowType(_wt: constructions.WindowType) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _wt.id_num),
         XML_Node("Name", _wt.name),
@@ -411,7 +412,7 @@ def _WindowType(_wt: constructions.WindowType) -> list[xml_writable]:
 # -- VENTILATION --
 
 
-def _RoomVentilation(_r: ventilation.RoomVentilation) -> list[xml_writable]:
+def _RoomVentilation(_r: ventilation.RoomVentilation) -> List[xml_writable]:
     return [
         XML_Node('Name', _r.name),
         XML_Node('Type', _r.wufi_type),
@@ -430,7 +431,7 @@ def _RoomVentilation(_r: ventilation.RoomVentilation) -> list[xml_writable]:
     ]
 
 
-def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> list[xml_writable]:
+def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> List[xml_writable]:
     op_periods = _util_pat.operating_periods
     return [
         XML_Node("Name", _util_pat.name),
@@ -451,7 +452,7 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> list
 # -- HVAC --
 
 
-def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> list[xml_writable]:
+def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> List[xml_writable]:
     return [
         XML_Node("IdentNrZone", _zc.zone_num),
         XML_Node("CoverageHeating", _zc.zone_num),
@@ -473,7 +474,7 @@ class Temp_PH_Params:
     in_conditioned_space: bool = True
 
 
-def _Device_Ventilator(_d: mech_equip.PhxVentilator) -> list[xml_writable]:
+def _Device_Ventilator(_d: mech_equip.PhxVentilator) -> List[xml_writable]:
     ph_params = Temp_PH_Params()
     ph_params.quantity = _d.quantity
     ph_params.heat_recovery_efficiency = _d.heat_recovery_efficiency
@@ -503,7 +504,7 @@ def _Device_Ventilator(_d: mech_equip.PhxVentilator) -> list[xml_writable]:
     ]
 
 
-def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> list[xml_writable]:
+def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> List[xml_writable]:
     return [
         XML_Node("Quantity", _params.quantity),
         XML_Node("HumidityRecoveryEfficiency", _params.moisture_recovery_efficiency),
@@ -529,11 +530,11 @@ def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> list[xml_writable]:
     ]
 
 
-def _Device_ElecResistance(_d: mech_equip.PhxMechanicalEquipment) -> list[xml_writable]:
+def _Device_ElecResistance(_d: mech_equip.PhxMechanicalEquipment) -> List[xml_writable]:
     return []
 
 
-def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollection) -> list[xml_writable]:
+def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
     devices = {
         1: '_Device_Ventilator',
         2: '_Device_ElecResistance',
@@ -550,7 +551,7 @@ def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollec
     ]
 
 
-def _HVAC_Collection(_hvac) -> list[xml_writable]:
+def _HVAC_Collection(_hvac) -> List[xml_writable]:
     return [
         XML_List("Systems", [XML_Object("System", n, "index", i, _schema_name='_WUFI_HVAC_SystemGroup')
                  for i, n in enumerate([_hvac])]),

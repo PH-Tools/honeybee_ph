@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.10 -*-
+# -*- Python Version: 3.7 -*-
 
 """Functions to build PHX 'RoomVentilation' entities from Honeybee-PH Spaces"""
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import ClassVar, Any
+from typing import ClassVar, Any, Dict, Optional
 
 
 class PhxMechanicalEquipment:
@@ -54,7 +54,7 @@ class PhxMechanicalEquipmentCollection:
     sys_type_str: str = "User defined (ideal system)"
 
     zone_coverage: PhxZoneCoverage = field(default_factory=PhxZoneCoverage)
-    _equipment: dict[str, Any] = field(default_factory=dict)
+    _equipment: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def equipment(self):
@@ -67,7 +67,7 @@ class PhxMechanicalEquipmentCollection:
     def equipment_in_collection(self, _equipment_key) -> bool:
         return _equipment_key in self._equipment.keys()
 
-    def get_mech_equipment_by_key(self, _key: str) -> PhxMechanicalEquipment | None:
+    def get_mech_equipment_by_key(self, _key: str) -> Optional[PhxMechanicalEquipment]:
         return self._equipment.get(_key, None)
 
     def add_new_mech_equipment(self, _key: str, _equipment: PhxMechanicalEquipment) -> None:
