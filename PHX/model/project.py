@@ -7,7 +7,8 @@ from __future__ import annotations
 from typing import Any, ClassVar
 from dataclasses import dataclass, field
 
-from PHX import mech_equip, building, geometry, climate, certification, constructions, schedules
+from PHX.model import schedules
+from PHX.model import building, certification, climate, constructions, geometry, mech_equip
 
 
 @dataclass

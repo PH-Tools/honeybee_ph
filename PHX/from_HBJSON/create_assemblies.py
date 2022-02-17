@@ -5,7 +5,7 @@
 
 from honeybee import model
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
-from PHX import constructions
+from PHX.model import constructions
 from typing import Union
 
 

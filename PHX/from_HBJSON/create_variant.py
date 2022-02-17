@@ -4,8 +4,9 @@
 """Functions to build PHX-Variant from Honeybee Rooms"""
 
 from honeybee import room
-from PHX import project, certification, ground
-from from_HBJSON import create_building, create_geometry, create_hvac
+from PHX.model import project
+from PHX.model import certification, ground
+from PHX.from_HBJSON import create_building, create_geometry, create_hvac
 
 
 def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:

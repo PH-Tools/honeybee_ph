@@ -10,7 +10,7 @@ from collections import defaultdict
 from functools import reduce
 import operator
 
-from PHX import ventilation
+from PHX.model import ventilation
 
 
 @dataclass

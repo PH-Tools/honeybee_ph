@@ -3,7 +3,7 @@
 
 """Functions to build PHX 'RoomVentilation' entities from Honeybee-PH Spaces"""
 
-from PHX import ventilation
+from PHX.model import ventilation
 from honeybee_ph import space
 from honeybee_ph_utils.occupancy import hb_room_ppl_per_area
 from honeybee_ph_utils.ventilation import hb_room_vent_flowrates

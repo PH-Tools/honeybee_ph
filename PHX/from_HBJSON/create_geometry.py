@@ -5,7 +5,7 @@
 
 from honeybee import aperture, face, shade
 from ladybug_geometry_ph.geometry3d_ph import pointvector
-from PHX import geometry
+from PHX.model import geometry
 
 
 def create_PHX_Vertix_from_LBT_P3D(_lbt_Point3D: pointvector.PH_Point3D) -> geometry.Vertix:

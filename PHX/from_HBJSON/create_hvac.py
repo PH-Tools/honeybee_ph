@@ -3,7 +3,7 @@
 
 """Functions to create PHX-HVAC objects from Honeybee-Energy HVAC"""
 
-from PHX import mech_equip
+from PHX.model import mech_equip
 from honeybee_ph import space
 
 

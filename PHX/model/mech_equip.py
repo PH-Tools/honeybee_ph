@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 3.7 -*-
+
+"""PHX Passive House Mechanical Equipment Classes"""
+
 from dataclasses import dataclass, field
 from typing import ClassVar, Any, Dict, Optional
 

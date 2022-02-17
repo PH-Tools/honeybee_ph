@@ -6,9 +6,9 @@
 from dataclasses import dataclass
 from typing import List
 
-from PHX import ground, mech_equip, project, building, certification, \
-    climate, constructions, geometry, schedules, ventilation
-from to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
+from PHX.model import project
+from PHX.model import building, certification, climate, constructions, geometry, ground, mech_equip, schedules, ventilation
+from PHX.to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
 TOL = 2  # Value tolerance for rounding. ie; 9.84318191919 -> 9.84
 

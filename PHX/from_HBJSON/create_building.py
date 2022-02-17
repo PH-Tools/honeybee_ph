@@ -5,8 +5,8 @@
 from typing import Any, Optional, List
 
 from honeybee import room, aperture, face
-from PHX import building
-from from_HBJSON import create_rooms
+from PHX.model import building
+from PHX.from_HBJSON import create_rooms
 
 
 def get_wufi_enum(_schema_nm: str, _key: str, _default: Any, _sub_schema: Optional[str] = None) -> int:

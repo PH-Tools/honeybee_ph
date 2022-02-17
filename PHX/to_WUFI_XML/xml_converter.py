@@ -5,8 +5,8 @@
 from typing import Optional, List
 from collections.abc import Callable
 
-import to_WUFI_XML.xml_schemas
-from to_WUFI_XML.xml_writables import xml_writable
+from PHX.to_WUFI_XML import xml_schemas
+from PHX.to_WUFI_XML.xml_writables import xml_writable
 
 
 class NoXMLSchemaFoundError(Exception):
@@ -43,10 +43,10 @@ def get_HB_object_conversion_schema(_hb_object, _schema_name: Optional[str]) -> 
         _schema_name = "_{}".format(_hb_object.__class__.__name__)
 
     # -- Schema Function
-    schema_function = getattr(to_WUFI_XML.xml_schemas, _schema_name, None)
+    schema_function = getattr(xml_schemas, _schema_name, None)
     if not schema_function:
         raise NoXMLSchemaFoundError(
-            to_WUFI_XML.xml_schemas, _hb_object, _schema_name)
+            xml_schemas, _hb_object, _schema_name)
 
     return schema_function
 

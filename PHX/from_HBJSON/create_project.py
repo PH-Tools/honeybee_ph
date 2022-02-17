@@ -9,9 +9,9 @@ from typing import Tuple, List
 from honeybee import model
 from honeybee import room
 
-from PHX.project import Project
-from from_HBJSON import create_assemblies, create_variant, merge, create_shades
-from from_HBJSON import create_schedules
+from PHX.model.project import Project
+from PHX.from_HBJSON import create_assemblies, create_variant, merge, create_shades
+from PHX.from_HBJSON import create_schedules
 
 
 class MissingPropertiesError(Exception):

@@ -4,8 +4,9 @@
 """Functions to create new PHX-Shades from HB-Model Orphaned-Shade Objects."""
 
 from honeybee import model, shade
-from PHX import project, building
-from from_HBJSON import create_geometry
+from PHX.model import project
+from PHX.model import building
+from PHX.from_HBJSON import create_geometry
 
 
 def _add_shade_geometry_from_model(_var: project.Variant, _hb_model: model.Model) -> None:

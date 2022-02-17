@@ -5,9 +5,8 @@
 
 from typing import Union
 from xml.dom.minidom import Document, Element
-from PHX.project import Project
-import to_WUFI_XML.xml_writables
-import to_WUFI_XML.xml_converter
+from PHX.model.project import Project
+from PHX.to_WUFI_XML import xml_writables, xml_converter
 
 
 def _xml_str(_: Union[str, bool]) -> str:
@@ -22,12 +21,12 @@ def _xml_str(_: Union[str, bool]) -> str:
         return str(_)
 
 
-def add_node_attributes(_data: to_WUFI_XML.xml_writables.xml_writable, _element: Element) -> None:
+def add_node_attributes(_data: xml_writables.xml_writable, _element: Element) -> None:
     """Sets in any Node Attribute data on the Element, if any is found.
 
     Arguments:
     ----------
-        * _data (PyPH_WUFI.xml_writables.xml_writable): The XML Data object to use as the source
+        * _data (xml_writables.xml_writable): The XML Data object to use as the source
         * _elememt (xml.dom.minidom.Element): The XML Element to set the Attributes for.
     """
 
@@ -36,14 +35,14 @@ def add_node_attributes(_data: to_WUFI_XML.xml_writables.xml_writable, _element:
             None, str(_data.attr_name), str(_data.attr_value))
 
 
-def _add_text_node(_doc: Document, _parent_node: Element, _data: to_WUFI_XML.xml_writables.xml_writable) -> None:
+def _add_text_node(_doc: Document, _parent_node: Element, _data: xml_writables.xml_writable) -> None:
     """Adds a basic text-node ie: "<node_name>node_value</node_name>" to the XML Parent Node.
 
     Arguments:
     ----------
         * _doc (xml.dom.minidom.Document): The XML document to operate on.
         * _parent_node (xml.dom.minidom.Element): The XML element to use as the 'parent' node.
-        * _data (to_WUFI_XML.xml_writables.xml_writable): The new XML_writable object to add to the 'parent' node.
+        * _data (xml_writables.xml_writable): The new XML_writable object to add to the 'parent' node.
     """
 
     # -- 1) Create the new text-node
@@ -62,38 +61,38 @@ def _add_text_node(_doc: Document, _parent_node: Element, _data: to_WUFI_XML.xml
     _parent_node.appendChild(new_element)
 
 
-def add_children(_doc: Document, _parent_node: Element, _item: to_WUFI_XML.xml_writables.xml_writable) -> None:
+def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml_writable) -> None:
     """Adds 'child' nodes to the XML Document and parent node recursively.
 
-    If the _item passed in is a basic type like a string or number (to_WUFI_XML.xml_writables.XML_Node),
-    it will just get added directly to the XML document. If the _item is an Object (to_WUFI_XML.xml_writables.XML_Object), 
-    the functuon 'to_WUFI_XML.xml_converter.convert_HB_object_to_xml_writables_list()' will get called on the object, 
-    and all returned attributes will be added to the XML document. If _item is a list (to_WUFI_XML.xml_writables.XML_List) 
+    If the _item passed in is a basic type like a string or number (xml_writables.XML_Node),
+    it will just get added directly to the XML document. If the _item is an Object (xml_writables.XML_Object), 
+    the functuon 'xml_converter.convert_HB_object_to_xml_writables_list()' will get called on the object, 
+    and all returned attributes will be added to the XML document. If _item is a list (xml_writables.XML_List) 
     then each item in the list gets added to the XML document in turn.
 
     Arguments:
     ----------
         * _doc (xml.dom.minidom.doc): The XML Document to operate on.
         * _parent_node (xml.dom.minidom.Element): The XML element to use as the 'parent' node.
-        * _item (to_WUFI_XML.xml_writables.xml_writable): The XML Data Node/Object/List to add to the parent node.
+        * _item (xml_writables.xml_writable): The XML Data Node/Object/List to add to the parent node.
     """
 
-    if isinstance(_item, to_WUFI_XML.xml_writables.XML_Node):
+    if isinstance(_item, xml_writables.XML_Node):
         # -- Basic Node, write out the value
         _add_text_node(_doc, _parent_node, _item)
 
-    elif isinstance(_item, to_WUFI_XML.xml_writables.XML_Object):
+    elif isinstance(_item, xml_writables.XML_Object):
         # -- Add a new node for the object, then try and add all its fields
         new_parent_node = _doc.createElementNS(None, _xml_str(_item.node_name))
         add_node_attributes(_item, new_parent_node)
         _parent_node.appendChild(new_parent_node)
 
-        for item in to_WUFI_XML.xml_converter.convert_HB_object_to_xml_writables_list(
+        for item in xml_converter.convert_HB_object_to_xml_writables_list(
             _item.node_object, _item.schema_name
         ):
             add_children(_doc, new_parent_node, item)
 
-    elif isinstance(_item, to_WUFI_XML.xml_writables.XML_List):
+    elif isinstance(_item, xml_writables.XML_List):
         # -- Add a new node for the 'container', and then add each item in the list
         new_parent_node = _doc.createElementNS(None, _xml_str(_item.node_name))
         add_node_attributes(_item, new_parent_node)
@@ -119,7 +118,7 @@ def generate_WUFI_XML_for_Project(_project: Project) -> str:
     root = doc.createElementNS(None, "WUFIplusProject")
     doc.appendChild(root)
 
-    for item in to_WUFI_XML.xml_converter.convert_HB_object_to_xml_writables_list(_project):
+    for item in xml_converter.convert_HB_object_to_xml_writables_list(_project):
         add_children(doc, root, item)
 
     return doc.toprettyxml()

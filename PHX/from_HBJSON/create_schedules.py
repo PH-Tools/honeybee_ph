@@ -6,7 +6,8 @@
 from typing import Optional
 from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identifier
 from honeybee import model, room
-from PHX import schedules, project
+from PHX.model import project
+from PHX.model import schedules
 from honeybee_ph_utils.schedules import calc_four_part_vent_sched_values_from_hb_room
 from honeybee_energy.schedule import ruleset
 
