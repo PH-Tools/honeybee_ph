@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""PH Properties classes for Space objects."""
+
 try:
     from typing import Any
 except:
