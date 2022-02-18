@@ -91,3 +91,6 @@ class Project:
 
     def assembly_in_project(self, _key) -> bool:
         return _key in self._assembly_types.keys()
+
+    def __str__(self):
+        return f"PHX-Project: {self.name}"

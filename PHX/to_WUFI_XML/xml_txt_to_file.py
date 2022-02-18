@@ -7,7 +7,6 @@ from datetime import datetime
 import os
 import shutil
 from pathlib import Path
-from rich import print
 
 
 def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
@@ -24,7 +23,7 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
 
     Raises:
     -------
-        * PermissionError: If the target file can't be overwriten for some reason. ie: if it's
+        * PermissionError: If the target file can't be overwritten for some reason. ie: if it's
             open and being read by another program or application. In this case, will write out
             to a new file with a unique time-stamped name instead.
     """
@@ -55,11 +54,11 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
     except PermissionError:
         # - In case the file is being used by WUFI or something else, make a new copy.
         print(
-            f"[bold]> Target file: [/bold]./{save_address_1} is currently being used by another process and is protected.\n"
-            f"[bold]> Writing to a new file: [/bold]./{save_address_2}"
+            f"> Target file: ./{save_address_1} is currently being used by another process and is protected.\n"
+            f"> Writing to a new file: ./{save_address_2}"
         )
 
         with open(save_address_2, "w", encoding="utf8") as f:
             f.writelines(_xml_text)
 
-    print("[bold green]> Successfully wrote to file.[/bold green]")
+    print("> Successfully wrote to file.")

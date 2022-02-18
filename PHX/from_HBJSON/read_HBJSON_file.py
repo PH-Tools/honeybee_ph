@@ -15,9 +15,9 @@ import ladybug_geometry
 import ladybug_geometry_ph
 # -- Dev Note: Do not remove --
 
-
 import json
 import pathlib
+from typing import Dict
 
 from honeybee import model
 from honeybee import face
@@ -116,16 +116,16 @@ def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
     return _model
 
 
-def read_hb_json(_file_address: pathlib.Path) -> model.Model:
-    """Read in the HB_JSON Model from the Rhino File and convert back into a HB-Model.
+def read_hb_json_from_file(_file_address: pathlib.Path) -> Dict:
+    """Read in the HBJSON file and return it as a python dictionary.
 
     Arguments:
     ----------
-        _file_address (str): A valid file path for the 'HB_Json' file to read.
+        _file_address (pathlib.Path): A valid file path for the HBJSON file to read.
 
     Returns:
     --------
-        model.Model: A Honeybee Model, rebuilt from the HB-JSON file.
+        Dict: The HBJSON dictionary, read in from the HBJSON file.
     """
 
     with open(_file_address) as json_file:
@@ -133,8 +133,24 @@ def read_hb_json(_file_address: pathlib.Path) -> model.Model:
 
     if data.get('type', None) != 'Model':
         raise HBJSONModelReadError(data.get('type', None))
+    else:
+        return data
 
-    # -- Clean up the model, addd the .ph properties
-    new_hb_model = model.Model.from_dict(data)
+
+def convert_hbjson_dict_to_hb_model(_data: Dict) -> model.Model:
+    """Convert an HBJSON python dictionary into an HB-Model, do some cleanup and PHX conversions.
+
+    Arguments:
+    ----------
+        _data (Dict): An HBJSON dictionary with all the model information.
+
+    Returns:
+    --------
+        model.Model: A Honeybee Model, rebuilt from the HBJSON file.
+    """
+
+    # -- Clean up the model, add the .ph properties
+    new_hb_model = model.Model.from_dict(_data)
     new_hb_model = convert_model_LBT_geometry(new_hb_model)
+
     return new_hb_model
