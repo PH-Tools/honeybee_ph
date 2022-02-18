@@ -4,7 +4,7 @@
 """Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from PHX.model import project
 from PHX.model import building, certification, climate, constructions, geometry, ground, mech_equip, schedules, ventilation
@@ -449,7 +449,7 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> List
     ]
 
 
-# -- HVAC --
+# -- MECHANICALS (HVAC, SHW) --
 
 
 def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> List[xml_writable]:
@@ -534,10 +534,73 @@ def _Device_ElecResistance(_d: mech_equip.PhxMechanicalEquipment) -> List[xml_wr
     return []
 
 
+@dataclass
+class Temp_PhParamsHotWaterTank:
+    storage_capacity: float = 0.0
+    storage_losses_standby: Optional[float] = None
+    total_solar_thermal_storage_losses: Optional[float] = None
+    input_option: int = 1
+    average_heat_release_storage: Optional[float] = None
+    tank_room_temp: float = 20.0
+    water_temp: float = 60.0
+    quantity: int = 1
+    aux_energy: Optional[float] = None
+    aux_energy_dhw: Optional[float] = None
+    in_conditioned_space: bool = True
+
+
+def _Device_WaterStorage(_d: mech_equip.PhxHotWaterTank) -> List[xml_writable]:
+    ph_params = Temp_PhParamsHotWaterTank()
+    ph_params.storage_capacity = _d.storage_capacity
+    ph_params.storage_losses_standby = _d.standby_losses
+    ph_params.total_solar_thermal_storage_losses = _d.solar_losses
+    ph_params.input_option = _d.input_option
+    ph_params.average_heat_release_storage = _d.storage_loss_rate
+    ph_params.tank_room_temp = _d.tank_room_temp
+    ph_params.water_temp = _d.tank_water_temp
+    ph_params.quantity = _d.quantity
+    ph_params.aux_energy = _d.aux_energy
+    ph_params.aux_energy_dhw = _d.aux_energy_dhw
+    ph_params.in_conditioned_space = _d.in_conditioned_space\
+
+    return [
+        XML_Node("Name", _d.name),
+        XML_Node("IdentNr", _d.id_num),
+        XML_Node("SystemType", _d.system_type_num),
+        XML_Node("TypeDevice", _d.device_type_num),
+        XML_Node("UsedFor_Heating", False),
+        XML_Node("UsedFor_DHW", True),
+        XML_Node("UsedFor_Cooling", False),
+        XML_Node("UsedFor_Ventilation", False),
+        XML_Node("UsedFor_Humidification", False),
+        XML_Node("UsedFor_Dehumidification", False),
+        XML_Object('PH_Parameters', ph_params,
+                   _schema_name='_Device_WaterStorage_PHParams')
+    ]
+
+
+def _Device_WaterStorage_PHParams(_params: Temp_PhParamsHotWaterTank) -> List[xml_writable]:
+    return [
+        XML_Node("SolarThermalStorageCapacity", _params.storage_capacity),
+        XML_Node("StorageLossesStandby", _params.storage_losses_standby),
+        XML_Node("TotalSolarThermalStorageLosses",
+                 _params.total_solar_thermal_storage_losses),
+        XML_Node("InputOption", _params.input_option),
+        XML_Node("AverageHeatReleaseStorage", _params.average_heat_release_storage),
+        XML_Node("TankRoomTemp ", _params.tank_room_temp),
+        XML_Node("TypicalStorageWaterTemperature", _params.water_temp),
+        XML_Node("QauntityWS", _params.quantity),
+        XML_Node("AuxiliaryEnergy", _params.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _params.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _params.in_conditioned_space),
+    ]
+
+
 def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
     devices = {
         1: '_Device_Ventilator',
         2: '_Device_ElecResistance',
+        8: '_Device_WaterStorage',
     }
 
     return [

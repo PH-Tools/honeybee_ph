@@ -23,6 +23,32 @@ class PhxMechanicalEquipment:
         return super(PhxMechanicalEquipment, cls).__new__(cls, *args, **kwargs)
 
 
+class PhxHotWaterTank(PhxMechanicalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.name = 'No_Name'
+        self.quantity: int = 1
+
+        self.system_type_num: int = 8
+        self.system_type_str: str = 'Water storage'
+        self.device_type_num: int = 8
+        self.device_type_str: str = 'Water storage'
+
+        self.solar_losses: float = 0.0  # W/K
+        self.storage_loss_rate: float = 0.0  # W
+        self.standby_losses: float = 0.0  # W/K
+
+        self.storage_capacity: float = 0.0  # Liter
+        self.input_option: int = 1
+
+        self.in_conditioned_space: bool = True
+        self.tank_room_temp: float = 20.0
+        self.tank_water_temp: float = 55.0
+
+        self.aux_energy: float = 0.0
+        self.aux_energy_dhw: float = 0.0
+
+
 class PhxVentilator(PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
@@ -76,14 +102,16 @@ class PhxMechanicalEquipmentCollection:
         return self._equipment.get(_key, None)
 
     def add_new_mech_equipment(self, _key: str, _equipment: PhxMechanicalEquipment) -> None:
-        """
+        """Adds a new PHX Mechanical Equipment device to the collection.
 
         Arguments:
         ----------
-            *
+            * _key (str): The key to use when storing the new mechanical equipment
+            * _equipment (PhxMechanicalEquipment): The new PHX mechanical equimnet to 
+                add to the collection.
 
         Returns:
         --------
-            *
+            * None
         """
         self._equipment[_key] = _equipment
