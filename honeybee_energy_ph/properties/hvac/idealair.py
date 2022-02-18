@@ -32,7 +32,7 @@ class IdealAirSystemPhProperties(object):
         return self._host
 
     def to_dict(self, abridged=False):
-        # type: (bool) -> dict[str, Any]
+        # type: (bool) -> dict[str, dict]
         d = {}
         if abridged:
             d['type'] = 'IdealAirSystemPhPropertiesAbridged'
@@ -49,18 +49,19 @@ class IdealAirSystemPhProperties(object):
         return {'ph': d}
 
     @classmethod
-    def from_dict(cls, _dict, host):
+    def from_dict(cls, _input_dict, host):
         # type: (dict, Any) -> IdealAirSystemPhProperties
         valid_types = ('IdealAirSystemPhProperties',
                        'IdealAirSystemPhPropertiesAbridged')
-        if _dict['type'] not in valid_types:
-            raise IdealAirSystemPhProperties_FromDictError(valid_types, _dict['type'])
+        if _input_dict['type'] not in valid_types:
+            raise IdealAirSystemPhProperties_FromDictError(
+                valid_types, _input_dict['type'])
 
         new_prop = cls(host)
-        new_prop.id_num = _dict['id_num']
-        new_prop.ventilator_id_num = _dict['ventilator_id_num']
+        new_prop.id_num = _input_dict['id_num']
+        new_prop.ventilator_id_num = _input_dict['ventilator_id_num']
 
-        vent_system_dict = _dict.get('ventilation_system', None)
+        vent_system_dict = _input_dict.get('ventilation_system', None)
         if vent_system_dict:
             new_prop.ventilation_system = ventilation.PhVentilationSystem.from_dict(
                 vent_system_dict)
