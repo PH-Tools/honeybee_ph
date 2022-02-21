@@ -8,18 +8,24 @@ from honeybee_energy_ph.hvac import hot_water
 
 
 def build_phx_hw_tank(_tank: hot_water.PhSHWTank) -> mech_equip.PhxHotWaterTank:
-    tank = mech_equip.PhxHotWaterTank()
+    phx_tank = mech_equip.PhxHotWaterTank()
 
-    tank.name = _tank.name
-    tank.quantity = _tank.quantity
+    phx_tank.name = _tank.name
+    phx_tank.quantity = _tank.quantity
 
-    tank.storage_capacity = _tank.volume
-    tank.storage_loss_rate = _tank.heat_loss_rate
-    tank.solar_losses = _tank.heat_loss_rate
-    tank.standby_losses = _tank.heat_loss_rate
+    phx_tank.storage_capacity = _tank.volume
+    phx_tank.storage_loss_rate = _tank.heat_loss_rate
+    phx_tank.solar_losses = _tank.heat_loss_rate
+    phx_tank.standby_losses = _tank.heat_loss_rate
 
-    tank.in_conditioned_space = _tank.in_conditioned_space
-    tank.tank_room_temp = _tank.location_temp
-    tank.tank_water_temp = _tank.water_temp
+    phx_tank.in_conditioned_space = _tank.in_conditioned_space
+    phx_tank.tank_room_temp = _tank.location_temp
+    phx_tank.tank_water_temp = _tank.water_temp
 
-    return tank
+    return phx_tank
+
+
+def build_phx_hw_heater() -> mech_equip.PhxHotWaterHeater:
+    phx_hw_heater = mech_equip.PhxHotWaterHeater()
+
+    return phx_hw_heater

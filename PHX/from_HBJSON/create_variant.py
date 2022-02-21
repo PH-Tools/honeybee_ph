@@ -184,8 +184,8 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
     return None
 
 
-def add_hvac_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Add new HVAC (Ventilation, DHW, etc) Systems to the Variant based on the HB-Rooms.
+def add_ventilation_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Add new HVAC (Ventilation, etc) Systems to the Variant based on the HB-Rooms.
 
     Arguments:
     ----------
@@ -216,24 +216,52 @@ def add_hvac_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Roo
     return None
 
 
-def add_dhw_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
-    for space in _hb_room.properties._ph.spaces:
-        # -- buid the HW-Tank
+def add_dhw_storage_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Add new Service Hot Water Equipment to the Variant based on the HB-Rooms.
 
+    Arguments:
+    ----------
+        * _variant (project.Variant): The PHX Variant to add the PHX DHW System to.
+        * _hb_room (room.Room): The Honeybee room to get the DHW System data from.
+
+    Returns:
+    --------
+        * None
+    """
+
+    for space in _hb_room.properties._ph.spaces:
+        # -- Build the HW-Tank
         for hw_tank in space.host.properties.energy.shw.properties.ph.tanks:
             if not hw_tank:
                 continue
+
             # -- Not sure if this is the right thing to do?
             # -- Will this cause problems at some point?
             equip_key = str(id(hw_tank))
-            if _variant.mech_systems.equipment_in_collection(equip_key):
-                # -- If the ventilator already exists, just use that one.
-                space_hw_tank = _variant.mech_systems.get_mech_equipment_by_key(
-                    equip_key)
-            else:
-                # -- otherwise, build a new PH-Ventilator from the HB-hvac
-                space_hw_tank = create_shw.build_phx_hw_tank(hw_tank)
-                _variant.mech_systems.add_new_mech_equipment(equip_key, space_hw_tank)
+            if not _variant.mech_systems.equipment_in_collection(equip_key):
+                # -- Build a new PHS-HW-Tank from the HB-hvac
+                phx_hw_tank = create_shw.build_phx_hw_tank(hw_tank)
+                _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_tank)
+
+    return None
+
+
+def add_dhw_heaters_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
+    for space in _hb_room.properties.ph.spaces:
+        """TODO: Two options:
+            1) Its a Honeybee-SHW System only with 'efficiency', 'condition' and 'loss' data
+            2) Its a detailed HB-PH-SHW System with full PH-Style data
+        """
+        if not space.host.properties.energy.shw:
+            continue
+
+        for heater in space.host.properties.energy.shw.properties.ph.heaters:
+            equip_key = str(id(heater))
+
+            if not _variant.mech_systems.equipment_in_collection(equip_key):
+                # -- Build a new PHX-HW-Heater from the HB-hvac
+                phx_hw_heater = create_shw.build_phx_hw_tank(heater)
+                _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_heater)
 
     return None
 
@@ -260,8 +288,9 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     new_variant.name = _hb_room.display_name
 
     # -- Build the Variant Elements (order matters)
-    add_hvac_systems_from_hb_rooms(new_variant, _hb_room)
-    add_dhw_systems_from_hb_rooms(new_variant, _hb_room)
+    add_ventilation_systems_from_hb_rooms(new_variant, _hb_room)
+    add_dhw_heaters_from_hb_rooms(new_variant, _hb_room)
+    add_dhw_storage_from_hb_rooms(new_variant, _hb_room)
     add_geometry_from_hb_rooms(new_variant, _hb_room)
     add_building_from_hb_room(new_variant, _hb_room, group_components)
     add_phius_certification_from_hb_room(new_variant, _hb_room)

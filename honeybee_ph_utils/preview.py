@@ -12,9 +12,9 @@ def object_preview(_obj, _full=False, _level=1):
 
     Arguments:
     ----------
-        * _obj (obect): A python object to print the attributes of.
+        * _obj (object): A python object to print the attributes of.
         * _full (bool): default=False. True=Print all the 'backend' attributes like 'identifier'.
-            False=ignnore the 'backend' attributes.
+            False=ignore the 'backend' attributes.
         * _level (int): default=1. The 'inset' level from the left.
 
     Return:
@@ -44,7 +44,7 @@ def object_preview(_obj, _full=False, _level=1):
         if hasattr(v, "__dict__"):
             print("{}+ [ {} ] ::: {}".format(" " * _level, k, v))
 
-            # Reciursively step through all the child objects
+            # Recursively step through all the child objects
             object_preview(v, _full, _level=_level + 8)
         else:
             print("{}> {} ::: {}".format(" " * _level, k, v))

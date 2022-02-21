@@ -4,7 +4,7 @@
 """PH-Properties classes for SHWSystem (System / Equipment) objects."""
 
 try:
-    from typing import Any
+    from typing import Any, ValuesView
 except:
     pass  # IronPython
 
@@ -29,6 +29,24 @@ class SHWSystemPhProperties(object):
         self.tank_2 = None
         self.tank_buffer = None
         self.tank_solar = None
+
+        self._heaters = {}
+
+    @property
+    def heaters(self):
+        # type: () -> ValuesView[hot_water.PhHotWaterHeater]
+        """Returns a list of all the heaters on the system."""
+        return self._heaters.values()
+
+    def clear_heaters(self):
+        self._heaters = {}
+
+    def add_heater(self, _h):
+        # type: (hot_water.PhHotWaterHeater) -> None
+        """Adds a new hot-water heater to the system."""
+        assert hasattr(
+            _h, 'to_dict'), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
+        self._heaters[_h.identifier] = _h
 
     @property
     def host(self):
@@ -58,6 +76,10 @@ class SHWSystemPhProperties(object):
         if self.tank_solar:
             d['tank_solar'] = self.tank_solar.to_dict()
 
+        d['heaters'] = {}
+        for heater in self.heaters:
+            d['heaters'][id(heater)] = heater.to_dict()
+
         return {'ph': d}
 
     @classmethod
@@ -84,10 +106,33 @@ class SHWSystemPhProperties(object):
             new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(
                 _input_dict['tank_buffer'])
 
+        for heater_dict in _input_dict['heaters'].values():
+            new_prop.add_heater(hot_water.PhSHWHeaterBuilder.from_dict(heater_dict))
+
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
         return
+
+    def duplicate(self, new_host=None):
+        # type: (Any) -> SHWSystemPhProperties
+        return self.__copy__(new_host)
+
+    def __copy__(self, new_host=None):
+        # type: (Any) -> SHWSystemPhProperties
+        _host = new_host or self._host
+        new_obj = SHWSystemPhProperties(_host)
+
+        new_obj.id_num = self.id_num
+        new_obj.tank_1 = self.tank_1
+        new_obj.tank_2 = self.tank_2
+        new_obj.tank_buffer = self.tank_buffer
+        new_obj.tank_solar = self.tank_solar
+
+        for k, v in self._heaters.items():
+            new_obj._heaters[k] = v
+
+        return new_obj
 
     def __str__(self):
         return '{}: id={}'.format(self.__class__.__name__, self.id_num)

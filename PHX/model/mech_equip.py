@@ -8,6 +8,7 @@ from typing import ClassVar, Any, Dict, Optional
 
 
 class PhxMechanicalEquipment:
+    """Base class for PHX Mechanical Devices (heaters, tanks, ventilators)"""
     _count: int = 0
 
     def __init__(self):
@@ -47,6 +48,12 @@ class PhxHotWaterTank(PhxMechanicalEquipment):
 
         self.aux_energy: float = 0.0
         self.aux_energy_dhw: float = 0.0
+
+
+class PhxHotWaterHeater(PhxMechanicalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.name = 'No_Name'
 
 
 class PhxVentilator(PhxMechanicalEquipment):

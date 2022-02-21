@@ -3,10 +3,19 @@
 
 """Passive House Service Hot Water Objects"""
 
+from honeybee_energy_ph.hvac import _base
+
 try:
     from typing import Any
 except ImportError:
     pass  # IronPython
+
+
+class UnknownPhHeaterTypeError(Exception):
+    def __init__(self, _heater_types, _received_type):
+        self.msg = 'Error: Unknown SHW Heater Type? Got: "{}" but only types: {} are allowed?'.format(
+            _received_type, _heater_types)
+        super(UnknownPhHeaterTypeError, self).__init__(self.msg)
 
 
 class PhSHWTank(object):
@@ -67,3 +76,116 @@ class PhSHWTank(object):
 
     def ToString(self):
         return self.__repr__()
+
+
+# -- Heaters ------------------------------------------------------------------
+
+
+class PhHotWaterHeater(_base._Base):
+    """Base class for all PH Hot-Water Heaters."""
+
+    def __init__(self):
+        super(PhHotWaterHeater, self).__init__()
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhHotWaterHeater
+        new_obj = cls()
+        return new_obj
+
+    def __str__(self):
+        return '{}()'.format(self.__class__.__name__)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
+
+class PhSHWHeaterElectric(PhHotWaterHeater):
+    def __init__(self):
+        super(PhSHWHeaterElectric, self).__init__()
+        self.name = '_unnamed_hot_water_elec_heater_'
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhSHWHeaterElectric
+        new_obj = cls()
+        return new_obj
+
+    def __str__(self):
+        return '{}()'.format(self.__class__.__name__)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
+
+class PhSHWHeaterGasBoiler(PhHotWaterHeater):
+    def __init__(self):
+        super(PhSHWHeaterGasBoiler, self).__init__()
+        self.name = '_unnamed_hot_water_gas_boiler_heater_'
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhSHWHeaterGasBoiler
+        new_obj = cls()
+        return new_obj
+
+    def __str__(self):
+        return '{}()'.format(self.__class__.__name__)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
+
+class PhSHWHeaterBuilder(object):
+    """Constructor class for Hot-Water-Heater objects"""
+
+    heaters = {
+        'PhSHWHeaterGasBoiler': PhSHWHeaterGasBoiler,
+        'PhSHWHeaterElectric': PhSHWHeaterElectric,
+    }
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhHotWaterHeater
+
+        heater_type = _input_dict.get('heater_type')
+        if heater_type is None:
+            raise UnknownPhHeaterTypeError(cls.heaters.keys(), heater_type)
+
+        heater_class = cls.heaters[heater_type]
+        new_heater = heater_class.from_dict(_input_dict)
+
+        return new_heater
+
+    def __str__(self):
+        return '{}()'.format(self.__class__.__name__)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
