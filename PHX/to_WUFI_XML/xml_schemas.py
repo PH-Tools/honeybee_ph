@@ -4,6 +4,7 @@
 """Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
 from dataclasses import dataclass
+from re import L
 from typing import List, Optional
 
 from PHX.model import project
@@ -597,7 +598,10 @@ class Temp_DHWParamsHotWaterHeater_Elec:
 
 def _Device_WaterHeater_Elec(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
     ph_params = Temp_PHParamsHotWaterHeater_Elec()
+    ph_params.in_conditioned_space = _d.in_conditioned_space
     dhw_params = Temp_DHWParamsHotWaterHeater_Elec()
+    dhw_params.percent_coverage = _d.percent_coverage
+
     return [
         XML_Node("Name", _d.name),
         XML_Node("IdentNr", _d.id_num),
@@ -632,6 +636,89 @@ def _Device_WaterHeaterElec_DHWParams(_params: Temp_DHWParamsHotWaterHeater_Elec
     ]
 
 
+def _Device_WaterHeater_Boiler(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
+    return []
+
+
+def _Device_WaterHeater_District(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
+    return []
+
+
+@dataclass
+class Temp_PHParamsHotWaterHeater_HeatPump:
+    aux_energy: float = 0.0  # W
+    aux_energy_dhw: float = 0.0  # W
+    in_conditioned_space: bool = True
+    heat_pump_type = 3
+    annual_COP: Optional[float] = None
+    annual_system_perf_ratio: Optional[float] = None
+    _annual_energy_factor: Optional[float] = None
+
+    @property
+    def annual_energy_factor(self):
+        return self._annual_energy_factor
+
+    @annual_energy_factor.setter
+    def annual_energy_factor(self, _in):
+        if not _in:
+            return
+        self._annual_energy_factor = _in
+        self.heat_pump_type = 5  # Heat Pump water heater (HPWH) inside
+
+
+@dataclass
+class Temp_DHWParamsHotWaterHeater_HeatPump:
+    percent_coverage: float = 1.0
+    selection: int = 1
+    unit: float = 120  # Ltr/h
+
+
+def _Device_WaterHeater_HeatPump(_d: mech_equip.PhxHotWaterHeaterHeatPump) -> List[xml_writable]:
+    ph_params = Temp_PHParamsHotWaterHeater_HeatPump()
+    ph_params.in_conditioned_space = _d.in_conditioned_space
+    ph_params.annual_COP = _d.annual_COP
+    ph_params.annual_system_perf_ratio = _d.annual_system_perf_ratio
+    ph_params.annual_energy_factor = _d.annual_energy_factor
+    dhw_params = Temp_DHWParamsHotWaterHeater_HeatPump()
+    dhw_params.percent_coverage = _d.percent_coverage
+
+    return [
+        XML_Node("Name", _d.name),
+        XML_Node("IdentNr", _d.id_num),
+        XML_Node("SystemType", _d.system_type_num),
+        XML_Node("TypeDevice", _d.device_type_num),
+        XML_Node("UsedFor_Heating", False),
+        XML_Node("UsedFor_DHW", True),
+        XML_Node("UsedFor_Cooling", False),
+        XML_Node("UsedFor_Ventilation", False),
+        XML_Node("UsedFor_Humidification", False),
+        XML_Node("UsedFor_Dehumidification", False),
+        XML_Object('PH_Parameters', ph_params,
+                   _schema_name='_Device_WaterHeaterHeatPump_PHParams'),
+        XML_Object('DHW_Parameters', dhw_params,
+                   _schema_name='_Device_WaterHeaterHeatPump_DHWParams'),
+    ]
+
+
+def _Device_WaterHeaterHeatPump_PHParams(_params: Temp_PHParamsHotWaterHeater_HeatPump) -> List[xml_writable]:
+    return [
+        XML_Node("AuxiliaryEnergy", _params.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _params.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _params.in_conditioned_space),
+        XML_Node("AnnualCOP", _params.annual_COP),
+        XML_Node("TotalSystemPerformanceRatioHeatGenerator",
+                 _params.annual_system_perf_ratio),
+        XML_Node("HPWH_EF", _params.annual_energy_factor),
+        XML_Node("HPType", _params.heat_pump_type),
+    ]
+
+
+def _Device_WaterHeaterHeatPump_DHWParams(_params: Temp_DHWParamsHotWaterHeater_HeatPump) -> List[xml_writable]:
+    return [
+        XML_Node("CoverageWithinSystem", _params.percent_coverage),
+        XML_Node("Unit", _params.unit),
+        XML_Node("Selection", _params.selection),
+    ]
 # -- MECHANICAL SYSTEMS / COLLECTIONS --
 
 
@@ -639,6 +726,9 @@ def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollec
     devices = {
         1: '_Device_Ventilator',
         2: '_Device_WaterHeater_Elec',
+        3: '_Device_WaterHeater_Boiler',
+        4: '_Device_WaterHeater_District',
+        5: '_Device_WaterHeater_HeatPump',
         8: '_Device_WaterStorage',
     }
 

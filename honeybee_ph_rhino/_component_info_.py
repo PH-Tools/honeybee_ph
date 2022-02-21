@@ -104,8 +104,18 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-
-
+    "HBPH - Create HW Heater": {
+        "NickName": "Create HW Heater",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Add HW Heater": {
+        "NickName": "Add HW Heater",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 }
 
 

@@ -252,6 +252,7 @@ def add_dhw_heaters_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
             1) Its a Honeybee-SHW System only with 'efficiency', 'condition' and 'loss' data
             2) Its a detailed HB-PH-SHW System with full PH-Style data
         """
+
         if not space.host.properties.energy.shw:
             continue
 

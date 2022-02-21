@@ -44,6 +44,9 @@ class SHWSystemPhProperties(object):
     def add_heater(self, _h):
         # type: (hot_water.PhHotWaterHeater) -> None
         """Adds a new hot-water heater to the system."""
+        if not _h:
+            return
+
         assert hasattr(
             _h, 'to_dict'), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
         self._heaters[_h.identifier] = _h
@@ -107,6 +110,7 @@ class SHWSystemPhProperties(object):
                 _input_dict['tank_buffer'])
 
         for heater_dict in _input_dict['heaters'].values():
+            new_heater = hot_water.PhSHWHeaterBuilder.from_dict(heater_dict)
             new_prop.add_heater(hot_water.PhSHWHeaterBuilder.from_dict(heater_dict))
 
         return new_prop

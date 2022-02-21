@@ -43,16 +43,34 @@ def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech_equ
     Arguments:
     ----------
         * _hbph_heater (hot_water.PhSHWHeaterElectric): The HBPH Hot-Water heater
-            to use as the source.
+            to use as the source for the PHX Heater.
 
     Returns:
     --------
         * mech_equip.PhxHotWaterHeater: The new PHX-Hot-Water-Heater.
     """
 
-    phx_hw_heater = mech_equip.PhxHotWaterHeater()
+    # -- Get the right constructor based on the type of heater
+    heaters = {
+        'PhSHWHeaterElectric': mech_equip.PhxHotWaterHeaterElectric,
+        'PhSHWHeaterBoiler': mech_equip.PhxHotWaterHeaterBoilerGas,
+        'PhSHWHeaterBoilerWood': mech_equip.PhxHotWaterHeaterBoilerWood,
+        'PhSHWHeaterDistrict': mech_equip.PhxHotWaterHeaterDistrictHeat,
+        'PhSHWHeaterHeatPump': mech_equip.PhxHotWaterHeaterHeatPump,
+    }
+
+    # -- Build the basic heater and set basic data
+    heater_class = heaters[_hbph_heater.__class__.__name__]
+    phx_hw_heater = heater_class()
 
     phx_hw_heater.name = _hbph_heater.display_name
-    phx_hw_heater.percent_coverage = _hbph_heater.percent_coverge
+    phx_hw_heater.percent_coverage = _hbph_heater.percent_coverage
+    phx_hw_heater.in_conditioned_space = _hbph_heater.in_conditioned_space
+
+    # -- Pull out all the detailed data which varies depending on the 'type'
+    for var in vars(_hbph_heater):
+        if var.startswith('_'):
+            continue
+        setattr(phx_hw_heater, var, getattr(_hbph_heater, var))
 
     return phx_hw_heater

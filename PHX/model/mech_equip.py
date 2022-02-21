@@ -51,17 +51,59 @@ class PhxHotWaterTank(PhxMechanicalEquipment):
 
 
 class PhxHotWaterHeater(PhxMechanicalEquipment):
+    """Base class for all Hot-Water Heaters"""
+
     def __init__(self):
         super().__init__()
         self.name = 'No_Name'
+        self.percent_coverage: float = 0.0
+        self.unit: float = 120  # Ltr/h
+        self.in_conditioned_space: bool = True
 
+
+class PhxHotWaterHeaterElectric(PhxHotWaterHeater):
+    def __init__(self):
+        super().__init__()
         self.system_type_num: int = 2
         self.system_type_str: str = "Electric resistance space heat / DHW"
         self.device_type_num: int = 2
         self.device_type_str: str = "Electric resistance space heat / DHW"
 
-        self.percent_coverage: float = 0.0
-        self.unit: float = 120  # Ltr/h
+
+class PhxHotWaterHeaterBoilerGas(PhxHotWaterHeater):
+    def __init__(self):
+        super().__init__()
+        self.system_type_num: int = 3
+        self.system_type_str: str = "Boiler"
+        self.device_type_num: int = 3
+        self.device_type_str: str = "Boiler"
+
+
+class PhxHotWaterHeaterBoilerWood(PhxHotWaterHeater):
+    def __init__(self):
+        super().__init__()
+        self.system_type_num: int = 3
+        self.system_type_str: str = "Boiler"
+        self.device_type_num: int = 3
+        self.device_type_str: str = "Boiler"
+
+
+class PhxHotWaterHeaterDistrictHeat(PhxHotWaterHeater):
+    def __init__(self):
+        super().__init__()
+        self.system_type_num: int = 4
+        self.system_type_str: str = "District"
+        self.device_type_num: int = 4
+        self.device_type_str: str = "District"
+
+
+class PhxHotWaterHeaterHeatPump(PhxHotWaterHeater):
+    def __init__(self):
+        super().__init__()
+        self.system_type_num: int = 5
+        self.system_type_str: str = "Heat pump"
+        self.device_type_num: int = 5
+        self.device_type_str: str = "Heat pump"
 
 
 class PhxVentilator(PhxMechanicalEquipment):

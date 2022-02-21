@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""Grasshopper Interface Class. Used to pass Rhino, GH side dependancies to all other classes.
+"""Grasshopper Interface Class. Used to pass Rhino, GH side dependencies to all other classes.
 
 This is done so that other classes can be tested by mocking out this Interface. If I 
-could figure out how to get Rhino dependancies to be recognized by testing framework, 
+could figure out how to get Rhino dependencies to be recognized by testing framework, 
 probably would not need something like this? I suppose it does help reduce coupling?
 """
+
 try:
     from typing import Any
 except ImportError:
@@ -20,6 +21,7 @@ except ImportError:
 
 from contextlib import contextmanager
 from copy import deepcopy
+import re
 
 import honeybee.face
 from ladybug_geometry.geometry3d.face import Face3D
@@ -44,7 +46,6 @@ class SelectionInputError(Exception):
         self.message = 'Input Error: Cannot use input "{}" [{}].\n' "Please check the allowable input options.".format(
             _in, type(_in)
         )
-
         super(SelectionInputError, self).__init__(self.message)
 
 
@@ -423,6 +424,23 @@ class IGH:
             self.ghenv.Component.AddRuntimeMessage(level, _in)
 
 
+class ComponentInput:
+    """GH-Component Input Node data class."""
+
+    def __init__(self, _name, _description):
+        self.name = _name
+        self.description = _description
+
+    def __str__(self):
+        return '{}({}: {})'.format(self.__class__.__name__, self.name)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
+
 def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
     # type: (IGH, list, str, int) -> list[dict]
     """
@@ -463,28 +481,25 @@ def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
     return output_list
 
 
-def input_to_int(IGH, _input_value, _default=None):
-    # type: (IGH, Any, Any) -> int | None
+def input_to_int(_input_value, _default=None):
+    # type: (Any, Any) -> int | None
     """For 'selection' type inputs, clean and convert input to int.
 
     ie: if the Grasshopper input allows:
         "1-A First Type"
         "2-A Second Type"
 
-    will strip the string part and return just the integer value, or error.
+    will strip the string part and return just the integer value, or raise SelectionInputError.
     """
 
     if _input_value is None:
         return _default
 
+    result = re.search(r"\d+", str(_input_value))
     try:
-        return int(_input_value)
+        return int(result.group(0))
     except ValueError:
-        try:
-            r = str(_input_value).split("-")
-            return int(r[0])
-        except ValueError:
-            raise SelectionInputError(_input_value)
+        raise SelectionInputError(_input_value)
 
 
 def clean_get(_list, _i, _default=None):
@@ -511,3 +526,61 @@ def clean_get(_list, _i, _default=None):
             return _list[0]
         except ValueError:
             return _default
+
+
+def setup_component_inputs(ghenv, _input_dict, _start_i=1, _end_i=20):
+    # type: (Any, dict[int, ComponentInput], int, int) -> None
+    """Dynamic GH component input node configuration.
+
+    Arguments:
+    ----------
+        * ghenv (): The Grasshopper ghenv variable.
+        * _input_dict (dict[int, ComponentInput]): The input dict with the field names
+            and descriptions to use for the component input nodes.
+        * _start_i (int): Optional starting node number. Default=1
+        * _end_i (int): Optional ending node number. Default=20
+
+    Returns:
+    --------
+        * None
+    """
+    for input_num in range(_start_i, _end_i):
+        input_item = _input_dict.get(input_num, ComponentInput('-', '-'))
+
+        try:
+            ghenv.Component.Params.Input[input_num].NickName = input_item.name
+            ghenv.Component.Params.Input[input_num].Name = input_item.name
+            ghenv.Component.Params.Input[input_num].Description = input_item.description
+        except ValueError:
+            # -- past end of component inputs
+            pass
+
+    return None
+
+
+def get_component_input_values(ghenv):
+    # type: (Any) -> dict[str, Any]
+    """ Dynamic Component Input 'get' - pulls all the component input names/values into a dictionary.
+
+    Arguments:
+    ----------
+        * ghenv (): The Grasshopper ghenv variable.
+
+    Returns:
+    --------
+        * dict[str, Any]: A dictionary of the component input node's user input values.
+
+    """
+    inputs = {}
+    for input in ghenv.Component.Params.Input:
+        try:
+            vals = list(input.VolatileData[0])
+            try:
+                val = float(str(vals[0]))
+            except:
+                val = str(vals[0])
+            inputs[input.Name] = val
+        except:
+            inputs[input.Name] = None
+
+    return inputs
