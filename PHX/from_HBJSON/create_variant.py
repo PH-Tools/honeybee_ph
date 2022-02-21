@@ -260,7 +260,7 @@ def add_dhw_heaters_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
 
             if not _variant.mech_systems.equipment_in_collection(equip_key):
                 # -- Build a new PHX-HW-Heater from the HB-hvac
-                phx_hw_heater = create_shw.build_phx_hw_tank(heater)
+                phx_hw_heater = create_shw.build_phx_hw_heater(heater)
                 _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_heater)
 
     return None

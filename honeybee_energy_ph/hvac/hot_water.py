@@ -86,6 +86,7 @@ class PhHotWaterHeater(_base._Base):
 
     def __init__(self):
         super(PhHotWaterHeater, self).__init__()
+        self.percent_coverge = 1.0
 
     def to_dict(self):
         # type: () -> dict
@@ -111,17 +112,27 @@ class PhHotWaterHeater(_base._Base):
 class PhSHWHeaterElectric(PhHotWaterHeater):
     def __init__(self):
         super(PhSHWHeaterElectric, self).__init__()
-        self.name = '_unnamed_hot_water_elec_heater_'
 
     def to_dict(self):
         # type: () -> dict
         d = {}
+
+        d['identifier'] = self.identifier
+        d['display_name'] = self.display_name
+        d['percent_coverge'] = self.percent_coverge
+        d['heater_type'] = self.__class__.__name__
+
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhSHWHeaterElectric
         new_obj = cls()
+
+        new_obj.identifier = _input_dict['identifier']
+        new_obj.display_name = _input_dict['display_name']
+        new_obj.percent_coverge = _input_dict['percent_coverge']
+
         return new_obj
 
     def __str__(self):
@@ -137,7 +148,6 @@ class PhSHWHeaterElectric(PhHotWaterHeater):
 class PhSHWHeaterGasBoiler(PhHotWaterHeater):
     def __init__(self):
         super(PhSHWHeaterGasBoiler, self).__init__()
-        self.name = '_unnamed_hot_water_gas_boiler_heater_'
 
     def to_dict(self):
         # type: () -> dict

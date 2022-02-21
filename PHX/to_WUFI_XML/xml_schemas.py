@@ -449,18 +449,7 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> List
     ]
 
 
-# -- MECHANICALS (HVAC, SHW) --
-
-
-def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> List[xml_writable]:
-    return [
-        XML_Node("IdentNrZone", _zc.zone_num),
-        XML_Node("CoverageHeating", _zc.zone_num),
-        XML_Node("CoverageCooling", _zc.zone_num),
-        XML_Node("CoverageVentilation", _zc.zone_num),
-        XML_Node("CoverageHumidification", _zc.zone_num),
-        XML_Node("CoverageDehumidification", _zc.zone_num),
-    ]
+# -- MECHANICAL DEVICES --
 
 
 @dataclass
@@ -530,10 +519,6 @@ def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> List[xml_writable]:
     ]
 
 
-def _Device_ElecResistance(_d: mech_equip.PhxMechanicalEquipment) -> List[xml_writable]:
-    return []
-
-
 @dataclass
 class Temp_PhParamsHotWaterTank:
     storage_capacity: float = 0.0
@@ -596,10 +581,64 @@ def _Device_WaterStorage_PHParams(_params: Temp_PhParamsHotWaterTank) -> List[xm
     ]
 
 
+@dataclass
+class Temp_PHParamsHotWaterHeater_Elec:
+    aux_energy: float = 0.0  # W
+    aux_energy_dhw: float = 0.0  # W
+    in_conditioned_space: bool = True
+
+
+@dataclass
+class Temp_DHWParamsHotWaterHeater_Elec:
+    percent_coverage: float = 1.0
+    selection: int = 1
+    unit: float = 120  # Ltr/h
+
+
+def _Device_WaterHeater_Elec(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
+    ph_params = Temp_PHParamsHotWaterHeater_Elec()
+    dhw_params = Temp_DHWParamsHotWaterHeater_Elec()
+    return [
+        XML_Node("Name", _d.name),
+        XML_Node("IdentNr", _d.id_num),
+        XML_Node("SystemType", _d.system_type_num),
+        XML_Node("TypeDevice", _d.device_type_num),
+        XML_Node("UsedFor_Heating", False),
+        XML_Node("UsedFor_DHW", True),
+        XML_Node("UsedFor_Cooling", False),
+        XML_Node("UsedFor_Ventilation", False),
+        XML_Node("UsedFor_Humidification", False),
+        XML_Node("UsedFor_Dehumidification", False),
+        XML_Object('PH_Parameters', ph_params,
+                   _schema_name='_Device_WaterHeaterElec_PHParams'),
+        XML_Object('DHW_Parameters', dhw_params,
+                   _schema_name='_Device_WaterHeaterElec_DHWParams'),
+    ]
+
+
+def _Device_WaterHeaterElec_PHParams(_params: Temp_PHParamsHotWaterHeater_Elec) -> List[xml_writable]:
+    return [
+        XML_Node("AuxiliaryEnergy", _params.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _params.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _params.in_conditioned_space),
+    ]
+
+
+def _Device_WaterHeaterElec_DHWParams(_params: Temp_DHWParamsHotWaterHeater_Elec) -> List[xml_writable]:
+    return [
+        XML_Node("CoverageWithinSystem", _params.percent_coverage),
+        XML_Node("Unit", _params.unit),
+        XML_Node("Selection", _params.selection),
+    ]
+
+
+# -- MECHANICAL SYSTEMS / COLLECTIONS --
+
+
 def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
     devices = {
         1: '_Device_Ventilator',
-        2: '_Device_ElecResistance',
+        2: '_Device_WaterHeater_Elec',
         8: '_Device_WaterStorage',
     }
 
@@ -614,8 +653,19 @@ def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollec
     ]
 
 
-def _HVAC_Collection(_hvac) -> List[xml_writable]:
+def _HVAC_Collection(_hvac: mech_equip.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
     return [
         XML_List("Systems", [XML_Object("System", n, "index", i, _schema_name='_WUFI_HVAC_SystemGroup')
                  for i, n in enumerate([_hvac])]),
+    ]
+
+
+def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> List[xml_writable]:
+    return [
+        XML_Node("IdentNrZone", _zc.zone_num),
+        XML_Node("CoverageHeating", _zc.zone_num),
+        XML_Node("CoverageCooling", _zc.zone_num),
+        XML_Node("CoverageVentilation", _zc.zone_num),
+        XML_Node("CoverageHumidification", _zc.zone_num),
+        XML_Node("CoverageDehumidification", _zc.zone_num),
     ]

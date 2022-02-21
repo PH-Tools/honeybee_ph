@@ -55,6 +55,14 @@ class PhxHotWaterHeater(PhxMechanicalEquipment):
         super().__init__()
         self.name = 'No_Name'
 
+        self.system_type_num: int = 2
+        self.system_type_str: str = "Electric resistance space heat / DHW"
+        self.device_type_num: int = 2
+        self.device_type_str: str = "Electric resistance space heat / DHW"
+
+        self.percent_coverage: float = 0.0
+        self.unit: float = 120  # Ltr/h
+
 
 class PhxVentilator(PhxMechanicalEquipment):
     def __init__(self):
@@ -114,7 +122,7 @@ class PhxMechanicalEquipmentCollection:
         Arguments:
         ----------
             * _key (str): The key to use when storing the new mechanical equipment
-            * _equipment (PhxMechanicalEquipment): The new PHX mechanical equimnet to 
+            * _equipment (PhxMechanicalEquipment): The new PHX mechanical equipment to 
                 add to the collection.
 
         Returns:
