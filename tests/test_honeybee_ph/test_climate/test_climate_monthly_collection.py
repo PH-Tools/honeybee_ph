@@ -4,9 +4,9 @@ from honeybee_ph import _base, climate
 def test_basic_climate_monthly_collection():
     monthly_climate_collection = climate.Climate_MonthlyValueCollection()
 
-    assert 'january' in vars(monthly_climate_collection)
-    assert 'july' in vars(monthly_climate_collection)
-    assert 'december' in vars(monthly_climate_collection)
+    assert 'january' in vars(monthly_climate_collection).keys()
+    assert 'july' in vars(monthly_climate_collection).keys()
+    assert 'december' in vars(monthly_climate_collection).keys()
 
     assert monthly_climate_collection
 

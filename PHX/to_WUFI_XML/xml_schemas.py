@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from re import L
 from typing import List, Optional
 
-from PHX.model import project
+from PHX.model import elec_equip, project
 from PHX.model import building, certification, climate, constructions, geometry, ground, mech_equip, schedules, ventilation
 from PHX.to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
@@ -106,6 +106,7 @@ def _Building(_b: building.Building) -> List[xml_writable]:
 
 
 def _Zone(_z: building.Zone) -> List[xml_writable]:
+    print(_z.elec_equipment_collection.equipment)
     return [
         XML_Node("Name", _z.name),
         XML_Node("IdentNr", _z.id_num),
@@ -122,6 +123,8 @@ def _Zone(_z: building.Zone) -> List[xml_writable]:
         XML_Node("SpecificHeatCapacity_Selection", 2),
         XML_Node("SpecificHeatCapacity", _z.specific_heat_capacity),
         XML_Node("IdentNrPH_Building", 1),
+        XML_List("HomeDevice", [XML_Object("Device", d, "index", i, "_ResElecDevice")
+                 for i, d in enumerate(_z.elec_equipment_collection.equipment)]),
     ]
 
 
@@ -719,6 +722,8 @@ def _Device_WaterHeaterHeatPump_DHWParams(_params: Temp_DHWParamsHotWaterHeater_
         XML_Node("Unit", _params.unit),
         XML_Node("Selection", _params.selection),
     ]
+
+
 # -- MECHANICAL SYSTEMS / COLLECTIONS --
 
 
@@ -759,3 +764,30 @@ def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> List[xml_writable]:
         XML_Node("CoverageHumidification", _zc.zone_num),
         XML_Node("CoverageDehumidification", _zc.zone_num),
     ]
+
+
+# -- ELEC. EQUIPMENT DEVICES --
+
+def _ResElecDevice_Dishwasher(_d) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 1),
+        XML_Node('Comment', _d.comment),
+        XML_Node('ReferenceQuantity', _d.reference_quantity),
+        XML_Node('Quantity', _d.quantity),
+        XML_Node('InConditionedSpace', _d.in_conditioned_space),
+        XML_Node('ReferenceEnergyDemandNorm', _d.reference_energy_norm),
+        XML_Node('EnergyDemandNorm', _d.energy_demand),
+        XML_Node('EnergyDemandNormUse', _d.energy_demand_per_use),
+        XML_Node('CEF_CombinedEnergyFactor', _d.combined_energy_factor),
+        XML_Node('Connection', _d.water_connection),
+        XML_Node('DishwasherCapacityPreselection', _d.capacity_type),
+        XML_Node('DishwasherCapacityInPlace', _d.capacity),
+    ]
+
+
+def _ResElecDevice(_d: elec_equip.PhxElectricalEquipment) -> List[xml_writable]:
+    devices = {
+        'PhxDishwasher': _ResElecDevice_Dishwasher
+    }
+
+    return devices[_d.__class__.__name__](_d)

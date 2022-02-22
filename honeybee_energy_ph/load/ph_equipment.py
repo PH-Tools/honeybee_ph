@@ -24,8 +24,7 @@ class PhEquipment(_base._Base):
 
     def __init__(self):
         super(PhEquipment, self).__init__()
-        self.equipment_type = 1
-        self.display_name = ""
+        self.equipment_type = self.__class__.__name__
         self.comment = None
         self.reference_quantity = 2  # Zone Occupants
         self.quantity = 0
@@ -39,8 +38,11 @@ class PhEquipment(_base._Base):
         # type: () -> dict
         d = {}
 
-        d['equipment_type'] = self.equipment_type
         d['display_name'] = self.display_name
+        d['identifier'] = self.identifier
+        d['user_data'] = self.user_data
+
+        d['equipment_type'] = self.__class__.__name__
         d['comment'] = self.comment
         d['reference_quantity'] = self.reference_quantity
         d['quantity'] = self.quantity  # = 0
@@ -65,23 +67,23 @@ class PhEquipment(_base._Base):
         --------
             * (PhEquipment): The input PhEquipment object, with its attribute values set.
         """
-        for var in vars(self):
-            if str(var).startswith('_'):
-                continue
+        for attr_name in vars(self).keys():
             try:
-                setattr(_obj, var, _input_dict[var])
+                # Strip off underscore so it uses the propertry setters
+                if attr_name.startswith('_'):
+                    attr_name = attr_name[1:]
+                setattr(_obj, attr_name, _input_dict[attr_name])
             except KeyError:
                 pass
-
         return _obj
 
 
 class PhDishwasher(PhEquipment):
     def __init__(self):
         super(PhDishwasher, self).__init__()
-        self.capacity_type = 1  # standard
-        self.capacity = 12
-        self.water_connection = 1  # DHW Connection
+        self.capacity_type = 1
+        self.capacity = 1
+        self.water_connection = 1
 
     def to_dict(self):
         # type: () -> dict
@@ -171,12 +173,27 @@ class PhEquipmentCollection(object):
 
     def add_equipment(self, _new_equipment, _key=None):
         # type: (PhEquipment, Any) -> None
+        """Adds a new piece of Ph-Equipment to the collection.
+
+        Arguments:
+        ----------
+            * _new_equipment (PhEquipment): The new Ph Equipment to add to the set.
+            * _key (Any): Optional key to use for storing the equipment. If None, the
+                equipment's "identifier" will be used as the key.
+
+        Returns:
+        --------
+            * None
+        """
+
         key = _key or _new_equipment.identifier
 
         if key in self._equipment_set.keys():
+            _new_equipment = self._equipment_set[key]
             return
 
         self._equipment_set[key] = _new_equipment
+        return None
 
     def to_dict(self):
         # type: () -> dict
@@ -193,8 +210,9 @@ class PhEquipmentCollection(object):
         # type: (dict, Any) -> PhEquipmentCollection
         new_obj = cls(_host)
 
-        for k, d in _input_dict['equipment_set'].items():
-            new_obj.add_equipment(PhEquipmentBuilder.from_dict(d), k)
+        for k, device in _input_dict['equipment_set'].items():
+            if k not in new_obj._equipment_set.keys():
+                new_obj.add_equipment(PhEquipmentBuilder.from_dict(device), k)
 
         return new_obj
 

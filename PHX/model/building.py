@@ -11,6 +11,7 @@ from functools import reduce
 import operator
 
 from PHX.model import ventilation
+from PHX.model import elec_equip
 
 
 @dataclass
@@ -24,6 +25,8 @@ class Zone:
     clearance_height: float = 2.5
     specific_heat_capacity: float = 132
     wufi_rooms: list[ventilation.RoomVentilation] = field(default_factory=list)
+    elec_equipment_collection: elec_equip.PhxElectricEquipmentCollection = field(
+        default_factory=elec_equip.PhxElectricEquipmentCollection)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1

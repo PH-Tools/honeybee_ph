@@ -6,7 +6,7 @@
 from honeybee import room
 from PHX.model import project
 from PHX.model import certification, ground
-from PHX.from_HBJSON import create_building, create_geometry, create_hvac, create_shw
+from PHX.from_HBJSON import create_building, create_geometry, create_hvac, create_shw, create_elec_equip
 
 
 def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
@@ -238,10 +238,12 @@ def add_dhw_storage_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
             # -- Not sure if this is the right thing to do?
             # -- Will this cause problems at some point?
             equip_key = str(id(hw_tank))
-            if not _variant.mech_systems.equipment_in_collection(equip_key):
-                # -- Build a new PHS-HW-Tank from the HB-hvac
-                phx_hw_tank = create_shw.build_phx_hw_tank(hw_tank)
-                _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_tank)
+            if _variant.mech_systems.equipment_in_collection(equip_key):
+                continue
+
+            # -- Build a new PHS-HW-Tank from the HB-hvac
+            phx_hw_tank = create_shw.build_phx_hw_tank(hw_tank)
+            _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_tank)
 
     return None
 
@@ -259,12 +261,42 @@ def add_dhw_heaters_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
         for heater in space.host.properties.energy.shw.properties.ph.heaters:
             equip_key = str(id(heater))
 
-            if not _variant.mech_systems.equipment_in_collection(equip_key):
-                # -- Build a new PHX-HW-Heater from the HB-hvac
-                phx_hw_heater = create_shw.build_phx_hw_heater(heater)
-                _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_heater)
+            if _variant.mech_systems.equipment_in_collection(equip_key):
+                continue
+
+            # -- Build a new PHX-HW-Heater from the HBPH-HW-Heater
+            phx_hw_heater = create_shw.build_phx_hw_heater(heater)
+            _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_heater)
 
     return None
+
+
+def add_elec_equip_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Creates new PHX-Elec-Equipment (Appliances) and adds them to each of the Variant.building.zones
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The Variant to add the new elec-equipment to.
+        # _hb_room (room.Room): The Honeybee Room to get the elec-equipment from.
+
+    Returns:
+    --------
+        * None
+    """
+
+    for space in _hb_room.properties.ph.spaces:
+        if not space.host.properties.energy.electric_equipment:
+            continue
+
+        for equip_key, device in space.host.properties.energy.electric_equipment.properties.ph.equipment_collection._equipment_set.items():
+            # -- Build a new PHX-Equipment from the HBPH-Equipment
+
+            phx_elec_device = create_elec_equip.build_phx_elec_device(device)
+            for zone in _variant.building.zones:
+                zone.elec_equipment_collection.add_new_equipment(
+                    equip_key, phx_elec_device)
+
+    return
 
 
 def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project.Variant:
@@ -288,7 +320,7 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     _hb_room.properties.ph.id_num = new_variant.id_num
     new_variant.name = _hb_room.display_name
 
-    # -- Build the Variant Elements (order matters)
+    # -- Build the Variant Elements (Dev. note: order matters!)
     add_ventilation_systems_from_hb_rooms(new_variant, _hb_room)
     add_dhw_heaters_from_hb_rooms(new_variant, _hb_room)
     add_dhw_storage_from_hb_rooms(new_variant, _hb_room)
@@ -297,5 +329,6 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     add_phius_certification_from_hb_room(new_variant, _hb_room)
     add_PH_Building_from_hb_room(new_variant, _hb_room)
     add_climate_from_hb_room(new_variant, _hb_room)
+    add_elec_equip_from_hb_room(new_variant, _hb_room)
 
     return new_variant

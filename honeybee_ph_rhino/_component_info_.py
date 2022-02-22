@@ -122,6 +122,13 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Add PH Equipment": {
+        "NickName": "Add PH Equipment",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+
 }
 
 

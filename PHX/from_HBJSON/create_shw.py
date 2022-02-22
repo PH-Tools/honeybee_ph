@@ -68,9 +68,11 @@ def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech_equ
     phx_hw_heater.in_conditioned_space = _hbph_heater.in_conditioned_space
 
     # -- Pull out all the detailed data which varies depending on the 'type'
-    for var in vars(_hbph_heater):
-        if var.startswith('_'):
-            continue
-        setattr(phx_hw_heater, var, getattr(_hbph_heater, var))
-
+    for attr_name in vars(_hbph_heater).keys():
+        try:
+            if attr_name.startswith('_'):
+                attr_name = attr_name[1:]
+            setattr(phx_hw_heater, attr_name, getattr(_hbph_heater, attr_name))
+        except KeyError:
+            pass
     return phx_hw_heater

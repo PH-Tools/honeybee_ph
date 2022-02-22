@@ -8,7 +8,6 @@ from copy import copy
 from honeybee_ph_rhino.gh_io import ComponentInput
 
 inputs_base = {
-    1: ComponentInput(_name='display_name', _description='(str)'),
     2: ComponentInput(_name='comment', _description='(str) User defined comment / note.'),
     3: ComponentInput(_name='reference_quantity', _description='()'),
     4: ComponentInput(_name='quantity', _description='(int) The total number of equipments used.'),
