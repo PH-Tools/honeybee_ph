@@ -14,7 +14,7 @@ from honeybee_energy_ph.hvac import hot_water
 class SHWSystemPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types[0], _expected_types[1], _input_type)
+            _expected_types, _input_type)
         super(SHWSystemPhProperties_FromDictError, self).__init__(self.msg)
 
 

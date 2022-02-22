@@ -3,12 +3,12 @@
 
 """Passive House Service Hot Water Objects"""
 
-from honeybee_energy_ph.hvac import _base
-
 try:
     from typing import Any
 except ImportError:
     pass  # IronPython
+
+from honeybee_energy_ph.hvac import _base
 
 
 class UnknownPhHeaterTypeError(Exception):

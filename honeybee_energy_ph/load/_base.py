@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""HBE-PH HVAC Base Class"""
+"""HBE-PH Appliance (Elec Equip.) Base Class"""
 
 import uuid
 
 
 class _Base(object):
-    """Base class for any HB-Energy-PH HVAC Object"""
+    """Base class for any HB-Energy-PH Appliance Object"""
 
     def __init__(self):
         self._identifier = uuid.uuid4()

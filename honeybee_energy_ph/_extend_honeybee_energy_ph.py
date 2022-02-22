@@ -8,7 +8,8 @@ from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 from honeybee_ph.properties.space import SpaceProperties
 from honeybee_energy.properties.extension import OpaqueConstructionProperties, \
     WindowConstructionProperties, IdealAirSystemProperties, \
-    ServiceHotWaterProperties, SHWSystemProperties
+    ServiceHotWaterProperties, SHWSystemProperties, ElectricEquipmentProperties
+
 
 # -- honeybee_energy_ph properties objects
 from honeybee_energy_ph.properties.ruleset import ScheduleRulesetPhProperties
@@ -18,6 +19,7 @@ from honeybee_energy_ph.properties.construction.window import WindowConstruction
 from honeybee_energy_ph.properties.hvac.idealair import IdealAirSystemPhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
 from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
+from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
 
 # Step 1)
 # set a private ._ph attribute on each relevant HB-Energy Property class to None
@@ -28,6 +30,7 @@ setattr(WindowConstructionProperties, '_ph', None)
 setattr(IdealAirSystemProperties, '_ph', None)
 setattr(ServiceHotWaterProperties, '_ph', None)
 setattr(SHWSystemProperties, '_ph', None)
+setattr(ElectricEquipmentProperties, '_ph', None)
 
 # Step 2)
 # create methods to define the public .property.<extension> @property instances on each obj.properties container
@@ -75,6 +78,12 @@ def hot_water_system_ph_properties(self):
     return self._ph
 
 
+def elec_equip_ph_properties(self):
+    if self._ph is None:
+        self._ph = ElectricEquipmentPhProperties(self.host)
+    return self._ph
+
+
 # Step 3)
 # add public .energy or .ph @property methods to the appropriate Properties classes
 setattr(SpaceProperties, 'energy', property(space_energy_properties))
@@ -84,3 +93,4 @@ setattr(WindowConstructionProperties, 'ph', property(window_construction_ph_prop
 setattr(IdealAirSystemProperties, 'ph', property(hvac_ideal_air_system_ph_properties))
 setattr(ServiceHotWaterProperties, 'ph', property(hot_water_program_ph_properties))
 setattr(SHWSystemProperties, 'ph', property(hot_water_system_ph_properties))
+setattr(ElectricEquipmentProperties, 'ph', property(elec_equip_ph_properties))
