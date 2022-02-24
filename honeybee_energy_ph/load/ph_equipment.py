@@ -23,7 +23,9 @@ class UnknownPhEquipmentTypeError(Exception):
 class PhEquipment(_base._Base):
     """Base for PH Equipment / Appliances with the common attributes."""
 
-    def __init__(self):
+    defaults = {}  # Implemented by subclasses
+
+    def __init__(self, _defaults=False):
         super(PhEquipment, self).__init__()
         self.equipment_type = self.__class__.__name__
         self.comment = None
@@ -34,6 +36,18 @@ class PhEquipment(_base._Base):
         self.energy_demand = 100  # kwh
         self.energy_demand_per_use = 100  # kwh/use
         self.combined_energy_factor = 0  # CEF
+
+        self.apply_default_attr_values(_defaults)
+
+    def apply_default_attr_values(self, _defaults):
+        # type: (bool) -> None
+        """Sets all the object attributes to default values, as specified in the class's "defaults" dict."""
+
+        if not _defaults:
+            return
+
+        for k, v in self.defaults.items():
+            setattr(self, k, v)
 
     def to_dict(self):
         # type: () -> dict
@@ -83,8 +97,23 @@ class PhEquipment(_base._Base):
 # - Appliances
 
 class PhDishwasher(PhEquipment):
-    def __init__(self):
-        super(PhDishwasher, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'capacity_type': 1,
+        'capacity': 1,
+        'water_connection': 1,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhDishwasher, self).__init__(_defaults)
         self.capacity_type = 1
         self.capacity = 1
         self.water_connection = 1
@@ -110,8 +139,24 @@ class PhDishwasher(PhEquipment):
 
 
 class PhClothesWasher(PhEquipment):
-    def __init__(self):
-        super(PhClothesWasher, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'capacity': 0.0814,
+        'modified_energy_factor': 2.38,
+        'connection': 1,
+        'utilization_factor': 1,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhClothesWasher, self).__init__(_defaults)
         self.capacity = 0.0814  # m3
         self.modified_energy_factor = 2.38
         self.connection = 1  # DHW Connection
@@ -140,8 +185,25 @@ class PhClothesWasher(PhEquipment):
 
 
 class PhClothesDryer(PhEquipment):
-    def __init__(self):
-        super(PhClothesDryer, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'dryer_type': 4,
+        'gas_consumption': 0,
+        'gas_efficiency_factor': 2.67,
+        'field_utilization_factor_type': 1,
+        'field_utilization_factor': 1.18,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhClothesDryer, self).__init__(_defaults)
         self.dryer_type = 4  # Condensation dryer
         self.gas_consumption = 0  # kWh
         self.gas_efficiency_factor = 2.67
@@ -173,8 +235,20 @@ class PhClothesDryer(PhEquipment):
 
 
 class PhRefrigerator(PhEquipment):
-    def __init__(self):
-        super(PhRefrigerator, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhRefrigerator, self).__init__(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -193,8 +267,20 @@ class PhRefrigerator(PhEquipment):
 
 
 class PhFreezer(PhEquipment):
-    def __init__(self):
-        super(PhFreezer, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhFreezer, self).__init__(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -213,8 +299,20 @@ class PhFreezer(PhEquipment):
 
 
 class PhFridgeFreezer(PhEquipment):
-    def __init__(self):
-        super(PhFridgeFreezer, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhFridgeFreezer, self).__init__(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -233,8 +331,21 @@ class PhFridgeFreezer(PhEquipment):
 
 
 class PhCooktop(PhEquipment):
-    def __init__(self):
-        super(PhCooktop, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'cooktop_type': 1,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhCooktop, self).__init__(_defaults)
         self.cooktop_type = 1  # Electric
 
     def to_dict(self):
@@ -254,8 +365,20 @@ class PhCooktop(PhEquipment):
 
 
 class PhPhiusMEL(PhEquipment):
-    def __init__(self):
-        super(PhPhiusMEL, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhPhiusMEL, self).__init__(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -274,8 +397,21 @@ class PhPhiusMEL(PhEquipment):
 
 
 class PhPhiusLightingInterior(PhEquipment):
-    def __init__(self):
-        super(PhPhiusLightingInterior, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'frac_high_efficiency': 1.0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhPhiusLightingInterior, self).__init__(_defaults)
         self.frac_high_efficiency = 1  # CEF
 
     def to_dict(self):
@@ -295,8 +431,21 @@ class PhPhiusLightingInterior(PhEquipment):
 
 
 class PhPhiusLightingExterior(PhEquipment):
-    def __init__(self):
-        super(PhPhiusLightingExterior, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'frac_high_efficiency': 1.0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhPhiusLightingExterior, self).__init__(_defaults)
         self.frac_high_efficiency = 1  # CEF
 
     def to_dict(self):
@@ -316,8 +465,21 @@ class PhPhiusLightingExterior(PhEquipment):
 
 
 class PhPhiusLightingGarage(PhEquipment):
-    def __init__(self):
-        super(PhPhiusLightingGarage, self).__init__()
+
+    defaults = {
+        'comment': '',
+        'reference_quantity': 2,
+        'quantity': 0,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 100,
+        'energy_demand_per_use': 100,
+        'combined_energy_factor': 0,
+        'frac_high_efficiency': 1.0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhPhiusLightingGarage, self).__init__(_defaults)
         self.frac_high_efficiency = 1  # CEF
 
     def to_dict(self):
