@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
+# -*- coding: utf-8 -*-
 """Passive House Equipments (Electric Equipment)"""
 
 
 try:
-    from typing import Any
+    from typing import Any, TypeVar
 except ImportError:
     pass  # IronPython
 
@@ -20,7 +20,7 @@ class UnknownPhEquipmentTypeError(Exception):
 
 
 class PhEquipment(_base._Base):
-    """Base for PH Equipments with common attributes."""
+    """Base for PH Equipment / Appliances with the common attributes."""
 
     def __init__(self):
         super(PhEquipment, self).__init__()
@@ -55,7 +55,7 @@ class PhEquipment(_base._Base):
         return d
 
     def base_attrs_from_dict(self, _obj, _input_dict):
-        # type: (PhEquipment, dict) -> Any
+        # type: (PhEquipment, dict) -> None
         """Set the base object attributes from a dictionary
 
         Arguments:
@@ -65,7 +65,7 @@ class PhEquipment(_base._Base):
 
         Returns:
         --------
-            * (PhEquipment): The input PhEquipment object, with its attribute values set.
+            * None
         """
         for attr_name in vars(self).keys():
             try:
@@ -75,8 +75,11 @@ class PhEquipment(_base._Base):
                 setattr(_obj, attr_name, _input_dict[attr_name])
             except KeyError:
                 pass
-        return _obj
+        return None
 
+
+# -----------------------------------------------------------------------------
+# - Appliances
 
 class PhDishwasher(PhEquipment):
     def __init__(self):
@@ -88,28 +91,252 @@ class PhDishwasher(PhEquipment):
     def to_dict(self):
         # type: () -> dict
         d = {}
-
         d.update(super(PhDishwasher, self).to_dict())
         d['capacity_type'] = self.capacity_type
         d['capacity'] = self.capacity
         d['water_connection'] = self.water_connection
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhDishwasher
         new_obj = cls()
-
-        new_obj = super(PhDishwasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        super(PhDishwasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.capacity_type = _input_dict['capacity_type']
         new_obj.capacity = _input_dict['capacity']
         new_obj.water_connection = _input_dict['water_connection']
+        return new_obj
+
+
+class PhClothesWasher(PhEquipment):
+    def __init__(self):
+        super(PhClothesWasher, self).__init__()
+        self.capacity = 0.0814  # m3
+        self.modified_energy_factor = 2.38
+        self.connection = 1  # DHW Connection
+        self.utilization_factor = 1
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhClothesWasher, self).to_dict())
+        d['capacity'] = self.capacity
+        d['modified_energy_factor'] = self.modified_energy_factor
+        d['connection'] = self.connection
+        d['utilization_factor'] = self.utilization_factor
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhClothesWasher
+        new_obj = cls()
+        super(PhClothesWasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.capacity = _input_dict['capacity']
+        new_obj.modified_energy_factor = _input_dict['modified_energy_factor']
+        new_obj.connection = _input_dict['connection']
+        new_obj.utilization_factor = _input_dict['utilization_factor']
+        return new_obj
+
+
+class PhClothesDryer(PhEquipment):
+    def __init__(self):
+        super(PhClothesDryer, self).__init__()
+        self.dryer_type = 4  # Condensation dryer
+        self.gas_consumption = 0  # kWh
+        self.gas_efficiency_factor = 2.67
+        self.field_utilization_factor_type = 1  # Timer
+        self.field_utilization_factor = 1.18
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhClothesDryer, self).to_dict())
+        d['dryer_type'] = self.dryer_type
+        d['gas_consumption'] = self.gas_consumption
+        d['gas_efficiency_factor'] = self.gas_efficiency_factor
+        d['field_utilization_factor_type'] = self.field_utilization_factor_type
+        d['field_utilization_factor'] = self.field_utilization_factor
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhClothesDryer
+        new_obj = cls()
+        super(PhClothesDryer, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.dryer_type = _input_dict['dryer_type']
+        new_obj.gas_consumption = _input_dict['gas_consumption']
+        new_obj.gas_efficiency_factor = _input_dict['gas_efficiency_factor']
+        new_obj.field_utilization_factor_type = _input_dict['field_utilization_factor_type']
+        new_obj.field_utilization_factor = _input_dict['field_utilization_factor']
+        return new_obj
+
+
+class PhRefrigerator(PhEquipment):
+    def __init__(self):
+        super(PhRefrigerator, self).__init__()
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhRefrigerator, self).to_dict())
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhRefrigerator
+        new_obj = cls()
+        super(PhRefrigerator, new_obj).base_attrs_from_dict(new_obj, _input_dict)
 
         return new_obj
 
 
-# ---
+class PhFreezer(PhEquipment):
+    def __init__(self):
+        super(PhFreezer, self).__init__()
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhFreezer, self).to_dict())
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhFreezer
+        new_obj = cls()
+        super(PhFreezer, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+
+        return new_obj
+
+
+class PhFridgeFreezer(PhEquipment):
+    def __init__(self):
+        super(PhFridgeFreezer, self).__init__()
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhFridgeFreezer, self).to_dict())
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhFridgeFreezer
+        new_obj = cls()
+        super(PhFridgeFreezer, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+
+        return new_obj
+
+
+class PhCooktop(PhEquipment):
+    def __init__(self):
+        super(PhCooktop, self).__init__()
+        self.cooktop_type = 1  # Electric
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhCooktop, self).to_dict())
+        d['cooktop_type'] = self.cooktop_type
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhCooktop
+        new_obj = cls()
+        super(PhCooktop, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.cooktop_type = _input_dict['cooktop_type']
+        return new_obj
+
+
+class PhPhiusMEL(PhEquipment):
+    def __init__(self):
+        super(PhPhiusMEL, self).__init__()
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhPhiusMEL, self).to_dict())
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhPhiusMEL
+        new_obj = cls()
+        super(PhPhiusMEL, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+
+        return new_obj
+
+
+class PhPhiusLightingInterior(PhEquipment):
+    def __init__(self):
+        super(PhPhiusLightingInterior, self).__init__()
+        self.frac_high_efficiency = 1  # CEF
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhPhiusLightingInterior, self).to_dict())
+        d['frac_high_efficiency'] = self.frac_high_efficiency
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhPhiusLightingInterior
+        new_obj = cls()
+        super(PhPhiusLightingInterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
+        return new_obj
+
+
+class PhPhiusLightingExterior(PhEquipment):
+    def __init__(self):
+        super(PhPhiusLightingExterior, self).__init__()
+        self.frac_high_efficiency = 1  # CEF
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhPhiusLightingExterior, self).to_dict())
+        d['frac_high_efficiency'] = self.frac_high_efficiency
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhPhiusLightingExterior
+        new_obj = cls()
+        super(PhPhiusLightingExterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
+        return new_obj
+
+
+class PhPhiusLightingGarage(PhEquipment):
+    def __init__(self):
+        super(PhPhiusLightingGarage, self).__init__()
+        self.frac_high_efficiency = 1  # CEF
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhPhiusLightingGarage, self).to_dict())
+        d['frac_high_efficiency'] = self.frac_high_efficiency
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhPhiusLightingGarage
+        new_obj = cls()
+        super(PhPhiusLightingGarage, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
+        return new_obj
+
+
+# -----------------------------------------------------------------------------
+# Collections
 
 class PhEquipmentBuilder(object):
     """Constructor class for PH Equipment objects"""
