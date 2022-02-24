@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 @dataclass
 class Ground:
     ground_thermal_conductivity: float = 2
-    ground_heat_capacitiy: float = 1000
+    ground_heat_capacity: float = 1000
     ground_density: float = 2000
     depth_groundwater: float = 3
     flow_rate_groundwater: float = 0.05

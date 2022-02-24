@@ -14,7 +14,7 @@ class PhxElectricalEquipment:
     def __init__(self):
         self.display_name: str = '_unnamed_equipment_'
         self.id_num: int = self._count
-        self.comment = None
+        self.comment: Optional[str] = None
         self.reference_quantity: int = 1
         self.quantity: int = 1
         self.in_conditioned_space: bool = True
@@ -31,9 +31,72 @@ class PhxElectricalEquipment:
 class PhxDishwasher(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
-        self.capacity_type = 1
-        self.capacity = 1
-        self.water_connection = 1
+        self.capacity_type: int = 1
+        self.capacity: float = 1
+        self.water_connection: int = 1
+
+
+class PhxClothesWasher(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.capacity: float = 0.0814  # m3
+        self.modified_energy_factor: float = 2.38
+        self.connection: int = 1  # DHW Connection
+        self.utilization_factor: float = 1
+
+
+class PhxClothesDryer(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.dryer_type: int = 4  # Condensation dryer
+        self.gas_consumption: float = 0  # kWh
+        self.gas_efficiency_factor: float = 2.67
+        self.field_utilization_factor_type: int = 1  # Timer
+        self.field_utilization_factor: float = 1.18
+
+
+class PhxRefrigerator(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+
+class PhxFreezer(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+
+class PhxFridgeFreezer(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+
+class PhxCooktop(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.cooktop_type: int = 1  # Electric
+
+
+class PhxMEL(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+
+class PhxLightingInterior(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.frac_high_efficiency: float = 1.0
+
+
+class PhxLightingExterior(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.frac_high_efficiency: float = 1.0
+
+
+class PhxLightingGarage(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+        self.frac_high_efficiency: float = 1.0
 
 
 @dataclass

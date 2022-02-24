@@ -169,7 +169,7 @@ class Climate_Ground(_base._Base):
     def __init__(self):
         super(Climate_Ground, self).__init__()
         self.ground_thermal_conductivity = 2
-        self.ground_heat_capacitiy = 1000
+        self.ground_heat_capacity = 1000
         self.ground_density = 2000
         self.depth_groundwater = 3
         self.flow_rate_groundwater = 0.05
@@ -179,7 +179,7 @@ class Climate_Ground(_base._Base):
         d = {}
 
         d["ground_thermal_conductivity"] = self.ground_thermal_conductivity
-        d["ground_heat_capacitiy"] = self.ground_heat_capacitiy
+        d["ground_heat_capacity"] = self.ground_heat_capacity
         d["ground_density"] = self.ground_density
         d["depth_groundwater"] = self.depth_groundwater
         d["flow_rate_groundwater"] = self.flow_rate_groundwater
@@ -192,8 +192,8 @@ class Climate_Ground(_base._Base):
 
         new_obj.ground_thermal_conductivity = _input_dict.get(
             "ground_thermal_conductivity")
-        new_obj.ground_heat_capacitiy = _input_dict.get(
-            "ground_heat_capacitiy")
+        new_obj.ground_heat_capacity = _input_dict.get(
+            "ground_heat_capacity")
         new_obj.ground_density = _input_dict.get("ground_density")
         new_obj.depth_groundwater = _input_dict.get("depth_groundwater")
         new_obj.flow_rate_groundwater = _input_dict.get(

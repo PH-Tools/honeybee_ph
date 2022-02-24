@@ -39,7 +39,7 @@ def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room, gr
     ----------
         * _variaint (project.Variant): The PHX-Variant to add the building to.
         * _hb_room (room.Room): The honeybee-Room to use as the source.
-        * group_components (bool): defauly=False. Set to true to have the converter
+        * group_components (bool): default=False. Set to true to have the converter
             group the components by assembly-type.
 
     Returns:
@@ -56,7 +56,7 @@ def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room, gr
 
 
 def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Copy PHX-Phius Certification from a Honeybee-Rooom over to a PHX-Variant.
+    """Copy PHX-Phius Certification from a Honeybee-Room over to a PHX-Variant.
 
     Arguments:
     ----------
@@ -136,7 +136,7 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
 
     # -- Ground
     _variant.climate.ph_climate_location.ground.ground_thermal_conductivity = ud_climate.ground.ground_thermal_conductivity
-    _variant.climate.ph_climate_location.ground.ground_heat_capacitiy = ud_climate.ground.ground_heat_capacitiy
+    _variant.climate.ph_climate_location.ground.ground_heat_capacity = ud_climate.ground.ground_heat_capacity
     _variant.climate.ph_climate_location.ground.ground_density = ud_climate.ground.ground_density
     _variant.climate.ph_climate_location.ground.depth_groundwater = ud_climate.ground.depth_groundwater
     _variant.climate.ph_climate_location.ground.flow_rate_groundwater = ud_climate.ground.flow_rate_groundwater

@@ -58,7 +58,7 @@ class LBTGeometryConversionError(Exception):
 
 
 class IGH:
-    """PyPH Interface for basic Grasshopper (and Rhino) dependancies that can be
+    """PyPH Interface for basic Grasshopper (and Rhino) dependencies that can be
         used by other classes which accept this Interface object.
 
     Arguments:
@@ -100,7 +100,7 @@ class IGH:
                 return i
 
         raise Exception(
-            'Error: The input node "{}" cannot be founnd?'.format(_input_name))
+            'Error: The input node "{}" cannot be found?'.format(_input_name))
 
     def gh_compo_get_input_for_node_number(self, _node_number):
         # type: (int) -> GH_Structure[IGH_Goo]
@@ -151,7 +151,7 @@ class IGH:
     def context_rh_doc(self):
         """
         Context Manager used to switch Grasshopper's scriptcontext.doc
-        to Rhino.RhinoDoc.ActiveDoc temporaily. This is needed when trying
+        to Rhino.RhinoDoc.ActiveDoc temporarily. This is needed when trying
         to access information such as UserText for Rhino objects
 
         Use:
@@ -364,7 +364,7 @@ class IGH:
 
         This *should* work on surfaces that are touching, AND ones that overlap. Using
         GH MergeFaces() only works on 'touching' surfaces, but not overlapping ones.
-        Using 'RegionUnion' should work on both touching and overlapping srfcs.
+        Using 'RegionUnion' should work on both touching and overlapping surfaces.
 
         Arguments:
         ----------
@@ -387,7 +387,7 @@ class IGH:
         if not isinstance(joined_curves, list):
             joined_curves = [joined_curves]
 
-        # -- Intersect and Merge the Perimeter Curves back togther, make new Face3Ds
+        # -- Intersect and Merge the Perimeter Curves back together, make new Face3Ds
         new_LBT_face3ds = []
         for crv in joined_curves:
             merged_breps = self.Rhino.Geometry.Brep.CreatePlanarBreps(crv, 0.01)
@@ -506,7 +506,7 @@ def clean_get(_list, _i, _default=None):
     # type: (list[Any], int, Any) -> Any
     """Get list item cleanly based on index pos. If IndexError, try getting list[0]
 
-    This is useful for ghcomponents with multiple list inputs whch are sometimes  
+    This is useful for gh-components with multiple list inputs which are sometimes  
     the same length, and sometimes not the same length.
 
     Arguments:
@@ -574,11 +574,11 @@ def get_component_input_values(ghenv):
     inputs = {}
     for input in ghenv.Component.Params.Input:
         try:
-            vals = list(input.VolatileData[0])
+            values = list(input.VolatileData[0])
             try:
-                val = float(str(vals[0]))
+                val = float(str(values[0]))
             except:
-                val = str(vals[0])
+                val = str(values[0])
             inputs[input.Name] = val
         except:
             inputs[input.Name] = None

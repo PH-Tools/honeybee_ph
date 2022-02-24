@@ -14,9 +14,19 @@ def build_phx_elec_device(_hbph_device: ph_equipment.PhEquipment) -> elec_equip.
     --------
         * elec_equip.PhxElectricalEquipment: The new PHX-Elec Equipment Device.
     """
-    # -- Get the right constructor based on the type of heater
+    # -- Get the right PHX Appliance constructor based on the type of HBPH Equipment found
     devices = {
         'PhDishwasher': elec_equip.PhxDishwasher,
+        'PhClothesWasher': elec_equip.PhxClothesWasher,
+        'PhClothesDryer': elec_equip.PhxClothesDryer,
+        'PhRefrigerator': elec_equip.PhxRefrigerator,
+        'PhFreezer': elec_equip.PhxFreezer,
+        'PhFridgeFreezer': elec_equip.PhxFridgeFreezer,
+        'PhCooktop': elec_equip.PhxCooktop,
+        'PhPhiusMEL': elec_equip.PhxMEL,
+        'PhPhiusLightingInterior': elec_equip.PhxLightingInterior,
+        'PhPhiusLightingExterior': elec_equip.PhxLightingExterior,
+        'PhPhiusLightingGarage': elec_equip.PhxLightingGarage,
     }
 
     # -- Build the basic device

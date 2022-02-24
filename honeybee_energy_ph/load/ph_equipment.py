@@ -9,6 +9,7 @@ try:
 except ImportError:
     pass  # IronPython
 
+import sys
 from honeybee_energy_ph.load import _base
 
 
@@ -341,19 +342,19 @@ class PhPhiusLightingGarage(PhEquipment):
 class PhEquipmentBuilder(object):
     """Constructor class for PH Equipment objects"""
 
-    equipment = {
-        'PhDishwasher': PhDishwasher,
-    }
-
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhEquipment
+        """Find the right appliance constructor class from the module based on the 'type' name."""
 
         equipment_type = _input_dict.get('equipment_type')
-        if equipment_type is None:
-            raise UnknownPhEquipmentTypeError(cls.equipment.keys(), equipment_type)
 
-        equipment_class = cls.equipment[equipment_type]
+        if equipment_type is None:
+            valid_class_types = [nm for nm in dir(
+                sys.modules[__name__]) if nm.startswith('Ph')]
+            raise UnknownPhEquipmentTypeError(valid_class_types, equipment_type)
+
+        equipment_class = getattr(sys.modules[__name__], equipment_type)
         new_equipment = equipment_class.from_dict(_input_dict)
 
         return new_equipment
@@ -369,7 +370,6 @@ class PhEquipmentBuilder(object):
 
 
 class PhEquipmentCollection(object):
-    """Singleton"""
 
     def __init__(self, _host):
         self._equipment_set = {}

@@ -106,7 +106,6 @@ def _Building(_b: building.Building) -> List[xml_writable]:
 
 
 def _Zone(_z: building.Zone) -> List[xml_writable]:
-    print(_z.elec_equipment_collection.equipment)
     return [
         XML_Node("Name", _z.name),
         XML_Node("IdentNr", _z.id_num),
@@ -241,7 +240,7 @@ def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> List[xml_writab
         # -- Ground
         XML_Node('GroundThermalConductivity',
                  _climate.ground.ground_thermal_conductivity),
-        XML_Node('GroundHeatCapacitiy', _climate.ground.ground_heat_capacitiy),
+        XML_Node('GroundHeatCapacitiy', _climate.ground.ground_heat_capacity),
         XML_Node('GroundDensity', _climate.ground.ground_density),
         XML_Node('DepthGroundwater', _climate.ground.depth_groundwater),
         XML_Node('FlowRateGroundwater', _climate.ground.flow_rate_groundwater),
@@ -768,9 +767,104 @@ def _PhxZoneCoverage(_zc: mech_equip.PhxZoneCoverage) -> List[xml_writable]:
 
 # -- ELEC. EQUIPMENT DEVICES --
 
-def _ResElecDevice_Dishwasher(_d) -> List[xml_writable]:
+def _ResElecDevice_Dishwasher(_d: elec_equip.PhxDishwasher) -> List[xml_writable]:
     return [
         XML_Node('Type', 1),
+        XML_Node('Connection', _d.water_connection),
+        XML_Node('DishwasherCapacityPreselection', _d.capacity_type),
+        XML_Node('DishwasherCapacityInPlace', _d.capacity),
+    ]
+
+
+def _ResElecDevice_ClothesWasher(_d: elec_equip.PhxClothesWasher) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 2),
+        XML_Node('Connection', _d.connection),
+        XML_Node('UtilizationFactor', _d.utilization_factor),
+        XML_Node('CapacityClothesWasher', _d.capacity),
+        XML_Node('MEF_ModifiedEnergyFactor', _d.modified_energy_factor),
+    ]
+
+
+def _ResElecDevice_ClothesDryer(_d: elec_equip.PhxClothesDryer) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 3),
+        XML_Node('Dryer_Choice', _d.dryer_type),
+        XML_Node('GasConsumption', _d.gas_consumption),
+        XML_Node('EfficiencyFactorGas', _d.gas_efficiency_factor),
+        XML_Node('FieldUtilizationFactorPreselection', _d.field_utilization_factor_type),
+        XML_Node('FieldUtilizationFactor', _d.field_utilization_factor),
+    ]
+
+
+def _ResElecDevice_Fridge(_d: elec_equip.PhxRefrigerator) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 4),
+    ]
+
+
+def _ResElecDevice_Freezer(_d: elec_equip.PhxFreezer) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 5),
+    ]
+
+
+def _ResElecDevice_FridgeFreezer(_d: elec_equip.PhxFridgeFreezer) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 6),
+    ]
+
+
+def _ResElecDevice_Cooktop(_d: elec_equip.PhxCooktop) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 7),
+        XML_Node('CookingWith', _d.cooktop_type),
+    ]
+
+
+def _ResElecDevice_MEL(_d: elec_equip.PhxMEL) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 13),
+    ]
+
+
+def _ResElecDevice_LightingInterior(_d: elec_equip.PhxLightingInterior) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 14),
+        XML_Node('FractionHightEfficiency', _d.frac_high_efficiency),
+    ]
+
+
+def _ResElecDevice_LightingExterior(_d: elec_equip.PhxLightingExterior) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 15),
+        XML_Node('FractionHightEfficiency', _d.frac_high_efficiency),
+    ]
+
+
+def _ResElecDevice_LightingGarage(_d: elec_equip.PhxLightingGarage) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 16),
+        XML_Node('FractionHightEfficiency', _d.frac_high_efficiency),
+    ]
+
+
+def _ResElecDevice(_d: elec_equip.PhxElectricalEquipment) -> List[xml_writable]:
+    devices = {
+        'PhxDishwasher': _ResElecDevice_Dishwasher,
+        'PhxClothesWasher': _ResElecDevice_ClothesWasher,
+        'PhxClothesDryer': _ResElecDevice_ClothesDryer,
+        'PhxRefrigerator': _ResElecDevice_Fridge,
+        'PhxFreezer': _ResElecDevice_Freezer,
+        'PhxFridgeFreezer': _ResElecDevice_FridgeFreezer,
+        'PhxCooktop': _ResElecDevice_Cooktop,
+        'PhxMEL': _ResElecDevice_MEL,
+        'PhxLightingInterior': _ResElecDevice_LightingInterior,
+        'PhxLightingExterior': _ResElecDevice_LightingExterior,
+        'PhxLightingGarage': _ResElecDevice_LightingGarage,
+    }
+
+    common_attributes = [
         XML_Node('Comment', _d.comment),
         XML_Node('ReferenceQuantity', _d.reference_quantity),
         XML_Node('Quantity', _d.quantity),
@@ -779,15 +873,7 @@ def _ResElecDevice_Dishwasher(_d) -> List[xml_writable]:
         XML_Node('EnergyDemandNorm', _d.energy_demand),
         XML_Node('EnergyDemandNormUse', _d.energy_demand_per_use),
         XML_Node('CEF_CombinedEnergyFactor', _d.combined_energy_factor),
-        XML_Node('Connection', _d.water_connection),
-        XML_Node('DishwasherCapacityPreselection', _d.capacity_type),
-        XML_Node('DishwasherCapacityInPlace', _d.capacity),
     ]
+    appliance_specific_attributes = devices[_d.__class__.__name__](_d)
 
-
-def _ResElecDevice(_d: elec_equip.PhxElectricalEquipment) -> List[xml_writable]:
-    devices = {
-        'PhxDishwasher': _ResElecDevice_Dishwasher
-    }
-
-    return devices[_d.__class__.__name__](_d)
+    return common_attributes + appliance_specific_attributes
