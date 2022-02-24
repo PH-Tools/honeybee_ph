@@ -3,8 +3,8 @@
 
 """Grasshopper Interface Class. Used to pass Rhino, GH side dependencies to all other classes.
 
-This is done so that other classes can be tested by mocking out this Interface. If I 
-could figure out how to get Rhino dependencies to be recognized by testing framework, 
+This is done so that other classes can be tested by mocking out this Interface. If I
+could figure out how to get Rhino dependencies to be recognized by testing framework,
 probably would not need something like this? I suppose it does help reduce coupling?
 """
 
@@ -221,7 +221,7 @@ class IGH:
         """Converts a list of RH- or GH-Geometry into a list of LBT-Geometry. If
             input is a string, boolean or number, will just return that without converting.
 
-            Note: The return is a list of lists since the lbt converter might return 
+            Note: The return is a list of lists since the lbt converter might return
             triangulated faces in some cases.
 
         Arguments:
@@ -492,7 +492,7 @@ def input_to_int(_input_value, _default=None):
     will strip the string part and return just the integer value, or raise SelectionInputError.
     """
 
-    if _input_value is None:
+    if not _input_value:
         return _default
 
     result = re.search(r"\d+", str(_input_value))
@@ -506,7 +506,7 @@ def clean_get(_list, _i, _default=None):
     # type: (list[Any], int, Any) -> Any
     """Get list item cleanly based on index pos. If IndexError, try getting list[0]
 
-    This is useful for gh-components with multiple list inputs which are sometimes  
+    This is useful for gh-components with multiple list inputs which are sometimes
     the same length, and sometimes not the same length.
 
     Arguments:

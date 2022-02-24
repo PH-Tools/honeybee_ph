@@ -99,23 +99,23 @@ class PhEquipment(_base._Base):
 class PhDishwasher(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 1,  # PH case occupants
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
-        'capacity_type': 1,
-        'capacity': 1,
-        'water_connection': 1,
+        'reference_energy_norm': 2,  # Year
+        'energy_demand': 269,  # kWh
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
+        'capacity_type': 1,  # Standard
+        'capacity': 12,
+        'water_connection': 1,  # DHW connection
     }
 
     def __init__(self, _defaults=False):
         super(PhDishwasher, self).__init__(_defaults)
         self.capacity_type = 1
-        self.capacity = 1
+        self.capacity = 12
         self.water_connection = 1
 
     def to_dict(self):
@@ -141,25 +141,25 @@ class PhDishwasher(PhEquipment):
 class PhClothesWasher(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 1,  # PH case occupants
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
-        'capacity': 0.0814,
-        'modified_energy_factor': 2.38,
-        'connection': 1,
-        'utilization_factor': 1,
+        'reference_energy_norm': 2,  # Year
+        'energy_demand': 120,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
+        'capacity': 0.1274,
+        'modified_energy_factor': 2.7,
+        'connection': 1,  # DHW connection
+        'utilization_factor': 1.0,
     }
 
     def __init__(self, _defaults=False):
         super(PhClothesWasher, self).__init__(_defaults)
-        self.capacity = 0.0814  # m3
-        self.modified_energy_factor = 2.38
-        self.connection = 1  # DHW Connection
+        self.capacity = 0.1274
+        self.modified_energy_factor = 2.7
+        self.connection = 1
         self.utilization_factor = 1
 
     def to_dict(self):
@@ -187,27 +187,27 @@ class PhClothesWasher(PhEquipment):
 class PhClothesDryer(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 1,  # PH case occupants
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
-        'dryer_type': 4,
-        'gas_consumption': 0,
+        'reference_energy_norm': 2,  # CEF - Combined Energy Factor
+        'energy_demand': None,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': 3.93,
+        'dryer_type': 4,  # Condensation dryer
+        'gas_consumption': None,
         'gas_efficiency_factor': 2.67,
-        'field_utilization_factor_type': 1,
+        'field_utilization_factor_type': 1,  # Timer controls
         'field_utilization_factor': 1.18,
     }
 
     def __init__(self, _defaults=False):
         super(PhClothesDryer, self).__init__(_defaults)
-        self.dryer_type = 4  # Condensation dryer
-        self.gas_consumption = 0  # kWh
+        self.dryer_type = 4
+        self.gas_consumption = 0
         self.gas_efficiency_factor = 2.67
-        self.field_utilization_factor_type = 1  # Timer
+        self.field_utilization_factor_type = 1
         self.field_utilization_factor = 1.18
 
     def to_dict(self):
@@ -237,14 +237,14 @@ class PhClothesDryer(PhEquipment):
 class PhRefrigerator(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 4,  # PH case Units
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
+        'reference_energy_norm': 1,  # Day
+        'energy_demand': 1.0,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
     }
 
     def __init__(self, _defaults=False):
@@ -269,14 +269,14 @@ class PhRefrigerator(PhEquipment):
 class PhFreezer(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 4,  # PH case Units
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
+        'reference_energy_norm': 1,  # Day
+        'energy_demand': 2.07,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
     }
 
     def __init__(self, _defaults=False):
@@ -301,14 +301,14 @@ class PhFreezer(PhEquipment):
 class PhFridgeFreezer(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 4,  # PH case Units
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
+        'reference_energy_norm': 1,  # Day
+        'energy_demand': 1.22,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
     }
 
     def __init__(self, _defaults=False):
@@ -333,15 +333,15 @@ class PhFridgeFreezer(PhEquipment):
 class PhCooktop(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 1,  # PH case occupants
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
-        'cooktop_type': 1,
+        'reference_energy_norm': 1,  # Use
+        'energy_demand': 0.2,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
+        'cooktop_type': 1,  # Cooking with electricity
     }
 
     def __init__(self, _defaults=False):
@@ -367,14 +367,14 @@ class PhCooktop(PhEquipment):
 class PhPhiusMEL(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 3,  # Bedroooms
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
+        'reference_energy_norm': 1,  # Use
+        'energy_demand': None,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
     }
 
     def __init__(self, _defaults=False):
@@ -399,14 +399,14 @@ class PhPhiusMEL(PhEquipment):
 class PhPhiusLightingInterior(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 6,  # PH case floor area
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
+        'reference_energy_norm': 1,  # Use
+        'energy_demand': None,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
         'frac_high_efficiency': 1.0,
     }
 
@@ -433,14 +433,14 @@ class PhPhiusLightingInterior(PhEquipment):
 class PhPhiusLightingExterior(PhEquipment):
 
     defaults = {
-        'comment': '',
-        'reference_quantity': 2,
-        'quantity': 0,
+        'comment': 'default',
+        'reference_quantity': 6,  # PH case floor area
+        'quantity': 1,
         'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
+        'reference_energy_norm': 1,  # Use
+        'energy_demand': None,
+        'energy_demand_per_use': None,
+        'combined_energy_factor': None,
         'frac_high_efficiency': 1.0,
     }
 
@@ -467,7 +467,7 @@ class PhPhiusLightingExterior(PhEquipment):
 class PhPhiusLightingGarage(PhEquipment):
 
     defaults = {
-        'comment': '',
+        'comment': 'default',
         'reference_quantity': 2,
         'quantity': 0,
         'in_conditioned_space': True,

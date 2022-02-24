@@ -115,7 +115,10 @@ def get_component_inputs(_equipment_type):
     # type: (str) -> dict
     """Select the component input-node group based on the 'type' specified"""
 
-    input_type_id = input_to_int(str(_equipment_type))
+    if not _equipment_type:
+        return {}
+
+    input_type_id = input_to_int(_equipment_type)
     if not input_type_id:
         raise InputTypeNotFoundError(input_type_id)
 
