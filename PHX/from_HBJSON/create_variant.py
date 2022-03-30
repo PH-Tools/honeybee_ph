@@ -230,6 +230,13 @@ def add_dhw_storage_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
     """
 
     for space in _hb_room.properties._ph.spaces:
+        # -- Guard Clause
+        if not space.host.properties.energy.shw:
+            continue
+
+        if not space.host.properties.energy.service_hot_water:
+            continue
+
         # -- Build the HW-Tank
         for hw_tank in space.host.properties.energy.shw.properties.ph.tanks:
             if not hw_tank:
