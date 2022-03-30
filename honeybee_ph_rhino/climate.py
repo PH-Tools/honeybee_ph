@@ -12,7 +12,7 @@ def parse_copy_from_excel(_ph_climate, _input):
 
     data = []
     for row in _input:
-        data.append(row.split("\t"))
+        data.append([_.lstrip().rstrip() for _ in row.split("\t")])
 
     _ph_climate.monthly_temperature_air.values = data[0][0:12]
     _ph_climate.monthly_temperature_dewpoint.values = data[6][0:12]
