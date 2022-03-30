@@ -11,8 +11,8 @@ from PHX.model import elec_equip, project
 from PHX.model import building, certification, climate, constructions, geometry, ground, mech_equip, schedules, ventilation
 from PHX.to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
-TOL = 2  # Value tolerance for rounding. ie; 9.84318191919 -> 9.84
-
+TOL_LEV1 = 2  # Value tolerance for rounding. ie; 9.843181919194 -> 9.84
+TOL_LEV2 = 10  # Value tolerance for rounding. ie; 9.843181919194 -> 9.8431819192
 
 # -- PROJECT --
 
@@ -335,9 +335,9 @@ def _Graphics3D(_graphics3D: geometry.Graphics3D) -> List[xml_writable]:
 def _Polygon(_p: geometry.Polygon) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _p.id_num),
-        XML_Node("NormalVectorX", _p.normal_vector.x),
-        XML_Node("NormalVectorY", _p.normal_vector.y),
-        XML_Node("NormalVectorZ", _p.normal_vector.z),
+        XML_Node("NormalVectorX", round(_p.normal_vector.x, TOL_LEV2)),
+        XML_Node("NormalVectorY", round(_p.normal_vector.y, TOL_LEV2)),
+        XML_Node("NormalVectorZ", round(_p.normal_vector.z, TOL_LEV2)),
         XML_List(
             "IdentNrPoints", [XML_Node("IdentNr", v_id, "index", i)
                               for i, v_id in enumerate(_p.vertices_id_numbers)]
@@ -353,9 +353,9 @@ def _Polygon(_p: geometry.Polygon) -> List[xml_writable]:
 def _Vertix(_v: geometry.Vertix) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _v.id_num),
-        XML_Node("X", _v.x),
-        XML_Node("Y", _v.y),
-        XML_Node("Z", _v.z),
+        XML_Node("X", round(_v.x, TOL_LEV2)),
+        XML_Node("Y", round(_v.y, TOL_LEV2)),
+        XML_Node("Z", round(_v.z, TOL_LEV2)),
     ]
 
 
@@ -425,9 +425,9 @@ def _RoomVentilation(_r: ventilation.RoomVentilation) -> List[xml_writable]:
         XML_Node('AreaRoom', _r.weighted_floor_area, "unit", "m²"),
         XML_Node('ClearRoomHeight', _r.clear_height, "unit", "m"),
         XML_Node('DesignVolumeFlowRateSupply',
-                 round(_r.ventilation_load.flow_supply, TOL), "unit", "m³/h"),
+                 round(_r.ventilation_load.flow_supply, TOL_LEV1), "unit", "m³/h"),
         XML_Node('DesignVolumeFlowRateExhaust',
-                 round(_r.ventilation_load.flow_extract, TOL), "unit", "m³/h"),
+                 round(_r.ventilation_load.flow_extract, TOL_LEV1), "unit", "m³/h"),
         # XML_Node('SupplyFlowRateUserDef', 'Test', "unit", "m³/h"),
         # XML_Node('ExhaustFlowRateUserDef', 'Test', "unit", "m³/h"),
         # XML_Node('DesignFlowInterzonalUserDef', 'Test', "unit", "m³/h"),
@@ -441,14 +441,16 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> List
         XML_Node("IdentNr", _util_pat.id_num),
         XML_Node("OperatingDays", _util_pat.operating_days),
         XML_Node("OperatingWeeks", _util_pat.operating_weeks),
-        XML_Node("Maximum_DOS", round(op_periods.high.period_operating_hours, TOL)),
-        XML_Node("Maximum_PDF", round(op_periods.high.period_operation_speed, TOL)),
-        XML_Node("Standard_DOS", round(op_periods.standard.period_operating_hours, TOL)),
-        XML_Node("Standard_PDF", round(op_periods.standard.period_operation_speed, TOL)),
-        XML_Node("Basic_DOS", round(op_periods.basic.period_operating_hours, TOL)),
-        XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL)),
-        XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL)),
-        XML_Node("Minimum_PDF", round(op_periods.minimum.period_operation_speed, TOL)),
+        XML_Node("Maximum_DOS", round(op_periods.high.period_operating_hours, TOL_LEV1)),
+        XML_Node("Maximum_PDF", round(op_periods.high.period_operation_speed, TOL_LEV1)),
+        XML_Node("Standard_DOS", round(
+            op_periods.standard.period_operating_hours, TOL_LEV1)),
+        XML_Node("Standard_PDF", round(
+            op_periods.standard.period_operation_speed, TOL_LEV1)),
+        XML_Node("Basic_DOS", round(op_periods.basic.period_operating_hours, TOL_LEV1)),
+        XML_Node("Basic_PDF", round(op_periods.basic.period_operation_speed, TOL_LEV1)),
+        XML_Node("Minimum_DOS", round(op_periods.minimum.period_operating_hours, TOL_LEV1)),
+        XML_Node("Minimum_PDF", round(op_periods.minimum.period_operation_speed, TOL_LEV1)),
     ]
 
 
