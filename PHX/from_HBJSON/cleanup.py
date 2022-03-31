@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""Functions used to merge Honeybee-Rooms together"""
+"""Functions used to cleanup / optimize Honeybee-Rooms before outputting to WUFI"""
+
 from typing import List
 from honeybee import room, face
 from honeybee.boundarycondition import Outdoors, Ground
 from honeybee_energy.boundarycondition import Adiabatic
+from PHX.model import project
 
 
-def get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
+def _get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
     """Returns a list of the exposed Honeybee Faces of a Honeybee Room. Exposed 
     faces are faces with a Boundary Condition of: 'Outdoors', 'Ground' or 'Adiabatic'.
 
@@ -61,7 +63,7 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
 
     exposed_faces = []
     for hb_room in _hb_rooms:
-        exposed_faces += get_room_exposed_faces(hb_room)
+        exposed_faces += _get_room_exposed_faces(hb_room)
 
     new_room = room.Room(
         identifier=reference_room.properties.ph.ph_bldg_segment.name,
@@ -87,4 +89,37 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
                 new_host=existing_space)
             new_room.properties.ph.add_new_space(existing_space)
 
+    # -- TODO: Can I merge together the surfaces as well?
+    # -- For larger models, I think this will be important.... hmm....
+
+    # -- Organize the surfaces by -> assembly / exposure / orientation (normal)
+
     return new_room
+
+
+def weld_vertices(_variant: project.Variant) -> project.Variant:
+    """
+    Used to try and weld/unify the vertices of a variant. 
+
+    This is helpful to reduce the complexity / number of variants in a large 
+    model so that WUFI can actually open it.
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The Variant object to weld the vertices for.
+
+    Returns:
+    --------
+        * (project.Variant): The variant, with its vertix objects welded.
+
+    """
+
+    unique_vertix_dict = {}
+    for polygon in _variant.graphics3D.polygons:
+        for i, vert in enumerate(polygon.vertices):
+            try:
+                vert = polygon.vertices[i] = unique_vertix_dict[vert.__hash__()]
+            except KeyError:
+                unique_vertix_dict[vert.__hash__()] = vert
+
+    return _variant

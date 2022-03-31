@@ -23,7 +23,7 @@ def add_geometry_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -
     """
 
     for hb_face in _hb_room.faces:
-        # Dev Note: To get the right IDs, have to generate the Children Polys first.
+        # Dev Note: To get the right IDs, have to generate the Children (window) Polygons FIRST.
         for aperture in hb_face.apertures:
             _variant.graphics3D.add_polygons(
                 create_geometry.create_PHX_Polyon_from_hb_aperture(aperture))

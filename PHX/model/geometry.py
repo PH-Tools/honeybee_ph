@@ -4,7 +4,7 @@
 """PHX Geometry Classes"""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Collection, List, Union
+from typing import Any, ClassVar, Collection, List, Union, Iterable
 
 
 @dataclass
@@ -15,9 +15,18 @@ class Vertix:
     y: float = 0.0
     z: float = 0.0
 
-    def __new__(cls, *args, **kwargs):
+    def __eq__(self, other: 'Vertix') -> bool:
+        return (self.x == other.x) and \
+            (self.y == other.y) and \
+            (self.z == other.z) and \
+            (self.id_num == other.id_num)
+
+    def __new__(cls, *args, **kwargs) -> 'Vertix':
         cls._count += 1
         return super(Vertix, cls).__new__(cls, *args, **kwargs)
+
+    def __hash__(self) -> int:
+        return hash(self.x) + hash(self.y) + hash(self.z)
 
 
 @dataclass
@@ -42,10 +51,17 @@ class Graphics3D:
     polygons: List[Polygon] = field(default_factory=list)
 
     @property
-    def vertices(self):
-        return [vertix for polygon in self.polygons for vertix in polygon.vertices]
+    def vertices(self) -> Iterable:
+        """Returns a set with all of the unique vertix objects of all the polygons in the collection."""
+
+        return {vertix
+                for polygon in self.polygons
+                for vertix in polygon.vertices
+                }
 
     def add_polygons(self, _polygons: Union[List[Polygon], Polygon]) -> None:
+        """Adds a new Polygon object to the collection"""
+
         if not isinstance(_polygons, Collection):
             _polygons = [_polygons]
 

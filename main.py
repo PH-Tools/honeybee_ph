@@ -11,13 +11,13 @@ from PHX.to_WUFI_XML import xml_builder, xml_txt_to_file
 if __name__ == '__main__':
     # --- Input / Output file Path
     # -----------------------------------------------------------------------------
-    SOURCE_FILE = pathlib.Path("sample", "hbjson", "Undercliff_220224.hbjson")
-    TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Undercliff_220224.xml")
+    SOURCE_FILE = pathlib.Path("sample", "hbjson", "Ridgeway_VI_220331.hbjson")
+    TARGET_FILE_XML = pathlib.Path("sample", "wufi_xml", "Ridgeway_VI_220331.xml")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -----------------------------------------------------------------------------
-    print("[bold red]- [/bold red]" * 50)
-    print(f"[bold red]> Reading in the HBJSON file: ./{SOURCE_FILE}[/bold red]")
+    print("[bold green]- [/bold green]" * 50)
+    print(f"[bold green]> Reading in the HBJSON file: ./{SOURCE_FILE}[/bold green]")
     hb_json_dict = read_HBJSON_file.read_hb_json_from_file(SOURCE_FILE)
     hb_model = read_HBJSON_file.convert_hbjson_dict_to_hb_model(hb_json_dict)
 
