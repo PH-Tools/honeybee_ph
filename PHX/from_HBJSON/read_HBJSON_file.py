@@ -73,7 +73,7 @@ def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
 
     Arguments:
     ----------
-        * _model (model.Model): The Honeybee Model to oeprate on.
+        * _model (model.Model): The Honeybee Model to operate on.
 
     Returns:
     --------

@@ -27,6 +27,8 @@ class Zone:
     wufi_rooms: list[ventilation.RoomVentilation] = field(default_factory=list)
     elec_equipment_collection: elec_equip.PhxElectricEquipmentCollection = field(
         default_factory=elec_equip.PhxElectricEquipmentCollection)
+    res_occupant_quantity: int = 0
+    res_number_bedrooms: int = 0
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1

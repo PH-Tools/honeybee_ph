@@ -194,4 +194,8 @@ def create_zones_from_hb_room(_hb_room: room.Room) -> building.Zone:
         (rm.weighted_floor_area for rm in new_zone.wufi_rooms))
     new_zone.volume_net = sum((rm.net_volume for rm in new_zone.wufi_rooms))
 
+    # Set the zone's occupancy based on the merged HB room
+    new_zone.res_occupant_quantity = _hb_room.properties.energy.people.properties.ph.number_people
+    new_zone.res_number_bedrooms = _hb_room.properties.energy.people.properties.ph.number_bedrooms
+
     return new_zone

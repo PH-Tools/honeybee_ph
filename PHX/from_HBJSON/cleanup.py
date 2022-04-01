@@ -4,9 +4,12 @@
 """Functions used to cleanup / optimize Honeybee-Rooms before outputting to WUFI"""
 
 from typing import List
+
 from honeybee import room, face
 from honeybee.boundarycondition import Outdoors, Ground
 from honeybee_energy.boundarycondition import Adiabatic
+from honeybee.room import Room
+
 from PHX.model import project
 
 
@@ -43,6 +46,39 @@ def _get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
     return exposed_faces
 
 
+def _add_hb_room_occupancy_to_existing_room(rm_1: Room, rm_2: Room) -> Room:
+    """Merges the HBE "People" from one HBE-Room with another HBE-Room.
+
+    Arguments:
+    ----------
+        * rm_1 (room.Room): A Honeybee Room
+        * rm_2 (room.Room): A Honeybee Room
+
+    Returns:
+    --------
+        * (room.Room) A Honeybee Room
+    """
+
+    new_ppl = rm_1.properties.energy.people.duplicate()
+
+    # -- Combine the HB Values
+    weighted_val_1 = rm_1.properties.energy.people.people_per_area * rm_1.floor_area
+    weighted_val_2 = rm_2.properties.energy.people.people_per_area * rm_2.floor_area
+    total_floor_area = rm_1.floor_area + rm_2.floor_area
+    weighted_total_val = weighted_val_1 + weighted_val_2
+    new_ppl.people_per_area = weighted_total_val / total_floor_area
+
+    # -- Combine the PH Values
+    new_ppl.properties.ph.number_bedrooms += int(
+        rm_2.properties.energy.people.properties.ph.number_bedrooms)
+    new_ppl.properties.ph.number_people += int(
+        rm_2.properties.energy.people.properties.ph.number_people)
+
+    rm_1.properties.energy.people = new_ppl
+
+    return rm_1
+
+
 def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
     """Merge together a group of Honeybee Rooms into a new single HB Room. 
 
@@ -61,6 +97,8 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
     """
     reference_room = _hb_rooms[0]
 
+    # -------------------------------------------------------------------------
+    # -- Get only the 'exposed' faces to build a new HB-Room with
     exposed_faces = []
     for hb_room in _hb_rooms:
         exposed_faces += _get_room_exposed_faces(hb_room)
@@ -70,15 +108,22 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
         faces=exposed_faces,
     )
 
-    # -- Set the new Room's properties.ph to match the 'reference' room
+    # -------------------------------------------------------------------------
+    # -- Set the new Merged-Room's properties.ph and properties.energy to match the 'reference' room
     dup_ph_prop = reference_room._properties.ph.duplicate(
         new_room._properties.ph, include_spaces=False)
     setattr(new_room._properties, '_ph', dup_ph_prop)
 
+    dup_energy_prop = reference_room._properties.energy.duplicate(
+        new_room._properties.energy)
+    setattr(new_room._properties, '_energy', dup_energy_prop)
+
+    # -------------------------------------------------------------------------
     # -- Then, collect all the spaces from the input rooms and add to the NEW room
-    # -- DEVELOPER NOTE: this has to be done AFTER the duplicate()
+    # -- NOTE: this has to be done AFTER the duplicate()
     # -- call, otherwise not all the spaces will transfer over properly.
-    for hb_room in _hb_rooms:
+    # -- NOTE: Skip the reference room so it isn't counted twice.
+    for hb_room in _hb_rooms[1:]:
         for existing_space in hb_room.properties.ph.spaces:
             # -- Preserve the original HB-Room's energy and ph properties over
             # -- on the space. We need to do this cus' the HB-Room is being removed
@@ -89,6 +134,12 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
                 new_host=existing_space)
             new_room.properties.ph.add_new_space(existing_space)
 
+    # -------------------------------------------------------------------------
+    # -- Merge the hb_rooms' Occupancy properties
+    for hb_room in _hb_rooms:
+        new_room = _add_hb_room_occupancy_to_existing_room(new_room, hb_room)
+
+    # -------------------------------------------------------------------------
     # -- TODO: Can I merge together the surfaces as well?
     # -- For larger models, I think this will be important.... hmm....
 

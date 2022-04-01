@@ -46,7 +46,7 @@ def convert_HB_model_to_WUFI_Project(_hb_model: model.Model, group_components: b
     Arguments:
     ----------
         * _hb_model (model.Model): The Honeybee Model to base the WUFI Project on
-        * group_components (bool): defauly=False. Set to true to have the converter
+        * group_components (bool): default=False. Set to true to have the converter
             group the components by assembly-type.
 
     Returns:

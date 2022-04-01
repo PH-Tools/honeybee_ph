@@ -106,8 +106,10 @@ def _Building(_b: building.Building) -> List[xml_writable]:
 
 
 def _Zone(_z: building.Zone) -> List[xml_writable]:
+    print(_z.res_number_bedrooms)
     return [
         XML_Node("Name", _z.name),
+        XML_Node("KindZone", 1, "choice", "Simulated zone"),
         XML_Node("IdentNr", _z.id_num),
         XML_List("RoomsVentilation", [XML_Object("Room", rm, "index", i)
                                       for i, rm in enumerate(_z.wufi_rooms)]),
@@ -122,6 +124,8 @@ def _Zone(_z: building.Zone) -> List[xml_writable]:
         XML_Node("SpecificHeatCapacity_Selection", 2),
         XML_Node("SpecificHeatCapacity", _z.specific_heat_capacity),
         XML_Node("IdentNrPH_Building", 1),
+        XML_Node("OccupantQuantityUserDef", int(_z.res_occupant_quantity), "unit", "-"),
+        XML_Node("NumberBedrooms", int(_z.res_number_bedrooms), "unit", "-"),
         XML_List("HomeDevice", [XML_Object("Device", d, "index", i, "_ResElecDevice")
                  for i, d in enumerate(_z.elec_equipment_collection.equipment)]),
     ]
