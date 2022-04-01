@@ -47,15 +47,16 @@ def offset_space_reference_points(IGH, _space, _dist=0):
     return new_space
 
 
-def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms):
-    # type: (list[space.Space], list[room.Room]) -> tuple[list[room.Room], list[SpaceData]]
+def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms, _inherit_names=False):
+    # type: (list[space.Space], list[room.Room], bool) -> tuple[list[room.Room], list[SpaceData]]
     """Sorts a list of Spaces, checks which are 'in' which HB-Room, and adds the space to that room.
 
     Arguments:
     ----------
         * _spaces (list[space.Space]) A list of Spaces.
         * _hb_rooms (list[room.Room]): A list of Honeybee Rooms.
-
+        * _inherit_names (bool) default=False. Set True to override all space names
+            with the name of the parent Honeybee-Room.
 
     Returns:
     --------
@@ -69,7 +70,7 @@ def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms):
     for space in _spaces:
         spaces_dict[id(space)] = SpaceData(space, [pt for pt in space.reference_points])
 
-    # -- Duplicate HB Rooms to ensure no confilcts
+    # -- Duplicate HB Rooms to ensure no conflicts
     hb_rooms = [rm.duplicate() for rm in _hb_rooms]
 
     # -- Add the spaces to the host-rooms
@@ -82,6 +83,9 @@ def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms):
                 if room.geometry.is_point_inside(pt):
                     sp = space_data.space
                     sp.host = room
+                    if _inherit_names:
+                        sp.name = room.display_name
+
                     room.properties.ph.add_new_space(sp)
 
                     # -- to speed up further checks
