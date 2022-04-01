@@ -14,7 +14,7 @@ from honeybee_energy.load import lighting
 
 
 class LightingPhProperties(object):
-    """PH Properties Object for LBT Point3D Objects"""
+    """PH Properties Object for Honeybee-Energy Lighting"""
 
     def __init__(self, _host):
         self._host = _host
@@ -30,6 +30,10 @@ class LightingPhProperties(object):
 
     def ToString(self):
         return self.__repr__()
+
+    @property
+    def host(self):
+        return self._host
 
     def __repr__(self):
         return "LBT-Point3D Passive House Properties: [host: {}]".format(self.host.display_name)
