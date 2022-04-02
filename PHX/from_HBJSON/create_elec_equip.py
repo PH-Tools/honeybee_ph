@@ -27,6 +27,9 @@ def build_phx_elec_device(_hbph_device: ph_equipment.PhEquipment) -> elec_equip.
         'PhPhiusLightingInterior': elec_equip.PhxLightingInterior,
         'PhPhiusLightingExterior': elec_equip.PhxLightingExterior,
         'PhPhiusLightingGarage': elec_equip.PhxLightingGarage,
+        'PhCustomAnnualElectric': elec_equip.PhxCustomElec,
+        'PhCustomAnnualLighting': elec_equip.PhxCustomLighting,
+        'PhCustomAnnualMEL': elec_equip.PhxCustomMEL,
     }
 
     # -- Build the basic device

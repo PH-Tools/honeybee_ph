@@ -498,8 +498,107 @@ class PhPhiusLightingGarage(PhEquipment):
         return new_obj
 
 
+class PhCustomAnnualElectric(PhEquipment):
+
+    defaults = {
+        'comment': 'default',
+        'reference_quantity': 5,
+        'quantity': 1,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 0,
+        'energy_demand_per_use': 0,
+        'combined_energy_factor': 0,
+        'frac_high_efficiency': 1.0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhCustomAnnualElectric, self).__init__(_defaults)
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhCustomAnnualElectric, self).to_dict())
+        d['energy_demand'] = self.energy_demand
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhCustomAnnualElectric
+        new_obj = cls()
+        super(PhCustomAnnualElectric, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.energy_demand = _input_dict['energy_demand']
+        return new_obj
+
+
+class PhCustomAnnualLighting(PhEquipment):
+
+    defaults = {
+        'comment': 'default',
+        'reference_quantity': 5,
+        'quantity': 1,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 0,
+        'energy_demand_per_use': 0,
+        'combined_energy_factor': 0,
+        'frac_high_efficiency': 1.0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhCustomAnnualLighting, self).__init__(_defaults)
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhCustomAnnualLighting, self).to_dict())
+        d['energy_demand'] = self.energy_demand
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhCustomAnnualLighting
+        new_obj = cls()
+        super(PhCustomAnnualLighting, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.energy_demand = _input_dict['energy_demand']
+        return new_obj
+
+
+class PhCustomAnnualMEL(PhEquipment):
+
+    defaults = {
+        'comment': 'default',
+        'reference_quantity': 5,
+        'quantity': 1,
+        'in_conditioned_space': True,
+        'reference_energy_norm': 2,
+        'energy_demand': 0,
+        'energy_demand_per_use': 0,
+        'combined_energy_factor': 0,
+        'frac_high_efficiency': 1.0,
+    }
+
+    def __init__(self, _defaults=False):
+        super(PhCustomAnnualMEL, self).__init__(_defaults)
+
+    def to_dict(self):
+        # type: () -> dict
+        d = {}
+        d.update(super(PhCustomAnnualMEL, self).to_dict())
+        d['energy_demand'] = self.energy_demand
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhCustomAnnualMEL
+        new_obj = cls()
+        super(PhCustomAnnualMEL, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        new_obj.energy_demand = _input_dict['energy_demand']
+        return new_obj
+
 # -----------------------------------------------------------------------------
 # Collections
+
 
 class PhEquipmentBuilder(object):
     """Constructor class for PH Equipment objects"""
@@ -510,10 +609,9 @@ class PhEquipmentBuilder(object):
         """Find the right appliance constructor class from the module based on the 'type' name."""
 
         equipment_type = _input_dict.get('equipment_type')
-
-        if equipment_type is None:
-            valid_class_types = [nm for nm in dir(
-                sys.modules[__name__]) if nm.startswith('Ph')]
+        valid_class_types = [nm for nm in dir(
+            sys.modules[__name__]) if nm.startswith('Ph')]
+        if equipment_type not in valid_class_types:
             raise UnknownPhEquipmentTypeError(valid_class_types, equipment_type)
 
         equipment_class = getattr(sys.modules[__name__], equipment_type)

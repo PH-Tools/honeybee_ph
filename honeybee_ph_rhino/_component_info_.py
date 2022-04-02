@@ -92,26 +92,26 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - SHW Tank": {
-        "NickName": "Create HW Tank",
+    "HBPH - Create SHW Tank": {
+        "NickName": "Create SHW Tank",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 4,
     },
     "HBPH - Add SHW Tank": {
-        "NickName": "Add HW Tank",
+        "NickName": "Add SHW Tank",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - Create HW Heater": {
-        "NickName": "Create HW Heater",
+    "HBPH - Create SHW Heater": {
+        "NickName": "Create SHW Heater",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - Add HW Heater": {
-        "NickName": "Add HW Heater",
+    "HBPH - Add SHW Heater": {
+        "NickName": "Add SHW Heater",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 4,
@@ -128,7 +128,12 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-
+    "HBPH - Set Occupancy": {
+        "NickName": "Set Occupancy",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 }
 
 

@@ -85,6 +85,10 @@ inputs_Phius_Lighting_Garage.update({
     10: ComponentInput(_name='frac_high_efficiency', _description=''),
 })
 
+inputs_Custom_Elec = copy(inputs_base)
+inputs_Custom_Lighting = copy(inputs_base)
+inputs_Custom_MEL = copy(inputs_base)
+
 # -----------------------------------------------------------------------------
 
 input_groups = {
@@ -99,14 +103,17 @@ input_groups = {
     14: inputs_Phius_Lighting_Int,
     15: inputs_Phius_Lighting_Ext,
     16: inputs_Phius_Lighting_Garage,
+    11: inputs_Custom_Elec,
+    17: inputs_Custom_Lighting,
+    18: inputs_Custom_MEL,
 }
 
 valid_equipment_types = ["1-dishwasher", "2-clothes_washer", "3-clothes_dryer",
                          "4-fridge", "5-freezer", "6-fridge_freezer", "7-cooking", "13-PHIUS_MEL",
-                         "14-PHIUS_Lighting_Int", "15-PHIUS_Lighting_Ext", "16-PHIUS_Lighting_Garage", ]
-#"11-Custom_Electric_per_Year", "17-Custom_Electric_Lighting_per_Year",
-#"18-Custom_Electric_MEL_per_Use", "21-Commercial_Dishwasher",
-# "22-Commercial_Refrigerator", "23-Commercial_Cooking", "24-Commercial_Custom"]
+                         "14-PHIUS_Lighting_Int", "15-PHIUS_Lighting_Ext", "16-PHIUS_Lighting_Garage",
+                         "11-Custom_Electric_per_Year", "17-Custom_Electric_Lighting_per_Year",
+                         "18-Custom_Electric_MEL_per_Use", ]
+# "21-Commercial_Dishwasher", "22-Commercial_Refrigerator", "23-Commercial_Cooking", "24-Commercial_Custom"]
 
 
 # -----------------------------------------------------------------------------

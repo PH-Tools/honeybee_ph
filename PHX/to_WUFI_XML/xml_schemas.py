@@ -855,6 +855,24 @@ def _ResElecDevice_LightingGarage(_d: elec_equip.PhxLightingGarage) -> List[xml_
     ]
 
 
+def _ResElecDevice_CustomElec(_d: elec_equip.PhxLightingGarage) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 11),
+    ]
+
+
+def _ResElecDevice_CustomLighting(_d: elec_equip.PhxLightingGarage) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 17),
+    ]
+
+
+def _ResElecDevice_CustomMEL(_d: elec_equip.PhxLightingGarage) -> List[xml_writable]:
+    return [
+        XML_Node('Type', 18),
+    ]
+
+
 def _ResElecDevice(_d: elec_equip.PhxElectricalEquipment) -> List[xml_writable]:
     devices = {
         'PhxDishwasher': _ResElecDevice_Dishwasher,
@@ -868,6 +886,9 @@ def _ResElecDevice(_d: elec_equip.PhxElectricalEquipment) -> List[xml_writable]:
         'PhxLightingInterior': _ResElecDevice_LightingInterior,
         'PhxLightingExterior': _ResElecDevice_LightingExterior,
         'PhxLightingGarage': _ResElecDevice_LightingGarage,
+        'PhxCustomElec': _ResElecDevice_CustomElec,
+        'PhxCustomLighting': _ResElecDevice_CustomLighting,
+        'PhxCustomMEL': _ResElecDevice_CustomMEL,
     }
 
     common_attributes = [

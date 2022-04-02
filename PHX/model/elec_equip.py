@@ -99,6 +99,23 @@ class PhxLightingGarage(PhxElectricalEquipment):
         self.frac_high_efficiency: float = 1.0
 
 
+class PhxCustomElec(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+
+class PhxCustomLighting(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+
+class PhxCustomMEL(PhxElectricalEquipment):
+    def __init__(self):
+        super().__init__()
+
+# -----------------------------------------------------------------------------
+
+
 @dataclass
 class PhxElectricEquipmentCollection:
     """A collection of all the electric-equipment (laundry, lighting, etc.) on the Zone"""
