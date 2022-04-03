@@ -134,6 +134,12 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Phius MF Res Calculator": {
+        "NickName": "Phius MF Res Calc",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 }
 
 

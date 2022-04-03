@@ -1,9 +1,8 @@
 # -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
 
-"""Classes and functions for calculating Phius Multifamily Elec. Energy"""
+"""Class for calculating Phius Multifamily Elec. Energy"""
 
-from collections import defaultdict
 from honeybee import room
 
 
@@ -71,58 +70,3 @@ class PhiusResidentialStory(object):
 
     def ToString(self):
         return str(self)
-
-
-def sort_rooms_by_story(_hb_rooms):
-    # type (list[room.Room]) -> list[list[room.Room]]
-    """Returns lists of the rooms, organized by their Honeybee 'story'.
-
-    Arguments:
-    ----------
-        * _hb_rooms (list[room.Room]):
-
-    Returns:
-    --------
-        * list[list[room.Room]]: 
-    """
-
-    d = defaultdict(list)
-    for rm in _hb_rooms:
-        d[rm.story].append(rm)
-    return [d[story_key] for story_key in sorted(d.keys())]
-
-
-# --- Error Checking
-
-
-def stories_error(_hb_rooms):
-    # type (list[room.Room]) -> bool
-    """Check that all the Honeybee-Rooms have a Honeybee-Story attribute."""
-    try:
-        stories = {rm.story for rm in _hb_rooms}
-        if len(stories) < 2:
-            return True
-        else:
-            return False
-    except AttributeError as e:
-        return True
-
-
-def spaces_error(_hb_rooms_by_story):
-    # type: (list[list[room.Room]]) -> room.Room | None
-    """Check if all the Honeybee-Rooms have PH Spaces applied."""
-    for story in _hb_rooms_by_story:
-        for rm in story:
-            if len(rm.properties.ph.spaces) == 0:
-                return rm
-    return None
-
-
-def people_error(_hb_rooms_by_story):
-    # type: (list[list[room.Room]]) -> room.Room | None
-    """Checks that all the HB rooms have a 'People' HBE property applied"""
-    for story in _hb_rooms_by_story:
-        for rm in story:
-            if rm.properties.energy.people is None:
-                return rm
-    return None
