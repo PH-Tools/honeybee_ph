@@ -106,7 +106,6 @@ def _Building(_b: building.Building) -> List[xml_writable]:
 
 
 def _Zone(_z: building.Zone) -> List[xml_writable]:
-    print(_z.res_number_bedrooms)
     return [
         XML_Node("Name", _z.name),
         XML_Node("KindZone", 1, "choice", "Simulated zone"),

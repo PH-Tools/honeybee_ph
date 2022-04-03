@@ -31,6 +31,7 @@ class PhxElectricalEquipment:
 class PhxDishwasher(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "Kitchen Dishwasher"
         self.capacity_type: int = 1
         self.capacity: float = 1
         self.water_connection: int = 1
@@ -39,6 +40,7 @@ class PhxDishwasher(PhxElectricalEquipment):
 class PhxClothesWasher(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "Laundry - washer"
         self.capacity: float = 0.0814  # m3
         self.modified_energy_factor: float = 2.38
         self.connection: int = 1  # DHW Connection
@@ -48,6 +50,7 @@ class PhxClothesWasher(PhxElectricalEquipment):
 class PhxClothesDryer(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "Laundry - dryer"
         self.dryer_type: int = 4  # Condensation dryer
         self.gas_consumption: float = 0  # kWh
         self.gas_efficiency_factor: float = 2.67
@@ -58,59 +61,70 @@ class PhxClothesDryer(PhxElectricalEquipment):
 class PhxRefrigerator(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "Kitchen refrigerator"
 
 
 class PhxFreezer(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "kitchen freezer"
 
 
 class PhxFridgeFreezer(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "Kitchen fridge/freeze combo"
 
 
 class PhxCooktop(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "Kitchen cooking"
         self.cooktop_type: int = 1  # Electric
 
 
 class PhxMEL(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "PHIUS+ MELS"
 
 
 class PhxLightingInterior(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "PHIUS+ Interior Lighting"
         self.frac_high_efficiency: float = 1.0
 
 
 class PhxLightingExterior(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "PHIUS+ Exterior Lighting"
         self.frac_high_efficiency: float = 1.0
 
 
 class PhxLightingGarage(PhxElectricalEquipment):
     def __init__(self):
         super().__init__()
+        self.display_name = "PHIUS+ Garage Lighting"
         self.frac_high_efficiency: float = 1.0
 
 
 class PhxCustomElec(PhxElectricalEquipment):
     def __init__(self):
+        self.display_name = "User defined"
         super().__init__()
 
 
 class PhxCustomLighting(PhxElectricalEquipment):
     def __init__(self):
+        self.display_name = "User defined - lighting"
         super().__init__()
 
 
 class PhxCustomMEL(PhxElectricalEquipment):
     def __init__(self):
+        self.display_name = "User defined - Misc electrical loads"
         super().__init__()
 
 # -----------------------------------------------------------------------------
@@ -123,7 +137,7 @@ class PhxElectricEquipmentCollection:
 
     @property
     def equipment(self):
-        return self._equipment.values()
+        return sorted(self._equipment.values(), key=lambda e: e.display_name)
 
     def equipment_in_collection(self, _equipment_key) -> bool:
         return _equipment_key in self._equipment.keys()

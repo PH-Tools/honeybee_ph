@@ -3,6 +3,7 @@
 
 """Functions used to cleanup / optimize Honeybee-Rooms before outputting to WUFI"""
 
+from re import A
 from typing import List
 
 from honeybee import room, face
@@ -10,11 +11,12 @@ from honeybee.boundarycondition import Outdoors, Ground
 from honeybee_energy.boundarycondition import Adiabatic
 from honeybee.room import Room
 
+from honeybee_energy_ph.load import ph_equipment
 from PHX.model import project
 
 
 def _get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
-    """Returns a list of the exposed Honeybee Faces of a Honeybee Room. Exposed 
+    """Returns a list of the exposed Honeybee Faces of a Honeybee Room. Exposed
     faces are faces with a Boundary Condition of: 'Outdoors', 'Ground' or 'Adiabatic'.
 
     Arguments:
@@ -79,12 +81,45 @@ def _add_hb_room_occupancy_to_existing_room(rm_1: Room, rm_2: Room) -> Room:
     return rm_1
 
 
-def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
-    """Merge together a group of Honeybee Rooms into a new single HB Room. 
+def _add_hb_room_elec_equip_to_existing_room(rm_1: Room, rm_2: Room) -> Room:
+    """
+    Merges the electric equipment from one Honeybee Room to another.
 
-    This will 
+    Arguments:
+    ----------
+        * rm_1 (room.Room): A Honeybee Room
+        * rm_2 (room.Room): A Honeybee Room
+
+    Returns:
+    --------
+        * (room.Room) A Honeybee Room
+    """
+    # -------------------------------------------------------------------------
+    #
+    # TODO: Combine the Honeybee Room's HBE Elec Equip Values
+    #
+    #
+
+    # -------------------------------------------------------------------------
+    # -- Combine the PH Elec. Equip it is the same item (same identifier / key)
+    equip_coll_1 = rm_1.properties.energy.electric_equipment.properties.ph.equipment_collection
+    equip_coll_2 = rm_2.properties.energy.electric_equipment.properties.ph.equipment_collection
+
+    for equip_key, equip in equip_coll_2:
+        try:
+            equip_coll_1[equip_key].quantity += 1
+        except KeyError:
+            equip_coll_1.add_equipment(equip)
+
+    return rm_1
+
+
+def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
+    """Merge together a group of Honeybee Rooms into a new single HB Room.
+
+    This will
     ignore any 'interior' Honeybee-Faces with a 'Surface' boundary condition and will only
-    keep the 'exposed' Honeybee Faces with boundary_conditions of 'Outdoors', 'Ground' 
+    keep the 'exposed' Honeybee Faces with boundary_conditions of 'Outdoors', 'Ground'
     and 'Adiabatic' to build the new Honeybee Room from.
 
     Arguments:
@@ -109,7 +144,8 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
     )
 
     # -------------------------------------------------------------------------
-    # -- Set the new Merged-Room's properties.ph and properties.energy to match the 'reference' room
+    # -- Set the new Merged-Room's properties.ph and
+    # -- properties.energy to match the 'reference' room to start with
     dup_ph_prop = reference_room._properties.ph.duplicate(
         new_room._properties.ph, include_spaces=False)
     setattr(new_room._properties, '_ph', dup_ph_prop)
@@ -140,6 +176,11 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
         new_room = _add_hb_room_occupancy_to_existing_room(new_room, hb_room)
 
     # -------------------------------------------------------------------------
+    # -- Merge the hb_rooms' Elec. Equipment (appliances)
+    for hb_room in _hb_rooms:
+        new_room = _add_hb_room_elec_equip_to_existing_room(new_room, hb_room)
+
+    # -------------------------------------------------------------------------
     # -- TODO: Can I merge together the surfaces as well?
     # -- For larger models, I think this will be important.... hmm....
 
@@ -150,9 +191,9 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
 
 def weld_vertices(_variant: project.Variant) -> project.Variant:
     """
-    Used to try and weld/unify the vertices of a variant. 
+    Used to try and weld/unify the vertices of a variant.
 
-    This is helpful to reduce the complexity / number of variants in a large 
+    This is helpful to reduce the complexity / number of variants in a large
     model so that WUFI can actually open it.
 
     Arguments:

@@ -71,7 +71,7 @@ class ElectricEquipmentPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return '{}(equipment_collection={})'.format(self.__class__.__name__, self.equipment_collection)
 
     def __repr__(self):
         return str(self)

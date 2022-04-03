@@ -291,17 +291,11 @@ def add_elec_equip_from_hb_room(_variant: project.Variant, _hb_room: room.Room) 
         * None
     """
 
-    for space in _hb_room.properties.ph.spaces:
-        if not space.host.properties.energy.electric_equipment:
-            continue
-
-        for equip_key, device in space.host.properties.energy.electric_equipment.properties.ph.equipment_collection._equipment_set.items():
-            # -- Build a new PHX-Equipment from the HBPH-Equipment
-
-            phx_elec_device = create_elec_equip.build_phx_elec_device(device)
-            for zone in _variant.building.zones:
-                zone.elec_equipment_collection.add_new_equipment(
-                    equip_key, phx_elec_device)
+    for equip_key, device in _hb_room.properties.energy.electric_equipment.properties.ph.equipment_collection.items():
+        phx_elec_device = create_elec_equip.build_phx_elec_device(device)
+        for zone in _variant.building.zones:
+            zone.elec_equipment_collection.add_new_equipment(
+                equip_key, phx_elec_device)
 
     return
 
