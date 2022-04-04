@@ -25,6 +25,7 @@ class PeoplePhProperties(object):
         self.id_num = 0
         self.number_bedrooms = 0
         self.number_people = 0
+        self.is_dwelling_unit = False
 
     def duplicate(self, new_host=None):
         # type: (Any) -> PeoplePhProperties
@@ -33,6 +34,7 @@ class PeoplePhProperties(object):
         new_properties_obj.id_num = self.id_num
         new_properties_obj.number_bedrooms = self.number_bedrooms
         new_properties_obj.number_people = self.number_people
+        new_properties_obj.is_dwelling_unit = self.is_dwelling_unit
 
         return new_properties_obj
 
@@ -44,8 +46,8 @@ class PeoplePhProperties(object):
         return '{}: id={}'.format(self.__class__.__name__, self.id_num)
 
     def __repr__(self):
-        return "{!r}(id_num={!r}, number_bedrooms={!r}, number_people={!r})".format(
-            self.__class__.__name__, self.id_num, self.number_bedrooms, self.number_people)
+        return "{!r}(id_num={!r}, number_bedrooms={!r}, number_people={!r}, is_dwelling_unit={!r})".format(
+            self.__class__.__name__, self.id_num, self.number_bedrooms, self.number_people, self.is_dwelling_unit)
 
     def ToString(self):
         return self.__repr__()
@@ -62,6 +64,7 @@ class PeoplePhProperties(object):
         d['id_num'] = self.id_num
         d['number_bedrooms'] = self.number_bedrooms
         d['number_people'] = self.number_people
+        d['is_dwelling_unit'] = self.is_dwelling_unit
 
         return {'ph': d}
 
@@ -77,5 +80,6 @@ class PeoplePhProperties(object):
         new_prop.id_num = data['id_num']
         new_prop.number_bedrooms = data['number_bedrooms']
         new_prop.number_people = data['number_people']
+        new_prop.is_dwelling_unit = data['is_dwelling_unit']
 
         return new_prop

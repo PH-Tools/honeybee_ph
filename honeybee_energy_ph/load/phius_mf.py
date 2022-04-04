@@ -9,6 +9,8 @@ except ImportError:
     pass  # IronPython 2.7
 
 from honeybee import room
+from honeybee_energy.schedule import ruleset
+from honeybee_energy.load import equipment
 from honeybee_ph import space
 
 
@@ -20,6 +22,7 @@ class PhiusResidentialStory(object):
         self.lighting_ext_HE_frac = 1.0
         self.lighting_garage_HE_frac = 1.0
 
+        self.story_number = hb_room_list[0].story
         self.total_floor_area_m2 = self.calc_story_floor_area(hb_room_list)
         self.total_number_dwellings = len(hb_room_list)
         self.total_number_bedrooms = self.calc_story_bedrooms(hb_room_list)
@@ -86,10 +89,19 @@ class PhiusNonResProgram(object):
 
     def __init__(self):
         self.name = "__unnamed_nonres_program_"
-        self.usage_days_yr = 0
+        self.usage_days_yr = 365
         self.operating_hours_day = 0
-        self.lighting_W_per_ft2 = 0
-        self.mel_kWh_yr = 0
+        self.lighting_W_per_m2 = 0
+        self.mel_kWh_m2_yr = 0
+
+    @property
+    def lighting_W_per_ft2(self):
+        # type: () -> float
+        return self.lighting_W_per_m2 * 0.09290304
+
+    @property
+    def mel_kWh_ft2_yr(self):
+        return self.mel_kWh_m2_yr * 0.09290304
 
     def to_phius_mf_workbook(self):
         # type: () -> str
@@ -99,17 +111,40 @@ class PhiusNonResProgram(object):
             str(self.usage_days_yr),
             str(self.operating_hours_day),
             str(self.lighting_W_per_ft2),
-            str(self.mel_kWh_yr),
+            str(self.mel_kWh_ft2_yr),
         ])
 
     @classmethod
     def from_hb_room(cls, _hb_room):
         # type: (room.Room) -> PhiusNonResProgram
+        """Returns a new PhiusNonResProgram object with attributes based on an HBE-Room."""
         obj = cls()
 
         obj.name = _hb_room.properties.energy.program_type.display_name
+        obj.operating_hours_day = obj._operating_hours_day_from_hb_schedule(
+            _hb_room.properties.energy.lighting.schedule)
+        obj.lighting_W_per_m2 = _hb_room.properties.energy.lighting.watts_per_area
+        obj.mel_kWh_m2_yr = obj._calc_mel_kWh_per_m2_from_hb_elec(
+            _hb_room.properties.energy.electric_equipment
+        )
 
         return obj
+
+    def _calc_mel_kWh_per_m2_from_hb_elec(self, _hb_elec_equip):
+        # type: (equipment.ElectricEquipment) -> float
+        """Returns the total Elec. Equip kWh for the HBE-Electric-Equipment."""
+
+        # -- Calc annual full-load hours
+        annual_full_load_hours = sum(_hb_elec_equip.schedule.values())
+
+        # -- Calc total usage in kWh
+        return (_hb_elec_equip.watts_per_area * annual_full_load_hours) / 1000
+
+    def _operating_hours_day_from_hb_schedule(self, _hb_lght_sched):
+        # type: (ruleset.ScheduleRuleset) -> float
+        """Return a daily operating period (num. hours) from an HB-Lighting-Schedule"""
+        operating_frac = sum(_hb_lght_sched.values()) / len(_hb_lght_sched.values())
+        return operating_frac * 24
 
     def __str__(self):
         return '{}(name={})'.format(self.__class__.__name__, self.name)
@@ -129,6 +164,7 @@ class PhiusNonResProgramCollection(object):
 
     def add_program(self, _program, _key=None):
         # type: (PhiusNonResProgram, str | None) -> None
+        """Adds a new PhiusNonResProgram to the collection."""
         if not _key:
             _key = _program.name
         self._collection[_key] = _program
@@ -136,6 +172,7 @@ class PhiusNonResProgramCollection(object):
     @property
     def programs(self):
         # type: () -> ValuesView[PhiusNonResProgram]
+        """Returns a list of the PhiusNonResPrograms in the collection."""
         return self._collection.values()
 
     def __getitem__(self, key):
@@ -143,9 +180,9 @@ class PhiusNonResProgramCollection(object):
         return self._collection[key]
 
     def to_phius_mf_workbook(self):
-        # type: () -> str
+        # type: () -> lisr
         """Returns a text block formated to match the Phius MF Calculator."""
-        return "\n".join([prog.to_phius_mf_workbook() for prog in self.programs])
+        return [prog.to_phius_mf_workbook() for prog in self.programs]
 
 
 class PhiusNonResRoom(object):
@@ -155,19 +192,53 @@ class PhiusNonResRoom(object):
         self.multipler = 1
         self.occupancy_sensor = "-"
         self.name = "_unnamed_phius_nonres_room"
-        self.icfa = 0.0
-        self.misc_mel = ""
+        self.icfa_m2 = 0.0
+        self.misc_mel = 0
         self.program_type = PhiusNonResProgram()
+
+    @property
+    def icfa_ft2(self):
+        # type: () -> float
+        return self.icfa_m2 * 10.7639
+
+    @property
+    def mel_kWh_yr(self):
+        # type: () -> float
+        """Total yearly MEL kWh EXCLUDING the Misc MEL"""
+        return (self.icfa_m2 * self.program_type.mel_kWh_m2_yr)
+
+    @property
+    def total_mel_kWh(self):
+        """Total yearly MEL kWh INCLUDING the Misc MEL"""
+        # type: () -> float
+        return self.mel_kWh_yr + self.misc_mel
+
+    @property
+    def total_lighting_kWh(self):
+        # type: () -> float
+        return (self.program_type.usage_days_yr * self.program_type.operating_hours_day *
+                self.program_type.lighting_W_per_m2 * self.icfa_m2) / 1000
 
     def to_phius_mf_workbook(self):
         # type: () -> str
+        """Returns a string representation that matches the Phius MF Calculator."""
         return ",".join([
             str(self.multipler),
             str(self.occupancy_sensor),
             str(self.name),
             str(self.program_type.name),
             str(self.misc_mel),
-            str(self.icfa),
+            str(self.icfa_ft2),
+        ])
+
+    def to_phius_mf_workbook_results(self):
+        return ",".join([
+            str(self.program_type.lighting_W_per_ft2),
+            str(self.program_type.usage_days_yr),
+            str(self.program_type.operating_hours_day),
+            str(self.program_type.mel_kWh_ft2_yr),
+            str(self.total_lighting_kWh),
+            str(self.mel_kWh_yr),
         ])
 
     @classmethod
@@ -177,7 +248,7 @@ class PhiusNonResRoom(object):
         obj = cls()
 
         obj.name = _ph_space.full_name
-        obj.icfa = _ph_space.weighted_floor_area
+        obj.icfa_m2 = _ph_space.weighted_floor_area
         obj.program_type = PhiusNonResProgram.from_hb_room(_ph_space.host)
 
         return obj
@@ -185,7 +256,7 @@ class PhiusNonResRoom(object):
     def __str__(self):
         return '{}(name={}, program_type={},'\
             'misc_mel={}, icfa={})'.format(
-                self.__class__.__name__, self.name, self.program_type, self.misc_mel, self.icfa)
+                self.__class__.__name__, self.name, self.program_type, self.misc_mel, self.icfa_m2)
 
     def __repr__(self):
         return str(self)
