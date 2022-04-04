@@ -80,17 +80,24 @@ def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms, _inherit_names=False):
         # -- See if any of the Space Reference points are inside the Room Geometry
         for space_data_id, space_data in spaces_dict.items():
             for pt in space_data.reference_points:
-                if room.geometry.is_point_inside(pt):
-                    sp = space_data.space
-                    sp.host = room
-                    if _inherit_names:
-                        sp.name = room.display_name
+                if not room.geometry.is_point_inside(pt):
+                    continue
 
+                sp = space_data.space
+                sp.host = room
+
+                # -- If 'inherit names', simplify the spaces so that
+                # -- there is only a single space inside of the HB-Room
+                # -- and it will inherit its name from the parent HB-Room.
+                if _inherit_names:
+                    sp.name = room.display_name
+                    room.properties.ph.merge_new_space(sp)
+                else:
                     room.properties.ph.add_new_space(sp)
 
-                    # -- to speed up further checks
-                    del spaces_dict[space_data_id]
-                    break
+                # -- to speed up further checks
+                del spaces_dict[space_data_id]
+                break
 
         new_rooms.append(room)
 

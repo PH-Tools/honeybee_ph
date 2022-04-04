@@ -117,5 +117,17 @@ class RoomPhProperties(object):
 
     def add_new_space(self, _new_space):
         # type: (space.Space) -> None
+        """Adds a new PH-Space to the RoomProperties collection."""
         if _new_space:
             self._spaces.append(_new_space)
+
+    def merge_new_space(self, _new_space):
+        # type: (space.Space) -> None
+        """Try and merge a new Space with the existing Space. 
+
+        If there is no existing Space, will set this as the Room's Space.
+        """
+        try:
+            self._spaces[0].add_new_volumes(_new_space.volumes)
+        except IndexError:
+            self.add_new_space(_new_space)

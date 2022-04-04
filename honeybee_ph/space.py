@@ -17,8 +17,14 @@ class SpaceFloorSegment(_base._Base):
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
         self.geometry = None
-        self.reference_point = None
         self.weighting_factor = 1.0
+
+        # -- Reference Point Note: Usually this is just the center, although for
+        # -- morecomplex shaped like 'L' and 'U' it cannot just be the center.
+        # -- In those cases, it should be a point 'on' the surface, as near to the
+        # -- center as possible. This point is used for testing hosting of the
+        # -- SpaceFloorSegment 'inside' an HB-Room.
+        self.reference_point = None
 
     @property
     def weighted_floor_area(self):
@@ -96,12 +102,13 @@ class SpaceFloorSegment(_base._Base):
 class SpaceFloor(_base._Base):
     def __init__(self):
         super(SpaceFloor, self).__init__()
-        self._floor_segments = list()  # list[geometry3d.Face3D]
+        self._floor_segments = list()  # list[SpaceFloorSegment]
         self.geometry = None  # geometry3d.Face3D
 
     @property
     def reference_points(self):
         # type() -> list[geometry3d.Point3D]
+        """Returns a list of the Floor's FloorSegment reference points."""
         return [seg.reference_point for seg in self.floor_segments]
 
     @property
@@ -134,6 +141,7 @@ class SpaceFloor(_base._Base):
 
     @property
     def floor_segments(self):
+        # type: () -> list[SpaceFloorSegment]
         return self._floor_segments
 
     def duplicate(self):
@@ -205,6 +213,7 @@ class SpaceVolume(_base._Base):
     @property
     def reference_points(self):
         # type() -> list[geometry3d.Point3D]
+        """Returns the Volume's FloorSegment reference points (center)."""
         return self.floor.reference_points
 
     def duplicate(self):
@@ -292,6 +301,7 @@ class Space(_base._Base):
     @property
     def reference_points(self):
         # type: () -> list[geometry3d.Point3D]
+        """Returns a list of the Space's Volume reference Points (center)."""
         pts = []
         for vol in self.volumes:
             pts += vol.reference_points
