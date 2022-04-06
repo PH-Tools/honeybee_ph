@@ -43,7 +43,7 @@ class RoomPhProperties(object):
 
         if include_spaces:
             for sp in self._spaces:
-                new_properties_obj._spaces.append(sp)
+                new_properties_obj._spaces.append(sp.duplicate(_host))
 
         new_properties_obj.ph_bldg_segment = self.ph_bldg_segment
 
