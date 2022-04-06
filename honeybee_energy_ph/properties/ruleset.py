@@ -4,7 +4,7 @@
 """Properties classes for PH-ScheduleRuleset objects."""
 
 try:
-    from typing import Any
+    from typing import Any, Generator
 except:
     pass  # IronPython
 
@@ -118,7 +118,7 @@ class DailyOperatingPeriodCollection(object):
         return self.__nonzero__()
 
     def __iter__(self):
-        # type: () -> DailyOperationPeriod
+        # type: () -> Generator[DailyOperationPeriod, None, None]
         for _ in self._collection:
             yield _
 
