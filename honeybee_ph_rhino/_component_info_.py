@@ -128,8 +128,8 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - Set Occupancy": {
-        "NickName": "Set Occupancy",
+    "HBPH - Set Res Occupancy": {
+        "NickName": "Set Res Occupancy",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 4,
@@ -140,6 +140,13 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Phius Program Finder": {
+        "NickName": "Phius Programs",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+
 }
 
 

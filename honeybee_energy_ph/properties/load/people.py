@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""Subclassing Honeybee-Energy | Load | People"""
+"""Properties for Honeybee-Energy-PH | Load | People"""
 
 try:
     from typing import Any

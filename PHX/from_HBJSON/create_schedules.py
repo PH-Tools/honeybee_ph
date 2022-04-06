@@ -27,7 +27,7 @@ def _room_has_ph_style_ventilation(_hb_room: room.Room) -> bool:
         return False
     elif _hb_room.properties.energy.ventilation.schedule is None:
         return False
-    elif not _hb_room.properties.energy.ventilation.schedule.properties.ph.operating_periods:
+    elif not _hb_room.properties.energy.ventilation.schedule.properties.ph.daily_operating_periods:
         return False
     else:
         return True
@@ -117,16 +117,14 @@ def _create_vent_pattern_from_ph_style(_hb_room: room.Room) -> schedules.Utiliza
     ph_sched_props = _hb_room.properties.energy.ventilation.schedule.properties.ph
 
     new_util_pattern.operating_days = ph_sched_props.operating_days_wk
-    new_util_pattern.operating_weeks = ph_sched_props.operating_wks_yr
+    new_util_pattern.operating_weeks = ph_sched_props.operating_weeks_year
 
-    new_util_pattern.operating_periods.high.period_operating_hours = ph_sched_props.operating_periods.high.operation_hours
-    new_util_pattern.operating_periods.high.period_operation_speed = ph_sched_props.operating_periods.high.operation_fraction
-    new_util_pattern.operating_periods.standard.period_operating_hours = ph_sched_props.operating_periods.standard.operation_hours
-    new_util_pattern.operating_periods.standard.period_operation_speed = ph_sched_props.operating_periods.standard.operation_fraction
-    new_util_pattern.operating_periods.basic.period_operating_hours = ph_sched_props.operating_periods.basic.operation_hours
-    new_util_pattern.operating_periods.basic.period_operation_speed = ph_sched_props.operating_periods.basic.operation_fraction
-    new_util_pattern.operating_periods.minimum.period_operating_hours = ph_sched_props.operating_periods.minimum.operation_hours
-    new_util_pattern.operating_periods.minimum.period_operation_speed = ph_sched_props.operating_periods.minimum.operation_fraction
+    for op_period in ph_sched_props.daily_operating_periods:
+        phx_vent_util_period = getattr(
+            new_util_pattern.operating_periods, op_period.name)
+        phx_vent_util_period.period_operating_hours = op_period.operation_hours
+        phx_vent_util_period.period_operation_speed = op_period.operation_fraction
+        setattr(new_util_pattern.operating_periods, op_period.name, phx_vent_util_period)
 
     # -- Keep all the IDs in alignment....
     new_util_pattern.identifier = _hb_room.properties.energy.ventilation.schedule.identifier

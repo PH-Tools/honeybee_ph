@@ -189,8 +189,8 @@ class PhiusNonResRoom(object):
     """A single Phius Non-Res Space."""
 
     def __init__(self):
-        self.multipler = 1
-        self.occupancy_sensor = "-"
+        self.multiplier = 1
+        self.occupancy_sensor = "N"
         self.name = "_unnamed_phius_nonres_room"
         self.icfa_m2 = 0.0
         self.misc_mel = 0
@@ -223,7 +223,7 @@ class PhiusNonResRoom(object):
         # type: () -> str
         """Returns a string representation that matches the Phius MF Calculator."""
         return ",".join([
-            str(self.multipler),
+            str(self.multiplier),
             str(self.occupancy_sensor),
             str(self.name),
             str(self.program_type.name),

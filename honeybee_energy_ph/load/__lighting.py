@@ -47,7 +47,7 @@ class LightingPhProperties(object):
 
     @classmethod
     def from_dict(cls, data, host):
-        # type: (LightingPhProperties, dict, Any) -> LightingPhProperties
+        # type: (dict, Any) -> LightingPhProperties
         assert data["type"] == "LightingPhProperties", "Expected LightingPhProperties. Got {}.".format(
             data["type"])
 
@@ -64,7 +64,7 @@ class LightingProperties(properties._Properties):
         return "LightingProperties: {!r}".format(self.host)
 
     def to_dict(self, abridged=False):
-        # type: (LightingProperties, bool) -> LightingProperties
+        # type: (LightingProperties, bool) -> dict
         """Convert properties to dictionary.
 
         Args:
@@ -91,7 +91,7 @@ class PH_Lighting(lighting.Lighting):
 
     @classmethod
     def from_hb_lighting(cls, _hb_lighting):
-        # type: (PH_Lighting, Lighting) -> PH_Lighting
+        # type: (lighting) -> PH_Lighting
         new_ph_obj = cls(
             identifier=_hb_lighting.identifier,
             watts_per_area=_hb_lighting.watts_per_area,

@@ -16,25 +16,77 @@ class ScheduleRulesetPhProperties_FromDictError(Exception):
         super(ScheduleRulesetPhProperties_FromDictError, self).__init__(self.msg)
 
 
-class OperationPeriod(object):
-    """Operating Period PH info (operation-hours/day and operation-fraction)"""
+class DailyOperationPeriod(object):
+    """PH-Style Daily Operating Period"""
 
-    def __init__(self, _operation_hours=0.0, _operation_fraction=0.0):
-        self.operation_hours = _operation_hours
-        self.operation_fraction = _operation_fraction
+    def __init__(self):
+        self.name = ''
+        self.start_hour = 0
+        self.end_hour = 24
+        self.operation_fraction = 1.0
+
+    @classmethod
+    def from_annual_utilization_factor(cls, _ann_util_fac=1.0, _name=''):
+        # type: (float, str) -> DailyOperationPeriod
+        op_period = cls()
+
+        op_period.name = _name
+        op_period.start_hour = 0
+        op_period.end_hour = 24
+        op_period.operation_fraction = _ann_util_fac
+
+        return op_period
+
+    @classmethod
+    def from_start_end_hours(cls, _start_hr=0, _end_hr=24, _op_frac=1.0, _name=''):
+        # type: (float, float, float, str) -> DailyOperationPeriod
+        op_period = cls()
+
+        op_period.name = _name
+        op_period.start_hour = _start_hr
+        op_period.end_hour = _end_hr
+        op_period.operation_fraction = _op_frac
+
+        return op_period
+
+    @classmethod
+    def from_operating_hours(cls, _op_hours=24, _op_frac=1.0, _name=''):
+        # type: (float, float, str) -> DailyOperationPeriod
+        op_period = cls()
+
+        op_period.name = _name
+        op_period.start_hour = 12.0 - (_op_hours / 2.0)
+        op_period.end_hour = 12.0 + (_op_hours / 2.0)
+        op_period.operation_fraction = _op_frac
+
+        return op_period
+
+    @property
+    def operation_hours(self):
+        # type: () -> float
+        return self.end_hour - self.start_hour
+
+    @property
+    def weighted_operation_hours(self):
+        # type: () -> float
+        return self.operation_hours * self.operation_fraction
 
     def to_dict(self):
         # type: () -> dict[str, float]
         d = {}
-        d['operation_hours'] = self.operation_hours
+        d['name'] = self.name
+        d['start_hour'] = self.start_hour
+        d['end_hour'] = self.end_hour
         d['operation_fraction'] = self.operation_fraction
         return d
 
     @classmethod
     def from_dict(cls, _dict):
-        # type: (dict[str, float]) -> OperationPeriod
+        # type: (dict[str, float]) -> DailyOperationPeriod
         new_op_period = cls()
-        new_op_period.operation_hours = _dict['operation_hours']
+        new_op_period.name = _dict['name']
+        new_op_period.start_hour = _dict['start_hour']
+        new_op_period.end_hour = _dict['end_hour']
         new_op_period.operation_fraction = _dict['operation_fraction']
         return new_op_period
 
@@ -48,66 +100,46 @@ class OperationPeriod(object):
             self.__class__.__name__, self.operation_hours, self.operation_fraction)
 
 
-class OperatingPeriodCollection(object):
+class DailyOperatingPeriodCollection(object):
+    """A collection of DailyOperatingPeriods"""
+
     def __init__(self):
-        self.high = None
-        self.standard = None
-        self.basic = None
-        self.minimum = None
+        self._collection = []
+
+    def add_period_to_collection(self, _period):
+        # type: (DailyOperationPeriod) -> None
+        self._collection.append(_period)
 
     def __nonzero__(self):
         # type: () -> bool
-        if not self.high and not self.standard and not self.basic and not self.minimum:
-            return False
-        else:
-            return True
+        return bool(self._collection)
 
     def __bool__(self):
         return self.__nonzero__()
 
     def __iter__(self):
-        # type: () -> OperationPeriod
-        for _ in [self.high, self.standard, self.basic, self.minimum]:
+        # type: () -> DailyOperationPeriod
+        for _ in self._collection:
             yield _
-
-    def __len__(self):
-        return 4
 
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
 
-        if self.high:
-            d['high'] = self.high.to_dict()
-        if self.standard:
-            d['standard'] = self.standard.to_dict()
-        if self.basic:
-            d['basic'] = self.basic.to_dict()
-        if self.minimum:
-            d['minimum'] = self.minimum.to_dict()
+        periods = []
+        for op_period in self._collection:
+            periods.append(op_period.to_dict())
+        d['collection'] = periods
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict[str, Any]) -> OperatingPeriodCollection
-        new_obj = OperatingPeriodCollection()
+        # type: (dict[str, Any]) -> DailyOperatingPeriodCollection
+        new_obj = DailyOperatingPeriodCollection()
 
-        high_dict = _input_dict.get('high', None)
-        if high_dict:
-            new_obj.high = OperationPeriod.from_dict(high_dict)
-
-        standard_dict = _input_dict.get('standard', None)
-        if standard_dict:
-            new_obj.standard = OperationPeriod.from_dict(standard_dict)
-
-        basic_dict = _input_dict.get('basic', None)
-        if basic_dict:
-            new_obj.basic = OperationPeriod.from_dict(basic_dict)
-
-        minimum_dict = _input_dict.get('minimum', None)
-        if minimum_dict:
-            new_obj.minimum = OperationPeriod.from_dict(minimum_dict)
+        for period_dict in _input_dict['collection']:
+            new_obj.add_period_to_collection(DailyOperationPeriod.from_dict(period_dict))
 
         return new_obj
 
@@ -118,9 +150,34 @@ class ScheduleRulesetPhProperties(object):
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
+        self.operating_weeks_year = 52
         self.operating_days_wk = 7.0
-        self.operating_wks_yr = 24.0
-        self.operating_periods = OperatingPeriodCollection()
+        self.daily_operating_periods = DailyOperatingPeriodCollection()
+
+    @classmethod
+    def from_days_per_week(cls, _days_per_wk, _wks_per_year, _host):
+        # type: (float, float, Any) -> ScheduleRulesetPhProperties
+        prop_obj = cls(_host)
+
+        prop_obj.operating_days_wk = _days_per_wk
+        prop_obj.operating_weeks_year = _wks_per_year
+
+        return prop_obj
+
+    @classmethod
+    def from_days_per_year(cls, _days_per_year, _host):
+        # type: (float, Any) -> ScheduleRulesetPhProperties
+        prop_obj = cls(_host)
+
+        prop_obj.operating_days_wk = (_days_per_year / 365) * 7.0
+        prop_obj.operating_weeks_year = 52
+
+        return prop_obj
+
+    @property
+    def operating_days_year(self):
+        # type: () -> float
+        return self.operating_weeks_year * self.operating_days_wk
 
     @property
     def host(self):
@@ -129,30 +186,30 @@ class ScheduleRulesetPhProperties(object):
     @property
     def annual_average_operating_fraction(self):
         # type: () -> float
-        """Returns the annual average operating fraction."""
-        if not self.operating_periods:
-            return 0
+        """Returns the annual average operating (utilization) fraction (0-1)."""
 
-        annual_oprating_days = self.operating_days_wk * self.operating_wks_yr
         wtd_total = 0
-        for op_period in self.operating_periods:
-            if op_period:
-                wtd_total += op_period.operation_hours * op_period.operation_fraction * annual_oprating_days
-        annual_operating_hours = annual_oprating_days * 24
-        wtd_annual_avg = wtd_total / annual_operating_hours
+        for op_period in self.daily_operating_periods:
+            wtd_total += op_period.weighted_operation_hours * self.operating_days_year
+
+        annual_operating_hours = self.operating_days_year * 24
+        try:
+            wtd_annual_avg = wtd_total / annual_operating_hours
+        except ZeroDivisionError:
+            wtd_annual_avg = 0
 
         return wtd_annual_avg
 
-    def validate_operating_period_hours(self):
-        # type: () -> str | None
-        """Returns a warning if the total operating period hours do not equal 24."""
-        total_hours = 0
-        for op_period in self.operating_periods:
-            if op_period:
-                total_hours += op_period.operation_hours
+    def validate_operating_period_hours(self, _total_period_hours=24.0):
+        # type: (float) -> str | None
+        """Returns a warning if the total daily operating period hours do not equal the specified _total_period_hours."""
 
-        if abs(24 - total_hours) > 0.001:
-            return 'Error: Total Operating Hours={}, not 24?'.format(total_hours)
+        total_hours = 0
+        for op_period in self.daily_operating_periods:
+            total_hours += op_period.operation_hours
+
+        if abs(_total_period_hours - total_hours) > 0.001:
+            return 'Error: Total Operating Hours={}, not {}?'.format(total_hours, _total_period_hours)
         else:
             return None
 
@@ -165,9 +222,9 @@ class ScheduleRulesetPhProperties(object):
             d['type'] = 'ScheduleRulesetPhProperties'
 
         d['id_num'] = self.id_num
+        d['operating_weeks_year'] = self.operating_weeks_year
         d['operating_days_wk'] = self.operating_days_wk
-        d['operating_wks_yr'] = self.operating_wks_yr
-        d['operating_periods'] = self.operating_periods.to_dict()
+        d['operating_periods'] = self.daily_operating_periods.to_dict()
 
         return {'ph': d}
 
@@ -181,14 +238,13 @@ class ScheduleRulesetPhProperties(object):
 
         new_prop = cls(host)
         new_prop.id_num = _dict['id_num']
+        new_prop.operating_weeks_year = _dict['operating_weeks_year']
         new_prop.operating_days_wk = _dict['operating_days_wk']
-        new_prop.operating_wks_yr = _dict['operating_wks_yr']
-        new_prop.operating_periods = OperatingPeriodCollection.from_dict(
+        new_prop.daily_operating_periods = DailyOperatingPeriodCollection.from_dict(
             _dict.get('operating_periods', {}))
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
-
         return
 
     def ToString(self):
