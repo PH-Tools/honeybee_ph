@@ -80,6 +80,10 @@ def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
         * model.Model: The Honeybee Model with properties and objects modified as needed.
     """
 
+    # -- This bit is a little dicey. HB-Room is not really made to let us swap out
+    # -- the ._faces like this. Might need to tweak this at some point to make
+    # -- sure that all the right attr and params are getting copied over properly
+
     new_rooms = []
     for room in _model.rooms:
         new_room = room.duplicate()
@@ -88,12 +92,14 @@ def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
             # -- convert face's geometry
             new_hb_face = hb_face.duplicate()
             new_hb_face._geometry = convert_face_3d(hb_face.geometry)
+            new_hb_face._parent = new_room
 
             new_apertures = []
             for aperture in hb_face.apertures:
                 # -- convert aperture's geometry
                 new_aperture = aperture.duplicate()
                 new_aperture._geometry = convert_face_3d(aperture.geometry)
+                new_aperture._parent = new_hb_face
                 new_apertures.append(new_aperture)
 
             new_hb_face._apertures = new_apertures
