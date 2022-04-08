@@ -25,8 +25,13 @@ class Vertix:
         cls._count += 1
         return super(Vertix, cls).__new__(cls, *args, **kwargs)
 
+    @property
+    def unique_key(self) -> str:
+        """Return a unique key (str) for the Vertex. Used for dicts, welding, etc"""
+        return f"{self.x :0.10f}_{self.y :0.10f}_{self.z :0.10f}"
+
     def __hash__(self) -> int:
-        return hash(self.x) + hash(self.y) + hash(self.z)
+        return hash(self.unique_key)
 
 
 @dataclass

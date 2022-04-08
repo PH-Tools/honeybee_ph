@@ -210,8 +210,8 @@ def weld_vertices(_variant: project.Variant) -> project.Variant:
     for polygon in _variant.graphics3D.polygons:
         for i, vert in enumerate(polygon.vertices):
             try:
-                vert = polygon.vertices[i] = unique_vertix_dict[vert.__hash__()]
+                vert = polygon.vertices[i] = unique_vertix_dict[vert.unique_key]
             except KeyError:
-                unique_vertix_dict[vert.__hash__()] = vert
+                unique_vertix_dict[vert.unique_key] = vert
 
     return _variant
