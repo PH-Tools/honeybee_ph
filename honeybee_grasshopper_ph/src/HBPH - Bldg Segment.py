@@ -1,22 +1,22 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-# 
+#
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-# 
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
-# Honeybee-PH is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published 
-# by the Free Software Foundation; either version 3 of the License, 
-# or (at your option) any later version. 
-# 
+#
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
+# Honeybee-PH is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-# 
+#
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
@@ -71,10 +71,10 @@ from honeybee.typing import clean_and_id_string
 
 import honeybee_ph.phius
 import honeybee_ph.bldg_segment
-import honeybee_ph.climate
+import honeybee_ph.location
 import honeybee_ph_utils.preview
 
-# --- 
+# ---
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Bldg Segment"
@@ -83,7 +83,7 @@ honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JAN_29_2022'
 if DEV:
     reload(honeybee_ph.phius)
     # reload(honeybee_ph.bldg_segment) # Breaks everyting.... sigh: Python 2
-    reload(honeybee_ph.climate)
+    reload(honeybee_ph.location)
     reload(honeybee_ph_utils.preview)
 
 
@@ -96,18 +96,19 @@ def get_new_room_name(_br_count):
             display_name = clean_and_id_string(_segment_name_.Branch(0)[0])
         except ValueError:
             display_name = 'Segment'
-    
-    return  clean_and_id_string(display_name)
+
+    return clean_and_id_string(display_name)
+
 
 # -- Sort our the new BldgSegment data
 segment = honeybee_ph.bldg_segment.BldgSegment()
 segment.name = _segment_name_ or 'Unnamed_Bldg_Segment'
-segment.occupancy_type.value = occupancy_type_ or 1 #Residential
+segment.occupancy_type.value = occupancy_type_ or 1  # Residential
 segment.usage_type.value = usage_type_ or 1
 segment.num_floor_levels = num_floor_levels_ or 1
 segment.num_dwelling_units = num_dwelling_units_ or 1
-segment.climate = climate_ or honeybee_ph.climate.Climate()
-segment.ph_certification = phius_certification_ or honeybee_ph.phius.PhiusCertifiction()
+segment.climate = climate_ or honeybee_ph.location.Climate()
+segment.ph_certification = phius_certification_ or honeybee_ph.phius.PhiusCertification()
 honeybee_ph_utils.preview.object_preview(segment)
 
 # -- Apply the segment to the rooms

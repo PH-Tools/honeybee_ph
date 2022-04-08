@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
+from typing import Union
 
 
 @dataclass
@@ -36,9 +37,27 @@ class PeakLoad:
 
 
 @dataclass
+class PH_PEFactor:
+    """Conversion Factors for Site-Energy->Primary-Energy"""
+    value: float = 0.0
+    unit: str = ''
+    fuel_name: str = ''
+
+
+@dataclass
+class PH_CO2Factor:
+    """Conversion Factors for Site->CO2"""
+    value: float = 0.0
+    unit: str = ''
+    fuel_name: str = ''
+
+
+PH_Factor = Union[PH_PEFactor, PH_CO2Factor]
+
+
+@dataclass
 class PH_ClimateLocation:
     selection: int = 6
-    selection_pe_co2_factor: int = 1
     daily_temp_swing: float = 8.0
     avg_wind_speed: float = 4.0
     location: Location = field(default_factory=Location)
@@ -58,6 +77,10 @@ class PH_ClimateLocation:
     peak_heating_2: PeakLoad = field(default_factory=PeakLoad)
     peak_cooling_1: PeakLoad = field(default_factory=PeakLoad)
     peak_cooling_2: PeakLoad = field(default_factory=PeakLoad)
+
+    selection_pe_co2_factor: int = 6
+    pe_factors: dict[str, PH_Factor] = field(default_factory=dict)
+    co2_factors: dict[str, PH_Factor] = field(default_factory=dict)
 
 
 @dataclass

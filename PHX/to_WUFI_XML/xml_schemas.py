@@ -4,11 +4,11 @@
 """Conversion Schemas for how to write PH/HB objects to WUFI XML"""
 
 from dataclasses import dataclass
-from re import L
 from typing import List, Optional
 
 from PHX.model import elec_equip, project
-from PHX.model import building, certification, climate, constructions, geometry, ground, mech_equip, schedules, ventilation
+from PHX.model import (building, certification, climate, constructions,
+                       geometry, ground, mech_equip, schedules, ventilation)
 from PHX.to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
 TOL_LEV1 = 2  # Value tolerance for rounding. ie; 9.843181919194 -> 9.84
@@ -225,11 +225,19 @@ def _FoundationInterface(_f: ground.Foundation) -> List[xml_writable]:
 
 # -- CLIMATE --
 
-
 def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> List[xml_writable]:
+
+    def _in_wufi_order(_factor_dict: dict) -> List[climate.PH_Factor]:
+        """Returns the PE /CO2 conversion factors in WUFI-specific order."""
+        fuel_order = ["OIL", "NATURAL_GAS", "LPG", "HARD_COAL", "WOOD", "ELECTRICITY_MIX",
+                      "ELECTRICITY_PV", "HARD_COAL_CGS_70_CHP", "HARD_COAL_CGS_35_CHP",
+                      "HARD_COAL_CGS_0_CHP", "GAS_CGS_70_CHP", "GAS_CGS_35_CHP",
+                      "GAS_CGS_0_CHP", "OIL_CGS_70_CHP", "OIL_CGS_35_CHP", "OIL_CGS_0_CHP",
+                      ]
+        return [_factor_dict[fuel_name] for fuel_name in fuel_order]
+
     return [
         XML_Node('Selection', _climate.selection),
-        XML_Node('SelectionPECO2Factor', _climate.selection_pe_co2_factor),
         XML_Node('DailyTemperatureSwingSummer', _climate.daily_temp_swing),
         XML_Node('AverageWindSpeed', _climate.avg_wind_speed),
 
@@ -294,6 +302,12 @@ def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> List[xml_writab
         XML_Node('SouthSolarRadiationCooling2', _climate.peak_cooling_2.rad_south),
         XML_Node('WestSolarRadiationCooling2', _climate.peak_cooling_2.rad_west),
         XML_Node('GlobalSolarRadiationCooling2', _climate.peak_cooling_2.rad_global),
+
+        XML_Node('SelectionPECO2Factor', _climate.selection_pe_co2_factor),
+        XML_List('PEFactorsUserDef', [XML_Node(f"PEF{i}", factor.value, "unit", factor.unit)
+                                      for i, factor in enumerate(_in_wufi_order(_climate.pe_factors))]),
+        XML_List('CO2FactorsUserDef', [XML_Node(f"CO2F{i}", factor.value, "unit", factor.unit)
+                                       for i, factor in enumerate(_in_wufi_order(_climate.co2_factors))]),
     ]
 
 

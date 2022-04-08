@@ -4,8 +4,7 @@
 """Functions to build PHX-Variant from Honeybee Rooms"""
 
 from honeybee import room
-from PHX.model import project
-from PHX.model import certification, ground
+from PHX.model import project, certification, ground, climate
 from PHX.from_HBJSON import create_building, create_geometry, create_hvac, create_shw, create_elec_equip
 
 
@@ -184,6 +183,49 @@ def add_climate_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> 
     return None
 
 
+def add_local_pe_conversion_factors(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Copy local Site->Source conversion factors from a Honeybee-Room over to a PHX-Variant.
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The PHX-Variant to add the factor data to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
+
+    Returns:
+    --------
+        * None
+    """
+    for factor in _hb_room.properties.ph.ph_bldg_segment.source_energy_factors:
+        new_phx_factor = climate.PH_PEFactor()
+        new_phx_factor.fuel_name = factor.fuel_name
+        new_phx_factor.value = factor.value
+        new_phx_factor.unit = factor.unit
+        _variant.climate.ph_climate_location.pe_factors[new_phx_factor.fuel_name] = new_phx_factor
+    return
+
+
+def add_local_co2_conversion_factors(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Copy local Site->CO2e conversion factors from a Honeybee-Room over to a PHX-Variant.
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The PHX-Variant to add the factor data to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
+
+    Returns:
+    --------
+        * None
+    """
+
+    for factor in _hb_room.properties.ph.ph_bldg_segment.co2e_factors:
+        new_phx_factor = climate.PH_CO2Factor()
+        new_phx_factor.fuel_name = factor.fuel_name
+        new_phx_factor.value = factor.value
+        new_phx_factor.unit = factor.unit
+        _variant.climate.ph_climate_location.co2_factors[new_phx_factor.fuel_name] = new_phx_factor
+    return
+
+
 def add_ventilation_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
     """Add new HVAC (Ventilation, etc) Systems to the Variant based on the HB-Rooms.
 
@@ -330,6 +372,8 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     add_phius_certification_from_hb_room(new_variant, _hb_room)
     add_PH_Building_from_hb_room(new_variant, _hb_room)
     add_climate_from_hb_room(new_variant, _hb_room)
+    add_local_pe_conversion_factors(new_variant, _hb_room)
+    add_local_co2_conversion_factors(new_variant, _hb_room)
     add_elec_equip_from_hb_room(new_variant, _hb_room)
 
     return new_variant

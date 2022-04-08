@@ -7,6 +7,7 @@ try:
     from itertools import izip as zip
 except ImportError:
     pass  # Python3
+
 from honeybee_ph import _base
 
 
@@ -18,7 +19,7 @@ class InvalidMonthlyDataError(Exception):
 
 
 class Climate_MonthlyValueCollection(_base._Base):
-    """Collection class to organize monthly cliamte values"""
+    """Collection class to organize monthly climate values"""
 
     months = [
         "january",

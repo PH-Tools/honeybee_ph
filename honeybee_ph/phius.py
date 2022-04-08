@@ -31,9 +31,9 @@ class BuildingType(enumerables.CustomEnum):
         self.value = _value
 
 
-class PhiusCertifiction(_base._Base):
+class PhiusCertification(_base._Base):
     def __init__(self):
-        super(PhiusCertifiction, self).__init__()
+        super(PhiusCertification, self).__init__()
         self.certification_criteria = 3
         self.localization_selection_type = 2
 
@@ -87,7 +87,7 @@ class PhiusCertifiction(_base._Base):
 
     @classmethod
     def from_dict(cls, _dict):
-        # type: (dict) -> PhiusCertifiction
+        # type: (dict) -> PhiusCertification
         obj = cls()
 
         obj.certification_criteria = _dict.get('certification_criteria')

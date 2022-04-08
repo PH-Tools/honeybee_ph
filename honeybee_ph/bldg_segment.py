@@ -8,7 +8,8 @@ try:
 except ImportError:
     pass  # Python2.7
 
-from honeybee_ph import _base, phius, climate
+from honeybee_ph import _base, location, phius
+from honeybee_ph_standards.sourcefactors import factors
 from honeybee_ph_utils import enumerables
 
 
@@ -74,8 +75,10 @@ class BldgSegment(_base._Base):
         self.usage_type = UsageType("RESIDENTIAL")
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
-        self.climate = climate.Climate()
-        self.ph_certification = phius.PhiusCertifiction()
+        self.climate = location.Climate()
+        self.source_energy_factors = factors.FactorCollection('Source_Energy')
+        self.co2e_factors = factors.FactorCollection('CO2')
+        self.ph_certification = phius.PhiusCertification()
         self.set_points = SetPoints()
 
     def to_dict(self):
@@ -89,6 +92,8 @@ class BldgSegment(_base._Base):
         d['num_floor_levels'] = self.num_floor_levels
         d['num_dwelling_units'] = self.num_dwelling_units
         d['climate'] = self.climate.to_dict()
+        d['source_energy_factors'] = self.source_energy_factors.to_dict()
+        d['co2e_factors'] = self.co2e_factors.to_dict()
         d['ph_certification'] = self.ph_certification.to_dict()
         d['set_points'] = self.set_points.to_dict()
 
@@ -106,8 +111,12 @@ class BldgSegment(_base._Base):
         obj.usage_type = UsageType.from_dict(_dict.get('usage_type', {}))
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
-        obj.climate = climate.Climate.from_dict(_dict.get('climate', {}))
-        obj.ph_certification = phius.PhiusCertifiction.from_dict(
+        obj.climate = location.Climate.from_dict(_dict.get('climate', {}))
+        obj.source_energy_factors = factors.FactorCollection.from_dict(
+            _dict.get('source_energy_factors', {}))
+        obj.co2e_factors = factors.FactorCollection.from_dict(
+            _dict.get('co2e_factors', {}))
+        obj.ph_certification = phius.PhiusCertification.from_dict(
             _dict.get('ph_certification', {}))
         obj.set_points = SetPoints.from_dict(_dict.get('set_points', {}))
 

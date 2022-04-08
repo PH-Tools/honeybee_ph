@@ -2,20 +2,20 @@ import honeybee_ph.phius
 
 
 def test_phius_cert():
-    phius_cert = honeybee_ph.phius.PhiusCertifiction()
+    phius_cert = honeybee_ph.phius.PhiusCertification()
     assert phius_cert
 
 
 def test_phius_cert_serialiation_default():
-    phius_cert = honeybee_ph.phius.PhiusCertifiction()
+    phius_cert = honeybee_ph.phius.PhiusCertification()
     d = phius_cert.to_dict()
-    new_obj = honeybee_ph.phius.PhiusCertifiction.from_dict(d)
+    new_obj = honeybee_ph.phius.PhiusCertification.from_dict(d)
 
     assert new_obj.to_dict() == d
 
 
 def test_phius_cert_serialiation_customized():
-    phius_cert = honeybee_ph.phius.PhiusCertifiction()
+    phius_cert = honeybee_ph.phius.PhiusCertification()
 
     # -- Customize / reset the attrs
     phius_cert.certification_criteria = 3
@@ -37,6 +37,6 @@ def test_phius_cert_serialiation_customized():
     phius_cert.int_gains_dhw_marginal_perf_ratio = None
 
     d = phius_cert.to_dict()
-    new_obj = honeybee_ph.phius.PhiusCertifiction.from_dict(d)
+    new_obj = honeybee_ph.phius.PhiusCertification.from_dict(d)
 
     assert new_obj.to_dict() == d

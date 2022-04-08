@@ -3,11 +3,11 @@
 
 """Functions to handle climate-data Grasshopper intputs."""
 
-import honeybee_ph.climate
+import honeybee_ph.location
 
 
 def parse_copy_from_excel(_ph_climate, _input):
-    # type: (honeybee_ph.climate.Climate, list) -> honeybee_ph.climate.Climate
+    # type: (honeybee_ph.location.Climate, list) -> honeybee_ph.location.Climate
     """Parse copy/pasted data from PHPP/WUFI XLS format."""
 
     data = []
