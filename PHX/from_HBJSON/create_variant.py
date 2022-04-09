@@ -102,6 +102,9 @@ def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room)
     none_foundation = ground.Foundation()
     ph_building.foundations.append(none_foundation)
 
+    # Set the airtightness for Building
+    ph_building.airtightness_q50 = _hb_room.properties.energy.infiltration.flow_per_exterior_area * 3600
+
     # Not clear why this is a list in the WUFI file? When would there be more than one?
     _variant.ph_data.ph_buildings.append(ph_building)
 

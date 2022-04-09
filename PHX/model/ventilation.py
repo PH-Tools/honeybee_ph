@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 class VentilationLoad:
     flow_supply: float = 0.0
     flow_extract: float = 0.0
-    flow_trasfer: float = 0.0
+    flow_transfer: float = 0.0
 
 
 @dataclass

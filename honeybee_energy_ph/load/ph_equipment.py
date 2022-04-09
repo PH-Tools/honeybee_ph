@@ -685,16 +685,6 @@ class PhEquipmentCollection(object):
     def host(self):
         return self._host
 
-    def __iter__(self):
-        for _ in self._equipment_set.items():
-            yield _
-
-    def __setitem__(self, key, attr):
-        self._equipment_set[key] = attr
-
-    def __getitem__(self, key):
-        return self._equipment_set[key]
-
     def items(self):
         return self._equipment_set.items()
 
@@ -707,16 +697,6 @@ class PhEquipmentCollection(object):
     def duplicate(self, new_host=None):
         # type: (Any) -> PhEquipmentCollection
         return self.__copy__(new_host)
-
-    def __copy__(self, new_host=None):
-        # type: (Any) -> PhEquipmentCollection
-        host = new_host or self._host
-
-        new_obj = self.__class__(host)
-        for k, v in self._equipment_set.items():
-            new_obj.add_equipment(v, k)
-
-        return new_obj
 
     def add_equipment(self, _new_equipment, _key=None):
         # type: (PhEquipment, Any) -> None
@@ -742,6 +722,10 @@ class PhEquipmentCollection(object):
         self._equipment_set[key] = _new_equipment
         return None
 
+    def remove_all_equipment(self):
+        """Reset the Collection to an empty set."""
+        self._equipment_set = {}
+
     def to_dict(self):
         # type: () -> dict
         d = {}
@@ -760,6 +744,26 @@ class PhEquipmentCollection(object):
         for k, device in _input_dict['equipment_set'].items():
             if k not in new_obj._equipment_set.keys():
                 new_obj.add_equipment(PhEquipmentBuilder.from_dict(device), k)
+
+        return new_obj
+
+    def __iter__(self):
+        for _ in self._equipment_set.items():
+            yield _
+
+    def __setitem__(self, key, attr):
+        self._equipment_set[key] = attr
+
+    def __getitem__(self, key):
+        return self._equipment_set[key]
+
+    def __copy__(self, new_host=None):
+        # type: (Any) -> PhEquipmentCollection
+        host = new_host or self._host
+
+        new_obj = self.__class__(host)
+        for k, v in self._equipment_set.items():
+            new_obj.add_equipment(v, k)
 
         return new_obj
 

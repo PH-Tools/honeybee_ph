@@ -3,25 +3,27 @@
 
 """Functions used to cleanup / optimize Honeybee-Rooms before outputting to WUFI"""
 
-from re import A
-from typing import List
+from typing import List, Union, Tuple
+from functools import partial
 
 from honeybee import room, face
 from honeybee.boundarycondition import Outdoors, Ground
 from honeybee_energy.boundarycondition import Adiabatic
-from honeybee.room import Room
+from honeybee_energy.load import infiltration, people, equipment
 
-from honeybee_energy_ph.load import ph_equipment
 from PHX.model import project
 
+HB_BC = Union[Outdoors, Ground, Adiabatic]
 
-def _get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
-    """Returns a list of the exposed Honeybee Faces of a Honeybee Room. Exposed
-    faces are faces with a Boundary Condition of: 'Outdoors', 'Ground' or 'Adiabatic'.
+
+def _get_room_exposed_faces(_hb_room: room.Room, _bc_types: Tuple = (Outdoors, Ground, Adiabatic)) -> List[face.Face3D]:
+    """Returns a list of the Honeybee Faces within the set of HB-Boundary Conditions specified.
 
     Arguments:
     ----------
         * _hb_room (room.Room): The Honeybee Room to get the faces of.
+        * _type (tuple[HB_BC]): A tuple of the allowable HB-Boundary Conditions.
+            default = (Outdoors, Ground, Adiabatic)
 
     Returns:
     --------
@@ -30,7 +32,7 @@ def _get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
 
     exposed_faces = []
     for original_face in _hb_room.faces:
-        if not isinstance(original_face.boundary_condition, (Outdoors, Ground, Adiabatic)):
+        if not isinstance(original_face.boundary_condition, _bc_types):
             continue
 
         new_face = original_face.duplicate()
@@ -48,70 +50,117 @@ def _get_room_exposed_faces(_hb_room: room.Room) -> List[face.Face3D]:
     return exposed_faces
 
 
-def _add_hb_room_occupancy_to_existing_room(rm_1: Room, rm_2: Room) -> Room:
-    """Merges the HBE "People" from one HBE-Room with another HBE-Room.
+def _get_room_exposed_face_area(_hb_room: room.Room, _bc_types: Tuple) -> float:
+    """Returns the total area of the 'exposed' faces in a HB-Room."""
+    return sum(f.area for f in _get_room_exposed_faces(_hb_room, _bc_types))
+
+
+def merge_occupancies(_hb_rooms: List[room.Room]) -> people.People:
+    """Returns a new HB-People-Obj with it's values set from a list of input HB-Rooms.
 
     Arguments:
     ----------
-        * rm_1 (room.Room): A Honeybee Room
-        * rm_2 (room.Room): A Honeybee Room
+        * _hb_rooms (List[room.Room]): A list of the HB-Rooms to build the merged
+            HB-People object from.
 
-    Returns:
-    --------
-        * (room.Room) A Honeybee Room
+    Return:
+    ------- 
+        * (people.People): A new Honeybee People object with values merged from the HB-Rooms.
     """
 
-    new_ppl = rm_1.properties.energy.people.duplicate()
+    # Tally up all the values from all the rooms
+    total_hb_people = 0.0
+    total_ph_bedrooms = 0.0
+    total_ph_people = 0.0
+    for room in _hb_rooms:
+        hb_ppl_obj = room.properties.energy.people  # alias
+        total_ph_bedrooms += int(hb_ppl_obj.properties.ph.number_bedrooms)
+        total_ph_people += int(hb_ppl_obj.properties.ph.number_people)
+        total_hb_people += hb_ppl_obj.people_per_area * room.floor_area
 
-    # -- Combine the HB Values
-    weighted_val_1 = rm_1.properties.energy.people.people_per_area * rm_1.floor_area
-    weighted_val_2 = rm_2.properties.energy.people.people_per_area * rm_2.floor_area
-    total_floor_area = rm_1.floor_area + rm_2.floor_area
-    weighted_total_val = weighted_val_1 + weighted_val_2
-    new_ppl.people_per_area = weighted_total_val / total_floor_area
+    # Build up the new object's attributes
+    total_floor_area = sum(rm.floor_area for rm in _hb_rooms)
+    new_hb_ppl = _hb_rooms[0].properties.energy.people.duplicate()
+    new_hb_ppl.people_per_area = total_hb_people / total_floor_area
+    new_hb_ppl.properties.ph.number_bedrooms = total_ph_bedrooms
+    new_hb_ppl.properties.ph.number_people = total_ph_people
 
-    # -- Combine the PH Values
-    new_ppl.properties.ph.number_bedrooms += int(
-        rm_2.properties.energy.people.properties.ph.number_bedrooms)
-    new_ppl.properties.ph.number_people += int(
-        rm_2.properties.energy.people.properties.ph.number_people)
-
-    rm_1.properties.energy.people = new_ppl
-
-    return rm_1
+    return new_hb_ppl
 
 
-def _add_hb_room_elec_equip_to_existing_room(rm_1: Room, rm_2: Room) -> Room:
-    """
-    Merges the electric equipment from one Honeybee Room to another.
+def merge_infiltrations(_hb_rooms: List[room.Room]) -> infiltration.Infiltration:
+    """Returns a new HB-Infiltration-Obj with it's values set from a list of input HB-Rooms.
 
     Arguments:
     ----------
-        * rm_1 (room.Room): A Honeybee Room
-        * rm_2 (room.Room): A Honeybee Room
+        * _hb_rooms (List[room.Room]): A list of the HB-Rooms to build the merged
+            HB-Infiltration object from.
 
-    Returns:
-    --------
-        * (room.Room) A Honeybee Room
+    Return:
+    ------- 
+        * (infiltration.Infiltration): A new Honeybee Infiltration object 
+            with values merged from the HB-Rooms.
     """
-    # -------------------------------------------------------------------------
-    #
-    # TODO: Combine the Honeybee Room's HBE Elec Equip Values
-    #
-    #
+    # For Phius, infiltration-exposed surfaces include all, including 'Ground'
+    # unlike for Honeybee where only 'Outdoors' count as 'exposed'
+    get_rm_infil_exposed_face_area = partial(
+        _get_room_exposed_face_area, _bc_types=(Outdoors, Ground))
 
-    # -------------------------------------------------------------------------
-    # -- Combine the PH Elec. Equip it is the same item (same identifier / key)
-    equip_coll_1 = rm_1.properties.energy.electric_equipment.properties.ph.equipment_collection
-    equip_coll_2 = rm_2.properties.energy.electric_equipment.properties.ph.equipment_collection
+    # Calculate the total airflow per room, total exposed area per room
+    total_m3_s = 0.0
+    total_exposed_area = 0.0
+    for room in _hb_rooms:
+        room_infil_exposed_area = get_rm_infil_exposed_face_area(room)
+        room_infil_m3_s = room_infil_exposed_area * \
+            room.properties.energy.infiltration.flow_per_exterior_area
 
-    for equip_key, equip in equip_coll_2:
-        try:
-            equip_coll_1[equip_key].quantity += 1
-        except KeyError:
-            equip_coll_1.add_equipment(equip)
+        total_exposed_area += room_infil_exposed_area
+        total_m3_s += room_infil_m3_s
 
-    return rm_1
+    # -- Set the new Infiltration Object's attr to the weighted average
+    new_infil = _hb_rooms[0].properties.energy.infiltration.duplicate()
+    new_infil.flow_per_exterior_area = total_m3_s / total_exposed_area
+
+    return new_infil
+
+
+def merge_elec_equip(_hb_rooms: List[room.Room]) -> equipment.ElectricEquipment:
+    """Returns a new HB-ElectricEquipment-Obj with it's values set from a list of input HB-Rooms.
+
+    Arguments:
+    ----------
+        * _hb_rooms (List[room.Room]): A list of the HB-Rooms to build the merged
+            HB-ElectricEquipment object from.
+
+    Return:
+    ------- 
+        * (equipment.ElectricEquipment): A new Honeybee ElectricEquipment object 
+            with values merged from the HB-Rooms.
+    """
+
+    # -- Collect all the unique PH-Equipment in all the rooms.
+    # -- Increase the quantity for each duplicate piece of equipment found.
+    ph_equipment = {}
+    for room in _hb_rooms:
+        for equip_key, equip in room.properties.energy.electric_equipment.properties.ph.equipment_collection.items():
+            try:
+                ph_equipment[equip_key].quantity += 1
+            except KeyError:
+                ph_equipment[equip_key] = equip
+
+    # -- Calculate the total Watts of elec-equipment, total floor-area
+    total_floor_area = sum(rm.floor_area for rm in _hb_rooms)
+    total_watts = sum(
+        (rm.floor_area * rm.properties.energy.electric_equipment.watts_per_area) for rm in _hb_rooms)
+
+    # -- Build a new HB-Elec-Equip with all the PH-Equipment in it.
+    new_hb_equip = _hb_rooms[0].properties.energy.electric_equipment.duplicate()
+    new_hb_equip.watts_per_area = total_watts / total_floor_area
+    new_hb_equip.properties.ph.equipment_collection.remove_all_equipment()
+    for ph_item in ph_equipment.values():
+        new_hb_equip.properties.ph.equipment_collection.add_equipment(ph_item)
+
+    return new_hb_equip
 
 
 def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
@@ -171,14 +220,10 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
             new_room.properties.ph.add_new_space(existing_space)
 
     # -------------------------------------------------------------------------
-    # -- Merge the hb_rooms' Occupancy properties
-    for hb_room in _hb_rooms:
-        new_room = _add_hb_room_occupancy_to_existing_room(new_room, hb_room)
-
-    # -------------------------------------------------------------------------
-    # -- Merge the hb_rooms' Elec. Equipment (appliances)
-    for hb_room in _hb_rooms:
-        new_room = _add_hb_room_elec_equip_to_existing_room(new_room, hb_room)
+    # -- Merge the hb_rooms' load values
+    new_room.properties.energy.infiltration = merge_infiltrations(_hb_rooms)
+    new_room.properties.energy.people = merge_occupancies(_hb_rooms)
+    new_room.properties.energy.electric_equipment = merge_elec_equip(_hb_rooms)
 
     # -------------------------------------------------------------------------
     # -- TODO: Can I merge together the surfaces as well?

@@ -89,7 +89,7 @@ class ModelPhProperties(object):
 
     @staticmethod
     def load_properties_from_dict(data):
-        # type: (dict[str, dict]) -> tuple[dict, dict]
+        # type: (dict[str, dict]) -> dict
         """Load the HB-Model .ph properties from an HB-Model dictionary as Python objects.
 
         Loaded objects include: BldgSegment.......
@@ -122,10 +122,7 @@ class ModelPhProperties(object):
         for seg in data['properties']['ph']['bldg_segments']:
             bldg_segments[seg['identifier']] = bldg_segment.BldgSegment.from_dict(seg)
 
-        # TODO: Spaces
-        spaces = {}
-
-        return spaces, bldg_segments
+        return bldg_segments
 
     def apply_properties_from_dict(self, data):
         # type: (dict[str, Any]) -> None
@@ -158,7 +155,7 @@ class ModelPhProperties(object):
             'Dictionary possesses no ModelPhProperties?'
 
         # re-build all of the .ph property objects from the HB-Model dict as python objects
-        spaces, bldg_segments = self.load_properties_from_dict(data)
+        bldg_segments = self.load_properties_from_dict(data)
 
         # collect lists of .ph property dictionaries at the sub-model level (room, face, etc)
         room_ph_dicts, face_ph_dicts, shd_ph_dicts, ap_ph_dicts, dr_ph_dicts = \
