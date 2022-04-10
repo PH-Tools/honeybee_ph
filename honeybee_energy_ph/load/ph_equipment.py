@@ -5,12 +5,11 @@
 
 
 try:
-    from typing import Any, TypeVar
+    from typing import Any
 except ImportError:
     pass  # IronPython
 
 import sys
-from collections import defaultdict
 
 from honeybee_energy_ph.load import _base
 
@@ -121,7 +120,29 @@ class PhEquipment(_base._Base):
             raise PhEquipmentMergeError(self.equipment_type, other.equipment_type)
 
         self.quantity += other.quantity
+
+        # ------------
+        # TODO: Should there be some sort of area-weighted averaging as well?
+        # ------------
+
         return self
+
+    def annual_energy_kWh(self, _ref_room=None):
+        # type: (room.Room | None) -> float
+        """Returns the annual energy use (kWh) of the equipment."""
+
+        # -- To be implemented by the equipment, as appropriate.
+
+        raise NotImplementedError(self)
+
+    def annual_avg_wattage(self, _ref_room=None):
+        # type: (room.Room | None) -> float
+        """Returns the annual average wattage of the equipment."""
+        return (self.annual_energy_kWh(_ref_room) * 1000) / 8760
+
+    def __str__(self):
+        return "{}(name={}, quantity={})".format(self.__class__.__name__, self.display_name, self.quantity)
+
 
 # -----------------------------------------------------------------------------
 # - Appliances
@@ -169,6 +190,9 @@ class PhDishwasher(PhEquipment):
         new_obj.water_connection = _input_dict['water_connection']
         return new_obj
 
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand
+
 
 class PhClothesWasher(PhEquipment):
 
@@ -215,6 +239,9 @@ class PhClothesWasher(PhEquipment):
         new_obj.connection = _input_dict['connection']
         new_obj.utilization_factor = _input_dict['utilization_factor']
         return new_obj
+
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand
 
 
 class PhClothesDryer(PhEquipment):
@@ -267,6 +294,12 @@ class PhClothesDryer(PhEquipment):
         new_obj.field_utilization_factor = _input_dict['field_utilization_factor']
         return new_obj
 
+    def annual_energy_kWh(self, _ref_room=None):
+
+        # TODO: Figure out how they calculate dryer energy? ANSI/Resnet?
+
+        return 0.0
+
 
 class PhRefrigerator(PhEquipment):
 
@@ -299,6 +332,9 @@ class PhRefrigerator(PhEquipment):
         super(PhRefrigerator, new_obj).base_attrs_from_dict(new_obj, _input_dict)
 
         return new_obj
+
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand * 365
 
 
 class PhFreezer(PhEquipment):
@@ -333,6 +369,9 @@ class PhFreezer(PhEquipment):
 
         return new_obj
 
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand * 365
+
 
 class PhFridgeFreezer(PhEquipment):
 
@@ -366,6 +405,9 @@ class PhFridgeFreezer(PhEquipment):
 
         return new_obj
 
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand * 365
+
 
 class PhCooktop(PhEquipment):
 
@@ -375,7 +417,7 @@ class PhCooktop(PhEquipment):
         'quantity': 1,
         'in_conditioned_space': True,
         'reference_energy_norm': 1,  # Use
-        'energy_demand': 0.2,
+        'energy_demand': 0.2,  # kWh/use
         'energy_demand_per_use': 0,
         'combined_energy_factor': 0,
         'cooktop_type': 1,  # Cooking with electricity
@@ -400,6 +442,13 @@ class PhCooktop(PhEquipment):
         super(PhCooktop, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.cooktop_type = _input_dict['cooktop_type']
         return new_obj
+
+    def annual_energy_kWh(self, _ref_room=None):
+        # Num. Meals as per Phius Guidebook V3.02, pg 73 footnote #31
+        annual_meals_per_occupant = 500
+        num_meals = _ref_room.properties.energy.people.properties.ph.number_people * \
+            annual_meals_per_occupant
+        return self.energy_demand * num_meals
 
 
 class PhPhiusMEL(PhEquipment):
@@ -433,6 +482,7 @@ class PhPhiusMEL(PhEquipment):
         super(PhPhiusMEL, new_obj).base_attrs_from_dict(new_obj, _input_dict)
 
         return new_obj
+    # TODO: annual_avg_wattage
 
 
 class PhPhiusLightingInterior(PhEquipment):
@@ -468,6 +518,7 @@ class PhPhiusLightingInterior(PhEquipment):
         super(PhPhiusLightingInterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
         return new_obj
+    # TODO: annual_avg_wattage
 
 
 class PhPhiusLightingExterior(PhEquipment):
@@ -503,6 +554,7 @@ class PhPhiusLightingExterior(PhEquipment):
         super(PhPhiusLightingExterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
         return new_obj
+    # TODO: annual_avg_wattage
 
 
 class PhPhiusLightingGarage(PhEquipment):
@@ -538,6 +590,7 @@ class PhPhiusLightingGarage(PhEquipment):
         super(PhPhiusLightingGarage, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
         return new_obj
+    # TODO:  annual_avg_wattage
 
 
 class PhCustomAnnualElectric(PhEquipment):
@@ -573,6 +626,9 @@ class PhCustomAnnualElectric(PhEquipment):
         new_obj.energy_demand = _input_dict['energy_demand']
         return new_obj
 
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand
+
 
 class PhCustomAnnualLighting(PhEquipment):
 
@@ -606,6 +662,9 @@ class PhCustomAnnualLighting(PhEquipment):
         super(PhCustomAnnualLighting, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.energy_demand = _input_dict['energy_demand']
         return new_obj
+
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand
 
 
 class PhCustomAnnualMEL(PhEquipment):
@@ -641,6 +700,8 @@ class PhCustomAnnualMEL(PhEquipment):
         new_obj.energy_demand = _input_dict['energy_demand']
         return new_obj
 
+    def annual_energy_kWh(self, _ref_room=None):
+        return self.energy_demand
 
 # -----------------------------------------------------------------------------
 # Collections
@@ -683,6 +744,7 @@ class PhEquipmentCollection(object):
 
     @property
     def host(self):
+        # type: () -> ElectricEquipmentPhProperties
         return self._host
 
     def items(self):
@@ -725,6 +787,22 @@ class PhEquipmentCollection(object):
     def remove_all_equipment(self):
         """Reset the Collection to an empty set."""
         self._equipment_set = {}
+
+    def total_collection_wattage(self, _hb_room):
+        # type: (room.Room) -> float
+        """Returns the total annual-average-wattage of the appliances.
+
+        This value assumes constant 24/7 operation (PH-Style modeling).
+
+        Arguments:
+        ----------
+            * _hb_room (room.Room): The reference Honeybee-Room to get occupancy from.
+
+        Returns:
+        --------
+            * (float): total Wattage of all installed PH-Equipment in the collection.
+        """
+        return sum(equip.annual_avg_wattage(_hb_room) for equip in self.values())
 
     def to_dict(self):
         # type: () -> dict

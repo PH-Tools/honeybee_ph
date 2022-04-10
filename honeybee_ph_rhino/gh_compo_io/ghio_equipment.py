@@ -2,6 +2,7 @@
 # -*- Python Version: 2.7 -*-
 
 """PH-Equipment GH-Component inputs node configuration."""
+
 from copy import copy
 # Note: Use copy so that specific equipments can overwrite base with their own hints
 
