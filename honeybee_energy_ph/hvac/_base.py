@@ -25,7 +25,6 @@ class _Base(object):
     @property
     def display_name(self):
         """Get or set a string for the object name without any character restrictions.
-
         If not set, this will be equal to the identifier.
         """
         return self._display_name
