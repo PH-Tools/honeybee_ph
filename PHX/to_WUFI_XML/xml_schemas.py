@@ -5,6 +5,7 @@
 
 from dataclasses import dataclass
 from typing import List, Optional
+from enum import Enum
 
 from PHX.model import elec_equip, project
 from PHX.model import (building, certification, climate, constructions,
@@ -474,271 +475,223 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> List
 # -- MECHANICAL DEVICES --
 
 
-@dataclass
-class Temp_PH_Params:
-    quantity: int = 1
-    heat_recovery_efficiency: float = 0.0
-    moisture_recovery_efficiency: float = 0.0
-    fan_power: float = 0.55
-    frost_protection_reqd: bool = True
-    frost_temp: float = -5.0
-    in_conditioned_space: bool = True
-
-
-def _Device_Ventilator(_d: mech_equip.PhxVentilator) -> List[xml_writable]:
-    ph_params = Temp_PH_Params()
-    ph_params.quantity = _d.quantity
-    ph_params.heat_recovery_efficiency = _d.heat_recovery_efficiency
-    ph_params.moisture_recovery_efficiency = _d.moisture_recovery_efficiency
-    ph_params.fan_power = _d.fan_power
-    ph_params.frost_protection_reqd = _d.frost_protection_reqd
-    ph_params.frost_temp = _d.frost_temp
-    ph_params.in_conditioned_space = _d.in_conditioned_space
-
+def _DeviceVentilator(_d: mech_equip.PhxVentilator) -> List[xml_writable]:
     return [
-        XML_Node("Name", _d.name),
+        XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _d.system_type_num, 'choice', _d.system_type_str),
-        XML_Node("TypeDevice", _d.device_type_num, 'choice', _d.device_type_str),
-        XML_Node("UsedFor_Heating", False),
-        XML_Node("UsedFor_DHW", False),
-        XML_Node("UsedFor_Cooling", False),
-        XML_Node("UsedFor_Ventilation", True),
-        XML_Node("UsedFor_Humidification", False),
-        XML_Node("UsedFor_Dehumidification", False),
+        XML_Node("SystemType", _d.system_type_num.value),
+        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
+        XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
+        XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
+        XML_Node("UsedFor_Ventilation", _d.usage_profile.ventilation),
+        XML_Node("UsedFor_Humidification", _d.usage_profile.humidification),
+        XML_Node("UsedFor_Dehumidification", _d.usage_profile.dehumidification),
         XML_Node("UseOptionalClimate", False),
         XML_Node("IdentNr_OptionalClimate", -1),
         XML_Node("HeatRecovery", _d.heat_recovery_efficiency),
         XML_Node("MoistureRecovery ", _d.moisture_recovery_efficiency),
-        XML_Object('PH_Parameters', ph_params,
-                   _schema_name='_Device_Ventilator_PH_Params')
+        XML_Object('PH_Parameters', _d,
+                   _schema_name='_DeviceVentilatorPhParams')
     ]
 
 
-def _Device_Ventilator_PH_Params(_params: Temp_PH_Params) -> List[xml_writable]:
+def _DeviceVentilatorPhParams(_d: mech_equip.PhxVentilator) -> List[xml_writable]:
     return [
-        XML_Node("Quantity", _params.quantity),
-        XML_Node("HumidityRecoveryEfficiency", _params.moisture_recovery_efficiency),
-        XML_Node("ElectricEfficiency", _params.fan_power),
-        XML_Node("DefrostRequired", _params.frost_protection_reqd),
-        XML_Node("FrostProtection", _params.frost_protection_reqd),
-        XML_Node("TemperatureBelowDefrostUsed", _params.frost_temp),
-        XML_Node("InConditionedSpace", _params.in_conditioned_space),
-        # XML_Node("SubsoilHeatExchangeEfficiency", _params.),
-        # XML_Node("VolumeFlowRateFrom", "unit","m³/h", _params.),
-        # XML_Node("VolumeFlowRateTo", "unit","m³/h", _params.),
-        # XML_Node("NoSummerBypass", _params.),
-        # XML_Node("Maximum_VOS", _params.),
-        # XML_Node("Maximum_PP", _params.),
-        # XML_Node("Standard_VOS", _params.),
-        # XML_Node("Standard_PP", _params.),
-        # XML_Node("Basic_VOS", _params.),
-        # XML_Node("Basic_PP", _params.),
-        # XML_Node("Minimum_VOS", _params.),
-        # XML_Node("Minimum_PP", _params.),
-        # XML_Node("AuxiliaryEnergy", _params.),
-        # XML_Node("AuxiliaryEnergyDHW", _params.),
+        XML_Node("Quantity", _d.quantity),
+        XML_Node("HumidityRecoveryEfficiency", _d.moisture_recovery_efficiency),
+        XML_Node("ElectricEfficiency", _d.fan_power),
+        XML_Node("DefrostRequired", _d.frost_protection_reqd),
+        XML_Node("FrostProtection", _d.frost_protection_reqd),
+        XML_Node("TemperatureBelowDefrostUsed", _d.frost_temp),
+        XML_Node("InConditionedSpace", _d.in_conditioned_space),
+        # XML_Node("SubsoilHeatExchangeEfficiency", _d.),
+        # XML_Node("VolumeFlowRateFrom", "unit","m³/h", _d.),
+        # XML_Node("VolumeFlowRateTo", "unit","m³/h", _d.),
+        # XML_Node("NoSummerBypass", _d.),
+        # XML_Node("Maximum_VOS", _d.),
+        # XML_Node("Maximum_PP", _d.),
+        # XML_Node("Standard_VOS", _d.),
+        # XML_Node("Standard_PP", _d.),
+        # XML_Node("Basic_VOS", _d.),
+        # XML_Node("Basic_PP", _d.),
+        # XML_Node("Minimum_VOS", _d.),
+        # XML_Node("Minimum_PP", _d.),
+        # XML_Node("AuxiliaryEnergy", _d.),
+        # XML_Node("AuxiliaryEnergyDHW", _d.),
     ]
 
 
-@dataclass
-class Temp_PhParamsHotWaterTank:
-    storage_capacity: float = 0.0
-    storage_losses_standby: Optional[float] = None
-    total_solar_thermal_storage_losses: Optional[float] = None
-    input_option: int = 1
-    average_heat_release_storage: Optional[float] = None
-    tank_room_temp: float = 20.0
-    water_temp: float = 60.0
-    quantity: int = 1
-    aux_energy: Optional[float] = None
-    aux_energy_dhw: Optional[float] = None
-    in_conditioned_space: bool = True
-
-
-def _Device_WaterStorage(_d: mech_equip.PhxHotWaterTank) -> List[xml_writable]:
-    ph_params = Temp_PhParamsHotWaterTank()
-    ph_params.storage_capacity = _d.storage_capacity
-    ph_params.storage_losses_standby = _d.standby_losses
-    ph_params.total_solar_thermal_storage_losses = _d.solar_losses
-    ph_params.input_option = _d.input_option
-    ph_params.average_heat_release_storage = _d.storage_loss_rate
-    ph_params.tank_room_temp = _d.tank_room_temp
-    ph_params.water_temp = _d.tank_water_temp
-    ph_params.quantity = _d.quantity
-    ph_params.aux_energy = _d.aux_energy
-    ph_params.aux_energy_dhw = _d.aux_energy_dhw
-    ph_params.in_conditioned_space = _d.in_conditioned_space\
-
+def _DeviceHeaterElec(_d: mech_equip.PhxHeaterElectric) -> List[xml_writable]:
     return [
-        XML_Node("Name", _d.name),
+        XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _d.system_type_num),
-        XML_Node("TypeDevice", _d.device_type_num),
-        XML_Node("UsedFor_Heating", False),
-        XML_Node("UsedFor_DHW", True),
-        XML_Node("UsedFor_Cooling", False),
-        XML_Node("UsedFor_Ventilation", False),
-        XML_Node("UsedFor_Humidification", False),
-        XML_Node("UsedFor_Dehumidification", False),
-        XML_Object('PH_Parameters', ph_params,
-                   _schema_name='_Device_WaterStorage_PHParams')
+        XML_Node("SystemType", _d.system_type_num.value),
+        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
+        XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
+        XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
+        XML_Node("UsedFor_Ventilation", _d.usage_profile.ventilation),
+        XML_Node("UsedFor_Humidification", _d.usage_profile.humidification),
+        XML_Node("UsedFor_Dehumidification", _d.usage_profile.dehumidification),
+        XML_Object('PH_Parameters', _d,
+                   _schema_name='_DeviceHeaterElecPhParams'),
+        XML_Object('DHW_Parameters', _d,
+                   _schema_name='_DeviceHeaterElecDeviceParams'),
+        XML_Object('Heating_Parameters', _d,
+                   _schema_name='_DeviceHeaterElecDeviceParams'),
     ]
 
 
-def _Device_WaterStorage_PHParams(_params: Temp_PhParamsHotWaterTank) -> List[xml_writable]:
+def _DeviceHeaterElecPhParams(_d: mech_equip.PhxHeaterElectric) -> List[xml_writable]:
     return [
-        XML_Node("SolarThermalStorageCapacity", _params.storage_capacity),
-        XML_Node("StorageLossesStandby", _params.storage_losses_standby),
-        XML_Node("TotalSolarThermalStorageLosses",
-                 _params.total_solar_thermal_storage_losses),
-        XML_Node("InputOption", _params.input_option),
-        XML_Node("AverageHeatReleaseStorage", _params.average_heat_release_storage),
-        XML_Node("TankRoomTemp ", _params.tank_room_temp),
-        XML_Node("TypicalStorageWaterTemperature", _params.water_temp),
-        XML_Node("QauntityWS", _params.quantity),
-        XML_Node("AuxiliaryEnergy", _params.aux_energy),
-        XML_Node("AuxiliaryEnergyDHW", _params.aux_energy_dhw),
-        XML_Node("InConditionedSpace", _params.in_conditioned_space),
+        XML_Node("AuxiliaryEnergy", _d.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _d.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _d.in_conditioned_space),
     ]
 
 
-@dataclass
-class Temp_PHParamsHotWaterHeater_Elec:
-    aux_energy: float = 0.0  # W
-    aux_energy_dhw: float = 0.0  # W
-    in_conditioned_space: bool = True
-
-
-@dataclass
-class Temp_DHWParamsHotWaterHeater_Elec:
-    percent_coverage: float = 1.0
-    selection: int = 1
-    unit: float = 120  # Ltr/h
-
-
-def _Device_WaterHeater_Elec(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
-    ph_params = Temp_PHParamsHotWaterHeater_Elec()
-    ph_params.in_conditioned_space = _d.in_conditioned_space
-    dhw_params = Temp_DHWParamsHotWaterHeater_Elec()
-    dhw_params.percent_coverage = _d.percent_coverage
-
+def _DeviceHeaterElecDeviceParams(_d: mech_equip.PhxHeaterElectric) -> List[xml_writable]:
     return [
-        XML_Node("Name", _d.name),
+        XML_Node("CoverageWithinSystem", _d.percent_coverage),
+        XML_Node("Unit", _d.unit),
+        XML_Node("Selection", 1),
+    ]
+
+
+def _DeviceHeaterBoiler(_d: mech_equip.PhxHeaterBoiler) -> List[xml_writable]:
+    return [
+        XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _d.system_type_num),
-        XML_Node("TypeDevice", _d.device_type_num),
-        XML_Node("UsedFor_Heating", False),
-        XML_Node("UsedFor_DHW", True),
-        XML_Node("UsedFor_Cooling", False),
-        XML_Node("UsedFor_Ventilation", False),
-        XML_Node("UsedFor_Humidification", False),
-        XML_Node("UsedFor_Dehumidification", False),
-        XML_Object('PH_Parameters', ph_params,
-                   _schema_name='_Device_WaterHeaterElec_PHParams'),
-        XML_Object('DHW_Parameters', dhw_params,
-                   _schema_name='_Device_WaterHeaterElec_DHWParams'),
+        XML_Node("SystemType", _d.system_type_num.value),
+        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
+        XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
+        XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
+        XML_Node("UsedFor_Ventilation", _d.usage_profile.ventilation),
+        XML_Node("UsedFor_Humidification", _d.usage_profile.humidification),
+        XML_Node("UsedFor_Dehumidification", _d.usage_profile.dehumidification),
     ]
 
 
-def _Device_WaterHeaterElec_PHParams(_params: Temp_PHParamsHotWaterHeater_Elec) -> List[xml_writable]:
+def _DeviceHeaterDistrict(_d: mech_equip.PhxHeaterDistrictHeat) -> List[xml_writable]:
     return [
-        XML_Node("AuxiliaryEnergy", _params.aux_energy),
-        XML_Node("AuxiliaryEnergyDHW", _params.aux_energy_dhw),
-        XML_Node("InConditionedSpace", _params.in_conditioned_space),
-    ]
-
-
-def _Device_WaterHeaterElec_DHWParams(_params: Temp_DHWParamsHotWaterHeater_Elec) -> List[xml_writable]:
-    return [
-        XML_Node("CoverageWithinSystem", _params.percent_coverage),
-        XML_Node("Unit", _params.unit),
-        XML_Node("Selection", _params.selection),
-    ]
-
-
-def _Device_WaterHeater_Boiler(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
-    return []
-
-
-def _Device_WaterHeater_District(_d: mech_equip.PhxHotWaterHeater) -> List[xml_writable]:
-    return []
-
-
-@dataclass
-class Temp_PHParamsHotWaterHeater_HeatPump:
-    aux_energy: float = 0.0  # W
-    aux_energy_dhw: float = 0.0  # W
-    in_conditioned_space: bool = True
-    heat_pump_type = 3
-    annual_COP: Optional[float] = None
-    annual_system_perf_ratio: Optional[float] = None
-    _annual_energy_factor: Optional[float] = None
-
-    @property
-    def annual_energy_factor(self):
-        return self._annual_energy_factor
-
-    @annual_energy_factor.setter
-    def annual_energy_factor(self, _in):
-        if not _in:
-            return
-        self._annual_energy_factor = _in
-        self.heat_pump_type = 5  # Heat Pump water heater (HPWH) inside
-
-
-@dataclass
-class Temp_DHWParamsHotWaterHeater_HeatPump:
-    percent_coverage: float = 1.0
-    selection: int = 1
-    unit: float = 120  # Ltr/h
-
-
-def _Device_WaterHeater_HeatPump(_d: mech_equip.PhxHotWaterHeaterHeatPump) -> List[xml_writable]:
-    ph_params = Temp_PHParamsHotWaterHeater_HeatPump()
-    ph_params.in_conditioned_space = _d.in_conditioned_space
-    ph_params.annual_COP = _d.annual_COP
-    ph_params.annual_system_perf_ratio = _d.annual_system_perf_ratio
-    ph_params.annual_energy_factor = _d.annual_energy_factor
-    dhw_params = Temp_DHWParamsHotWaterHeater_HeatPump()
-    dhw_params.percent_coverage = _d.percent_coverage
-
-    return [
-        XML_Node("Name", _d.name),
+        XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _d.system_type_num),
-        XML_Node("TypeDevice", _d.device_type_num),
-        XML_Node("UsedFor_Heating", False),
-        XML_Node("UsedFor_DHW", True),
-        XML_Node("UsedFor_Cooling", False),
-        XML_Node("UsedFor_Ventilation", False),
-        XML_Node("UsedFor_Humidification", False),
-        XML_Node("UsedFor_Dehumidification", False),
-        XML_Object('PH_Parameters', ph_params,
-                   _schema_name='_Device_WaterHeaterHeatPump_PHParams'),
-        XML_Object('DHW_Parameters', dhw_params,
-                   _schema_name='_Device_WaterHeaterHeatPump_DHWParams'),
+        XML_Node("SystemType", _d.system_type_num.value),
+        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
+        XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
+        XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
+        XML_Node("UsedFor_Ventilation", _d.usage_profile.ventilation),
+        XML_Node("UsedFor_Humidification", _d.usage_profile.humidification),
+        XML_Node("UsedFor_Dehumidification", _d.usage_profile.dehumidification),
     ]
 
 
-def _Device_WaterHeaterHeatPump_PHParams(_params: Temp_PHParamsHotWaterHeater_HeatPump) -> List[xml_writable]:
+def _DeviceHeaterHeatPump(_d: mech_equip.PhxHeaterHeatPump) -> List[xml_writable]:
+    param_schemas = {
+        mech_equip.PhxHeaterHeatPumpParamsAnnual.hp_type.value: '_DeviceHeaterHeatPumpPhParamsAnnual',
+        mech_equip.PhxHeaterHeatPumpParamsMonthly.hp_type.value: '_DeviceHeaterHeatPumpPhParamsMonthly',
+        mech_equip.PhxHeaterHeatPumpParamsHotWater.hp_type.value: '_DeviceHeaterHeatPumpPhParamsHotWater',
+    }
+
     return [
-        XML_Node("AuxiliaryEnergy", _params.aux_energy),
-        XML_Node("AuxiliaryEnergyDHW", _params.aux_energy_dhw),
-        XML_Node("InConditionedSpace", _params.in_conditioned_space),
-        XML_Node("AnnualCOP", _params.annual_COP),
+        XML_Node("Name", _d.display_name),
+        XML_Node("IdentNr", _d.id_num),
+        XML_Node("SystemType", _d.system_type_num.value),
+        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
+        XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
+        XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
+        XML_Node("UsedFor_Ventilation", _d.usage_profile.ventilation),
+        XML_Node("UsedFor_Humidification", _d.usage_profile.humidification),
+        XML_Node("UsedFor_Dehumidification", _d.usage_profile.dehumidification),
+        XML_Object('PH_Parameters', _d,
+                   _schema_name=param_schemas[_d.params.hp_type.value]),
+        XML_Object('DHW_Parameters', _d,
+                   _schema_name='_DeviceHeaterHeatPumpDeviceParams'),
+        XML_Object('Heating_Parameters', _d,
+                   _schema_name='_DeviceHeaterHeatPumpDeviceParams'),
+    ]
+
+
+def _DeviceHeaterHeatPumpPhParamsAnnual(_d: mech_equip.PhxHeaterHeatPump) -> List[xml_writable]:
+    return [
+        XML_Node("AuxiliaryEnergy", _d.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _d.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _d.in_conditioned_space),
+        XML_Node("AnnualCOP", _d.params.annual_COP),
         XML_Node("TotalSystemPerformanceRatioHeatGenerator",
-                 _params.annual_system_perf_ratio),
-        XML_Node("HPWH_EF", _params.annual_energy_factor),
-        XML_Node("HPType", _params.heat_pump_type),
+                 _d.params.total_system_perf_ratio),
+        XML_Node("HPType", _d.params.hp_type.value),
     ]
 
 
-def _Device_WaterHeaterHeatPump_DHWParams(_params: Temp_DHWParamsHotWaterHeater_HeatPump) -> List[xml_writable]:
+def _DeviceHeaterHeatPumpPhParamsMonthly(_d: mech_equip.PhxHeaterHeatPump) -> List[xml_writable]:
     return [
-        XML_Node("CoverageWithinSystem", _params.percent_coverage),
-        XML_Node("Unit", _params.unit),
-        XML_Node("Selection", _params.selection),
+        XML_Node("AuxiliaryEnergy", _d.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _d.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _d.in_conditioned_space),
+        XML_Node("RatedCOP1", _d.params.COP_1),
+        XML_Node("RatedCOP2", _d.params.COP_2),
+        XML_Node("AmbientTemperature1", _d.params.ambient_temp_1),
+        XML_Node("AmbientTemperature2", _d.params.ambient_temp_2),
+        XML_Node("HPType", _d.params.hp_type.value),
+    ]
+
+
+def _DeviceHeaterHeatPumpPhParamsHotWater(_d: mech_equip.PhxHeaterHeatPump) -> List[xml_writable]:
+    return [
+        XML_Node("AuxiliaryEnergy", _d.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _d.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _d.in_conditioned_space),
+        XML_Node("AnnualCOP", _d.params.annual_COP),
+        XML_Node("TotalSystemPerformanceRatioHeatGenerator",
+                 _d.params.annual_system_perf_ratio),
+        XML_Node("HPWH_EF", _d.params.annual_energy_factor),
+        XML_Node("HPType", _d.params.hp_type.value),
+    ]
+
+
+def _DeviceHeaterHeatPumpDeviceParams(_d: mech_equip.PhxHeaterHeatPump) -> List[xml_writable]:
+    return [
+        XML_Node("CoverageWithinSystem", _d.percent_coverage),
+        XML_Node("Unit", _d.unit),
+        XML_Node("Selection", 1),
+    ]
+
+
+def _DeviceWaterStorage(_d: mech_equip.PhxHotWaterTank) -> List[xml_writable]:
+    return [
+        XML_Node("Name", _d.display_name),
+        XML_Node("IdentNr", _d.id_num),
+        XML_Node("SystemType", _d.system_type_num.value),
+        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
+        XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
+        XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
+        XML_Node("UsedFor_Ventilation", _d.usage_profile.ventilation),
+        XML_Node("UsedFor_Humidification", _d.usage_profile.humidification),
+        XML_Node("UsedFor_Dehumidification", _d.usage_profile.dehumidification),
+        XML_Object('PH_Parameters', _d,
+                   _schema_name='_DeviceWaterStoragePhParams')
+    ]
+
+
+def _DeviceWaterStoragePhParams(_d: mech_equip.PhxHotWaterTank) -> List[xml_writable]:
+    return [
+        XML_Node("SolarThermalStorageCapacity", _d.storage_capacity),
+        XML_Node("StorageLossesStandby", _d.standby_losses),
+        XML_Node("TotalSolarThermalStorageLosses", _d.solar_losses),
+        XML_Node("InputOption", _d.input_option),
+        XML_Node("AverageHeatReleaseStorage", _d.storage_loss_rate),
+        XML_Node("TankRoomTemp ", _d.tank_room_temp),
+        XML_Node("TypicalStorageWaterTemperature", _d.tank_water_temp),
+        XML_Node("QauntityWS", _d.quantity),
+        XML_Node("AuxiliaryEnergy", _d.aux_energy),
+        XML_Node("AuxiliaryEnergyDHW", _d.aux_energy_dhw),
+        XML_Node("InConditionedSpace", _d.in_conditioned_space),
     ]
 
 
@@ -747,21 +700,21 @@ def _Device_WaterHeaterHeatPump_DHWParams(_params: Temp_DHWParamsHotWaterHeater_
 
 def _WUFI_HVAC_SystemGroup(_hvac_system: mech_equip.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
     devices = {
-        1: '_Device_Ventilator',
-        2: '_Device_WaterHeater_Elec',
-        3: '_Device_WaterHeater_Boiler',
-        4: '_Device_WaterHeater_District',
-        5: '_Device_WaterHeater_HeatPump',
-        8: '_Device_WaterStorage',
+        1: '_DeviceVentilator',
+        2: '_DeviceHeaterElec',
+        3: '_DeviceHeaterBoiler',
+        4: '_DeviceHeaterDistrict',
+        5: '_DeviceHeaterHeatPump',
+        8: '_DeviceWaterStorage',
     }
 
     return [
-        XML_Node("Name", _hvac_system.name),
+        XML_Node("Name", _hvac_system.display_name),
         XML_Node("Type", _hvac_system.sys_type_num, 'choice', _hvac_system.sys_type_str),
         XML_Node("IdentNr", _hvac_system.id_num),
         XML_List('ZonesCoverage', [XML_Object("ZoneCoverage", n, "index", i)
                  for i, n in enumerate([_hvac_system.zone_coverage])]),
-        XML_List('Devices', [XML_Object("Device", d, "index", i, _schema_name=devices[d.device_type_num])
+        XML_List('Devices', [XML_Object("Device", d, "index", i, _schema_name=devices[d.system_type_num.value])
                  for i, d in enumerate(_hvac_system.equipment)]),
     ]
 

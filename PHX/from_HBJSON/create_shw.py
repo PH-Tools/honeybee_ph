@@ -37,7 +37,7 @@ def build_phx_hw_tank(_tank: hot_water.PhSHWTank) -> mech_equip.PhxHotWaterTank:
     return phx_tank
 
 
-def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech_equip.PhxHotWaterHeater:
+def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech_equip.PhxHeater:
     """Returns a new PHX Hot-Water Heater based on the HBPH Hot Water Heater input.
 
     Arguments:
@@ -52,27 +52,33 @@ def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech_equ
 
     # -- Get the right constructor based on the type of heater
     heaters = {
-        'PhSHWHeaterElectric': mech_equip.PhxHotWaterHeaterElectric,
-        'PhSHWHeaterBoiler': mech_equip.PhxHotWaterHeaterBoilerGas,
-        'PhSHWHeaterBoilerWood': mech_equip.PhxHotWaterHeaterBoilerWood,
-        'PhSHWHeaterDistrict': mech_equip.PhxHotWaterHeaterDistrictHeat,
-        'PhSHWHeaterHeatPump': mech_equip.PhxHotWaterHeaterHeatPump,
+        'PhSHWHeaterElectric': mech_equip.PhxHeaterElectric,
+        'PhSHWHeaterBoiler': mech_equip.PhxHeaterBoilerFossil,
+        'PhSHWHeaterBoilerWood': mech_equip.PhxHeaterBoilerWood,
+        'PhSHWHeaterDistrict': mech_equip.PhxHeaterDistrictHeat,
+        'PhSHWHeaterHeatPump': mech_equip.PhxHeaterHeatPump.hot_water,
     }
 
     # -- Build the basic heater and set basic data
     heater_class = heaters[_hbph_heater.__class__.__name__]
     phx_hw_heater = heater_class()
-
     phx_hw_heater.name = _hbph_heater.display_name
-    phx_hw_heater.percent_coverage = _hbph_heater.percent_coverage
-    phx_hw_heater.in_conditioned_space = _hbph_heater.in_conditioned_space
 
     # -- Pull out all the detailed data which varies depending on the 'type'
-    for attr_name in vars(_hbph_heater).keys():
+    for attr_name in vars(phx_hw_heater).keys():
         try:
             if attr_name.startswith('_'):
                 attr_name = attr_name[1:]
             setattr(phx_hw_heater, attr_name, getattr(_hbph_heater, attr_name))
         except KeyError:
             pass
+
+    for attr_name in vars(phx_hw_heater.params).keys():
+        try:
+            if attr_name.startswith('_'):
+                attr_name = attr_name[1:]
+            setattr(phx_hw_heater.params, attr_name, getattr(_hbph_heater, attr_name))
+        except KeyError:
+            pass
+
     return phx_hw_heater

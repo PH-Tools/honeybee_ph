@@ -81,7 +81,7 @@ class PhSHWTank(object):
 # -- Heaters ------------------------------------------------------------------
 
 
-class PhHotWaterHeater(_base._Base):
+class PhHotWaterHeater(_base._PhHVACBase):
     """Base class for all PH Hot-Water Heaters."""
 
     def __init__(self):
@@ -285,11 +285,6 @@ class PhSHWHeaterHeatPump(PhHotWaterHeater):
         self.annual_system_perf_ratio = None
         self.annual_energy_factor = None
 
-        self.rated_COP_at_T1 = None
-        self.rated_COP_at_T2 = None
-        self.temp_T1 = None
-        self.temp_T2 = None
-
     def to_dict(self):
         # type: () -> dict
         d = {}
@@ -303,11 +298,6 @@ class PhSHWHeaterHeatPump(PhHotWaterHeater):
         d['annual_COP'] = self.annual_COP
         d['annual_system_perf_ratio'] = self.annual_system_perf_ratio
         d['annual_energy_factor'] = self.annual_energy_factor
-
-        d['rated_COP_at_T1'] = self.rated_COP_at_T1
-        d['rated_COP_at_T2'] = self.rated_COP_at_T2
-        d['temp_T1'] = self.temp_T1
-        d['temp_T2'] = self.temp_T2
 
         return d
 
@@ -323,11 +313,6 @@ class PhSHWHeaterHeatPump(PhHotWaterHeater):
         new_obj.annual_COP = _input_dict['annual_COP']
         new_obj.annual_system_perf_ratio = _input_dict['annual_system_perf_ratio']
         new_obj.annual_energy_factor = _input_dict['annual_energy_factor']
-
-        new_obj.rated_COP_at_T1 = _input_dict['rated_COP_at_T1']
-        new_obj.rated_COP_at_T2 = _input_dict['rated_COP_at_T2']
-        new_obj.temp_T1 = _input_dict['temp_T1']
-        new_obj.temp_T2 = _input_dict['temp_T2']
 
         return new_obj
 

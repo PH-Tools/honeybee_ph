@@ -8,10 +8,13 @@ try:
 except ImportError:
     pass  # IronPython
 
+from honeybee_energy_ph.hvac import _base
 
-class Ventilator:
+
+class Ventilator(object):
     def __init__(self):
-        self.name = '_unnamed_ventilator_'
+        self.display_name = '_unnamed_ventilator_'
+        self.id_num = 0
         self.sensible_heat_recovery = 0.0
         self.latent_heat_recovery = 0.0
         self.electric_efficiency = 0.55
@@ -23,7 +26,7 @@ class Ventilator:
         # type: () -> dict[str, Any]
         d = {}
 
-        d['name'] = self.name
+        d['display_name'] = self.display_name
         d['sensible_heat_recovery'] = self.sensible_heat_recovery
         d['latent_heat_recovery'] = self.latent_heat_recovery
         d['electric_efficiency'] = self.electric_efficiency
@@ -38,7 +41,7 @@ class Ventilator:
         # type: (dict[str, Any]) -> Ventilator
         obj = cls()
 
-        obj.name = _input_dict['name']
+        obj.display_name = _input_dict['display_name']
         obj.sensible_heat_recovery = _input_dict['sensible_heat_recovery']
         obj.latent_heat_recovery = _input_dict['latent_heat_recovery']
         obj.electric_efficiency = _input_dict['electric_efficiency']
@@ -49,17 +52,18 @@ class Ventilator:
         return obj
 
     def __repr__(self):
-        return "{}(name={!r}, sensible_heat_recovery={:0.2f})".format(self.__class__.__name__, self.name, self.sensible_heat_recovery)
+        return "{}(name={!r}, sensible_heat_recovery={:0.2f})".format(self.__class__.__name__, self.display_name, self.sensible_heat_recovery)
 
     def ToString(self):
         return self.__repr__()
 
 
-class PhVentilationSystem:
+class PhVentilationSystem(_base._PhHVACBase):
     """Passive House Fresh-Air Ventilation System."""
 
     def __init__(self):
-        self.name = '_unnamed_ph_vent_system_'
+        super(PhVentilationSystem, self).__init__()
+        self.display_name = '_unnamed_ph_vent_system_'
         self.sys_type = 1  # '1-Balanced PH ventilation with HR'
         self.duct_01 = None
         self.duct_02 = None
@@ -69,7 +73,8 @@ class PhVentilationSystem:
         # type: () -> dict[str, Any]
         d = {}
 
-        d['name'] = self.name
+        d['identifier'] = str(self.identifier)
+        d['name'] = self.display_name
         d['sys_type'] = self.sys_type
         d['duct_01'] = self.duct_01
         d['duct_02'] = self.duct_02
@@ -84,7 +89,8 @@ class PhVentilationSystem:
         # type: (dict[str, Any]) -> PhVentilationSystem
         obj = cls()
 
-        obj.name = _input_dict['name']
+        obj.identifier = _input_dict['identifier']
+        obj.display_name = _input_dict['name']
         obj.sys_type = _input_dict['sys_type']
         obj.duct_01 = _input_dict['duct_01']
         obj.duct_02 = _input_dict['duct_02']
@@ -96,7 +102,7 @@ class PhVentilationSystem:
         return obj
 
     def __repr__(self):
-        return "{}(name={!r}, sys_type={!r})".format(self.__class__.__name__, self.name, self.sys_type)
+        return "{}(name={!r}, sys_type={!r})".format(self.__class__.__name__, self.display_name, self.sys_type)
 
     def ToString(self):
         return self.__repr__()

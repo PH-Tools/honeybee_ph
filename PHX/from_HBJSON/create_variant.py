@@ -243,20 +243,57 @@ def add_ventilation_systems_from_hb_rooms(_variant: project.Variant, _hb_room: r
     """
 
     for space in _hb_room.properties._ph.spaces:
-        # -- Build the ventilator
-        # -- Use the normal Ideal Air unique key, but remove the name so can group
-        vent_key = str(space.host.properties.energy.hvac._IdealAirSystem__key()[1:])
+        # -- Get the HBE-PH Ventilation system from the space's host room
+        # -- Note: in the case of a merged room, the space host may not be the same
+        # -- as _hb_room, so always refer back to the space.host to be sure.
+        vent_sys = space.host.properties.energy.hvac.properties.ph.ventilation_system
 
-        if _variant.mech_systems.equipment_in_collection(vent_key):
-            # -- If the ventilator already exists, just use that one.
-            space_ventilator = _variant.mech_systems.get_mech_equipment_by_key(vent_key)
-        else:
+        if not vent_sys:
+            continue
+
+        # -- Get or Build the PHX Ventilation system
+        # -- If the ventilator already exists, just use that one.
+        phx_vent = _variant.mech_systems.get_mech_equipment_by_key(vent_sys.key)
+        if not phx_vent:
             # -- otherwise, build a new PH-Ventilator from the HB-hvac
-            space_ventilator = create_hvac.build_phx_ventilator(space)
-            _variant.mech_systems.add_new_mech_equipment(vent_key, space_ventilator)
+            phx_vent = create_hvac.build_phx_ventilation_sys(vent_sys)
+            _variant.mech_systems.add_new_mech_equipment(vent_sys.key, phx_vent)
 
-        # -- Set the space host-room's ventilator-ID-number to match the new ventilator
-        space.host.properties.energy.hvac.properties.ph.ventilator_id_num = space_ventilator.id_num
+        space.host.properties.energy.hvac.properties.ph.ventilation_system.id_num = phx_vent.id_num
+
+    return None
+
+
+def add_heating_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Add new PHX-Heating Systems to the Variant based on the HB-Rooms.
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The PHX-Variant to add the new hvac systems to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
+
+    Returns:
+    --------
+        * None
+    """
+
+    for space in _hb_room.properties._ph.spaces:
+        # -- Get the HBE-PH Heating Systems from the space's host room
+        # -- Note: in the case of a merged room, the space host may not be the same
+        # -- as _hb_room, so always refer back to the space.host to be sure.
+        heating_systems = space.host.properties.energy.hvac.properties.ph.heating_systems
+
+        # -- Get or Build the PHX Heating systems
+        # -- If the system already exists, just use that one.
+        for htg_sys in heating_systems:
+            phx_htg_sys = _variant.mech_systems.get_mech_equipment_by_key(htg_sys.key)
+            if not phx_htg_sys:
+                # -- otherwise, build a new PHX-Heating-Sys from the HB-hvac
+                phx_htg_sys = create_hvac.build_phx_heating_sys(htg_sys)
+                _variant.mech_systems.add_new_mech_equipment(htg_sys.key, phx_htg_sys)
+
+            htg_sys.id_num = phx_htg_sys.id_num
+            #space.host.properties.energy.hvac.properties.ph.ventilation_system.id_num = phx_htg_sys.id_num
 
     return None
 
@@ -368,6 +405,7 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
 
     # -- Build the Variant Elements (Dev. note: order matters!)
     add_ventilation_systems_from_hb_rooms(new_variant, _hb_room)
+    add_heating_systems_from_hb_rooms(new_variant, _hb_room)
     add_dhw_heaters_from_hb_rooms(new_variant, _hb_room)
     add_dhw_storage_from_hb_rooms(new_variant, _hb_room)
     add_geometry_from_hb_rooms(new_variant, _hb_room)

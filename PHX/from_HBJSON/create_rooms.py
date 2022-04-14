@@ -57,11 +57,14 @@ def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
     new_room.clear_height = _space.avg_clear_height
     new_room.net_volume = _space.net_volume
 
-    new_room.vent_pattern_id_num = _space.host.properties.energy.ventilation.schedule.properties.ph.id_num
-    new_room.vent_unit_id_num = _space.host.properties.energy.hvac.properties.ph.ventilator_id_num
-
+    # -- Ventilation flow rates
     space_peak_flow_rate = calc_space_ventilation_flow_rate(_space)
     new_room.ventilation_load.flow_supply = space_peak_flow_rate
     new_room.ventilation_load.flow_extract = space_peak_flow_rate
+    new_room.vent_pattern_id_num = _space.host.properties.energy.ventilation.schedule.properties.ph.id_num
+
+    # -- Ventilation Equipment
+    if _space.host.properties.energy.hvac.properties.ph.ventilation_system:
+        new_room.vent_unit_id_num = _space.host.properties.energy.hvac.properties.ph.ventilation_system.id_num
 
     return new_room

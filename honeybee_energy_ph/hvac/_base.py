@@ -6,8 +6,8 @@
 import uuid
 
 
-class _Base(object):
-    """Base class for any HB-Energy-PH HVAC Object"""
+class _PhHVACBase(object):
+    """Base class for any HB-Energy-PH HVAC Objects"""
 
     def __init__(self):
         self._identifier = uuid.uuid4()
@@ -39,6 +39,13 @@ class _Base(object):
     @property
     def identifier_short(self):
         return str(self.identifier).split("-")[0]
+
+    @property
+    def key(self):
+        return self.identifier
+
+    def __hash__(self):
+        return hash(self.key)
 
     def __str__(self):
         return "HBEPH_{}: ID-{}".format(self.__class__.__name__, self.identifier_short)
