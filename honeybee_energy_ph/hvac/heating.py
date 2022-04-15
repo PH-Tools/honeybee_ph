@@ -1,3 +1,4 @@
+from hashlib import new
 import sys
 try:
     from typing import Any
@@ -47,6 +48,7 @@ class PhHeatingSystem(_base._PhHVACBase):
         msg = "Error creating Heating System from dict. Expected '{}' but got '{}'".format(
             self.__class__.__name__, heating_type)
         assert heating_type == str(self.__class__.__name__), msg
+        return None
 
 
 # -----------------------------------------------------------------------------
@@ -135,6 +137,10 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
         self.rated_capacity = 15  # kW
         self.demand_basic_cycle = 1  # kWh
         self.power_stationary_run = 1  # W
+        self.power_standard_run = None
+        self.no_transport_pellets = None
+        self.only_control = None
+        self.area_mech_room = None
 
     @property
     def useful_heat_output(self):
@@ -157,12 +163,17 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
         d['rated_capacity'] = self.rated_capacity
         d['demand_basic_cycle'] = self.demand_basic_cycle
         d['power_stationary_run'] = self.power_stationary_run
+        d['power_standard_run'] = self.power_standard_run
+        d['no_transport_pellets'] = self.no_transport_pellets
+        d['only_control'] = self.only_control
+        d['area_mech_room'] = self.area_mech_room
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhHeatingWoodBoiler
+
         new_obj = cls()
         new_obj.check_dict_type(_input_dict)
         new_obj.base_attrs_from_dict(_input_dict)
@@ -175,7 +186,10 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
         new_obj.temp_diff_on_off = _input_dict['temp_diff_on_off']
         new_obj.rated_capacity = _input_dict['rated_capacity']
         new_obj.demand_basic_cycle = _input_dict['demand_basic_cycle']
-        new_obj.power_stationary_run = _input_dict['power_stationary_run ']
+        new_obj.power_stationary_run = _input_dict['power_stationary_run']
+        new_obj.no_transport_pellets = _input_dict['no_transport_pellets']
+        new_obj.only_control = _input_dict['only_control']
+        new_obj.area_mech_room = _input_dict['area_mech_room']
 
         return new_obj
 
@@ -242,7 +256,7 @@ class PhHeatingHeatPumpRatedMonthly(PhHeatingSystem):
         self.ambient_temp_2 = 8.333  # =47F
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> dict[str, Any]
         d = super(PhHeatingHeatPumpRatedMonthly, self).to_dict()
         d['COP_1'] = self.COP_1
         d['ambient_temp_1'] = self.ambient_temp_1
@@ -252,7 +266,7 @@ class PhHeatingHeatPumpRatedMonthly(PhHeatingSystem):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> PhHeatingHeatPumpRatedMonthly
+        # type: (dict[str, Any]) -> PhHeatingHeatPumpRatedMonthly
         new_obj = cls()
         new_obj.check_dict_type(_input_dict)
         new_obj.base_attrs_from_dict(_input_dict)
@@ -278,18 +292,17 @@ class PhHeatingSystemBuilder(object):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict[str, Any]) -> _base._PhHVACBase
+        # type: (dict[str, Any]) -> PhHeatingSystem
         """Find the right appliance constructor class from the module based on the 'type' name."""
-
         heating_type = _input_dict.get('heating_type')
+
         valid_class_types = [nm for nm in dir(
             sys.modules[__name__]) if nm.startswith('Ph')]
+
         if heating_type not in valid_class_types:
             raise UnknownPhHeatingTypeError(valid_class_types, heating_type)
-
         heating_class = getattr(sys.modules[__name__], heating_type)
         new_equipment = heating_class.from_dict(_input_dict)
-
         return new_equipment
 
     def __str__(self):

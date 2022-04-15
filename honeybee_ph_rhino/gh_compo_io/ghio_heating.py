@@ -18,7 +18,7 @@ class InputTypeNotFoundError(Exception):
 # -----------------------------------------------------------------------------
 # Setup the component input node groups
 inputs_base = {
-    1: ComponentInput(_name='display_name_', _description='(str) Optional display name for the heating system.'),
+    1: ComponentInput(_name='display_name', _description='(str) Optional display name for the heating system.'),
     2: ComponentInput(_name='percent_coverage', _description='(float) default=1.0 The fraction of total heating supplied by this system (0-1)'),
 }
 

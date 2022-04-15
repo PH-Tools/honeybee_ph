@@ -3,12 +3,12 @@
 
 """Functions to create PHX-HVAC objects from Honeybee-Energy-PH HVAC"""
 
-from PHX.model import mech_equip
+from PHX.model import mech
 from honeybee_energy_ph.hvac import ventilation, heating, _base
 
 
 def _transfer_attributes(_hbeph_obj: _base._PhHVACBase,
-                         _phx_obj: mech_equip.PhxMechanicalEquipment) -> mech_equip.PhxMechanicalEquipment:
+                         _phx_obj: mech.PhxMechanicalEquipment) -> mech.PhxMechanicalEquipment:
     """Copy the common attributes from a Honeybee-Energy-PH obj to a PHX-object
 
     Arguments:
@@ -45,7 +45,7 @@ def _transfer_attributes(_hbeph_obj: _base._PhHVACBase,
 # -- Ventilation
 
 
-def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> mech_equip.PhxVentilator:
+def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> mech.PhxVentilator:
     """Returns a new Fresh-Air Ventilator built from the hb-energy hvac paramaters.
 
     This will look at the Space's Host-Room .properties.energy.hvac for data.
@@ -60,17 +60,16 @@ def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> m
         * mech_equip.Ventilator: The new Passive House Ventilator created.
     """
 
-    phx_vent = mech_equip.PhxVentilator()
+    phx_vent = mech.PhxVentilator()
+
+    if not _hbeph_vent.ventilation_unit:
+        return phx_vent
+    phx_vent = _transfer_attributes(_hbeph_vent, phx_vent)
+    phx_vent = _transfer_attributes(_hbeph_vent.ventilation_unit, phx_vent)
 
     phx_vent.display_name = 'Ventilator:'\
         f' {_hbeph_vent.ventilation_unit.sensible_heat_recovery*100 :0.0f}%-HR,'\
         f' {_hbeph_vent.ventilation_unit.latent_heat_recovery*100 :0.0f}%-MR'
-
-    phx_vent.display_name = _hbeph_vent.ventilation_unit.display_name
-    phx_vent.fan_power = _hbeph_vent.ventilation_unit.electric_efficiency
-    phx_vent.frost_protection_reqd = _hbeph_vent.ventilation_unit.frost_protection_reqd
-    phx_vent.frost_temp = _hbeph_vent.ventilation_unit.temperature_below_defrost_used
-    phx_vent.in_conditioned_space = _hbeph_vent.ventilation_unit.in_conditioned_space
 
     return phx_vent
 
@@ -78,57 +77,57 @@ def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> m
 # -- Heating
 
 
-def build_phx_heating_electric(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterElectric()
+def build_phx_heating_electric(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterElectric:
+    phx_obj = mech.PhxHeaterElectric()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_fossil_boiler(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterBoilerFossil()
+def build_phx_heating_fossil_boiler(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterBoiler:
+    phx_obj = mech.PhxHeaterBoiler.fossil()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_wood_boiler(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterBoilerWood()
+def build_phx_heating_wood_boiler(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterBoiler:
+    phx_obj = mech.PhxHeaterBoiler.wood()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_district(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterDistrictHeat()
+def build_phx_heating_district(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterDistrictHeat:
+    phx_obj = mech.PhxHeaterDistrictHeat()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_annual(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterHeatPump.annual()
+def build_phx_heating_hp_annual(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPumpParamsAnnual:
+    phx_obj = mech.PhxHeaterHeatPump.annual()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_monthly(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterHeatPump.monthly()
+def build_phx_heating_hp_monthly(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPumpParamsMonthly:
+    phx_obj = mech.PhxHeaterHeatPump.monthly()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
-    phx_obj = mech_equip.PhxHeaterHeatPump.combined()
+def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPumpParamsCombined:
+    phx_obj = mech.PhxHeaterHeatPump.combined()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech_equip.PhxHeater:
+def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech.PhxHeater:
     """Returns a new PHX-Heating-System based on an input HBE-PH Heating.
 
     Arguments:
@@ -138,7 +137,7 @@ def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech_equip.PhxHe
 
     Returns:
     --------
-        * (mech_equip.PhxHeater): The new PHX Heating System created.
+        * (mech.heating.PhxHeater): The new PHX Heating System created.
     """
 
     # -- Mapping HBEPH -> PHX types

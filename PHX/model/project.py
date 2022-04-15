@@ -8,7 +8,8 @@ from typing import Any, ClassVar
 from dataclasses import dataclass, field
 
 from PHX.model import schedules
-from PHX.model import building, certification, climate, constructions, geometry, mech_equip
+from PHX.model import building, certification, climate, constructions, geometry
+from PHX.model.mech import collection
 
 
 @dataclass
@@ -23,8 +24,8 @@ class Variant:
     ph_data: certification.PassivehouseData = field(
         default_factory=certification.PassivehouseData)
     climate: climate.ClimateLocation = field(default_factory=climate.ClimateLocation)
-    mech_systems: mech_equip.PhxMechanicalEquipmentCollection = field(
-        default_factory=mech_equip.PhxMechanicalEquipmentCollection)
+    mech_systems: collection.PhxMechanicalEquipmentCollection = field(
+        default_factory=collection.PhxMechanicalEquipmentCollection)
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1

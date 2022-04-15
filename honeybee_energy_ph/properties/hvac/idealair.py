@@ -4,11 +4,11 @@
 """Properties class for PH-HVAC IdealAir Systems"""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except:
     pass  # IronPython
 
-from honeybee_energy_ph.hvac import ventilation, heating
+from honeybee_energy_ph.hvac import ventilation, heating, cooling
 
 
 class IdealAirSystemPhProperties_FromDictError(Exception):
@@ -24,9 +24,9 @@ class IdealAirSystemPhProperties(object):
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
-        self.ventilation_system = None
-        self.heating_systems = set()
-        self.cooling_systems = set()
+        self.ventilation_system = None  # type: Optional[ventilation.PhVentilationSystem]
+        self.heating_systems = set()  # type: set[heating.PhHeatingSystem]
+        self.cooling_systems = set()  # type: set[cooling.PhCoolingSystem]
 
     @property
     def host(self):
@@ -42,9 +42,9 @@ class IdealAirSystemPhProperties(object):
 
         d['id_num'] = self.id_num
 
-        try:
+        if self.ventilation_system:
             d['ventilation_system'] = self.ventilation_system.to_dict()
-        except AttributeError:
+        else:
             d['ventilation_system'] = None
 
         d['heating_systems'] = []
@@ -102,8 +102,10 @@ class IdealAirSystemPhProperties(object):
 
         new_obj.id_num = self.id_num
         new_obj.ventilation_system = self.ventilation_system
-        new_obj.heating_systems = self.heating_systems
-        new_obj.cooling_systems = self.cooling_systems
+        for htg_sys in self.heating_systems:
+            new_obj.heating_systems.add(htg_sys)
+        for clg_sys in self.cooling_systems:
+            new_obj.cooling_systems.add(clg_sys)
 
         return new_obj
 

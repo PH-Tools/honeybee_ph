@@ -4,17 +4,19 @@
 """Passive House HVAC Equipment Classes"""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except ImportError:
     pass  # IronPython
 
 from honeybee_energy_ph.hvac import _base
 
 
-class Ventilator(object):
+class Ventilator(_base._PhHVACBase):
     def __init__(self):
+        super(Ventilator, self).__init__()
         self.display_name = '_unnamed_ventilator_'
         self.id_num = 0
+        self.quantity = 0
         self.sensible_heat_recovery = 0.0
         self.latent_heat_recovery = 0.0
         self.electric_efficiency = 0.55
@@ -27,6 +29,7 @@ class Ventilator(object):
         d = {}
 
         d['display_name'] = self.display_name
+        d['quantity'] = self.quantity
         d['sensible_heat_recovery'] = self.sensible_heat_recovery
         d['latent_heat_recovery'] = self.latent_heat_recovery
         d['electric_efficiency'] = self.electric_efficiency
@@ -42,6 +45,7 @@ class Ventilator(object):
         obj = cls()
 
         obj.display_name = _input_dict['display_name']
+        obj.quantity = _input_dict['quantity']
         obj.sensible_heat_recovery = _input_dict['sensible_heat_recovery']
         obj.latent_heat_recovery = _input_dict['latent_heat_recovery']
         obj.electric_efficiency = _input_dict['electric_efficiency']
@@ -52,7 +56,7 @@ class Ventilator(object):
         return obj
 
     def __repr__(self):
-        return "{}(name={!r}, sensible_heat_recovery={:0.2f})".format(self.__class__.__name__, self.display_name, self.sensible_heat_recovery)
+        return "{}(display_name={!r}, sensible_heat_recovery={:0.2f})".format(self.__class__.__name__, self.display_name, self.sensible_heat_recovery)
 
     def ToString(self):
         return self.__repr__()
@@ -67,7 +71,24 @@ class PhVentilationSystem(_base._PhHVACBase):
         self.sys_type = 1  # '1-Balanced PH ventilation with HR'
         self.duct_01 = None
         self.duct_02 = None
-        self.ventilation_unit = None
+        self._ventilation_unit = None  # type: Optional[Ventilator]
+
+    @property
+    def ventilation_unit(self):
+        # type: () -> Optional[Ventilator]
+        return self._ventilation_unit
+
+    @ventilation_unit.setter
+    def ventilation_unit(self, _in):
+        # type: (Optional[Ventilator]) -> None
+        self._ventilation_unit = _in
+
+        if not self._ventilation_unit:
+            return None
+
+        if self._ventilation_unit.display_name == '_unnamed_ventilator_':
+            self._ventilation_unit.display_name = self.display_name
+        return None
 
     def to_dict(self):
         # type: () -> dict[str, Any]
@@ -102,7 +123,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         return obj
 
     def __repr__(self):
-        return "{}(name={!r}, sys_type={!r})".format(self.__class__.__name__, self.display_name, self.sys_type)
+        return "{}(display_name={!r}, sys_type={!r})".format(self.__class__.__name__, self.display_name, self.sys_type)
 
     def ToString(self):
         return self.__repr__()
