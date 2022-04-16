@@ -5,7 +5,7 @@
 
 from typing import Optional
 
-from PHX.model.mech.enums import SystemType, DeviceType, HeatPumpType, FuelType
+from PHX.model.mech.enums import DeviceType
 from PHX.model.mech import _base
 
 
@@ -21,7 +21,6 @@ class PhxVentilatorParams(_base.PhxMechanicalEquipmentParams):
 class PhxVentilator(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.system_type_num: SystemType = SystemType.VENTILATION
         self.device_type_num: DeviceType = DeviceType.VENTILATION
         self.usage_profile.ventilation = True
         self.params: PhxVentilatorParams = PhxVentilatorParams()

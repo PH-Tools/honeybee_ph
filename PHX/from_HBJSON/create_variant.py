@@ -253,13 +253,13 @@ def add_ventilation_systems_from_hb_rooms(_variant: project.Variant, _hb_room: r
 
         # -- Get or Build the PHX Ventilation system
         # -- If the ventilator already exists, just use that one.
-        phx_vent = _variant.mech_systems.get_mech_equipment_by_key(vent_sys.key)
-        if not phx_vent:
+        phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(vent_sys.key)
+        if not phx_subsystem:
             # -- otherwise, build a new PH-Ventilator from the HB-hvac
-            phx_vent = create_hvac.build_phx_ventilation_sys(vent_sys)
-            _variant.mech_systems.add_new_mech_equipment(vent_sys.key, phx_vent)
+            phx_subsystem = create_hvac.build_phx_ventilation_sys(vent_sys)
+            _variant.mech_systems.add_new_mech_subsystem(vent_sys.key, phx_subsystem)
 
-        space.host.properties.energy.hvac.properties.ph.ventilation_system.id_num = phx_vent.id_num
+        vent_sys.id_num = phx_subsystem.id_num
 
     return None
 
@@ -285,15 +285,14 @@ def add_heating_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.
 
         # -- Get or Build the PHX Heating systems
         # -- If the system already exists, just use that one.
-        for htg_sys in heating_systems:
-            phx_htg_sys = _variant.mech_systems.get_mech_equipment_by_key(htg_sys.key)
-            if not phx_htg_sys:
+        for hbph_sys in heating_systems:
+            phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(hbph_sys.key)
+            if not phx_subsystem:
                 # -- otherwise, build a new PHX-Heating-Sys from the HB-hvac
-                phx_htg_sys = create_hvac.build_phx_heating_sys(htg_sys)
-                _variant.mech_systems.add_new_mech_equipment(htg_sys.key, phx_htg_sys)
+                phx_subsystem = create_hvac.build_phx_heating_sys(hbph_sys)
+                _variant.mech_systems.add_new_mech_subsystem(hbph_sys.key, phx_subsystem)
 
-            htg_sys.id_num = phx_htg_sys.id_num
-            #space.host.properties.energy.hvac.properties.ph.ventilation_system.id_num = phx_htg_sys.id_num
+            hbph_sys.id_num = phx_subsystem.id_num
 
     return None
 
@@ -324,15 +323,13 @@ def add_dhw_storage_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
             if not hw_tank:
                 continue
 
-            # -- Not sure if this is the right thing to do?
-            # -- Will this cause problems at some point?
             equip_key = str(id(hw_tank))
-            if _variant.mech_systems.equipment_in_collection(equip_key):
+            if _variant.mech_systems.subsystem_in_collection(equip_key):
                 continue
 
             # -- Build a new PHS-HW-Tank from the HB-hvac
-            phx_hw_tank = create_shw.build_phx_hw_tank(hw_tank)
-            _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_tank)
+            phx_subsystem = create_shw.build_phx_hw_storage_subsystem(hw_tank)
+            _variant.mech_systems.add_new_mech_subsystem(equip_key, phx_subsystem)
 
     return None
 
@@ -350,12 +347,12 @@ def add_dhw_heaters_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room
         for heater in space.host.properties.energy.shw.properties.ph.heaters:
             equip_key = str(id(heater))
 
-            if _variant.mech_systems.equipment_in_collection(equip_key):
+            if _variant.mech_systems.subsystem_in_collection(equip_key):
                 continue
 
             # -- Build a new PHX-HW-Heater from the HBPH-HW-Heater
-            phx_hw_heater = create_shw.build_phx_hw_heater(heater)
-            _variant.mech_systems.add_new_mech_equipment(equip_key, phx_hw_heater)
+            phx_subsystem = create_shw.build_phx_hw_heating_subsystem(heater)
+            _variant.mech_systems.add_new_mech_subsystem(equip_key, phx_subsystem)
 
     return None
 

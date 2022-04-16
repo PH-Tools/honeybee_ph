@@ -4,7 +4,7 @@
 """PHX Passive House Mechanical Equipment Classes"""
 
 from typing import Optional, Union
-from PHX.model.mech.enums import SystemType, DeviceType, HeatPumpType, FuelType
+from PHX.model.mech.enums import DeviceType, HeatPumpType, FuelType
 from PHX.model.mech import _base
 
 
@@ -15,9 +15,7 @@ from PHX.model.mech import _base
 class PhxHeaterElectric(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.system_type_num: SystemType = SystemType.ELECTRIC
         self.device_type_num: DeviceType = DeviceType.ELECTRIC
-        self.params: _base.PhxMechanicalEquipmentParams = _base.PhxMechanicalEquipmentParams()
 
 
 # -----------------------------------------------------------------------------
@@ -72,9 +70,7 @@ class PhxHeaterBoilerWoodParams(_base.PhxMechanicalEquipmentParams):
 class PhxHeaterBoiler(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.system_type_num: SystemType = SystemType.BOILER
         self.device_type_num: DeviceType = DeviceType.BOILER
-        self.params = None
 
     @classmethod
     def fossil(cls) -> 'PhxHeaterBoiler':
@@ -96,9 +92,7 @@ class PhxHeaterBoiler(_base.PhxMechanicalEquipment):
 class PhxHeaterDistrictHeat(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.system_type_num: SystemType = SystemType.DISTRICT_HEAT
         self.device_type_num: DeviceType = DeviceType.DISTRICT_HEAT
-        self.params: _base.PhxMechanicalEquipmentParams = _base.PhxMechanicalEquipmentParams()
 
 
 # -----------------------------------------------------------------------------
@@ -163,9 +157,7 @@ class PhxHeaterHeatPumpParamsCombined(_base.PhxMechanicalEquipmentParams):
 class PhxHeaterHeatPump(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.system_type_num: SystemType = SystemType.HEAT_PUMP
         self.device_type_num: DeviceType = DeviceType.HEAT_PUMP
-        self.params = None
 
     @classmethod
     def annual(cls) -> 'PhxHeaterHeatPump':

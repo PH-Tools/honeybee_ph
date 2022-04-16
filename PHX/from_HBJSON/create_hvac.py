@@ -45,7 +45,7 @@ def _transfer_attributes(_hbeph_obj: _base._PhHVACBase,
 # -- Ventilation
 
 
-def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> mech.PhxVentilator:
+def build_phx_ventilator(_hbeph_vent: ventilation.PhVentilationSystem) -> mech.PhxVentilator:
     """Returns a new Fresh-Air Ventilator built from the hb-energy hvac paramaters.
 
     This will look at the Space's Host-Room .properties.energy.hvac for data.
@@ -57,7 +57,7 @@ def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> m
 
     Returns:
     --------
-        * mech_equip.Ventilator: The new Passive House Ventilator created.
+        * (mech_equip.Ventilator): The new Passive House Ventilator created.
     """
 
     phx_vent = mech.PhxVentilator()
@@ -72,6 +72,28 @@ def build_phx_ventilation_sys(_hbeph_vent: ventilation.PhVentilationSystem) -> m
         f' {_hbeph_vent.ventilation_unit.latent_heat_recovery*100 :0.0f}%-MR'
 
     return phx_vent
+
+
+def build_phx_ventilation_sys(_hbeph_vent: heating.PhHeatingSystem) -> mech.PhxMechanicalSubSystem:
+    """Build a new PHX Ventilation Mechanical SubSystem.
+
+    Arguments:
+    ----------
+        *_hbeph_vent (ventilation.PhVentilationSystem): The HBE-PH Ventilation System
+            to build the PHX-Ventilation from.
+
+    Returns:
+    --------
+        * (mech.PhxMechanicalSubSystem): A new mech subsystem with the heating device
+            and distribution.
+    """
+
+    phx_vent_subsystem = mech.PhxMechanicalSubSystem()
+    phx_vent_subsystem.device = build_phx_ventilator(_hbeph_vent)
+
+    # TODO: Distribution...
+
+    return phx_vent_subsystem
 
 
 # -- Heating
@@ -127,8 +149,8 @@ def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> mec
     return phx_obj
 
 
-def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech.PhxHeater:
-    """Returns a new PHX-Heating-System based on an input HBE-PH Heating.
+def build_phx_heating_device(_htg_sys: heating.PhHeatingSystem) -> mech.PhxHeater:
+    """Returns a new PHX-Heating-Device based on an input HBE-PH Heating System.
 
     Arguments:
     ----------
@@ -151,6 +173,27 @@ def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech.PhxHeater:
         'PhHeatingHeatPumpCombined': build_phx_heating_hp_combined,
     }
 
-    # -- Get and build the right heater type
+    # -- Get and build the right heater equipment type
     phx_heater = phx_heater_classes[_htg_sys.heating_type](_htg_sys)
     return phx_heater
+
+
+def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech.PhxMechanicalSubSystem:
+    """
+
+    Arguments:
+    ----------
+        * _htg_sys (heating.PhHeatingSystem): The HBE-PH Heating System to build 
+            the new PHX Heating system from.
+
+    Returns:
+    --------
+        * (mech.PhxMechanicalSubSystem): A new mech subsystem with the heating device
+            and distribution.
+    """
+    phx_htg_subsystem = mech.PhxMechanicalSubSystem()
+    phx_htg_subsystem.device = build_phx_heating_device(_htg_sys)
+
+    # TODO: Distribution...
+
+    return phx_htg_subsystem

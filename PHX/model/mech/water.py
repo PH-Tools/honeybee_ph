@@ -26,6 +26,5 @@ class PhxHotWaterTankParams(_base.PhxMechanicalEquipmentParams):
 class PhxHotWaterTank(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.system_type_num: SystemType = SystemType.WATER_STORAGE
         self.device_type_num: DeviceType = DeviceType.WATER_STORAGE
         self.params: PhxHotWaterTankParams = PhxHotWaterTankParams()

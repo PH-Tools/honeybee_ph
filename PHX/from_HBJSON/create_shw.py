@@ -3,11 +3,11 @@
 
 """Functions to create PHX-Service Hot Water objects from Honeybee-Energy-PH SHW"""
 
-from PHX.model.mech import heating, water
+from PHX.model import mech
 from honeybee_energy_ph.hvac import hot_water
 
 
-def build_phx_hw_tank(_tank: hot_water.PhSHWTank) -> water.PhxHotWaterTank:
+def build_phx_hw_tank(_hbph_tank: hot_water.PhSHWTank) -> mech.PhxHotWaterTank:
     """Returns a new PHX Hot-Water Tank based on the HBPH Hot Water Tank input.
 
     Arguments:
@@ -20,24 +20,45 @@ def build_phx_hw_tank(_tank: hot_water.PhSHWTank) -> water.PhxHotWaterTank:
         * mech_equip.PhxHotWaterTank: The new PHX-Hot-Water-Tank.
     """
 
-    phx_tank = water.PhxHotWaterTank()
+    phx_tank = mech.PhxHotWaterTank()
 
-    phx_tank.display_name = _tank.name
-    phx_tank.params.quantity = _tank.quantity
+    phx_tank.display_name = _hbph_tank.name
+    phx_tank.params.quantity = _hbph_tank.quantity
 
-    phx_tank.params.storage_capacity = _tank.volume
-    phx_tank.params.storage_loss_rate = _tank.heat_loss_rate
-    phx_tank.params.solar_losses = _tank.heat_loss_rate
-    phx_tank.params.standby_losses = _tank.heat_loss_rate
+    phx_tank.params.storage_capacity = _hbph_tank.volume
+    phx_tank.params.storage_loss_rate = _hbph_tank.heat_loss_rate
+    phx_tank.params.solar_losses = _hbph_tank.heat_loss_rate
+    phx_tank.params.standby_losses = _hbph_tank.heat_loss_rate
 
-    phx_tank.params.in_conditioned_space = _tank.in_conditioned_space
-    phx_tank.params.tank_room_temp = _tank.location_temp
-    phx_tank.params.tank_water_temp = _tank.water_temp
+    phx_tank.params.in_conditioned_space = _hbph_tank.in_conditioned_space
+    phx_tank.params.tank_room_temp = _hbph_tank.location_temp
+    phx_tank.params.tank_water_temp = _hbph_tank.water_temp
 
     return phx_tank
 
 
-def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> heating.PhxHeater:
+def build_phx_hw_storage_subsystem(_hbph_tank: hot_water.PhSHWTank) -> mech.PhxMechanicalSubSystem:
+    """
+
+    Arguments:
+    ----------
+        * _hbph_heater (hot_water.PhSHWTank): The HBPH Hot-Water tank
+            to use as the source.
+
+    Returns:
+    --------
+        * (mech.PhxMechanicalSubSystem): The new Water Storage SubSystem.
+    """
+
+    phx_strg_subsystem = mech.PhxMechanicalSubSystem()
+    phx_strg_subsystem.device = build_phx_hw_tank(_hbph_tank)
+
+    # TODO: Distribution...
+
+    return phx_strg_subsystem
+
+
+def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech.PhxHeater:
     """Returns a new PHX Hot-Water Heater based on the HBPH Hot Water Heater input.
 
     Arguments:
@@ -52,11 +73,11 @@ def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> heating.
 
     # -- Get the right constructor based on the type of heater
     heaters = {
-        'PhSHWHeaterElectric': heating.PhxHeaterElectric,
-        'PhSHWHeaterBoiler': heating.PhxHeaterBoiler.fossil,
-        'PhSHWHeaterBoilerWood': heating.PhxHeaterBoiler.wood,
-        'PhSHWHeaterDistrict': heating.PhxHeaterDistrictHeat,
-        'PhSHWHeaterHeatPump': heating.PhxHeaterHeatPump.hot_water,
+        'PhSHWHeaterElectric': mech.PhxHeaterElectric,
+        'PhSHWHeaterBoiler': mech.PhxHeaterBoiler.fossil,
+        'PhSHWHeaterBoilerWood': mech.PhxHeaterBoiler.wood,
+        'PhSHWHeaterDistrict': mech.PhxHeaterDistrictHeat,
+        'PhSHWHeaterHeatPump': mech.PhxHeaterHeatPump.hot_water,
     }
 
     # -- Build the basic heater and set basic data
@@ -84,3 +105,24 @@ def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> heating.
     phx_hw_heater.usage_profile.dhw_heating = True
 
     return phx_hw_heater
+
+
+def build_phx_hw_heating_subsystem(_hbph_heater: hot_water.PhSHWHeaterElectric) -> mech.PhxMechanicalSubSystem:
+    """
+
+    Arguments:
+    ----------
+        * _hbph_heater (hot_water.PhSHWHeaterElectric): The HBPH Hot-Water heater
+            to use as the source for the PHX Heater.
+
+    Returns:
+    --------
+        * (mech.PhxMechanicalSubSystem): The new Water-Heating SubSystem.
+    """
+
+    phx_strg_subsystem = mech.PhxMechanicalSubSystem()
+    phx_strg_subsystem.device = build_phx_hw_heater(_hbph_heater)
+
+    # TODO: Distribution...
+
+    return phx_strg_subsystem

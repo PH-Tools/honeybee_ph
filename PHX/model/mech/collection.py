@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""PHX Passive House Mechanical Equipment Classes"""
+"""PHX Passive House Mechanical Colletion Classes"""
 
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Optional
@@ -10,7 +10,7 @@ from PHX.model.mech import _base
 
 @dataclass
 class PhxZoneCoverage:
-    """Percentage of the load-type covered by the device."""
+    """Percentage of the building load-type covered by the subsystem."""
     zone_num: float = 1.0
     heating: float = 1.0
     cooling: float = 1.0
@@ -21,7 +21,7 @@ class PhxZoneCoverage:
 
 @dataclass
 class PhxMechanicalEquipmentCollection:
-    """A collection of all the mechanical equipment (ERV, DHW, etc..) in the project"""
+    """A collection of all the mechanical subsystems (heating, cooling, etc) in the project"""
     _count: ClassVar[int] = 0
     id_num: int = 0
     display_name: str = "Ideal Air System"
@@ -29,33 +29,33 @@ class PhxMechanicalEquipmentCollection:
     sys_type_str: str = "User defined (ideal system)"
 
     zone_coverage: PhxZoneCoverage = field(default_factory=PhxZoneCoverage)
-    _equipment: Dict[str, _base.PhxMechanicalEquipment] = field(default_factory=dict)
+    _subsystems: Dict[str, _base.PhxMechanicalSubSystem] = field(default_factory=dict)
 
     @property
-    def equipment(self):
-        return self._equipment.values()
+    def subsystems(self):
+        return self._subsystems.values()
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1
         return super(PhxMechanicalEquipmentCollection, cls).__new__(cls, *args, **kwargs)
 
-    def equipment_in_collection(self, _equipment_key) -> bool:
-        return _equipment_key in self._equipment.keys()
+    def subsystem_in_collection(self, _subsystem_key) -> bool:
+        return _subsystem_key in self._subsystems.keys()
 
-    def get_mech_equipment_by_key(self, _key: str) -> Optional[_base.PhxMechanicalEquipment]:
-        return self._equipment.get(_key, None)
+    def get_mech_subsystem_by_key(self, _key: str) -> Optional[_base.PhxMechanicalSubSystem]:
+        return self._subsystems.get(_key, None)
 
-    def add_new_mech_equipment(self, _key: str, _equipment: _base.PhxMechanicalEquipment) -> None:
-        """Adds a new PHX Mechanical Equipment device to the collection.
+    def add_new_mech_subsystem(self, _key: str, _subsystem: _base.PhxMechanicalSubSystem) -> None:
+        """Adds a new PHX Mechanical SubSystem device to the collection.
 
         Arguments:
         ----------
-            * _key (str): The key to use when storing the new mechanical equipment
-            * _equipment (PhxMechanicalEquipment): The new PHX mechanical equipment to 
+            * _key (str): The key to use when storing the new mechanical subsystem
+            * _subsystem (_base.PhxMechanicalSubSystem): The new PHX mechanical subsystem to 
                 add to the collection.
 
         Returns:
         --------
             * None
         """
-        self._equipment[_key] = _equipment
+        self._subsystems[_key] = _subsystem
