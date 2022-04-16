@@ -265,7 +265,7 @@ def add_ventilation_systems_from_hb_rooms(_variant: project.Variant, _hb_room: r
 
 
 def add_heating_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
-    """Add new PHX-Heating Systems to the Variant based on the HB-Rooms.
+    """Add a new PHX-Heating SubSystem to the Variant based on the HB-Rooms.
 
     Arguments:
     ----------
@@ -290,6 +290,39 @@ def add_heating_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.
             if not phx_subsystem:
                 # -- otherwise, build a new PHX-Heating-Sys from the HB-hvac
                 phx_subsystem = create_hvac.build_phx_heating_sys(hbph_sys)
+                _variant.mech_systems.add_new_mech_subsystem(hbph_sys.key, phx_subsystem)
+
+            hbph_sys.id_num = phx_subsystem.id_num
+
+    return None
+
+
+def add_cooling_systems_from_hb_rooms(_variant: project.Variant, _hb_room: room.Room) -> None:
+    """Add new PHX-Cooling SubSystem to the Variant based on the HB-Rooms.
+
+    Arguments:
+    ----------
+        * _variant (project.Variant): The PHX-Variant to add the new hvac systems to.
+        * _hb_room (room.Room): The Honeybee-Room to use as the source.
+
+    Returns:
+    --------
+        * None
+    """
+
+    for space in _hb_room.properties._ph.spaces:
+        # -- Get the HBPH-Cooling-Systems from the space's host room
+        # -- Note: in the case of a merged room, the space host may not be the same
+        # -- as _hb_room, so always refer back to the space.host to be sure.
+        cooling_systems = space.host.properties.energy.hvac.properties.ph.cooling_systems
+
+        # -- Get or Build the PHX-Cooling systems
+        # -- If the system already exists, just use that one.
+        for hbph_sys in cooling_systems:
+            phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(hbph_sys.key)
+            if not phx_subsystem:
+                # -- otherwise, build a new PHX-Cooling-Sys from the HB-hvac
+                phx_subsystem = create_hvac.build_phx_cooling_sys(hbph_sys)
                 _variant.mech_systems.add_new_mech_subsystem(hbph_sys.key, phx_subsystem)
 
             hbph_sys.id_num = phx_subsystem.id_num
@@ -403,6 +436,7 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     # -- Build the Variant Elements (Dev. note: order matters!)
     add_ventilation_systems_from_hb_rooms(new_variant, _hb_room)
     add_heating_systems_from_hb_rooms(new_variant, _hb_room)
+    add_cooling_systems_from_hb_rooms(new_variant, _hb_room)
     add_dhw_heaters_from_hb_rooms(new_variant, _hb_room)
     add_dhw_storage_from_hb_rooms(new_variant, _hb_room)
     add_geometry_from_hb_rooms(new_variant, _hb_room)

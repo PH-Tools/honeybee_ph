@@ -82,9 +82,9 @@ class IdealAirSystemPhProperties(object):
             htg_sys = heating.PhHeatingSystemBuilder.from_dict(htg_sys_dict)
             new_prop.heating_systems.add(htg_sys)
 
-        # for cooling_sys_dict in _input_dict.get('heating_systems', []):
-        #     cooling_sys = cooling.PhCoolingSystemBuilder.from_dict(cooling_sys_dict)
-        #     new_prop.heating_systems.add(cooling_sys)
+        for cooling_sys_dict in _input_dict.get('cooling_systems', []):
+            cooling_sys = cooling.PhCoolingSystemBuilder.from_dict(cooling_sys_dict)
+            new_prop.cooling_systems.add(cooling_sys)
 
         return new_prop
 

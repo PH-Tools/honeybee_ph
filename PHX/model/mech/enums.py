@@ -45,3 +45,10 @@ class HeatPumpType(Enum):
     ANNUAL = 3
     RATED_MONTHLY = 4
     HOT_WATER = 5
+
+
+class CoolingType(Enum):
+    VENTILATION = 1
+    RECIRCULATION = 2
+    DEHUMIDIFICATION = 3
+    PANEL = 4

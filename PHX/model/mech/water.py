@@ -5,7 +5,7 @@
 
 from typing import Optional
 
-from PHX.model.mech.enums import SystemType, DeviceType
+from PHX.model.mech.enums import DeviceType
 from PHX.model.mech import _base
 
 
@@ -26,5 +26,5 @@ class PhxHotWaterTankParams(_base.PhxMechanicalEquipmentParams):
 class PhxHotWaterTank(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.device_type_num: DeviceType = DeviceType.WATER_STORAGE
+        self.device_type: DeviceType = DeviceType.WATER_STORAGE
         self.params: PhxHotWaterTankParams = PhxHotWaterTankParams()

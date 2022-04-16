@@ -21,6 +21,6 @@ class PhxVentilatorParams(_base.PhxMechanicalEquipmentParams):
 class PhxVentilator(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.device_type_num: DeviceType = DeviceType.VENTILATION
+        self.device_type: DeviceType = DeviceType.VENTILATION
         self.usage_profile.ventilation = True
         self.params: PhxVentilatorParams = PhxVentilatorParams()

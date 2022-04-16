@@ -4,7 +4,7 @@
 """Functions to create PHX-HVAC objects from Honeybee-Energy-PH HVAC"""
 
 from PHX.model import mech
-from honeybee_energy_ph.hvac import ventilation, heating, _base
+from honeybee_energy_ph.hvac import ventilation, heating, cooling, _base
 
 
 def _transfer_attributes(_hbeph_obj: _base._PhHVACBase,
@@ -42,6 +42,7 @@ def _transfer_attributes(_hbeph_obj: _base._PhHVACBase,
     return _phx_obj
 
 
+# -----------------------------------------------------------------------------
 # -- Ventilation
 
 
@@ -96,6 +97,7 @@ def build_phx_ventilation_sys(_hbeph_vent: heating.PhHeatingSystem) -> mech.PhxM
     return phx_vent_subsystem
 
 
+# -----------------------------------------------------------------------------
 # -- Heating
 
 
@@ -127,22 +129,21 @@ def build_phx_heating_district(_hbeph_heater: heating.PhHeatingSystem) -> mech.P
     return phx_obj
 
 
-def build_phx_heating_hp_annual(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPumpParamsAnnual:
+def build_phx_heating_hp_annual(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPump:
     phx_obj = mech.PhxHeaterHeatPump.annual()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
-    phx_obj.usage_profile.space_heating = True
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_monthly(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPumpParamsMonthly:
+def build_phx_heating_hp_monthly(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPump:
     phx_obj = mech.PhxHeaterHeatPump.monthly()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPumpParamsCombined:
+def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> mech.PhxHeaterHeatPump:
     phx_obj = mech.PhxHeaterHeatPump.combined()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
@@ -193,6 +194,85 @@ def build_phx_heating_sys(_htg_sys: heating.PhHeatingSystem) -> mech.PhxMechanic
     """
     phx_htg_subsystem = mech.PhxMechanicalSubSystem()
     phx_htg_subsystem.device = build_phx_heating_device(_htg_sys)
+
+    # TODO: Distribution...
+
+    return phx_htg_subsystem
+
+
+# -----------------------------------------------------------------------------
+# --- Cooling
+
+
+def build_phx_cooling_ventilation(_hbeph_cooling: cooling.PhCoolingSystem) -> mech.PhxCoolingVentilation:
+    phx_obj = mech.PhxCoolingVentilation()
+    phx_obj = _transfer_attributes(_hbeph_cooling, phx_obj)
+    phx_obj.usage_profile.cooling = True
+    return phx_obj
+
+
+def build_phx_cooling_recirculation(_hbeph_cooling: cooling.PhCoolingSystem) -> mech.PhxCoolingRecirculation:
+    phx_obj = mech.PhxCoolingRecirculation()
+    phx_obj = _transfer_attributes(_hbeph_cooling, phx_obj)
+    phx_obj.usage_profile.cooling = True
+    return phx_obj
+
+
+def build_phx_cooling_dehumidification(_hbeph_cooling: cooling.PhCoolingSystem) -> mech.PhxCoolingDehumidification:
+    phx_obj = mech.PhxCoolingDehumidification()
+    phx_obj = _transfer_attributes(_hbeph_cooling, phx_obj)
+    phx_obj.usage_profile.cooling = True
+    return phx_obj
+
+
+def build_phx_cooling_panel(_hbeph_cooling: cooling.PhCoolingSystem) -> mech.PhxCoolingPanel:
+    phx_obj = mech.PhxCoolingPanel()
+    phx_obj = _transfer_attributes(_hbeph_cooling, phx_obj)
+    phx_obj.usage_profile.cooling = True
+    return phx_obj
+
+
+def build_phx_cooling_device(_clg_sys: cooling.PhCoolingSystem) -> mech.PhxHeater:
+    """Returns a new PHX-Cooling-Device based on an input HBE-PH cooling System.
+
+    Arguments:
+    ----------
+        * _clg_sys (cooling.PhCoolingSystem): The HBPH-Cooling-System to build 
+            the new PHX-Cooling-System from.
+
+    Returns:
+    --------
+        * (mech.cooling.PhxHeater): The new PHX cooling System created.
+    """
+
+    # -- Mapping HBEPH -> PHX types
+    phx_cooling_classes = {
+        'PhCoolingVentilation': build_phx_cooling_ventilation,
+        'PhCoolingRecirculation': build_phx_cooling_recirculation,
+        'PhCoolingDehumidification': build_phx_cooling_dehumidification,
+        'PhCoolingPanel': build_phx_cooling_panel,
+    }
+
+    # -- Get and build the right heater equipment type
+    phx_cooling = phx_cooling_classes[_clg_sys.cooling_class_name](_clg_sys)
+    return phx_cooling
+
+
+def build_phx_cooling_sys(_htg_sys: cooling.PhCoolingSystem) -> mech.PhxMechanicalSubSystem:
+    """
+
+    Arguments:
+    ----------
+        * _htg_sys (cooling.PhCoolingSystem): The HBE-PH cooling System to build 
+            the new PHX cooling system from.
+
+    Returns:
+    --------
+        * (mech.PhxMechanicalSubSystem): A new mech subsystem with the cooling device
+            and distribution.
+    """
+    phx_htg_subsystem = mech.PhxMechanicalSubSystem()
+    phx_htg_subsystem.device = build_phx_cooling_device(_htg_sys)
 
     # TODO: Distribution...
 

@@ -15,7 +15,7 @@ from PHX.model.mech import _base
 class PhxHeaterElectric(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.device_type_num: DeviceType = DeviceType.ELECTRIC
+        self.device_type: DeviceType = DeviceType.ELECTRIC
 
 
 # -----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ class PhxHeaterBoilerWoodParams(_base.PhxMechanicalEquipmentParams):
 class PhxHeaterBoiler(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.device_type_num: DeviceType = DeviceType.BOILER
+        self.device_type: DeviceType = DeviceType.BOILER
 
     @classmethod
     def fossil(cls) -> 'PhxHeaterBoiler':
@@ -92,7 +92,7 @@ class PhxHeaterBoiler(_base.PhxMechanicalEquipment):
 class PhxHeaterDistrictHeat(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.device_type_num: DeviceType = DeviceType.DISTRICT_HEAT
+        self.device_type: DeviceType = DeviceType.DISTRICT_HEAT
 
 
 # -----------------------------------------------------------------------------
@@ -157,7 +157,7 @@ class PhxHeaterHeatPumpParamsCombined(_base.PhxMechanicalEquipmentParams):
 class PhxHeaterHeatPump(_base.PhxMechanicalEquipment):
     def __init__(self):
         super().__init__()
-        self.device_type_num: DeviceType = DeviceType.HEAT_PUMP
+        self.device_type: DeviceType = DeviceType.HEAT_PUMP
 
     @classmethod
     def annual(cls) -> 'PhxHeaterHeatPump':

@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 from typing import Optional
-from PHX.model.mech.enums import SystemType, DeviceType
+from PHX.model.mech.enums import DeviceType
 
 
 @dataclass
@@ -17,6 +17,16 @@ class PhxUsageProfile:
     ventilation: bool = False
     humidification: bool = False
     dehumidification: bool = False
+
+    def __add__(self, other: 'PhxUsageProfile') -> 'PhxUsageProfile':
+        obj = self.__class__()
+        obj.space_heating = any([self.space_heating, other.space_heating])
+        obj.dhw_heating = any([self.dhw_heating, other.dhw_heating])
+        obj.cooling = any([self.cooling, other.cooling])
+        obj.ventilation = any([self.ventilation, other.ventilation])
+        obj.humidification = any([self.humidification, other.humidification])
+        obj.dehumidification = any([self.dehumidification, other.dehumidification])
+        return obj
 
 
 class PhxMechanicalEquipmentParams:
@@ -35,7 +45,7 @@ class PhxMechanicalEquipment:
     _count: int = 0
 
     def __init__(self):
-        self.device_type_num: DeviceType = DeviceType.ELECTRIC
+        self.device_type: DeviceType = DeviceType.ELECTRIC
         self.display_name: str = '_unnamed_equipment_'
         self.id_num: int = self._count
         self.quantity: int = 0
@@ -48,6 +58,23 @@ class PhxMechanicalEquipment:
     def __new__(cls, *args, **kwargs):
         cls._count += 1
         return super(PhxMechanicalEquipment, cls).__new__(cls, *args, **kwargs)
+
+    def __add__(self, other: 'PhxMechanicalEquipment') -> 'PhxMechanicalEquipment':
+        obj = self.__class__()
+        obj.device_type = self.device_type
+        obj.display_name = self.display_name
+        obj.id_num = self.id_num
+        obj.quantity = self.quantity + other.quantity
+        obj.unit = self.unit + other.unit
+        obj.percent_coverage = self.percent_coverage + other.percent_coverage
+        obj.usage_profile = self.usage_profile + other.usage_profile
+        return obj
+
+    def __radd__(self, other):
+        if isinstance(other, int):
+            return self + self
+        else:
+            return self + other
 
 
 class PhxMechanicalSubSystem:
@@ -70,8 +97,8 @@ class PhxMechanicalSubSystem:
             False, False, False, False, False, False)
 
     @property
-    def system_type_num(self):
-        return SystemType(self.device.device_type_num.value)
+    def system_type(self):
+        return self.device.device_type
 
     def __new__(cls, *args, **kwargs):
         cls._count += 1

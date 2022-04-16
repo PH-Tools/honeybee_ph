@@ -1,4 +1,8 @@
-from hashlib import new
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""HBPH Heating Objects"""
+
 import sys
 try:
     from typing import Any
@@ -11,7 +15,7 @@ from honeybee_energy_ph.hvac import _base, fuels
 class UnknownPhHeatingTypeError(Exception):
     def __init__(self, _heater_types, _received_type):
         # type: (list[str], str) -> None
-        self.msg = 'Error: Unknown PH-Heating type? Got: "{}" but only types: {} are allowed?'.format(
+        self.msg = 'Error: Unknown HBPH-Heating-SubSystem type? Got: "{}" but only types: {} are allowed?'.format(
             _received_type, _heater_types)
         super(UnknownPhHeatingTypeError, self).__init__(self.msg)
 
@@ -56,6 +60,7 @@ class PhHeatingSystem(_base._PhHVACBase):
 
 
 class PhHeatingDirectElectric(PhHeatingSystem):
+    """Heating via direct-electric (resistance heating)."""
 
     def __init__(self):
         super(PhHeatingDirectElectric, self).__init__()
@@ -75,6 +80,7 @@ class PhHeatingDirectElectric(PhHeatingSystem):
 
 
 class PhHeatingFossilBoiler(PhHeatingSystem):
+    """Heating via boiler using fossil-fuel (gas, oil)"""
 
     def __init__(self):
         super(PhHeatingFossilBoiler, self).__init__()
@@ -125,6 +131,7 @@ class PhHeatingFossilBoiler(PhHeatingSystem):
 
 
 class PhHeatingWoodBoiler(PhHeatingSystem):
+    """Heating via boiler using wood (log, pellet)."""
 
     def __init__(self):
         super(PhHeatingWoodBoiler, self).__init__()
@@ -195,6 +202,7 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
 
 
 class PhHeatingDistrict(PhHeatingSystem):
+    """Heating via district-heat."""
 
     def __init__(self):
         super(PhHeatingDistrict, self).__init__()
@@ -247,6 +255,7 @@ class PhHeatingHeatPumpAnnual(PhHeatingSystem):
 
 
 class PhHeatingHeatPumpRatedMonthly(PhHeatingSystem):
+    """Heating via electric heat-pump."""
 
     def __init__(self):
         super(PhHeatingHeatPumpRatedMonthly, self).__init__()

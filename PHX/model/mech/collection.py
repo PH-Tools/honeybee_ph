@@ -4,7 +4,7 @@
 """PHX Passive House Mechanical Colletion Classes"""
 
 from dataclasses import dataclass, field
-from typing import ClassVar, Dict, Optional
+from typing import ClassVar, Dict, Optional, List
 from PHX.model.mech import _base
 
 
@@ -59,3 +59,8 @@ class PhxMechanicalEquipmentCollection:
             * None
         """
         self._subsystems[_key] = _subsystem
+
+    @property
+    def cooling_subsystems(self) -> List[_base.PhxMechanicalSubSystem]:
+        """Returns a list of the 'Cooling' subsystems in the collection."""
+        return [sys for sys in self.subsystems if sys.device.usage_profile.cooling]

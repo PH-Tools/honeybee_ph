@@ -478,8 +478,8 @@ def _DeviceVentilator(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]:
     return [
         XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _s.system_type_num.value),
-        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("SystemType", _s.system_type.value),
+        XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
         XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
         XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
@@ -526,8 +526,8 @@ def _DeviceHeaterElec(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]:
     return [
         XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _s.system_type_num.value),
-        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("SystemType", _s.system_type.value),
+        XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
         XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
         XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
@@ -570,8 +570,8 @@ def _DeviceHeaterBoiler(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]:
     return [
         XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _s.system_type_num.value),
-        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("SystemType", _s.system_type.value),
+        XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
         XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
         XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
@@ -644,8 +644,8 @@ def _DeviceHeaterDistrict(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]
     return [
         XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _s.system_type_num.value),
-        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("SystemType", _s.system_type.value),
+        XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
         XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
         XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
@@ -677,8 +677,8 @@ def _DeviceHeaterHeatPump(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]
     return [
         XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _s.system_type_num.value),
-        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("SystemType", _s.system_type.value),
+        XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
         XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
         XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
@@ -744,8 +744,8 @@ def _DeviceWaterStorage(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]:
     return [
         XML_Node("Name", _d.display_name),
         XML_Node("IdentNr", _d.id_num),
-        XML_Node("SystemType", _s.system_type_num.value),
-        XML_Node("TypeDevice", _d.device_type_num.value),
+        XML_Node("SystemType", _s.system_type.value),
+        XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
         XML_Node("UsedFor_DHW", _d.usage_profile.dhw_heating),
         XML_Node("UsedFor_Cooling", _d.usage_profile.cooling),
@@ -773,6 +773,173 @@ def _DeviceWaterStoragePhParams(_p: mech.PhxHotWaterTankParams) -> List[xml_writ
     ]
 
 
+# -- MECHANICAL SYSTEMS / DISTRIBUTION
+
+class DistributionDHW:
+    def __init__(self):
+        raise NotImplementedError
+
+
+def _DistributionDHW(_d):
+    raise NotImplementedError
+    return [
+        #     XML_Node("LengthCirculationPipes_WR", _d.),
+        #     XML_Node("LengthCirculationPipes_CR1", _d.),
+        #     XML_Node("LengthCirculationPipes_CR2", _d.),
+        #     XML_Node("HeatLossCoefficient_WR", _d.),
+        #     XML_Node("HeatLossCoefficient_CR1", _d.),
+        #     XML_Node("HeatLossCoefficient_CR2", _d.),
+        #     XML_Node("TemperatureRoom_WR", _d.),
+        #     XML_Node("TemperatureRoom_CR1", _d.),
+        #     XML_Node("TemperatureRoom_CR2", _d.),
+        #     XML_Node("DesignFlowTemperature_WR", _d.),
+        #     XML_Node("DesignFlowTemperature_CR1", _d.),
+        #     XML_Node("DesignFlowTemperature_CR2", _d.),
+        #     XML_Node("DailyRunningHoursCirculation_WR", _d.),
+        #     XML_Node("DailyRunningHoursCirculation_CR1", _d.),
+        #     XML_Node("DailyRunningHoursCirculation_CR2", _d.),
+        #     XML_Node("LengthIndividualPipes_WR", _d.),
+        #     XML_Node("LengthIndividualPipes_CR1", _d.),
+        #     XML_Node("LengthIndividualPipes_CR2", _d.),
+        #     XML_Node("ExteriorPipeDiameter_WR", _d.),
+        #     XML_Node("ExteriorPipeDiameter_CR1", _d.),
+        #     XML_Node("ExteriorPipeDiameter_CR2", _d.),
+        #     XML_Node("HeatReleaseStorage_WR", _d.),
+        #     XML_Node("HeatReleaseStorage_CR1", _d.),
+        #     XML_Node("HeatReleaseStorage_CR2", _d.),
+        #     XML_Node("CalculationMethodIndividualPipes", _d.),
+        #     XML_Node("PipeMaterialSimplifiedMethod", _d.),
+        #     XML_Node("PipeDiameterSimplifiedMethod", _d.),
+        #     XML_Node("HotWaterFixtureEffectiveness", _d.),
+        #     XML_Node("DemandRecirculation", _d.),
+        #     XML_Node("SelectionhotWaterFixtureEff", _d.),
+        #     XML_Node("NumberOfBathrooms", _d.),
+        #     XML_Node("AllPipesAreInsulated", _d.),
+        #     XML_Node("SelectionUnitsOrFloors", _d.),
+    ]
+
+
+class DistributionHeating:
+    def __init__(self):
+        raise NotImplementedError
+
+
+def _DistributionHeating(_d):
+    raise NotImplementedError
+    return [
+        #     XML_Node("LengthPipes_WR", _d.),
+        #     XML_Node("LengthPipes_CR1", _d.),
+        #     XML_Node("LengthPipes_CR2", _d.),
+        #     XML_Node("HeatLossCoefficient_WR", _d.),
+        #     XML_Node("HeatLossCoefficient_CR1", _d.),
+        #     XML_Node("HeatLossCoefficient_CR2", _d.),
+        #     XML_Node("TemperatureRoom_WR", _d.),
+        #     XML_Node("TemperatureRoom_CR1", _d.),
+        #     XML_Node("TemperatureRoom_CR2", _d.),
+        #     XML_Node("DesignFlowTemperature_WR", _d.),
+        #     XML_Node("DesignFlowTemperature_CR1", _d.),
+        #     XML_Node("DesignFlowTemperature_CR2", _d.),
+        #     XML_Node("DesignSystemHeatingLoad_WR", _d.),
+        #     XML_Node("DesignSystemHeatingLoad_CR1", _d.),
+        #     XML_Node("DesignSystemHeatingLoad_CR2", _d.),
+        #     XML_Node("FlowTControl_WR", _d.),
+        #     XML_Node("FlowTControl_CR1", _d.),
+        #     XML_Node("FlowTControl_CR2", _d.),
+    ]
+
+
+def _Duct(_in):
+    return [
+        # XML_Node("Name", _d.),
+        # XML_Node("IdentNr", _d.),
+        # XML_Node("DuctDiameter", _d.),
+        # XML_Node("DuctLength", _d.),
+        # XML_Node("InsulationThickness", _d.),
+        # XML_Node("ThermalConductivity", _d.),
+        # XML_Node("Quantity", _d.),
+        # XML_Node("DuctType", _d.),
+        # XML_Node("DuctShape", _d.),
+        # XML_Node("IsReflective", _d.),
+        # XML_Node("AssignedVentUnits", _d.),
+        # XML_Node("IdentNrVentUnit", _d.),
+        # XML_Node("/AssignedVentUnits", _d.),
+    ]
+
+
+"""DEV NOTE: I don't want to have the Cooling distribution as part of the PHX model.
+It is stupid that things like COP are stored in there. So use a temp class for now."""
+
+
+class TempDistributionCooling:
+    """Temporary wrapper class for WUFI format Cooling Distribution data"""
+
+    def __init__(self, _c: mech.PhxMechanicalEquipmentCollection):
+        # -- have to sort and combine the systems together
+        self.ventilation_subsystem = sum(
+            sys.device for sys in _c.cooling_subsystems if sys.device.cooling_type == mech.CoolingType.VENTILATION)
+        self.recirculation_subsystem = sum(
+            sys.device for sys in _c.cooling_subsystems if sys.device.cooling_type == mech.CoolingType.RECIRCULATION)
+        self.dehumidification_subsystem = sum(
+            sys.device for sys in _c.cooling_subsystems if sys.device.cooling_type == mech.CoolingType.DEHUMIDIFICATION)
+        self.panel_subsystem = sum(
+            sys.device for sys in _c.cooling_subsystems if sys.device.cooling_type == mech.CoolingType.PANEL)
+
+
+def _DistributionCooling(_clg_distr: TempDistributionCooling) -> List[xml_writable]:
+    base = []
+    if _clg_distr.ventilation_subsystem != 0:
+        vent_params: mech.PhxCoolingVentilationParams = _clg_distr.ventilation_subsystem.params
+        base += [
+            XML_Node("CoolingViaVentilationAir", True),
+            XML_Node("SupplyAirCoolingOnOff", vent_params.single_speed),
+            XML_Node("MaxSupplyAirCoolingPower", vent_params.capacity),
+            XML_Node("MinTemperatureCoolingCoilSupplyAir", vent_params.min_coil_temp),
+            XML_Node("SupplyAirCoolinCOP", vent_params.annual_COP),
+        ]
+    if _clg_distr.recirculation_subsystem != 0:
+        recirc_params: mech.PhxCoolingRecirculationParams = _clg_distr.recirculation_subsystem.params
+        base += [
+            XML_Node("CoolingViaRecirculation", True),
+            XML_Node("RecirculatingAirOnOff", recirc_params.single_speed),
+            XML_Node("MaxRecirculationAirCoolingPower", recirc_params.capacity),
+            XML_Node("MinTempCoolingCoilRecirculatingAir", recirc_params.min_coil_temp),
+            XML_Node("RecirculationCoolingCOP", recirc_params.annual_COP),
+            XML_Node("RecirculationAirVolume", recirc_params.flow_rate_m3_hr),
+            XML_Node("ControlledRecirculationVolumeFlow",
+                     recirc_params.flow_rate_variable),
+        ]
+    if _clg_distr.dehumidification_subsystem != 0:
+        dehumid_params: mech.PhxCoolingDehumidificationParams = _clg_distr.dehumidification_subsystem.params
+        base += [
+            XML_Node("Dehumidification", True),
+            XML_Node("UsefullDehumidificationHeatLoss", dehumid_params.useful_heat_loss),
+            XML_Node("DehumdificationCOP", dehumid_params.annual_COP),
+            XML_Node("SEER", None),
+            XML_Node("EER", None),
+            XML_Node("DehumidificationElEnergy", None),
+        ]
+    if _clg_distr.panel_subsystem != 0:
+        panel_params: mech.PhxCoolingPanelParams = _clg_distr.dehumidification_subsystem.params
+        base += [
+            XML_Node("PanelCooling", True),
+            XML_Node("DehumdificationCOP", panel_params.annual_COP),
+        ]
+    return base
+
+
+def _PHDistribution(_c: mech.PhxMechanicalEquipmentCollection):
+    return [
+        # XML_Object('DistributionDHW', DistributionDHW()),
+        # XML_Object('DistributionHeating', DistributionHeating()),
+        XML_Object('DistributionCooling', TempDistributionCooling(
+            _c), _schema_name='_DistributionCooling'),
+        # XML_List('DistributionVentilation', [XML_Object('Duct', None, 'index', i)
+        #                                      for i, d in enumerate([])]),
+        XML_Node("UseDefaultValues", True),
+        XML_Node("DeviceInConditionedSpace", True),
+    ]
+
+
 # -- MECHANICAL SYSTEMS / COLLECTIONS --
 
 
@@ -787,26 +954,26 @@ def _PhxZoneCoverage(_zc: mech.PhxZoneCoverage) -> List[xml_writable]:
     ]
 
 
-def _WUFI_HVAC_SystemGroup(_hvac_system: mech.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
+def _WUFI_HVAC_SystemGroup(_hvac_collection: mech.PhxMechanicalEquipmentCollection) -> List[xml_writable]:
     devices = {
-        1: '_DeviceVentilator',
-        2: '_DeviceHeaterElec',
-        3: '_DeviceHeaterBoiler',
-        4: '_DeviceHeaterDistrict',
-        5: '_DeviceHeaterHeatPump',
-        8: '_DeviceWaterStorage',
+        mech.DeviceType.VENTILATION: '_DeviceVentilator',
+        mech.DeviceType.ELECTRIC: '_DeviceHeaterElec',
+        mech.DeviceType.BOILER: '_DeviceHeaterBoiler',
+        mech.DeviceType.DISTRICT_HEAT: '_DeviceHeaterDistrict',
+        mech.DeviceType.HEAT_PUMP: '_DeviceHeaterHeatPump',
+        mech.DeviceType.WATER_STORAGE: '_DeviceWaterStorage',
     }
 
     return [
-        XML_Node("Name", _hvac_system.display_name),
-        XML_Node("Type", _hvac_system.sys_type_num, 'choice', _hvac_system.sys_type_str),
-        XML_Node("IdentNr", _hvac_system.id_num),
+        XML_Node("Name", _hvac_collection.display_name),
+        XML_Node("Type", _hvac_collection.sys_type_num,
+                 'choice', _hvac_collection.sys_type_str),
+        XML_Node("IdentNr", _hvac_collection.id_num),
         XML_List('ZonesCoverage', [XML_Object("ZoneCoverage", n, "index", i)
-                 for i, n in enumerate([_hvac_system.zone_coverage])]),
-        XML_List('Devices', [XML_Object("Device", d, "index", i, _schema_name=devices[d.system_type_num.value])
-                 for i, d in enumerate(_hvac_system.subsystems)]),
-        # XML_Object('PHDistribution', _hvac_system.distribution,
-        #            _schema_name='_PHDistribution'),
+                 for i, n in enumerate([_hvac_collection.zone_coverage])]),
+        XML_List('Devices', [XML_Object("Device", d, "index", i, _schema_name=devices[d.system_type])
+                 for i, d in enumerate(_hvac_collection.subsystems)]),
+        XML_Object('PHDistribution', _hvac_collection, _schema_name='_PHDistribution'),
     ]
 
 
@@ -815,38 +982,6 @@ def _HVAC_Collection(_hvac: mech.PhxMechanicalEquipmentCollection) -> List[xml_w
         XML_List("Systems", [XML_Object("System", n, "index", i, _schema_name='_WUFI_HVAC_SystemGroup')
                  for i, n in enumerate([_hvac])]),
     ]
-
-# -- MECHANICAL SYSTEMS / DISTRIBUTION
-
-
-def _PHDistribution(_d):
-    return []
-
-
-def _DistributionCooling(_d):
-    return []
-    # return [
-    #     XML_Node("CoolingViaVentilationAir", _d.),
-    #     XML_Node("SupplyAirCoolingOnOff", _d.),
-    #     XML_Node("CoolingViaRecirculation", _d.),
-    #     XML_Node("RecirculatingAirOnOff", _d.),
-    #     XML_Node("Dehumidification", _d.),
-    #     XML_Node("PanelCooling", _d.),
-    #     XML_Node("MinTempCoolingCoilRecirculatingAir", _d.),
-    #     XML_Node("MinTemperatureCoolingCoilSupplyAir", _d.),
-    #     XML_Node("RecirculationAirVolume", _d.),
-    #     XML_Node("MaxSupplyAirCoolingPower", _d.),
-    #     XML_Node("SupplyAirCoolinCOP", _d.),
-    #     XML_Node("ControlledRecirculationVolumeFlow", _d.),
-    #     XML_Node("MaxRecirculationAirCoolingPower", _d.),
-    #     XML_Node("RecirculationCoolingCOP", _d.),
-    #     XML_Node("UsefullDehumidificationHeatLoss", _d.),
-    #     XML_Node("DehumdificationCOP", _d.),
-    #     XML_Node("DehumdificationCOP", _d.),
-    #     XML_Node("DehumidificationElEnergy", _d.),
-    #     XML_Node("SEER", _d.),
-    #     XML_Node("EER", _d.),
-    # ]
 
 # -- ELEC. EQUIPMENT DEVICES --
 
