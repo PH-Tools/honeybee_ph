@@ -27,12 +27,12 @@ inputs_direct_electric.update({})
 
 inputs_fossil_boiler = copy(inputs_base)
 inputs_fossil_boiler.update({
-    3: ComponentInput(_name='fuel', _description='Select Fuel type: "1-Natural-Gas" or "3-Oil"'),
+    3: ComponentInput(_name='fuel', _description='Select Fuel type: "1-Natural-Gas" or "2-Oil"'),
 })
 
 inputs_wood_boiler = copy(inputs_base)
 inputs_wood_boiler.update({
-    3: ComponentInput(_name='fuel', _description='Select Fuel type: "1-Logs" or "2-Pellets"'),
+    3: ComponentInput(_name='fuel', _description='Select Fuel type: "3-Logs" or "4-Pellets"'),
 })
 
 inputs_district_heat = copy(inputs_base)

@@ -74,12 +74,6 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - Vent HVAC": {
-        "NickName": "PH Vent",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
-    },
     "HBPH - Ventilator": {
         "NickName": "PH Ventilator",
         "Message": RELEASE_VERSION,
@@ -152,6 +146,32 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Add Mech Systems": {
+        "NickName": "Add Mech",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create Heating System": {
+        "NickName": "Create Heating",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create Cooling System": {
+        "NickName": "Create Cooling",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create Ventilation System": {
+        "NickName": "Create Vent",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+
+
 
 }
 
