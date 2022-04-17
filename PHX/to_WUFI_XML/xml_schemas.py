@@ -477,7 +477,7 @@ def _DeviceVentilator(_s: mech.PhxMechanicalSubSystem) -> List[xml_writable]:
     _d: mech.PhxVentilator = _s.device
     return [
         XML_Node("Name", _d.display_name),
-        XML_Node("IdentNr", _d.id_num),
+        XML_Node("IdentNr", _s.id_num),
         XML_Node("SystemType", _s.system_type.value),
         XML_Node("TypeDevice", _d.device_type.value),
         XML_Node("UsedFor_Heating", _d.usage_profile.space_heating),
