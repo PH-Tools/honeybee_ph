@@ -3,7 +3,7 @@
 
 """Functions to build PHX 'RoomVentilation' entities from Honeybee-PH Spaces"""
 
-from PHX.model import ventilation
+from PHX.model.loads import ventilation
 from honeybee_ph import space
 from honeybee_ph_utils.occupancy import hb_room_ppl_per_area
 from honeybee_ph_utils.ventilation import hb_room_vent_flowrates
@@ -36,7 +36,7 @@ def calc_space_ventilation_flow_rate(_space: space.Space) -> float:
     return (m3s_by_occupancy + m3s_by_area + m3s_by_zone + m3s_by_ach) * 3600
 
 
-def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
+def create_room_from_space(_space: space.Space) -> ventilation.PhxRoomVentilation:
     """Create a new RoomVentilation object with attributes based on a Honeybee-PH Space
 
     Arguments:
@@ -47,7 +47,7 @@ def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
     --------
         * ventilation.RoomVentilation: The new PHX-Room with attributes based on the Honeybee Space.
     """
-    new_room = ventilation.RoomVentilation()
+    new_room = ventilation.PhxRoomVentilation()
 
     new_room.name = _space.full_name
     new_room.wufi_type = _space.wufi_type
@@ -59,8 +59,8 @@ def create_room_from_space(_space: space.Space) -> ventilation.RoomVentilation:
 
     # -- Ventilation flow rates
     space_peak_flow_rate = calc_space_ventilation_flow_rate(_space)
-    new_room.ventilation_load.flow_supply = space_peak_flow_rate
-    new_room.ventilation_load.flow_extract = space_peak_flow_rate
+    new_room.flow_rates.flow_supply = space_peak_flow_rate
+    new_room.flow_rates.flow_extract = space_peak_flow_rate
     new_room.vent_pattern_id_num = _space.host.properties.energy.ventilation.schedule.properties.ph.id_num
 
     # -- Ventilation Equipment

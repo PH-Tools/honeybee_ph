@@ -4,8 +4,8 @@
 """PHX Passive House Mechanical Equipment Classes"""
 
 from typing import Optional, Union
-from PHX.model.mech.enums import DeviceType, HeatPumpType, FuelType
-from PHX.model.mech import _base
+from PHX.model.hvac.enums import DeviceType, HeatPumpType, FuelType
+from PHX.model.hvac import _base
 
 
 # -----------------------------------------------------------------------------

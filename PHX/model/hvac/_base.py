@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 from typing import Optional
-from PHX.model.mech.enums import DeviceType
+from PHX.model.hvac.enums import DeviceType
 
 
 @dataclass

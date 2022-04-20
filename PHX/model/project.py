@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 
 from PHX.model import schedules
 from PHX.model import building, certification, climate, constructions, geometry
-from PHX.model.mech import collection
+from PHX.model.hvac import collection
 
 
 @dataclass

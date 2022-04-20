@@ -10,8 +10,7 @@ from collections import defaultdict
 from functools import reduce
 import operator
 
-from PHX.model import ventilation
-from PHX.model import elec_equip
+from PHX.model import loads, elec_equip
 
 
 @dataclass
@@ -24,7 +23,7 @@ class Zone:
     weighted_net_floor_area: float = 0.0
     clearance_height: float = 2.5
     specific_heat_capacity: float = 132
-    wufi_rooms: list[ventilation.RoomVentilation] = field(default_factory=list)
+    wufi_rooms: list[loads.PhxRoomVentilation] = field(default_factory=list)
     elec_equipment_collection: elec_equip.PhxElectricEquipmentCollection = field(
         default_factory=elec_equip.PhxElectricEquipmentCollection)
     res_occupant_quantity: int = 0

@@ -1,7 +1,11 @@
 # coding=utf-8
 # -*- Python Version: 2.7 -*-
 
-"""Module for reading in HBJSON and converting to PHX-Model"""
+"""Module for reading in HBJSON and converting to PHX-Model.
+
+Running the 'convert_hbjson_to_PHX' function will call a new subprocess using the 
+Ladybug Tools Python 3.7 interpreter.
+"""
 
 from __future__ import division
 
@@ -15,16 +19,13 @@ except ImportError as e:
 
 
 def _run_hbjson2PHX_windows(_hbjson, _save_file_name, _save_folder):
-    print('Not Implemented Yet.')
-    return None
+    # type: (str, str, str) -> tuple[str, str]
+    raise NotImplementedError
 
 
 def _run_hbjson2PHX_unix(_hbjson, _save_file_name, _save_folder):
     # type: (str, str, str) -> tuple[str, str]
-    """Run a .osw file using the OpenStudio CLI on a Unix-based operating system.
-
-    This includes both Mac OS and Linux since a shell will be used to run
-    the simulation.
+    """Convert an HBJSON to a PHX using LBT's Python 3.7 interpreter.
 
     Arguments:
     ---------

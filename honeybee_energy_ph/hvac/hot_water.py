@@ -4,7 +4,7 @@
 """Passive House Service Hot Water Objects"""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except ImportError:
     pass  # IronPython
 
@@ -22,12 +22,12 @@ class PhSHWTank(object):
     def __init__(self):
         self.name = '_unnamed_hw_tank_'
         self.quantity = 1
-        self.tank_type = None
+        self.tank_type = None  # type: Optional[str]
 
-        self.for_solar = False
-        self.heat_loss_rate = None
-        self.volume = None
-        self.standby_fraction = None
+        self.for_solar = False  # type: Optional[bool]
+        self.heat_loss_rate = None  # type: Optional[float]
+        self.volume = None  # type: Optional[float]
+        self.standby_fraction = None  # type: Optional[float]
 
         self.in_conditioned_space = True
         self.location_temp = 20

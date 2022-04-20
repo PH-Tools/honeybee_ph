@@ -5,8 +5,8 @@
 
 from typing import Optional
 
-from PHX.model.mech.enums import DeviceType
-from PHX.model.mech import _base
+from PHX.model.hvac.enums import DeviceType
+from PHX.model.hvac import _base
 
 
 class PhxVentilatorParams(_base.PhxMechanicalEquipmentParams):

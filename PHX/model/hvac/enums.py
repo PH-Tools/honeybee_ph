@@ -52,3 +52,9 @@ class CoolingType(Enum):
     RECIRCULATION = 2
     DEHUMIDIFICATION = 3
     PANEL = 4
+
+
+class PhxHotWaterInputOptions(Enum):
+    SPEC_TOTAL_LOSSES = 1
+    SPEC_STANDBY_LOSSES = 2
+    TOTAL_LOSSES = 3

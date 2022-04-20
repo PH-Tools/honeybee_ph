@@ -3,8 +3,8 @@
 
 """PHX Passive House Mechanical Cooling Equipment Classes"""
 
-from PHX.model.mech.enums import CoolingType, DeviceType, HeatPumpType
-from PHX.model.mech import _base
+from PHX.model.hvac.enums import CoolingType, DeviceType, HeatPumpType
+from PHX.model.hvac import _base
 
 
 class PhxCoolingDevice(_base.PhxMechanicalEquipment):

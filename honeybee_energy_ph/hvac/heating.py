@@ -5,7 +5,7 @@
 
 import sys
 try:
-    from typing import Any
+    from typing import Any, Optional
 except ImportError:
     pass  # IronPython 2.7
 
@@ -144,10 +144,10 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
         self.rated_capacity = 15  # kW
         self.demand_basic_cycle = 1  # kWh
         self.power_stationary_run = 1  # W
-        self.power_standard_run = None
-        self.no_transport_pellets = None
-        self.only_control = None
-        self.area_mech_room = None
+        self.power_standard_run = None  # type: Optional[float]
+        self.no_transport_pellets = None  # type: Optional[bool]
+        self.only_control = None  # type: Optional[bool]
+        self.area_mech_room = None  # type: Optional[float]
 
     @property
     def useful_heat_output(self):

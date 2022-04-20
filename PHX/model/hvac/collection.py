@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Optional, List
-from PHX.model.mech import _base
+from PHX.model.hvac import _base
 
 
 @dataclass
