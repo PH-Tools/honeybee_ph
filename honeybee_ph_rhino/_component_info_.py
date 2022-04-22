@@ -170,7 +170,30 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-
+    "HBPH - Create PH Window Frame Element": {
+        "NickName": "Create Frame Element",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create PH Window Frame": {
+        "NickName": "Create Frame",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create PH Glazing": {
+        "NickName": "Create Glazing",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create PH Window Construction": {
+        "NickName": "Create PH Win Const",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 
 
 }

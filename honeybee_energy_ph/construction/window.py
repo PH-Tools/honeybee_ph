@@ -12,11 +12,13 @@ from honeybee_energy_ph.construction import _base
 
 
 class PhWindowFrameElement(_base._Base):
+    """An individual PhWindowFrameElement (side) which is part of a complete PhWindowFrame."""
+
     def __init__(self):
         super(PhWindowFrameElement, self).__init__()
         self.width = 0.1
         self.u_factor = 1.0
-        self.psi_g = 0.04
+        self.psi_glazing = 0.04
         self.psi_install = 0.04
 
     def to_dict(self):
@@ -24,7 +26,7 @@ class PhWindowFrameElement(_base._Base):
         d = super(PhWindowFrameElement, self).to_dict()
         d['width'] = self.width
         d['u_factor'] = self.u_factor
-        d['psi_g'] = self.psi_g
+        d['psi_glazing'] = self.psi_glazing
         d['psi_install'] = self.psi_install
         return d
 
@@ -35,7 +37,7 @@ class PhWindowFrameElement(_base._Base):
         new_obj.set_base_attrs_from_dict(_input_dict)
         new_obj.width = _input_dict['width']
         new_obj.u_factor = _input_dict['u_factor']
-        new_obj.psi_g = _input_dict['psi_g']
+        new_obj.psi_glazing = _input_dict['psi_glazing']
         new_obj.psi_install = _input_dict['psi_install']
         return new_obj
 
@@ -49,13 +51,13 @@ class PhWindowFrameElement(_base._Base):
         new_obj.set_base_attrs_from_obj(self)
         new_obj.width = self.width
         new_obj.u_factor = self.u_factor
-        new_obj.psi_g = self.psi_g
+        new_obj.psi_glazing = self.psi_glazing
         new_obj.psi_install = self.psi_install
         return new_obj
 
     def __str__(self):
-        return '{}(width={:.3f}, u_factor={:.3f}, psi_g={:.3f}, psi_install={:.3f})'.format(
-            self.__class__.__name__, self.width, self.u_factor, self.psi_g, self.psi_install)
+        return '{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f})'.format(
+            self.__class__.__name__, self.width, self.u_factor, self.psi_glazing, self.psi_install)
 
     def __repr__(self):
         return str(self)
@@ -65,12 +67,18 @@ class PhWindowFrameElement(_base._Base):
 
 
 class PhWindowFrame(_base._Base):
+    """A full PH window frame made of 4 PhWindowFrameElements."""
+
     def __init__(self):
         super(PhWindowFrame, self).__init__()
         self.top = PhWindowFrameElement()
         self.right = PhWindowFrameElement()
         self.bottom = PhWindowFrameElement()
         self.left = PhWindowFrameElement()
+
+    @property
+    def elements(self):
+        return [self.top, self.right, self.bottom, self.left]
 
     def to_dict(self):
         # type: () -> dict[str, Any]
