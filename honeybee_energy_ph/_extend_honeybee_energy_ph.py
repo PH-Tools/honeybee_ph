@@ -68,7 +68,7 @@ def opaque_construction_ph_properties(self):
 
 def window_construction_ph_properties(self):
     if self._ph is None:
-        self._ph = WindowConstructionPhProperties()
+        self._ph = WindowConstructionPhProperties(self.host)
     return self._ph
 
 
