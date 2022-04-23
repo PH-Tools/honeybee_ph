@@ -79,7 +79,7 @@ class PhxCoolingRecirculationParams(_base.PhxMechanicalEquipmentParams):
     capacity: float = 10  # kW
     annual_COP: float = 4  # W/W
 
-    @property
+    @ property
     def total_system_perf_ratio(self):
         return 1 / self.annual_COP
 
@@ -124,7 +124,7 @@ class PhxCoolingDehumidificationParams(_base.PhxMechanicalEquipmentParams):
     useful_heat_loss: bool = False
     annual_COP: float = 4  # W/W
 
-    @property
+    @ property
     def total_system_perf_ratio(self):
         return 1 / self.annual_COP
 
@@ -164,7 +164,7 @@ class PhxCoolingPanelParams(_base.PhxMechanicalEquipmentParams):
     hp_type: HeatPumpType = HeatPumpType.ANNUAL
     annual_COP: float = 4  # W/W
 
-    @property
+    @ property
     def total_system_perf_ratio(self):
         return 1 / self.annual_COP
 

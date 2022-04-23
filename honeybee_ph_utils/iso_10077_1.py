@@ -89,14 +89,24 @@ class StandardWindow:
         return frame_element.psi_install * self.side_exterior_length(_side)
 
 
-def calculate_window_uw(_frame, _glazing):
-    # type: (window.PhWindowFrame, window.PhWindowGlazing) -> float
-
+def build_standard_window(_frame, _glazing):
+    # type: (window.PhWindowFrame, window.PhWindowGlazing) -> StandardWindow
     # As per Annex F (2006)
     width = 1.23  # M
     height = 1.48  # M
+    return StandardWindow(width, height, _frame, _glazing)
 
-    window = StandardWindow(width, height, _frame, _glazing)
+
+def calculate_window_frame_factor(_frame, _glazing):
+    # type: (window.PhWindowFrame, window.PhWindowGlazing) -> float
+    window = build_standard_window(_frame, _glazing)
+    return window.area_glazing / window.area_window
+
+
+def calculate_window_uw(_frame, _glazing):
+    # type: (window.PhWindowFrame, window.PhWindowGlazing) -> float
+    window = build_standard_window(_frame, _glazing)
+
     heat_loss_frame = sum([
         window.side_frame_heat_loss('top'),
         window.side_frame_heat_loss('right'),

@@ -3,7 +3,7 @@
 
 """PHX Passive House Mechanical Equipment Classes"""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 from PHX.model.hvac.enums import DeviceType
 
@@ -51,8 +51,7 @@ class PhxMechanicalEquipment:
         self.quantity: int = 0
         self.unit: float = 0.0
         self.percent_coverage: float = 0.0
-        self.usage_profile: PhxUsageProfile = PhxUsageProfile(
-            False, False, False, False, False, False)
+        self.usage_profile: PhxUsageProfile = PhxUsageProfile()
         self.params: PhxMechanicalEquipmentParams = PhxMechanicalEquipmentParams()
 
     def __new__(cls, *args, **kwargs):

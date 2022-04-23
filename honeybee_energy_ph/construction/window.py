@@ -14,8 +14,8 @@ from honeybee_energy_ph.construction import _base
 class PhWindowFrameElement(_base._Base):
     """An individual PhWindowFrameElement (side) which is part of a complete PhWindowFrame."""
 
-    def __init__(self):
-        super(PhWindowFrameElement, self).__init__()
+    def __init__(self, _identifier):
+        super(PhWindowFrameElement, self).__init__(_identifier)
         self.width = 0.1
         self.u_factor = 1.0
         self.psi_glazing = 0.04
@@ -33,7 +33,7 @@ class PhWindowFrameElement(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhWindowFrameElement
-        new_obj = cls()
+        new_obj = cls(_input_dict['identifier'])
         new_obj.set_base_attrs_from_dict(_input_dict)
         new_obj.width = _input_dict['width']
         new_obj.u_factor = _input_dict['u_factor']
@@ -47,7 +47,7 @@ class PhWindowFrameElement(_base._Base):
 
     def __copy__(self):
         # type: () -> PhWindowFrameElement
-        new_obj = self.__class__()
+        new_obj = self.__class__(self.identifier)
         new_obj.set_base_attrs_from_obj(self)
         new_obj.width = self.width
         new_obj.u_factor = self.u_factor
@@ -69,12 +69,12 @@ class PhWindowFrameElement(_base._Base):
 class PhWindowFrame(_base._Base):
     """A full PH window frame made of 4 PhWindowFrameElements."""
 
-    def __init__(self):
-        super(PhWindowFrame, self).__init__()
-        self.top = PhWindowFrameElement()
-        self.right = PhWindowFrameElement()
-        self.bottom = PhWindowFrameElement()
-        self.left = PhWindowFrameElement()
+    def __init__(self, _identifier):
+        super(PhWindowFrame, self).__init__(_identifier)
+        self.top = PhWindowFrameElement('_default_')
+        self.right = PhWindowFrameElement('_default_')
+        self.bottom = PhWindowFrameElement('_default_')
+        self.left = PhWindowFrameElement('_default_')
 
     @property
     def elements(self):
@@ -92,7 +92,7 @@ class PhWindowFrame(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhWindowFrame
-        new_obj = cls()
+        new_obj = cls(_input_dict['identifier'])
         new_obj.set_base_attrs_from_dict(_input_dict)
         new_obj.top = PhWindowFrameElement.from_dict(_input_dict['top'])
         new_obj.right = PhWindowFrameElement.from_dict(_input_dict['right'])
@@ -106,7 +106,7 @@ class PhWindowFrame(_base._Base):
 
     def __copy__(self):
         # type: () -> PhWindowFrame
-        new_obj = self.__class__()
+        new_obj = self.__class__(self.identifier)
         new_obj.set_base_attrs_from_obj(self)
         new_obj.top = self.top.duplicate()
         new_obj.right = self.right.duplicate()
@@ -126,8 +126,8 @@ class PhWindowFrame(_base._Base):
 
 
 class PhWindowGlazing(_base._Base):
-    def __init__(self):
-        super(PhWindowGlazing, self).__init__()
+    def __init__(self, _identifier):
+        super(PhWindowGlazing, self).__init__(_identifier)
         self.u_factor = 1.0
         self.g_value = 0.4
 
@@ -141,7 +141,7 @@ class PhWindowGlazing(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhWindowGlazing
-        new_obj = cls()
+        new_obj = cls(_input_dict['identifier'])
         new_obj.set_base_attrs_from_dict(_input_dict)
         new_obj.u_factor = _input_dict['u_factor']
         new_obj.g_value = _input_dict['g_value']
@@ -153,7 +153,7 @@ class PhWindowGlazing(_base._Base):
 
     def __copy__(self):
         # type: () -> PhWindowGlazing
-        new_obj = self.__class__()
+        new_obj = self.__class__(self.identifier)
         new_obj.set_base_attrs_from_obj(self)
         new_obj.u_factor = self.u_factor
         new_obj.g_value = self.g_value

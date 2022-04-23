@@ -61,7 +61,7 @@ class WindowConstructionPhProperties(object):
             d['ph_frame'] = self.ph_frame.to_dict()
         if self.ph_glazing:
             d['ph_glazing'] = self.ph_glazing.to_dict()
-        return d
+        return {'ph': d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
@@ -83,7 +83,7 @@ class WindowConstructionPhProperties(object):
         return new_obj
 
     def __str__(self):
-        return '{}(display_name={!r}, frame={!r}, glazing={!r})'.format(
+        return '{}(frame={!r}, glazing={!r})'.format(
             self.__class__.__name__, self.ph_frame, self.ph_glazing)
 
     def __repr__(self):

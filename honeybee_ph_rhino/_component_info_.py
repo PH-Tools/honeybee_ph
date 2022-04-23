@@ -8,6 +8,7 @@ These are called when the component is instantiated within the Grasshopper canva
 RELEASE_VERSION = "HONEYBEE-PH v0.1"
 CATEGORY = "Honeybee-PH"
 SUB_CATGORIES = {
+    0: "00 | Utils",
     4: "04 | Honeybee-PH",
     5: "05 | Temp",
     6: "06 | Temp",

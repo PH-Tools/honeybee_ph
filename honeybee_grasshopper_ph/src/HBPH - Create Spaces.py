@@ -34,7 +34,7 @@ a wall.
 Each Volume is made of one or more floor-segments. Each floor-segment can have a
 'weighting factor' applied for calculating the TFA/iCFA for Passive House certification.
 -
-EM January 29, 2022
+EM February 15, 2022
     Args:
         _flr_seg_geom: (Tree[Geometry]) The Rhino geometry that you would like to use 
             to create the Floor-Segments of the various Spaces. Each branch should be a list 
@@ -85,7 +85,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create Spaces"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JAN_29_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='FEB_15_2022')
 if DEV:
     reload(honeybee_ph_rhino.gh_io)
     reload(honeybee_ph.space)
@@ -128,7 +128,13 @@ for i, flr_srfc_list in enumerate(_flr_seg_geom.Branches):
     new_space.name = space_names.Branch(i)[0]
     new_space.number = space_numbers.Branch(i)[0]
     
-    space_floors = honeybee_ph_rhino.make_spaces.floor.space_floor_from_rh_geom(IGH, list(flr_srfc_list))
+    space_floors, e = honeybee_ph_rhino.make_spaces.floor.space_floor_from_rh_geom(IGH, list(flr_srfc_list))
+    if e:
+        error_ = [from_face3d(s) for s in e]
+        msg='Error: There was a problem joining together one or more group of floor surfaces?'\
+            'Check the "error_" output for a preview of the surfaces causing the problem'\
+            'Check the names and numbers of the surfaces, and make sure they can be properly merged?'
+        IGH.error(msg)
     space_volumes = honeybee_ph_rhino.make_spaces.volume.volumes_from_floors(IGH, space_floors, volume_heights.Branch(i))
     new_space.add_new_volumes(space_volumes)
     

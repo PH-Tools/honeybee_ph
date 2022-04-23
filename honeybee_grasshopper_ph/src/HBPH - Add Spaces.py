@@ -25,7 +25,7 @@ can be made up of one or more individual volumes. This is useful if you are calc
 interior net-floor-area or volume as in the Passive House models. Each Space will map to 
 a single entry in the WUFI 'Ventilation Rooms' or a PHPP 'Additional Ventilation'.
 -
-EM January 29, 2022
+EM April 1, 2022
     Args:
         _spaces: (list[Space]) A list of the new PH-Spaces to add to the Honeybee-Rooms.
         
@@ -35,6 +35,10 @@ EM January 29, 2022
             testing if it is 'inside' the honeybee-Room. This is useful you drew your
             floor-segments directly 'on' the floor surface of the honeybee room as this 
             sometimes leads to errors when testing for 'inside'.
+        
+        inherit_room_names_ (bool): default=False. Set to true if you would like all of the 
+            PH-Spaces 'in' a Honeybee Room to automatically inherit the display name of the 
+            Honeybee Room. Note: this will override any user-defined Space names.
         
         _hb_rooms: (list[Room]) The list of honeybee-Rooms to add to the spaces to.
             
@@ -61,10 +65,12 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add Spaces"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JAN_29_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
 if DEV:
     reload(honeybee_ph_rhino.gh_io)
-
+    reload(honeybee_ph_rhino.make_spaces)
+    from honeybee_ph_rhino.make_spaces import space
+    reload(space)
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
@@ -74,12 +80,12 @@ IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 # -- Clean up the inpt spaces, host in the HB-Rooms
 offset_dist = _offset_dist_ or 0.1
 spaces = [space.offset_space_reference_points(IGH, sp, offset_dist) for sp in _spaces]
-hb_rooms_, un_hosted_spaces = space.add_spaces_to_honeybee_rooms(spaces, _hb_rooms)
+hb_rooms_, un_hosted_spaces = space.add_spaces_to_honeybee_rooms(spaces, _hb_rooms, inherit_room_names_)
 
 # ------------------------------------------------------------------------------
 # -- if any un_hosted_spaces, pull out their center points for troubelshooting
 # -- and raise a user-warning
 check_pts_ = [from_point3d(lbt_pt) for space_data in  un_hosted_spaces for lbt_pt in space_data.reference_points]
 if un_hosted_spaces:
-    msg = 'Error: Host Honeybee-Rooms not found for the Spaces: {}'.format('\n'.join([ spd.space.full_name for spd in un_hosted_spaces]))
+    msg = 'Error: Host Honeybee-Rooms not found for the Spaces: {}'.format(''.join([ spd.space.full_name for spd in un_hosted_spaces]))
     IGH.error(msg)

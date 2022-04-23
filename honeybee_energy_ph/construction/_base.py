@@ -13,9 +13,9 @@ from honeybee.typing import valid_ep_string
 
 class _Base(object):
 
-    def __init__(self):
+    def __init__(self, _identifier):
         self.id_num = 0
-        self._identifier = None  # type: Optional[str]
+        self._identifier = _identifier  # type: str
         self._display_name = None  # type: Optional[str]
         self._user_data = {}  # type: dict
 
