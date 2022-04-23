@@ -381,7 +381,7 @@ def _Vertix(_v: geometry.Vertix) -> List[xml_writable]:
 def _Assembly(_a: constructions.Assembly) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _a.id_num),
-        XML_Node("Name", _a.name),
+        XML_Node("Name", _a.display_name),
         XML_Node("Order_Layers", _a.layer_order),
         XML_Node("Grid_Kind", _a.grid_kind),
         XML_List("Layers", [XML_Object("Layer", n, "index", i)
@@ -398,7 +398,7 @@ def _Layer(_l: constructions.Layer) -> List[xml_writable]:
 
 def _Material(_m: constructions.Material) -> List[xml_writable]:
     return [
-        XML_Node("Mass", _m.name),
+        XML_Node("Mass", _m.display_name),
         XML_Node("ThermalConductivity", _m.conductivity),
         XML_Node("BulkDensity", _m.density),
         XML_Node("Porosity", _m.porosity),
@@ -411,20 +411,37 @@ def _Material(_m: constructions.Material) -> List[xml_writable]:
 def _WindowType(_wt: constructions.WindowType) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _wt.id_num),
-        XML_Node("Name", _wt.name),
+        XML_Node("Name", _wt.display_name),
         XML_Node("Uw_Detailed>", _wt.use_detailed_uw),
         XML_Node("GlazingFrameDetailed", _wt.use_detailed_frame),
+        XML_Node("FrameFactor", _wt.frame_factor),
         XML_Node("U_Value", _wt.u_value_window),
         XML_Node("U_Value_Glazing", _wt.u_value_glass),
-        XML_Node("U_Value_Frame", _wt.u_value_frame),
-        XML_Node("Frame_Width_Left", _wt.frame_width_left),
-        XML_Node("Frame_Psi_Left", _wt.frame_psi_inst_left),
-        XML_Node("Frame_U_Left", _wt.frame_u_value_left),
-        XML_Node("FrameFactor", _wt.frame_factor),
-        XML_Node("Glazing_Psi_Left", _wt.frame_psi_g_left),
-        XML_Node("SHGC_Hemispherical", _wt.glass_g_value),
         XML_Node("MeanEmissivity", _wt.glass_mean_emissivity),
         XML_Node("g_Value", _wt.glass_g_value),
+        XML_Node("SHGC_Hemispherical", _wt.glass_g_value),
+        # --
+        XML_Node("U_Value_Frame", _wt.u_value_frame),
+        # --
+        XML_Node("Frame_Width_Left", _wt.frame_left.width),
+        XML_Node("Frame_Psi_Left", _wt.frame_left.psi_install),
+        XML_Node("Frame_U_Left", _wt.frame_left.u_value),
+        XML_Node("Glazing_Psi_Left", _wt.frame_left.psi_glazing),
+        # --
+        XML_Node("Frame_Width_Right", _wt.frame_right.width),
+        XML_Node("Frame_Psi_Right", _wt.frame_right.psi_install),
+        XML_Node("Frame_U_Right", _wt.frame_right.u_value),
+        XML_Node("Glazing_Psi_Right", _wt.frame_right.psi_glazing),
+        # --
+        XML_Node("Frame_Width_Top", _wt.frame_top.width),
+        XML_Node("Frame_Psi_Top", _wt.frame_top.psi_install),
+        XML_Node("Frame_U_Top", _wt.frame_top.u_value),
+        XML_Node("Glazing_Psi_Top", _wt.frame_top.psi_glazing),
+        # --
+        XML_Node("Frame_Width_Bottom", _wt.frame_bottom.width),
+        XML_Node("Frame_Psi_Bottom", _wt.frame_bottom.psi_install),
+        XML_Node("Frame_U_Bottom", _wt.frame_bottom.u_value),
+        XML_Node("Glazing_Psi_Bottom", _wt.frame_bottom.psi_glazing),
     ]
 
 

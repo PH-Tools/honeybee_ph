@@ -5,6 +5,9 @@
 
 from honeybee import model
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
+from honeybee_energy.construction import window
+from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
+from honeybee_ph_utils import iso_10077_1
 from PHX.model import constructions
 from typing import Union
 
@@ -90,7 +93,7 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
                 # -- Create a new Assembly with Layers from the Honeybee-Construction
                 new_assembly = constructions.Assembly()
                 new_assembly.id_num = constructions.Assembly._count
-                new_assembly.name = hb_const.display_name
+                new_assembly.display_name = hb_const.display_name
                 new_assembly.layers = [build_layer_from_hb_material(layer)
                                        for layer in hb_const.materials]
 
@@ -102,8 +105,100 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
     return None
 
 
+def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowConstruction) -> constructions.WindowType:
+    """Create a new PHX-WindowType based on a HB-Window-Construction.
+
+    If any detailed PH-Params exist for the frame or glass on the HB-Window-Construction's 
+    .properties.ph.* then those will be used. Otherwise, the basic HB-Window-Construction
+    attributes will be used.
+
+    Arguments:
+    ----------
+        * _hb_win_const (window.WindowConstruction): The Honeybee Window Construction to
+            base the new PHX-WindowType on.
+
+    Returns:
+    --------
+        * (constructions.WindowType): The new PHX-WindowType.
+    """
+
+    phx_window_type = constructions.WindowType()
+    phx_window_type.id_num = constructions.WindowType._count
+    phx_window_type.display_name = _hb_win_const.display_name
+
+    ph_params: WindowConstructionPhProperties = _hb_win_const.properties.ph
+
+    # -- Glass ----------------------------------------------------------------
+    if ph_params.ph_glazing:
+        # -- Use Detailed PH-Params
+        phx_window_type.u_value_glass = ph_params.ph_glazing.u_factor
+        phx_window_type.glass_g_value = ph_params.ph_glazing.g_value
+    else:
+        # -- Use the basic Honeybee Params
+        phx_window_type.u_value_glass = _hb_win_const.u_factor
+        phx_window_type.glass_g_value = _hb_win_const.shgc
+
+    # -- Frames ---------------------------------------------------------------
+    if ph_params.ph_frame:
+        print('here!', ph_params.ph_frame.top.u_factor)
+        # -- Use Detailed PH-Params
+        phx_window_type.frame_top.u_value = ph_params.ph_frame.top.u_factor
+        phx_window_type.frame_top.width = ph_params.ph_frame.top.width
+        phx_window_type.frame_top.psi_glazing = ph_params.ph_frame.top.psi_glazing
+        phx_window_type.frame_top.psi_install = ph_params.ph_frame.top.psi_install
+
+        phx_window_type.frame_right.u_value = ph_params.ph_frame.right.u_factor
+        phx_window_type.frame_right.width = ph_params.ph_frame.right.width
+        phx_window_type.frame_right.psi_glazing = ph_params.ph_frame.right.psi_glazing
+        phx_window_type.frame_right.psi_install = ph_params.ph_frame.right.psi_install
+
+        phx_window_type.frame_bottom.u_value = ph_params.ph_frame.bottom.u_factor
+        phx_window_type.frame_bottom.width = ph_params.ph_frame.bottom.width
+        phx_window_type.frame_bottom.psi_glazing = ph_params.ph_frame.bottom.psi_glazing
+        phx_window_type.frame_bottom.psi_install = ph_params.ph_frame.bottom.psi_install
+
+        phx_window_type.frame_left.u_value = ph_params.ph_frame.left.u_factor
+        phx_window_type.frame_left.width = ph_params.ph_frame.left.width
+        phx_window_type.frame_left.psi_glazing = ph_params.ph_frame.left.psi_glazing
+        phx_window_type.frame_left.psi_install = ph_params.ph_frame.left.psi_install
+    else:
+        # -- Use the basic Honeybee Params
+        print('no here!', _hb_win_const.u_factor)
+        phx_window_type.frame_top.u_value = _hb_win_const.u_factor
+        phx_window_type.frame_top.width = 0.1
+        phx_window_type.frame_top.psi_glazing = 0.0
+        phx_window_type.frame_top.psi_install = 0.0
+
+        phx_window_type.frame_right.u_value = _hb_win_const.u_factor
+        phx_window_type.frame_right.width = 0.1
+        phx_window_type.frame_right.psi_glazing = 0.0
+        phx_window_type.frame_right.psi_install = 0.0
+
+        phx_window_type.frame_bottom.u_value = _hb_win_const.u_factor
+        phx_window_type.frame_bottom.width = 0.1
+        phx_window_type.frame_bottom.psi_glazing = 0.0
+        phx_window_type.frame_bottom.psi_install = 0.0
+
+        phx_window_type.frame_left.u_value = _hb_win_const.u_factor
+        phx_window_type.frame_left.width = 0.1
+        phx_window_type.frame_left.psi_glazing = 0.0
+        phx_window_type.frame_left.psi_install = 0.0
+
+    # -- Window Params as per ISO-10077-1 -------------------------------------
+    if ph_params.ph_frame and ph_params.ph_glazing:
+        phx_window_type.frame_factor = iso_10077_1.calculate_window_frame_factor(
+            ph_params.ph_frame, ph_params.ph_glazing)
+        phx_window_type.u_value_window = iso_10077_1.calculate_window_uw(
+            ph_params.ph_frame, ph_params.ph_glazing)
+    else:
+        phx_window_type.frame_factor = 0.75
+        phx_window_type.u_value_window = _hb_win_const.u_factor
+
+    return phx_window_type
+
+
 def build_transparent_assemblies_from_HB_Model(_project, _hb_model: model.Model) -> None:
-    """Create Transparent Constructions from an HB Model and add to the PHX-Project
+    """Create PHX-WindowTypes (constructions) from an HB Model and add to the PHX-Project
 
     Will also align the id_nums of the Aperture Construction's with the WindowType in the Project dict.
 
@@ -119,18 +214,16 @@ def build_transparent_assemblies_from_HB_Model(_project, _hb_model: model.Model)
     for room in _hb_model.rooms:
         for face in room.faces:
             for aperture in face._apertures:
-                aperture_const = aperture.properties.energy.construction
+                hb_win_construction = aperture.properties.energy.construction
 
-                if aperture_const.identifier not in _project._window_types.keys():
-                    new_aperture_constr = constructions.WindowType()
-                    new_aperture_constr.id_num = constructions.WindowType._count
-                    new_aperture_constr.name = aperture_const.display_name
+                if hb_win_construction.identifier not in _project._window_types.keys():
 
-                    # TODO: Convert the other HB Values into WUFI-speak
+                    phx_aperture_constr = build_phx_window_type_from_hb_win_construction(
+                        hb_win_construction)
 
-                    _project._window_types[aperture_const.identifier] = new_aperture_constr
+                    _project._window_types[hb_win_construction.identifier] = phx_aperture_constr
 
-                aperture_const.properties.ph.id_num = _project._window_types[
-                    aperture_const.identifier].id_num
+                hb_win_construction.properties.ph.id_num = _project._window_types[
+                    hb_win_construction.identifier].id_num
 
     return None

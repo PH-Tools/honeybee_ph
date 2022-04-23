@@ -1,28 +1,28 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-#
+# 
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-#
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
-# Honeybee-PH is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published
-# by the Free Software Foundation; either version 3 of the License,
-# or (at your option) any later version.
-#
+# 
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
+# Honeybee-PH is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published 
+# by the Free Software Foundation; either version 3 of the License, 
+# or (at your option) any later version. 
+# 
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
 # GNU General Public License for more details.
-#
+# 
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-#
+# 
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
 Enter the relevant Phius Certification threshold data for the building-segment.
 -
-EM January 29, 2022
+EM April 8, 2022
     Args:
         _PHIUS_annual_heating_demand_kWh_m2:
         _PHIUS_annual_cooling_demand_kWh_m2:
@@ -44,12 +44,12 @@ EM January 29, 2022
 import honeybee_ph.phius
 import honeybee_ph_utils.preview
 
-# ---
+# --- 
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Phius Certification"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JAN_29_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_08_2022')
 
 if DEV:
     reload(honeybee_ph.phius)
