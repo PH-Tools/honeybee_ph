@@ -4,13 +4,13 @@
 """PHX Geometry Classes"""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Collection, List, Union, Iterable
+from typing import Any, ClassVar, Collection, List, Union, Iterable, Optional
 
 
 @dataclass
 class Vertix:
     _count: ClassVar[int] = 0
-    id_num: int = 0
+    id_num: int = field(init=False, default=0)
     x: float = 0.0
     y: float = 0.0
     z: float = 0.0
@@ -21,9 +21,9 @@ class Vertix:
             (self.z == other.z) and \
             (self.id_num == other.id_num)
 
-    def __new__(cls, *args, **kwargs) -> 'Vertix':
-        cls._count += 1
-        return super(Vertix, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self):
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
     @property
     def unique_key(self) -> str:
@@ -37,8 +37,8 @@ class Vertix:
 @dataclass
 class Polygon:
     _count: ClassVar[int] = 0
-    id_num: int = 0
-    normal_vector: Any = None
+    id_num: int = field(init=False, default=0)
+    normal_vector: Optional[Any] = None  # TODO: What the fuck should this be????
     vertices: List[Vertix] = field(default_factory=list)
     child_polygon_ids: List[int] = field(default_factory=list)
 
@@ -46,9 +46,15 @@ class Polygon:
     def vertices_id_numbers(self) -> List[int]:
         return [v.id_num for v in self.vertices]
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(Polygon, cls).__new__(cls, *args, **kwargs)
+    def add_vertix(self, _phx_vertix: Vertix) -> None:
+        self.vertices.append(_phx_vertix)
+
+    def add_child_poly_id(self, _child_id: int) -> None:
+        self.child_polygon_ids.append(_child_id)
+
+    def __post_init__(self):
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
 
 @dataclass
@@ -72,3 +78,6 @@ class Graphics3D:
 
         for polygon in _polygons:
             self.polygons.append(polygon)
+
+    def __bool__(self) -> bool:
+        return bool(self.polygons)

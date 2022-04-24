@@ -3,29 +3,31 @@
 
 """PHX Passive House Electrical Equipment (Appliances) Classes"""
 
-from typing import Dict, Optional, Any
+from typing import Optional, ClassVar, Union, List
 from dataclasses import dataclass, field
+import uuid
 
 
+@dataclass
 class PhxElectricalEquipment:
     """Base class for PHX Electrical Equipment (dishwashers, laundry, lighting, etc.)"""
-    _count: int = 0
+    _count: ClassVar[int] = 0
 
-    def __init__(self):
-        self.display_name: str = '_unnamed_equipment_'
-        self.id_num: int = self._count
-        self.comment: Optional[str] = None
-        self.reference_quantity: int = 1
-        self.quantity: int = 1
-        self.in_conditioned_space: bool = True
-        self.reference_energy_norm: int = 2
-        self.energy_demand: float = 100
-        self.energy_demand_per_use: float = 100
-        self.combined_energy_factor: float = 0
+    identifier: Union[uuid.UUID, str] = field(default_factory=uuid.uuid4)
+    display_name: str = '_unnamed_equipment_'
+    id_num: int = field(init=False, default=0)
+    comment: str = ""
+    reference_quantity: int = 1
+    quantity: int = 1
+    in_conditioned_space: bool = True
+    reference_energy_norm: int = 2
+    energy_demand: float = 100
+    energy_demand_per_use: float = 100
+    combined_energy_factor: float = 0
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(PhxElectricalEquipment, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
 
 class PhxDishwasher(PhxElectricalEquipment):
@@ -127,19 +129,23 @@ class PhxCustomMEL(PhxElectricalEquipment):
         self.display_name = "User defined - Misc electrical loads"
         super().__init__()
 
+
 # -----------------------------------------------------------------------------
 
 
 @dataclass
 class PhxElectricEquipmentCollection:
     """A collection of all the electric-equipment (laundry, lighting, etc.) on the Zone"""
-    _equipment: Dict[str, Any] = field(default_factory=dict)
+    _equipment: dict = field(default_factory=dict)
 
     @property
-    def equipment(self):
+    def equipment(self) -> List[PhxElectricalEquipment]:
+        if not self._equipment:
+            return []
         return sorted(self._equipment.values(), key=lambda e: e.display_name)
 
     def equipment_in_collection(self, _equipment_key) -> bool:
+        """Returns True if the key supplied is in the existing equipment set."""
         return _equipment_key in self._equipment.keys()
 
     def get_equipment_by_key(self, _key: str) -> Optional[PhxElectricalEquipment]:
@@ -159,3 +165,6 @@ class PhxElectricEquipmentCollection:
             * None
         """
         self._equipment[_key] = _equipment
+
+    def __bool__(self) -> bool:
+        return bool(self._equipment)

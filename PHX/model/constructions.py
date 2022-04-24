@@ -28,15 +28,15 @@ class Layer:
 @dataclass
 class Assembly:
     _count: ClassVar[int] = 0
-    id_num: int = 0
+    id_num: int = field(init=False, default=0)
     display_name: str = ""
     layer_order: int = 2  # Outside to Inside
     grid_kind: int = 2  # Medium
     layers: list[Layer] = field(default_factory=list)
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(Assembly, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
 
 @dataclass
@@ -49,8 +49,8 @@ class WindowFrameElement:
 
 @dataclass
 class WindowType:
-    _count = 0
-    id_num: int = 0
+    _count: ClassVar[int] = 0
+    id_num: int = field(init=False, default=0)
     display_name: str = ""
 
     use_detailed_uw: bool = True
@@ -69,6 +69,6 @@ class WindowType:
     glass_mean_emissivity: float = 0.1
     glass_g_value: float = 0.4
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(WindowType, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count

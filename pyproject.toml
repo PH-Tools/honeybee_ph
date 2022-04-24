@@ -7,3 +7,16 @@ filterwarnings = [
     "ignore::UserWarning",
     'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
+
+[tool.coverage.run]
+branch = true
+source = ["PHX/model"]
+cover_pylib = false
+command_line = "-m pytest tests/test_PHX"
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 100
+
+[tool.coverage.html]
+directory = "_coverage_html"

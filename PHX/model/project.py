@@ -15,7 +15,7 @@ from PHX.model.hvac import collection
 @dataclass
 class Variant:
     _count: ClassVar[int] = 0
-    id_num: int = 0
+    id_num: int = field(init=False, default=0)
     name: str = "unnamed_variant"
     remarks: str = ""
     plugin: str = ""
@@ -27,9 +27,9 @@ class Variant:
     mech_systems: collection.PhxMechanicalEquipmentCollection = field(
         default_factory=collection.PhxMechanicalEquipmentCollection)
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(Variant, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
 
 @dataclass

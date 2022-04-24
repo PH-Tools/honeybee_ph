@@ -4,6 +4,7 @@
 """Functions to build PHX-Variant from Honeybee Rooms"""
 
 from honeybee import room
+from honeybee_energy_ph.properties.load import equipment
 from PHX.model import project, certification, ground, climate
 from PHX.from_HBJSON import create_building, create_geometry, create_hvac, create_shw, create_elec_equip
 
@@ -51,7 +52,7 @@ def add_building_from_hb_room(_variant: project.Variant, _hb_room: room.Room, gr
         create_building.create_zones_from_hb_room(_hb_room))
 
     if group_components:
-        _variant.building.group_components_by_assembly()
+        _variant.building.merge_components_by_assembly()
 
 
 def add_phius_certification_from_hb_room(_variant: project.Variant, _hb_room: room.Room) -> None:
@@ -99,14 +100,13 @@ def add_PH_Building_from_hb_room(_variant: project.Variant, _hb_room: room.Room)
     ph_building.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
 
     # TODO: Foundations. For now: set to None
-    none_foundation = ground.Foundation()
-    ph_building.foundations.append(none_foundation)
+    ph_building.add_foundation(ground.Foundation())
 
     # Set the airtightness for Building
     ph_building.airtightness_q50 = _hb_room.properties.energy.infiltration.flow_per_exterior_area * 3600
 
     # Not clear why this is a list in the WUFI file? When would there be more than one?
-    _variant.ph_data.ph_buildings.append(ph_building)
+    _variant.ph_data.add_ph_building(ph_building)
 
     return None
 
@@ -403,7 +403,8 @@ def add_elec_equip_from_hb_room(_variant: project.Variant, _hb_room: room.Room) 
         * None
     """
 
-    for equip_key, device in _hb_room.properties.energy.electric_equipment.properties.ph.equipment_collection.items():
+    ee_properties_ph: equipment.ElectricEquipmentPhProperties = _hb_room.properties.energy.electric_equipment.properties.ph
+    for equip_key, device in ee_properties_ph.equipment_collection.items():
         phx_elec_device = create_elec_equip.build_phx_elec_device(device)
         for zone in _variant.building.zones:
             zone.elec_equipment_collection.add_new_equipment(

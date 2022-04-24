@@ -5,18 +5,22 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
+from typing import ClassVar, Union
+import uuid
+
+# TODO: Refactor names: these are not only for Vent...
 
 
 @dataclass
 class UtilPat_Vent_Collection:
-    patterns: dict = field(default_factory=dict)
+    patterns: dict = field(init=False, default_factory=dict)
 
     def add_new_util_pattern(self, _util_pattern: UtilizationPatternVent | None) -> None:
         """Add a new Utilization Pattern to the Collection.
 
         Arguments:
         ----------
-            * _util_pattern (UtilizationPatternVent): The Utilization patten to add
+            * _util_pattern (UtilizationPatternVent): The UtilizationPatternVent pattern to add
                 to the collection.
 
         Returns:
@@ -39,6 +43,9 @@ class UtilPat_Vent_Collection:
         for v in self.patterns.values():
             yield v
 
+    def __bool__(self):
+        return bool(self.patterns)
+
 
 @dataclass
 class Vent_OperatingPeriod:
@@ -56,17 +63,17 @@ class Vent_UtilPeriods:
 
 @dataclass
 class UtilizationPatternVent:
-    _count = 0
+    _count: ClassVar[int] = 0
+    id_num: int = field(init=False, default=0)
     name: str = '__unamed_vent_pattern__'
-    id_num: int = 0
-    identifier = None
+    identifier: Union[uuid.UUID, str] = field(default_factory=uuid.uuid4)
     operating_days: int = 7
     operating_weeks: int = 52
     operating_periods: Vent_UtilPeriods = field(default_factory=Vent_UtilPeriods)
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(UtilizationPatternVent, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
     def force_max_utilization_hours(self, _max_hours: float = 24.0, _tol: int = 2) -> None:
         """Ensure that the total utilization hours never exceed target (default=24).
@@ -79,3 +86,6 @@ class UtilizationPatternVent:
         total = a + b + c
         remainder = round(_max_hours - total, _tol)
         self.operating_periods.high.period_operating_hours = remainder
+
+    def __hash__(self):
+        return hash(self.identifier)

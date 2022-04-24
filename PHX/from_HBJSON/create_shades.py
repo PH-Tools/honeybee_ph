@@ -53,7 +53,7 @@ def _create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.C
     new_compo.color_interior = 1  # Ext wall, inner surface
     new_compo.color_exterior = 1  # Ext wall, inner surface
 
-    new_compo.polygon_ids = [_shade.properties.ph.id_num]
+    new_compo.add_polygon_id(_shade.properties.ph.id_num)
 
     return new_compo
 

@@ -18,6 +18,7 @@ class PhxVentilationFlowrates:
 @dataclass
 class PhxRoomVentilation:
     _count: ClassVar[int] = 0
+    id_num: int = field(init=False, default=0)
     name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1
@@ -31,6 +32,6 @@ class PhxRoomVentilation:
     vent_pattern_id_num: int = 0
     flow_rates: PhxVentilationFlowrates = field(default_factory=PhxVentilationFlowrates)
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(PhxRoomVentilation, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count

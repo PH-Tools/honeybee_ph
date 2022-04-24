@@ -108,7 +108,7 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     new_compo.color_exterior = 4  # Window
     new_compo.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
 
-    new_compo.polygon_ids = [_aperture.properties.ph.id_num]
+    new_compo.add_polygon_id(_aperture.properties.ph.id_num)
 
     return new_compo
 
@@ -139,7 +139,7 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
         "color_interior", str(_hb_face.boundary_condition), 1, str(_hb_face.type))
     new_compo.color_exterior = get_wufi_enum(
         "color_exterior", str(_hb_face.boundary_condition), 1, str(_hb_face.type))
-    new_compo.polygon_ids = [_hb_face.properties.ph.id_num]
+    new_compo.add_polygon_id(_hb_face.properties.ph.id_num)
 
     return new_compo
 

@@ -44,11 +44,11 @@ def create_PHX_Polyon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geome
     """
     new_polygon = geometry.Polygon()
 
-    new_polygon.id_num = geometry.Polygon._count
+    new_polygon.id_num = geometry.Polygon._count  # TODO: WHY?
     _hb_aperture.properties._ph.id_num = new_polygon.id_num
     new_polygon.normal_vector = _hb_aperture.normal
-    new_polygon.vertices = [create_PHX_Vertix_from_LBT_P3D(v)
-                            for v in _hb_aperture.vertices]
+    for v in _hb_aperture.vertices:
+        new_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
 
     return new_polygon
 
@@ -66,12 +66,12 @@ def create_PHX_Polyon_from_hb_face(_hb_face: face.Face) -> geometry.Polygon:
     """
     new_polygon = geometry.Polygon()
 
-    new_polygon.id_num = geometry.Polygon._count
+    new_polygon.id_num = geometry.Polygon._count  # TODO: WHY?
     _hb_face.properties._ph.id_num = new_polygon.id_num
     new_polygon.normal_vector = _hb_face.normal
     new_polygon.vertices = [create_PHX_Vertix_from_LBT_P3D(v) for v in _hb_face.vertices]
-    new_polygon.child_polygon_ids = [aperture.properties.ph.id_num
-                                     for aperture in _hb_face.apertures]
+    for aperture in _hb_face.apertures:
+        new_polygon.add_child_poly_id(aperture.properties.ph.id_num)
 
     return new_polygon
 
@@ -90,10 +90,10 @@ def create_PHX_Polygon_from_hb_shade(_hb_shade: shade.Shade) -> geometry.Polygon
     """
     new_polygon = geometry.Polygon()
 
-    new_polygon.id_num = geometry.Polygon._count
+    new_polygon.id_num = geometry.Polygon._count  # TODO: WHY?
     _hb_shade.properties.ph.id_num = new_polygon.id_num
     new_polygon.normal_vector = _hb_shade.normal
-    new_polygon.vertices = [create_PHX_Vertix_from_LBT_P3D(
-        v) for v in _hb_shade.vertices]
+    for v in _hb_shade.vertices:
+        new_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
 
     return new_polygon

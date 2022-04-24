@@ -23,7 +23,8 @@ class PhxZoneCoverage:
 class PhxMechanicalEquipmentCollection:
     """A collection of all the mechanical subsystems (heating, cooling, etc) in the project"""
     _count: ClassVar[int] = 0
-    id_num: int = 0
+
+    id_num: int = field(init=False, default=0)
     display_name: str = "Ideal Air System"
     sys_type_num: int = 1
     sys_type_str: str = "User defined (ideal system)"
@@ -31,13 +32,13 @@ class PhxMechanicalEquipmentCollection:
     zone_coverage: PhxZoneCoverage = field(default_factory=PhxZoneCoverage)
     _subsystems: Dict[str, _base.PhxMechanicalSubSystem] = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
+
     @property
     def subsystems(self):
         return self._subsystems.values()
-
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(PhxMechanicalEquipmentCollection, cls).__new__(cls, *args, **kwargs)
 
     def subsystem_in_collection(self, _subsystem_key) -> bool:
         return _subsystem_key in self._subsystems.keys()

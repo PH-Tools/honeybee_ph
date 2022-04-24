@@ -7,10 +7,13 @@ from __future__ import annotations
 from typing import ClassVar
 from dataclasses import dataclass, field
 
+from PHX.model import ground
+
 
 @dataclass
 class PH_Building:
     _count: ClassVar[int] = 0
+    id_num: int = field(init=False, default=0)
     building_category: int = 1
     occupancy_type: int = 1
     building_status: int = 1
@@ -20,11 +23,14 @@ class PH_Building:
     occupancy_setting_method: int = 2  # Design
 
     airtightness_q50: float = 1.0  # m3/hr-m2-envelope
-    foundations: list = field(default_factory=list)
+    foundations: list[ground.Foundation] = field(default_factory=list)
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(PH_Building, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
+
+    def add_foundation(self, _input: ground.Foundation) -> None:
+        self.foundations.append(_input)
 
 
 @dataclass
@@ -36,3 +42,6 @@ class PassivehouseData:
     peak_heating_load: float = 10.0
     peak_cooling_load: float = 10.0
     ph_buildings: list[PH_Building] = field(default_factory=list)
+
+    def add_ph_building(self, _input: PH_Building) -> None:
+        self.ph_buildings.append(_input)

@@ -16,7 +16,7 @@ from PHX.model import loads, elec_equip
 @dataclass
 class Zone:
     _count: ClassVar[int] = 0
-    id_num: int = 0
+    id_num: int = field(init=False, default=0)
     name: str = ""
     volume_gross: float = 0.0
     volume_net: float = 0.0
@@ -29,15 +29,15 @@ class Zone:
     res_occupant_quantity: int = 0
     res_number_bedrooms: int = 0
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(Zone, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
 
 @dataclass
 class Component:
     _count: ClassVar[int] = 0
-    id_num: int = 0
+    id_num: int = field(init=False, default=0)
     name: str = ""
     type: int = 1
     color_interior: int = 1
@@ -47,16 +47,28 @@ class Component:
     interior_attachment_id: int = -1
     assembly_type_id_num: int = -1
     window_type_id_num: int = -1
-    polygon_ids: list[int] = field(default_factory=list)
+    polygon_ids: set[int] = field(default_factory=set)
 
-    def __new__(cls, *args, **kwargs):
-        cls._count += 1
-        return super(Component, cls).__new__(cls, *args, **kwargs)
+    def __post_init__(self) -> None:
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
-    def __add__(self, other):
-        self.name = 'Merged_Component'
-        self.polygon_ids += other.polygon_ids
-        return self
+    @property
+    def unique_key(self) -> str:
+        return f'{self.type}-{self.exposure_interior}-{self.interior_attachment_id}-'\
+            f'{self.exposure_exterior}-{self.assembly_type_id_num}-{self.window_type_id_num}'
+
+    def add_polygon_id(self, _input: int) -> None:
+        self.polygon_ids.add(_input)
+
+    def __add__(self, other: Component) -> 'Component':
+        new_obj = self.__class__()
+        for attr_name, attr_val in vars(self).items():
+            setattr(new_obj, attr_name, attr_val)
+
+        new_obj.name = 'Merged_Component'
+        new_obj.polygon_ids = set.union(self.polygon_ids, other.polygon_ids)
+        return new_obj
 
 
 @dataclass
@@ -80,13 +92,12 @@ class Building:
         for zone in _zones:
             self.zones.append(zone)
 
-    def group_components_by_assembly(self):
+    def merge_components_by_assembly(self) -> None:
+        """Merge together the Components in the Building if they gave the same Attributes."""
         # -- Group the components by their unique key / type
         new_component_groups = defaultdict(list)
         for c in self.components:
-            type_key = f'{c.type}-{c.exposure_interior}-{c.interior_attachment_id}-'\
-                f'{c.exposure_exterior}-{c.assembly_type_id_num}-{c.window_type_id_num}'
-            new_component_groups[type_key].append(c)
+            new_component_groups[c.unique_key].append(c)
 
         # -- Create new components from the group
         grouped_components = []
@@ -95,3 +106,14 @@ class Building:
 
         # -- Reset the Building's Components
         self.components = grouped_components
+
+    @property
+    def polygon_ids(self) -> set[int]:
+        """Return a set of all the Polygon IDs of of all the Components in the building."""
+        p_ids = set()
+        for compo in self.components:
+            p_ids.update(compo.polygon_ids)
+        return p_ids
+
+    def __bool__(self) -> bool:
+        return bool(self.components) or bool(self.zones)
