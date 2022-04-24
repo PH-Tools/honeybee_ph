@@ -9,10 +9,16 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-branch = true
-source = ["PHX/model"]
-cover_pylib = false
+# --- For testing...
 command_line = "-m pytest tests/test_PHX"
+source = ["PHX/model"]
+# ---
+branch = true
+cover_pylib = false
+omit = [
+    "*.venv/*",
+    "*.venv_mbair/*"
+]
 
 [tool.coverage.report]
 show_missing = true
