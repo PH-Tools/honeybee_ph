@@ -4,8 +4,10 @@
 """PHX Passive House Mechanical Equipment Classes"""
 
 from __future__ import annotations
+from inspect import signature
 from dataclasses import dataclass, field
 from typing import Optional, ClassVar
+
 from PHX.model.hvac.enums import DeviceType
 
 
@@ -106,7 +108,27 @@ class PhxMechanicalEquipment:
             return self
         else:
             return self + other
+    
+    @classmethod
+    def from_kwargs(cls, **kwargs):
+        """Allow for the create of base object from arbitrary kwarg input.
+        
+        This is used by subclasses dring __add__ or __copy__, otherwise fields
+        such as 'id_num' or any other init=False fields result in an AttributeError.
+        """
+        # fetch the constructor's signature
+        cls_fields = {field for field in signature(cls).parameters}
 
+        # split the kwargs into native ones and new ones
+        native_args, new_args = {}, {}
+        for name, val in kwargs.items():
+            if name in cls_fields:
+                native_args[name] = val
+            else:
+                new_args[name] = val
+
+        # use the native ones to create the class ...
+        return cls(**native_args)
 
 @dataclass
 class PhxMechanicalSubSystem:

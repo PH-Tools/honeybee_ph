@@ -1,7 +1,7 @@
 import pytest
 from PHX.model import project, geometry, schedules, certification, constructions, building, elec_equip
 from PHX.model.loads import ventilation
-from PHX.model.hvac import _base, collection
+from PHX.model.hvac import _base, cooling, collection
 
 
 @pytest.fixture
@@ -42,6 +42,7 @@ def reset_class_counters():
     _base.PhxMechanicalEquipment._count = 0
     _base.PhxMechanicalSubSystem._count = 0
     collection.PhxMechanicalEquipmentCollection._count = 0
+    cooling.PhxCoolingDevice._count = 0
 
     yield
 
@@ -59,3 +60,4 @@ def reset_class_counters():
     _base.PhxMechanicalEquipment._count = 0
     _base.PhxMechanicalSubSystem._count = 0
     collection.PhxMechanicalEquipmentCollection._count = 0
+    cooling.PhxCoolingDevice._count = 0
