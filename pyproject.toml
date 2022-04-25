@@ -11,7 +11,7 @@ filterwarnings = [
 [tool.coverage.run]
 # --- For testing...
 command_line = "-m pytest tests/test_PHX"
-source = ["PHX/model"]
+source = ["PHX"]
 # ---
 branch = true
 cover_pylib = false

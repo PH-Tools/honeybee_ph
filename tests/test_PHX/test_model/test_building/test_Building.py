@@ -3,8 +3,8 @@ from PHX.model import building
 
 
 def test_default_Building(reset_class_counters):
-    b1 = building.Building()
-    b2 = building.Building()
+    b1 = building.PhxBuilding()
+    b2 = building.PhxBuilding()
 
     assert id(b1) != id(b2)
     assert not b1
@@ -16,8 +16,8 @@ def test_default_Building(reset_class_counters):
 
 
 def test_add_single_component(reset_class_counters):
-    b = building.Building()
-    c1 = building.Component()
+    b = building.PhxBuilding()
+    c1 = building.PhxComponent()
     b.add_components(c1)
 
     assert b
@@ -27,9 +27,9 @@ def test_add_single_component(reset_class_counters):
 
 
 def test_add_multiple_components(reset_class_counters):
-    b = building.Building()
-    c1 = building.Component()
-    c2 = building.Component()
+    b = building.PhxBuilding()
+    c1 = building.PhxComponent()
+    c2 = building.PhxComponent()
     b.add_components([c1, c2])
 
     assert b
@@ -40,8 +40,8 @@ def test_add_multiple_components(reset_class_counters):
 
 
 def test_add_single_zone(reset_class_counters):
-    b = building.Building()
-    z1 = building.Zone()
+    b = building.PhxBuilding()
+    z1 = building.PhxZone()
     b.add_zones(z1)
 
     assert b
@@ -51,9 +51,9 @@ def test_add_single_zone(reset_class_counters):
 
 
 def test_add_multiple_zones(reset_class_counters):
-    b = building.Building()
-    z1 = building.Zone()
-    z2 = building.Zone()
+    b = building.PhxBuilding()
+    z1 = building.PhxZone()
+    z2 = building.PhxZone()
     b.add_zones([z1, z2])
 
     assert b
@@ -64,8 +64,8 @@ def test_add_multiple_zones(reset_class_counters):
 
 
 def test_group_compos_by_assembly_with_single_compo(reset_class_counters):
-    b = building.Building()
-    c1 = building.Component()
+    b = building.PhxBuilding()
+    c1 = building.PhxComponent()
     b.add_components(c1)
     b.merge_components_by_assembly()
 
@@ -76,10 +76,10 @@ def test_group_compos_by_assembly_with_single_compo(reset_class_counters):
 
 
 def test_merge_compos_by_assembly_with_multiple_compos_same_assembly(reset_class_counters):
-    b = building.Building()
-    c1 = building.Component(assembly_type_id_num=1, polygon_ids={1, 2})
-    c2 = building.Component(assembly_type_id_num=1, polygon_ids={3, 4, 5})
-    c3 = building.Component(assembly_type_id_num=1, polygon_ids={6})
+    b = building.PhxBuilding()
+    c1 = building.PhxComponent(assembly_type_id_num=1, polygon_ids={1, 2})
+    c2 = building.PhxComponent(assembly_type_id_num=1, polygon_ids={3, 4, 5})
+    c3 = building.PhxComponent(assembly_type_id_num=1, polygon_ids={6})
     b.add_components([c1, c2, c3])
     b.merge_components_by_assembly()
 
@@ -100,12 +100,12 @@ def test_merge_compos_by_assembly_with_multiple_compos_same_assembly(reset_class
 
 
 def test_merge_compos_by_assembly_with_multiple_compos_different_assembly(reset_class_counters):
-    b = building.Building()
-    c1 = building.Component(assembly_type_id_num=1, polygon_ids={1, 2})
-    c2 = building.Component(assembly_type_id_num=1, polygon_ids={3, 4, 5})
-    c3 = building.Component(assembly_type_id_num=2, polygon_ids={6})
-    c4 = building.Component(assembly_type_id_num=2, polygon_ids={7, 8, 9})
-    c5 = building.Component(assembly_type_id_num=3, polygon_ids={10, 11})
+    b = building.PhxBuilding()
+    c1 = building.PhxComponent(assembly_type_id_num=1, polygon_ids={1, 2})
+    c2 = building.PhxComponent(assembly_type_id_num=1, polygon_ids={3, 4, 5})
+    c3 = building.PhxComponent(assembly_type_id_num=2, polygon_ids={6})
+    c4 = building.PhxComponent(assembly_type_id_num=2, polygon_ids={7, 8, 9})
+    c5 = building.PhxComponent(assembly_type_id_num=3, polygon_ids={10, 11})
     b.add_components([c1, c2, c3, c4, c5])
     b.merge_components_by_assembly()
 

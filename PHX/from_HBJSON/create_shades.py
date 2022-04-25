@@ -9,7 +9,7 @@ from PHX.model import building
 from PHX.from_HBJSON import create_geometry
 
 
-def _add_shade_geometry_from_model(_var: project.Variant, _hb_model: model.Model) -> None:
+def _add_shade_geometry_from_model(_var: project.PhxVariant, _hb_model: model.Model) -> None:
     """Creates new PHX Polygons for the shades and adds them to the PHX-Variant.graphics3D
 
     Arguments:
@@ -29,7 +29,7 @@ def _add_shade_geometry_from_model(_var: project.Variant, _hb_model: model.Model
     return None
 
 
-def _create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.Component:
+def _create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.PhxComponent:
     """Returns a new PHX-Component for based on the Honeybee-Shade.
 
     Arguments:
@@ -41,10 +41,10 @@ def _create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.C
         * building.Component: A new PHX-Component for the HB-Shade.
     """
 
-    new_compo = building.Component()
+    new_compo = building.PhxComponent()
 
     new_compo.name = _shade.display_name
-    new_compo.id_num = building.Component._count
+    new_compo.id_num = building.PhxComponent._count
 
     new_compo.type = 1  # Opaque
 
@@ -58,7 +58,7 @@ def _create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.C
     return new_compo
 
 
-def _add_shade_compos_from_model(_var: project.Variant, _hb_model: model.Model) -> None:
+def _add_shade_compos_from_model(_var: project.PhxVariant, _hb_model: model.Model) -> None:
     """Creates new PHX-Components for the shades and adds them to the PHX-Variant.building.components
 
     Arguments:
@@ -78,7 +78,7 @@ def _add_shade_compos_from_model(_var: project.Variant, _hb_model: model.Model) 
     return None
 
 
-def add_model_shades_to_variant(_var: project.Variant, _hb_model: model.Model) -> None:
+def add_model_shades_to_variant(_var: project.PhxVariant, _hb_model: model.Model) -> None:
     """"Create shading objects from model orphaned shades and add to the PHX-Variant.
 
     Arguments:

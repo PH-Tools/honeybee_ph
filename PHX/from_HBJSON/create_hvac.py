@@ -108,15 +108,15 @@ def build_phx_heating_electric(_hbeph_heater: heating.PhHeatingSystem) -> hvac.P
     return phx_obj
 
 
-def build_phx_heating_fossil_boiler(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterBoiler:
-    phx_obj = hvac.PhxHeaterBoiler.fossil()
+def build_phx_heating_fossil_boiler(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterBoilerFossil:
+    phx_obj = hvac.PhxHeaterBoilerFossil()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_wood_boiler(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterBoiler:
-    phx_obj = hvac.PhxHeaterBoiler.wood()
+def build_phx_heating_wood_boiler(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterBoilerWood:
+    phx_obj = hvac.PhxHeaterBoilerWood()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
@@ -129,22 +129,22 @@ def build_phx_heating_district(_hbeph_heater: heating.PhHeatingSystem) -> hvac.P
     return phx_obj
 
 
-def build_phx_heating_hp_annual(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterHeatPump:
-    phx_obj = hvac.PhxHeaterHeatPump.annual()
+def build_phx_heating_hp_annual(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterHeatPumpAnnual:
+    phx_obj = hvac.PhxHeaterHeatPumpAnnual()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_monthly(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterHeatPump:
-    phx_obj = hvac.PhxHeaterHeatPump.monthly()
+def build_phx_heating_hp_monthly(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterHeatPumpMonthly:
+    phx_obj = hvac.PhxHeaterHeatPumpMonthly()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj
 
 
-def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterHeatPump:
-    phx_obj = hvac.PhxHeaterHeatPump.combined()
+def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> hvac.PhxHeaterHeatPumpCombined:
+    phx_obj = hvac.PhxHeaterHeatPumpCombined()
     phx_obj = _transfer_attributes(_hbeph_heater, phx_obj)
     phx_obj.usage_profile.space_heating = True
     return phx_obj

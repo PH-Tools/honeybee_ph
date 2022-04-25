@@ -74,10 +74,10 @@ def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> hvac.Phx
     # -- Get the right constructor based on the type of heater
     heaters = {
         'PhSHWHeaterElectric': hvac.PhxHeaterElectric,
-        'PhSHWHeaterBoiler': hvac.PhxHeaterBoiler.fossil,
-        'PhSHWHeaterBoilerWood': hvac.PhxHeaterBoiler.wood,
+        'PhSHWHeaterBoiler': hvac.PhxHeaterBoilerFossil,
+        'PhSHWHeaterBoilerWood': hvac.PhxHeaterBoilerWood,
         'PhSHWHeaterDistrict': hvac.PhxHeaterDistrictHeat,
-        'PhSHWHeaterHeatPump': hvac.PhxHeaterHeatPump.hot_water,
+        'PhSHWHeaterHeatPump': hvac.PhxHeaterHeatPumpHotWater,
     }
 
     # -- Build the basic heater and set basic data

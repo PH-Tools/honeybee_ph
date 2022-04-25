@@ -5,22 +5,22 @@ from PHX.model.hvac import _base, cooling, collection, water, ventilation, heati
 
 
 @pytest.fixture
-def polygon_1x1x0() -> geometry.Polygon:
-    p1 = geometry.Polygon()
-    p1.add_vertix(geometry.Vertix(0, 0, 0))
-    p1.add_vertix(geometry.Vertix(0, 1, 0))
-    p1.add_vertix(geometry.Vertix(1, 1, 0))
-    p1.add_vertix(geometry.Vertix(1, 0, 0))
+def polygon_1x1x0() -> geometry.PhxPolygon:
+    p1 = geometry.PhxPolygon()
+    p1.add_vertix(geometry.PhxVertix(0, 0, 0))
+    p1.add_vertix(geometry.PhxVertix(0, 1, 0))
+    p1.add_vertix(geometry.PhxVertix(1, 1, 0))
+    p1.add_vertix(geometry.PhxVertix(1, 0, 0))
     return p1
 
 
 @pytest.fixture
-def polygon_2x2x0() -> geometry.Polygon:
-    p1 = geometry.Polygon()
-    p1.add_vertix(geometry.Vertix(0, 0, 0))
-    p1.add_vertix(geometry.Vertix(0, 2, 0))
-    p1.add_vertix(geometry.Vertix(2, 2, 0))
-    p1.add_vertix(geometry.Vertix(2, 0, 0))
+def polygon_2x2x0() -> geometry.PhxPolygon:
+    p1 = geometry.PhxPolygon()
+    p1.add_vertix(geometry.PhxVertix(0, 0, 0))
+    p1.add_vertix(geometry.PhxVertix(0, 2, 0))
+    p1.add_vertix(geometry.PhxVertix(2, 2, 0))
+    p1.add_vertix(geometry.PhxVertix(2, 0, 0))
     return p1
 
 
@@ -28,15 +28,15 @@ def polygon_2x2x0() -> geometry.Polygon:
 def reset_class_counters():
     """Re-set class's _count variable in order to test incrementing properly"""
 
-    project.Variant._count = 0
-    geometry.Vertix._count = 0
-    geometry.Polygon._count = 0
+    project.PhxVariant._count = 0
+    geometry.PhxVertix._count = 0
+    geometry.PhxPolygon._count = 0
     schedules.UtilizationPatternVent._count = 0
-    certification.PH_Building._count = 0
+    certification.PhxPHBuilding._count = 0
     constructions.Assembly._count = 0
     constructions.WindowType._count = 0
-    building.Zone._count = 0
-    building.Component._count = 0
+    building.PhxZone._count = 0
+    building.PhxComponent._count = 0
     elec_equip.PhxElectricalEquipment._count = 0
     PhxRoomVentilation._count = 0
     _base.PhxMechanicalEquipment._count = 0
@@ -66,15 +66,15 @@ def reset_class_counters():
 
     yield
 
-    project.Variant._count = 0
-    geometry.Vertix._count = 0
-    geometry.Polygon._count = 0
+    project.PhxVariant._count = 0
+    geometry.PhxVertix._count = 0
+    geometry.PhxPolygon._count = 0
     schedules.UtilizationPatternVent._count = 0
-    certification.PH_Building._count = 0
+    certification.PhxPHBuilding._count = 0
     constructions.Assembly._count = 0
     constructions.WindowType._count = 0
-    building.Zone._count = 0
-    building.Component._count = 0
+    building.PhxZone._count = 0
+    building.PhxComponent._count = 0
     elec_equip.PhxElectricalEquipment._count = 0
     PhxRoomVentilation._count = 0
     _base.PhxMechanicalEquipment._count = 0

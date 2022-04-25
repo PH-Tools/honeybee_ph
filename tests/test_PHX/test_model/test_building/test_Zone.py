@@ -2,8 +2,8 @@ from PHX.model import building
 
 
 def test_default_building(reset_class_counters):
-    z1 = building.Zone()
-    z2 = building.Zone()
+    z1 = building.PhxZone()
+    z2 = building.PhxZone()
 
     assert z1.id_num == 1
     assert z2.id_num == 2

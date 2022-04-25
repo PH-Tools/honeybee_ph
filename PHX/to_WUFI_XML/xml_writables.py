@@ -3,7 +3,7 @@
 
 """Classes used to build XML Node Objects which are used during XML Output"""
 
-from typing import Union, Collection, Any
+from typing import Union, Collection, Any, Optional
 
 # Type Alias
 xml_valid = Union[str, float, int, bool, None]
@@ -15,7 +15,7 @@ class XML_Node:
     def __init__(
         self, _node_name: str,
         _node_value: xml_valid,
-        _attr_name: str = None,
+        _attr_name: Optional[str] = None,
         _attr_value: xml_valid = None
     ):
         self.node_name = _node_name
@@ -52,25 +52,26 @@ class XML_List:
 
 
 class XML_Object:
-    """XML Writable Object. Object fields will be writen out as child nodes"""
+    """XML Writable Object. Object fields will be written out as child nodes"""
 
     def __init__(
         self,
         _node_name: str,
         _node_object: Any,
-        _attr_name: str = None,
+        _attr_name: Optional[str] = None,
         _attr_value: xml_valid = None,
-        _schema_name: str = None,
+        _schema_name: Optional[str] = None,
     ):
         """
         Arguments:
         ----------
             * _node_name (str): The XML name for the node.
             * _node_object (Any): The Honeybee Object to write to the node.
-            * _attr_name (str | None): Optional XML node attribue name.
-            * _attr_value (str | None): Optional XML node attribute value.
-            * _schema_name (str | None): Optional explict name for xml_schema function to use when writing to XML.
-                If None is passed, uses the class name preceded by and underscore.
+            * _attr_name (Optional[str]): Optional XML node attribute name.
+            * _attr_value (Optional[str]): Optional XML node attribute value.
+            * _schema_name (Optional[str]): Optional explicit name for xml_schema 
+                function to use when writing to XML. If None is passed, uses the
+                class name preceded by and underscore.
         """
 
         self.node_name = _node_name

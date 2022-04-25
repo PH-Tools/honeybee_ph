@@ -14,7 +14,7 @@ from PHX.model import loads, elec_equip
 
 
 @dataclass
-class Zone:
+class PhxZone:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
     name: str = ""
@@ -35,7 +35,7 @@ class Zone:
 
 
 @dataclass
-class Component:
+class PhxComponent:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
     name: str = ""
@@ -61,7 +61,7 @@ class Component:
     def add_polygon_id(self, _input: int) -> None:
         self.polygon_ids.add(_input)
 
-    def __add__(self, other: Component) -> 'Component':
+    def __add__(self, other: PhxComponent) -> 'PhxComponent':
         new_obj = self.__class__()
         for attr_name, attr_val in vars(self).items():
             setattr(new_obj, attr_name, attr_val)
@@ -72,11 +72,11 @@ class Component:
 
 
 @dataclass
-class Building:
-    components: list[Component] = field(default_factory=list)
-    zones: list[Zone] = field(default_factory=list)
+class PhxBuilding:
+    components: list[PhxComponent] = field(default_factory=list)
+    zones: list[PhxZone] = field(default_factory=list)
 
-    def add_components(self, _components: Component | list[Component]) -> None:
+    def add_components(self, _components: PhxComponent | list[PhxComponent]) -> None:
         """Add a new PHX-Component to the PHX-Building"""
         if not isinstance(_components, Collection):
             _components = [_components]
@@ -84,7 +84,7 @@ class Building:
         for compo in _components:
             self.components.append(compo)
 
-    def add_zones(self, _zones: Zone | list[Zone]) -> None:
+    def add_zones(self, _zones: PhxZone | list[PhxZone]) -> None:
         """Add a new PHX-Zone to the PHX-Building"""
         if not isinstance(_zones, Collection):
             _zones = [_zones]

@@ -234,7 +234,7 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
     return new_room
 
 
-def weld_vertices(_variant: project.Variant) -> project.Variant:
+def weld_vertices(_variant: project.PhxVariant) -> project.PhxVariant:
     """
     Used to try and weld/unify the vertices of a variant.
 

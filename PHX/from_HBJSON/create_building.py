@@ -82,7 +82,7 @@ def get_wufi_enum(_schema_nm: str, _key: str, _default: Any, _sub_schema: Option
     return schema.get(_key, _default)
 
 
-def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.Component:
+def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.PhxComponent:
     """Create a new Transparent (window) Component based on a Honeybee Aperture.
 
     Arguments:
@@ -94,10 +94,10 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     --------
         * building.Component: A new Transparent (window) Component.
     """
-    new_compo = building.Component()
+    new_compo = building.PhxComponent()
 
     new_compo.name = _aperture.display_name
-    new_compo.id_num = building.Component._count
+    new_compo.id_num = building.PhxComponent._count
 
     new_compo.type = 2  # Transparent
 
@@ -113,7 +113,7 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     return new_compo
 
 
-def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) -> building.Component:
+def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) -> building.PhxComponent:
     """Returns a new Opaque Component based on a Honeybee Face,
 
     Arguments:
@@ -125,10 +125,10 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
     --------
         * building.Component: The new Opaque Component.
     """
-    new_compo = building.Component()
+    new_compo = building.PhxComponent()
 
     new_compo.name = _hb_face.display_name
-    new_compo.id_num = building.Component._count
+    new_compo.id_num = building.PhxComponent._count
     new_compo.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
 
     new_compo.type = get_wufi_enum("face_type", str(_hb_face.type), 1)
@@ -144,7 +144,7 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
     return new_compo
 
 
-def create_components_from_hb_room(_hb_room: room.Room) -> List[building.Component]:
+def create_components_from_hb_room(_hb_room: room.Room) -> List[building.PhxComponent]:
     """Create new Opaque and Transparent PHX-Components based on Honeybee-Room Faces.
 
     Arguments:
@@ -165,7 +165,7 @@ def create_components_from_hb_room(_hb_room: room.Room) -> List[building.Compone
     return compos
 
 
-def create_zones_from_hb_room(_hb_room: room.Room) -> building.Zone:
+def create_zones_from_hb_room(_hb_room: room.Room) -> building.PhxZone:
     """Create a new PHX-Zone based on a honeybee-Room.
 
     Arguments:
@@ -176,9 +176,9 @@ def create_zones_from_hb_room(_hb_room: room.Room) -> building.Zone:
     --------
         * building.Zone: The new PHX-Zone object.
     """
-    new_zone = building.Zone()
+    new_zone = building.PhxZone()
 
-    new_zone.id_num = building.Zone._count
+    new_zone.id_num = building.PhxZone._count
     new_zone.name = _hb_room.display_name
 
     # -- Sort the room order by full_name

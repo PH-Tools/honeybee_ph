@@ -2,18 +2,18 @@ from PHX.model import geometry
 
 
 def test_blank_Polygon(reset_class_counters):
-    p1 = geometry.Polygon()
+    p1 = geometry.PhxPolygon()
     assert p1.id_num == 1
-    assert not p1.normal_vector
+    assert p1.normal_vector
     assert not p1.vertices
     assert not p1.child_polygon_ids
     assert not p1.vertices_id_numbers
 
 
 def test_multiple_Polygon_id_numbers(reset_class_counters):
-    p1 = geometry.Polygon()
-    p2 = geometry.Polygon()
-    p3 = geometry.Polygon()
+    p1 = geometry.PhxPolygon()
+    p2 = geometry.PhxPolygon()
+    p3 = geometry.PhxPolygon()
 
     assert p1.id_num == 1
     assert p2.id_num == 2
@@ -21,12 +21,12 @@ def test_multiple_Polygon_id_numbers(reset_class_counters):
 
 
 def test_add_vertices_to_Polygon(reset_class_counters):
-    p1 = geometry.Polygon()
+    p1 = geometry.PhxPolygon()
 
-    v1 = geometry.Vertix(0, 0, 0)
-    v2 = geometry.Vertix(0, 1, 0)
-    v3 = geometry.Vertix(1, 1, 0)
-    v4 = geometry.Vertix(1, 0, 0)
+    v1 = geometry.PhxVertix(0, 0, 0)
+    v2 = geometry.PhxVertix(0, 1, 0)
+    v3 = geometry.PhxVertix(1, 1, 0)
+    v4 = geometry.PhxVertix(1, 0, 0)
 
     p1.add_vertix(v1)
     p1.add_vertix(v2)
@@ -47,17 +47,17 @@ def test_add_vertices_to_Polygon(reset_class_counters):
 
 
 def test_add_child_poly_id(reset_class_counters, polygon_1x1x0, polygon_2x2x0):
-    p1 = geometry.Polygon()
-    p1.add_vertix(geometry.Vertix(0, 0, 0))
-    p1.add_vertix(geometry.Vertix(0, 1, 0))
-    p1.add_vertix(geometry.Vertix(1, 1, 0))
-    p1.add_vertix(geometry.Vertix(1, 0, 0))
+    p1 = geometry.PhxPolygon()
+    p1.add_vertix(geometry.PhxVertix(0, 0, 0))
+    p1.add_vertix(geometry.PhxVertix(0, 1, 0))
+    p1.add_vertix(geometry.PhxVertix(1, 1, 0))
+    p1.add_vertix(geometry.PhxVertix(1, 0, 0))
 
-    p2 = geometry.Polygon()
-    p2.add_vertix(geometry.Vertix(0, 0, 0))
-    p2.add_vertix(geometry.Vertix(0, 2, 0))
-    p2.add_vertix(geometry.Vertix(2, 2, 0))
-    p2.add_vertix(geometry.Vertix(2, 0, 0))
+    p2 = geometry.PhxPolygon()
+    p2.add_vertix(geometry.PhxVertix(0, 0, 0))
+    p2.add_vertix(geometry.PhxVertix(0, 2, 0))
+    p2.add_vertix(geometry.PhxVertix(2, 2, 0))
+    p2.add_vertix(geometry.PhxVertix(2, 0, 0))
 
     p1.add_child_poly_id(p2.id_num)
     assert len(p1.child_polygon_ids) == 1

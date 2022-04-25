@@ -3,14 +3,14 @@ from PHX.model import geometry
 
 
 def test_empty_Graphics3D(reset_class_counters):
-    g3d = geometry.Graphics3D()
+    g3d = geometry.PhxGraphics3D()
     assert not g3d
     assert not g3d.polygons
     assert not g3d.vertices
 
 
 def test_add_single_polygon(reset_class_counters, polygon_1x1x0):
-    g3d = geometry.Graphics3D()
+    g3d = geometry.PhxGraphics3D()
     g3d.add_polygons(polygon_1x1x0)
 
     assert g3d
@@ -21,7 +21,7 @@ def test_add_single_polygon(reset_class_counters, polygon_1x1x0):
 
 
 def test_add_two_polygon(reset_class_counters, polygon_1x1x0, polygon_2x2x0):
-    g3d = geometry.Graphics3D()
+    g3d = geometry.PhxGraphics3D()
     g3d.add_polygons([polygon_1x1x0, polygon_2x2x0])
 
     assert g3d

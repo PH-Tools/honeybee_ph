@@ -13,17 +13,17 @@ from PHX.model.hvac import collection
 
 
 @dataclass
-class Variant:
+class PhxVariant:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
     name: str = "unnamed_variant"
     remarks: str = ""
     plugin: str = ""
-    graphics3D: geometry.Graphics3D = field(default_factory=geometry.Graphics3D)
-    building: building.Building = field(default_factory=building.Building)
-    ph_data: certification.PassivehouseData = field(
-        default_factory=certification.PassivehouseData)
-    climate: climate.ClimateLocation = field(default_factory=climate.ClimateLocation)
+    graphics3D: geometry.PhxGraphics3D = field(default_factory=geometry.PhxGraphics3D)
+    building: building.PhxBuilding = field(default_factory=building.PhxBuilding)
+    ph_certification: certification.PhxPHCertification = field(
+        default_factory=certification.PhxPHCertification)
+    location: climate.PhxLocation = field(default_factory=climate.PhxLocation)
     mech_systems: collection.PhxMechanicalEquipmentCollection = field(
         default_factory=collection.PhxMechanicalEquipmentCollection)
 
@@ -44,7 +44,7 @@ class ProjectData_Agent:
 
 
 @dataclass
-class ProjectData:
+class PhxProjectData:
     customer: ProjectData_Agent = field(default_factory=ProjectData_Agent)
     building: ProjectData_Agent = field(default_factory=ProjectData_Agent)
     owner: ProjectData_Agent = field(default_factory=ProjectData_Agent)
@@ -67,7 +67,7 @@ class PhxProject:
     utilization_patterns_ph: list = field(default_factory=list)
     variants: list = field(default_factory=list)
 
-    project_data: ProjectData = field(default_factory=ProjectData)
+    project_data: PhxProjectData = field(default_factory=PhxProjectData)
 
     data_version: int = 48
     unit_system: int = 1
@@ -83,7 +83,7 @@ class PhxProject:
     def window_types(self):
         return self._window_types.values()
 
-    def add_new_variant(self, _variant: Variant) -> None:
+    def add_new_variant(self, _variant: PhxVariant) -> None:
         """Adds a new PHX Variant to the Project."""
         self.variants.append(_variant)
 

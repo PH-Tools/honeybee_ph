@@ -13,10 +13,10 @@ from PHX.to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_wr
 TOL_LEV1 = 2  # Value tolerance for rounding. ie; 9.843181919194 -> 9.84
 TOL_LEV2 = 10  # Value tolerance for rounding. ie; 9.843181919194 -> 9.8431819192
 
-# -- PROJECT --
+# -- PROJECT ------------------------------------------------------------------
 
 
-def _Project(_wufi_project: project.PhxProject) -> List[xml_writable]:
+def _PhxProject(_wufi_project: project.PhxProject) -> List[xml_writable]:
     return [
         XML_Node("DataVersion", _wufi_project.data_version),
         XML_Node("UnitSystem", _wufi_project.data_version),
@@ -45,7 +45,7 @@ def _Project(_wufi_project: project.PhxProject) -> List[xml_writable]:
     ]
 
 
-def _Variant(_variant: project.Variant) -> List[xml_writable]:
+def _PhxVariant(_variant: project.PhxVariant) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _variant.id_num),
         XML_Node("Name", _variant.name),
@@ -53,14 +53,14 @@ def _Variant(_variant: project.Variant) -> List[xml_writable]:
         XML_Node("PlugIn", _variant.plugin),
         XML_Object("Graphics_3D", _variant.graphics3D),
         XML_Object("Building", _variant.building),
-        XML_Object("ClimateLocation", _variant.climate),
-        XML_Object("PassivehouseData", _variant.ph_data),
+        XML_Object("ClimateLocation", _variant.location),
+        XML_Object("PassivehouseData", _variant.ph_certification),
         XML_Object("HVAC", _variant.mech_systems,
                    _schema_name='_HVAC_Collection'),
     ]
 
 
-def _ProjectData(_project_data: project.ProjectData) -> List[xml_writable]:
+def _PhxProjectData(_project_data: project.PhxProjectData) -> List[xml_writable]:
     return [
         XML_Node("Year_Construction", _project_data.year_constructed),
         XML_Node("OwnerIsClient", _project_data.owner_is_client),
@@ -92,10 +92,10 @@ def _ProjectData(_project_data: project.ProjectData) -> List[xml_writable]:
     ]
 
 
-# -- BUILDING --
+# -- BUILDING -----------------------------------------------------------------
 
 
-def _Building(_b: building.Building) -> List[xml_writable]:
+def _PhxBuilding(_b: building.PhxBuilding) -> List[xml_writable]:
     return [
         XML_List("Components", [XML_Object("Component", c, "index", i)
                  for i, c in enumerate(_b.components)]),
@@ -104,7 +104,7 @@ def _Building(_b: building.Building) -> List[xml_writable]:
     ]
 
 
-def _Zone(_z: building.Zone) -> List[xml_writable]:
+def _PhxZone(_z: building.PhxZone) -> List[xml_writable]:
     return [
         XML_Node("Name", _z.name),
         XML_Node("KindZone", 1, "choice", "Simulated zone"),
@@ -129,7 +129,7 @@ def _Zone(_z: building.Zone) -> List[xml_writable]:
     ]
 
 
-def _Component(_c: building.Component) -> List[xml_writable]:
+def _PhxComponent(_c: building.PhxComponent) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _c.id_num),
         XML_Node("Name", _c.name),
@@ -147,10 +147,10 @@ def _Component(_c: building.Component) -> List[xml_writable]:
     ]
 
 
-# -- CERTIFICATION --
+# -- CERTIFICATION ------------------------------------------------------------
 
 
-def _PH_Building(_ph_bldg: certification.PH_Building) -> List[xml_writable]:
+def _PhxPHBuilding(_ph_bldg: certification.PhxPHBuilding) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _ph_bldg._count),
         XML_Node("BuildingCategory", _ph_bldg.building_category),
@@ -166,20 +166,24 @@ def _PH_Building(_ph_bldg: certification.PH_Building) -> List[xml_writable]:
     ]
 
 
-def _PassivehouseData(_ph_data: certification.PassivehouseData) -> List[xml_writable]:
+def _PhxPHCertification(_ph_data: certification.PhxPHCertification) -> List[xml_writable]:
     return [
-        XML_Node("PH_CertificateCriteria", _ph_data.ph_certificate_criteria),
-        XML_Node("PH_SelectionTargetData", _ph_data.ph_selection_target_data),
-        XML_Node("AnnualHeatingDemand", _ph_data.annual_heating_demand),
-        XML_Node("AnnualCoolingDemand", _ph_data.annual_cooling_demand),
-        XML_Node("PeakHeatingLoad", _ph_data.peak_heating_load),
-        XML_Node("PeakCoolingLoad", _ph_data.peak_cooling_load),
+        XML_Node("PH_CertificateCriteria",
+                 _ph_data.certification_criteria.ph_certificate_criteria),
+        XML_Node("PH_SelectionTargetData",
+                 _ph_data.certification_criteria.ph_selection_target_data),
+        XML_Node("AnnualHeatingDemand",
+                 _ph_data.certification_criteria.annual_heating_demand),
+        XML_Node("AnnualCoolingDemand",
+                 _ph_data.certification_criteria.annual_cooling_demand),
+        XML_Node("PeakHeatingLoad", _ph_data.certification_criteria.peak_heating_load),
+        XML_Node("PeakCoolingLoad", _ph_data.certification_criteria.peak_cooling_load),
         XML_List("PH_Buildings", [XML_Object("PH_Building", obj, "index", i)
-                 for i, obj in enumerate(_ph_data.ph_buildings)]),
+                 for i, obj in enumerate(_ph_data.building_data)]),
     ]
 
 
-# -- FOUNDATIONS --
+# -- FOUNDATIONS --------------------------------------------------------------
 
 def _FoundationInterface(_f: ground.Foundation) -> List[xml_writable]:
     return [
@@ -224,9 +228,9 @@ def _FoundationInterface(_f: ground.Foundation) -> List[xml_writable]:
 
 # -- CLIMATE --
 
-def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> List[xml_writable]:
+def _PH_ClimateLocation(_phx_location: climate.PhxLocation) -> List[xml_writable]:
 
-    def _in_wufi_order(_factor_dict: dict) -> List[climate.PH_Factor]:
+    def _in_wufi_order(_factor_dict: dict) -> List[climate.PhxEnergyFactor]:
         """Returns the PE /CO2 conversion factors in WUFI-specific order."""
         fuel_order = ["OIL", "NATURAL_GAS", "LPG", "HARD_COAL", "WOOD", "ELECTRICITY_MIX",
                       "ELECTRICITY_PV", "HARD_COAL_CGS_70_CHP", "HARD_COAL_CGS_35_CHP",
@@ -236,91 +240,112 @@ def _PH_ClimateLocation(_climate: climate.PH_ClimateLocation) -> List[xml_writab
         return [_factor_dict[fuel_name] for fuel_name in fuel_order]
 
     return [
-        XML_Node('Selection', _climate.selection),
-        XML_Node('DailyTemperatureSwingSummer', _climate.daily_temp_swing),
-        XML_Node('AverageWindSpeed', _climate.avg_wind_speed),
+        XML_Node('Selection', _phx_location.selection),
+        XML_Node('DailyTemperatureSwingSummer', _phx_location.climate.daily_temp_swing),
+        XML_Node('AverageWindSpeed', _phx_location.climate.avg_wind_speed),
 
         # -- Location
-        XML_Node('Latitude', _climate.location.latitude),
-        XML_Node('Longitude', _climate.location.longitude),
-        XML_Node('HeightNNWeatherStation', _climate.location.weather_station_elevation),
-        XML_Node('dUTC', _climate.location.hours_from_UTC),
-        XML_Node('ClimateZone', _climate.location.climate_zone),
+        XML_Node('Latitude', _phx_location.site.latitude),
+        XML_Node('Longitude', _phx_location.site.longitude),
+        XML_Node('HeightNNWeatherStation', _phx_location.site.weather_station_elevation),
+        XML_Node('dUTC', _phx_location.site.hours_from_UTC),
+        XML_Node('ClimateZone', _phx_location.site.climate_zone),
 
         # -- Ground
         XML_Node('GroundThermalConductivity',
-                 _climate.ground.ground_thermal_conductivity),
-        XML_Node('GroundHeatCapacitiy', _climate.ground.ground_heat_capacity),
-        XML_Node('GroundDensity', _climate.ground.ground_density),
-        XML_Node('DepthGroundwater', _climate.ground.depth_groundwater),
-        XML_Node('FlowRateGroundwater', _climate.ground.flow_rate_groundwater),
+                 _phx_location.ground.ground_thermal_conductivity),
+        XML_Node('GroundHeatCapacitiy', _phx_location.ground.ground_heat_capacity),
+        XML_Node('GroundDensity', _phx_location.ground.ground_density),
+        XML_Node('DepthGroundwater', _phx_location.ground.depth_groundwater),
+        XML_Node('FlowRateGroundwater', _phx_location.ground.flow_rate_groundwater),
 
         # -- Monthly
         XML_List('TemperatureMonthly', [XML_Node("Item", val, "index", i)
-                                        for i, val in enumerate(_climate.monthly_temperature_air)]),
+                                        for i, val in enumerate(_phx_location.climate.monthly_temperature_air)]),
         XML_List('DewPointTemperatureMonthly', [XML_Node("Item", val, "index", i)
-                                                for i, val in enumerate(_climate.monthly_temperature_dewpoint)]),
+                                                for i, val in enumerate(_phx_location.climate.monthly_temperature_dewpoint)]),
         XML_List('SkyTemperatureMonthly', [XML_Node("Item", val, "index", i)
-                                           for i, val in enumerate(_climate.monthly_temperature_sky)]),
+                                           for i, val in enumerate(_phx_location.climate.monthly_temperature_sky)]),
         XML_List('NorthSolarRadiationMonthly', [XML_Node("Item", val, "index", i)
-                                                for i, val in enumerate(_climate.monthly_radiation_north)]),
+                                                for i, val in enumerate(_phx_location.climate.monthly_radiation_north)]),
         XML_List('EastSolarRadiationMonthly', [XML_Node("Item", val, "index", i)
-                                               for i, val in enumerate(_climate.monthly_radiation_east)]),
+                                               for i, val in enumerate(_phx_location.climate.monthly_radiation_east)]),
         XML_List('SouthSolarRadiationMonthly', [XML_Node("Item", val, "index", i)
-                                                for i, val in enumerate(_climate.monthly_radiation_south)]),
+                                                for i, val in enumerate(_phx_location.climate.monthly_radiation_south)]),
         XML_List('WestSolarRadiationMonthly', [XML_Node("Item", val, "index", i)
-                                               for i, val in enumerate(_climate.monthly_radiation_west)]),
+                                               for i, val in enumerate(_phx_location.climate.monthly_radiation_west)]),
         XML_List('GlobalSolarRadiationMonthly', [XML_Node("Item", val, "index", i)
-                                                 for i, val in enumerate(_climate.monthly_radiation_global)]),
+                                                 for i, val in enumerate(_phx_location.climate.monthly_radiation_global)]),
 
         # -- Peak Load Values
-        XML_Node('TemperatureHeating1', _climate.peak_heating_1.temp),
-        XML_Node('NorthSolarRadiationHeating1', _climate.peak_heating_1.rad_north),
-        XML_Node('EastSolarRadiationHeating1', _climate.peak_heating_1.rad_east),
-        XML_Node('SouthSolarRadiationHeating1', _climate.peak_heating_1.rad_south),
-        XML_Node('WestSolarRadiationHeating1', _climate.peak_heating_1.rad_west),
-        XML_Node('GlobalSolarRadiationHeating1', _climate.peak_heating_1.rad_global),
+        XML_Node('TemperatureHeating1', _phx_location.climate.peak_heating_1.temp),
+        XML_Node('NorthSolarRadiationHeating1',
+                 _phx_location.climate.peak_heating_1.rad_north),
+        XML_Node('EastSolarRadiationHeating1',
+                 _phx_location.climate.peak_heating_1.rad_east),
+        XML_Node('SouthSolarRadiationHeating1',
+                 _phx_location.climate.peak_heating_1.rad_south),
+        XML_Node('WestSolarRadiationHeating1',
+                 _phx_location.climate.peak_heating_1.rad_west),
+        XML_Node('GlobalSolarRadiationHeating1',
+                 _phx_location.climate.peak_heating_1.rad_global),
 
-        XML_Node('TemperatureHeating2', _climate.peak_heating_2.temp),
-        XML_Node('NorthSolarRadiationHeating2', _climate.peak_heating_2.rad_north),
-        XML_Node('EastSolarRadiationHeating2', _climate.peak_heating_2.rad_east),
-        XML_Node('SouthSolarRadiationHeating2', _climate.peak_heating_2.rad_south),
-        XML_Node('WestSolarRadiationHeating2', _climate.peak_heating_2.rad_west),
-        XML_Node('GlobalSolarRadiationHeating2', _climate.peak_heating_2.rad_global),
+        XML_Node('TemperatureHeating2', _phx_location.climate.peak_heating_2.temp),
+        XML_Node('NorthSolarRadiationHeating2',
+                 _phx_location.climate.peak_heating_2.rad_north),
+        XML_Node('EastSolarRadiationHeating2',
+                 _phx_location.climate.peak_heating_2.rad_east),
+        XML_Node('SouthSolarRadiationHeating2',
+                 _phx_location.climate.peak_heating_2.rad_south),
+        XML_Node('WestSolarRadiationHeating2',
+                 _phx_location.climate.peak_heating_2.rad_west),
+        XML_Node('GlobalSolarRadiationHeating2',
+                 _phx_location.climate.peak_heating_2.rad_global),
 
-        XML_Node('TemperatureCooling', _climate.peak_cooling_1.temp),
-        XML_Node('NorthSolarRadiationCooling', _climate.peak_cooling_1.rad_north),
-        XML_Node('EastSolarRadiationCooling', _climate.peak_cooling_1.rad_east),
-        XML_Node('SouthSolarRadiationCooling', _climate.peak_cooling_1.rad_south),
-        XML_Node('WestSolarRadiationCooling', _climate.peak_cooling_1.rad_west),
-        XML_Node('GlobalSolarRadiationCooling', _climate.peak_cooling_1.rad_global),
+        XML_Node('TemperatureCooling', _phx_location.climate.peak_cooling_1.temp),
+        XML_Node('NorthSolarRadiationCooling',
+                 _phx_location.climate.peak_cooling_1.rad_north),
+        XML_Node('EastSolarRadiationCooling',
+                 _phx_location.climate.peak_cooling_1.rad_east),
+        XML_Node('SouthSolarRadiationCooling',
+                 _phx_location.climate.peak_cooling_1.rad_south),
+        XML_Node('WestSolarRadiationCooling',
+                 _phx_location.climate.peak_cooling_1.rad_west),
+        XML_Node('GlobalSolarRadiationCooling',
+                 _phx_location.climate.peak_cooling_1.rad_global),
 
-        XML_Node('TemperatureCooling2', _climate.peak_cooling_2.temp),
-        XML_Node('NorthSolarRadiationCooling2', _climate.peak_cooling_2.rad_north),
-        XML_Node('EastSolarRadiationCooling2', _climate.peak_cooling_2.rad_east),
-        XML_Node('SouthSolarRadiationCooling2', _climate.peak_cooling_2.rad_south),
-        XML_Node('WestSolarRadiationCooling2', _climate.peak_cooling_2.rad_west),
-        XML_Node('GlobalSolarRadiationCooling2', _climate.peak_cooling_2.rad_global),
+        XML_Node('TemperatureCooling2', _phx_location.climate.peak_cooling_2.temp),
+        XML_Node('NorthSolarRadiationCooling2',
+                 _phx_location.climate.peak_cooling_2.rad_north),
+        XML_Node('EastSolarRadiationCooling2',
+                 _phx_location.climate.peak_cooling_2.rad_east),
+        XML_Node('SouthSolarRadiationCooling2',
+                 _phx_location.climate.peak_cooling_2.rad_south),
+        XML_Node('WestSolarRadiationCooling2',
+                 _phx_location.climate.peak_cooling_2.rad_west),
+        XML_Node('GlobalSolarRadiationCooling2',
+                 _phx_location.climate.peak_cooling_2.rad_global),
 
-        XML_Node('SelectionPECO2Factor', _climate.selection_pe_co2_factor),
+        XML_Node('SelectionPECO2Factor',
+                 _phx_location.energy_factors.selection_pe_co2_factor),
         XML_List('PEFactorsUserDef', [XML_Node(f"PEF{i}", factor.value, "unit", factor.unit)
-                                      for i, factor in enumerate(_in_wufi_order(_climate.pe_factors))]),
+                                      for i, factor in enumerate(_in_wufi_order(_phx_location.energy_factors.pe_factors))]),
         XML_List('CO2FactorsUserDef', [XML_Node(f"CO2F{i}", factor.value, "unit", factor.unit)
-                                       for i, factor in enumerate(_in_wufi_order(_climate.co2_factors))]),
+                                       for i, factor in enumerate(_in_wufi_order(_phx_location.energy_factors.co2_factors))]),
     ]
 
 
-def _ClimateLocation(_climate: climate.ClimateLocation) -> List[xml_writable]:
+def _PhxLocation(_phx_location: climate.PhxLocation) -> List[xml_writable]:
     return [
-        XML_Node('Selection', _climate.selection),
+        XML_Node('Selection', _phx_location.selection),
         # XML_Node('IDNr_DB', _climate.),
         # XML_Node('Name_DB', _climate.),
         # XML_Node('Comment_DB', _climate.),
-        XML_Node('Latitude_DB', _climate.ph_climate_location.location.latitude, 'unit', "°"),
-        XML_Node('Longitude_DB', _climate.ph_climate_location.location.longitude,  'unit', "°"),
+        XML_Node('Latitude_DB', _phx_location.site.latitude, 'unit', "°"),
+        XML_Node('Longitude_DB', _phx_location.site.longitude,  'unit', "°"),
         XML_Node(
-            'HeightNN_DB', _climate.ph_climate_location.location.weather_station_elevation, 'unit', "m"),
-        XML_Node('dUTC_DB', _climate.ph_climate_location.location.hours_from_UTC),
+            'HeightNN_DB', _phx_location.site.weather_station_elevation, 'unit', "m"),
+        XML_Node('dUTC_DB', _phx_location.site.hours_from_UTC),
         # XML_Node('FileName_DB', _climate.),
         # XML_Node('Type_DB', _climate.),
         # XML_Node('CatalogueNr_DB', _climate.),
@@ -332,14 +357,15 @@ def _ClimateLocation(_climate: climate.ClimateLocation) -> List[xml_writable]:
         XML_Node('CloudIndex', 0.66, 'unit', "-"),
         XML_Node('CO2concenration', 350, 'unit', "mg/m³"),
         XML_Node('Unit_CO2concentration', 48, 'choice', "ppmv"),
-        XML_Object('PH_ClimateLocation', _climate.ph_climate_location),
+        XML_Object('PH_ClimateLocation', _phx_location,
+                   _schema_name='_PH_ClimateLocation'),
     ]
 
 
-# -- GEOMETRY --
+# -- GEOMETRY -----------------------------------------------------------------
 
 
-def _Graphics3D(_graphics3D: geometry.Graphics3D) -> List[xml_writable]:
+def _PhxGraphics3D(_graphics3D: geometry.PhxGraphics3D) -> List[xml_writable]:
     return [
         XML_List("Vertices", [XML_Object("Vertix", var, "index", i)
                  for i, var in enumerate(_graphics3D.vertices)]),
@@ -348,7 +374,7 @@ def _Graphics3D(_graphics3D: geometry.Graphics3D) -> List[xml_writable]:
     ]
 
 
-def _Polygon(_p: geometry.Polygon) -> List[xml_writable]:
+def _PhxPolygon(_p: geometry.PhxPolygon) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _p.id_num),
         XML_Node("NormalVectorX", round(_p.normal_vector.x, TOL_LEV2)),
@@ -366,7 +392,7 @@ def _Polygon(_p: geometry.Polygon) -> List[xml_writable]:
     ]
 
 
-def _Vertix(_v: geometry.Vertix) -> List[xml_writable]:
+def _PhxVertix(_v: geometry.PhxVertix) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _v.id_num),
         XML_Node("X", round(_v.x, TOL_LEV2)),
@@ -375,7 +401,7 @@ def _Vertix(_v: geometry.Vertix) -> List[xml_writable]:
     ]
 
 
-# -- CONSTRUCTIONS --
+# -- CONSTRUCTIONS ------------------------------------------------------------
 
 
 def _Assembly(_a: constructions.Assembly) -> List[xml_writable]:
@@ -445,7 +471,7 @@ def _WindowType(_wt: constructions.WindowType) -> List[xml_writable]:
     ]
 
 
-# -- VENTILATION --
+# -- VENTILATION --------------------------------------------------------------
 
 
 def _RoomVentilation(_r: loads.PhxRoomVentilation) -> List[xml_writable]:
@@ -487,7 +513,7 @@ def _UtilizationPatternVent(_util_pat: schedules.UtilizationPatternVent) -> List
     ]
 
 
-# -- MECHANICAL DEVICES --
+# -- MECHANICAL DEVICES -------------------------------------------------------
 
 
 def _DeviceVentilator(_s: hvac.PhxMechanicalSubSystem) -> List[xml_writable]:
@@ -790,7 +816,7 @@ def _DeviceWaterStoragePhParams(_p: hvac.PhxHotWaterTankParams) -> List[xml_writ
     ]
 
 
-# -- MECHANICAL SYSTEMS / DISTRIBUTION
+# -- MECHANICAL SYSTEMS / DISTRIBUTION ----------------------------------------
 
 class DistributionDHW:
     def __init__(self):
@@ -957,7 +983,7 @@ def _PHDistribution(_c: hvac.PhxMechanicalEquipmentCollection):
     ]
 
 
-# -- MECHANICAL SYSTEMS / COLLECTIONS --
+# -- MECHANICAL SYSTEMS / COLLECTIONS -----------------------------------------
 
 
 def _PhxZoneCoverage(_zc: hvac.PhxZoneCoverage) -> List[xml_writable]:
@@ -1000,7 +1026,7 @@ def _HVAC_Collection(_hvac: hvac.PhxMechanicalEquipmentCollection) -> List[xml_w
                  for i, n in enumerate([_hvac])]),
     ]
 
-# -- ELEC. EQUIPMENT DEVICES --
+# -- ELEC. EQUIPMENT DEVICES --------------------------------------------------
 
 
 def _ResElecDevice_Dishwasher(_d: elec_equip.PhxDishwasher) -> List[xml_writable]:

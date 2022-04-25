@@ -29,7 +29,7 @@ if __name__ == '__main__':
     # --- Output the WUFI Project as an XML Text File
     # -------------------------------------------------------------------------
     print(f"[bold]> Generating XML Text for the Honeybee Model: [{hb_model}][/bold]")
-    xml_txt = xml_builder.generate_WUFI_XML_for_Project(wufi_Project)
+    xml_txt = xml_builder.generate_WUFI_XML_from_object(wufi_Project)
 
     print(f"[bold]> Saving the XML file to: ./{TARGET_FILE_XML}[/bold]")
     xml_txt_to_file.write_XML_text_file(TARGET_FILE_XML, xml_txt)

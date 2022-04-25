@@ -11,8 +11,9 @@ from PHX.model import ground
 
 
 @dataclass
-class PH_Building:
+class PhxPHBuilding:
     _count: ClassVar[int] = 0
+
     id_num: int = field(init=False, default=0)
     building_category: int = 1
     occupancy_type: int = 1
@@ -34,14 +35,20 @@ class PH_Building:
 
 
 @dataclass
-class PassivehouseData:
+class PhxPHCertificationCriteria:
     ph_certificate_criteria: int = 3
     ph_selection_target_data: int = 2
     annual_heating_demand: float = 15.0
     annual_cooling_demand: float = 15.0
     peak_heating_load: float = 10.0
     peak_cooling_load: float = 10.0
-    ph_buildings: list[PH_Building] = field(default_factory=list)
 
-    def add_ph_building(self, _input: PH_Building) -> None:
-        self.ph_buildings.append(_input)
+
+@dataclass
+class PhxPHCertification:
+    certification_criteria: PhxPHCertificationCriteria = field(
+        default_factory=PhxPHCertificationCriteria)
+    building_data: list[PhxPHBuilding] = field(default_factory=list)
+
+    def add_ph_building(self, _input: PhxPHBuilding) -> None:
+        self.building_data.append(_input)

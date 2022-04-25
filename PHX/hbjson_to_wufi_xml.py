@@ -68,7 +68,7 @@ if __name__ == '__main__':
     # --- Output the WUFI Project as an XML Text File
     # ---------------------------------------------------------------------------
     print(f'> Generating XML Text for the PHX-Project: "{phx_Project}"')
-    xml_txt = xml_builder.generate_WUFI_XML_for_Project(phx_Project)
+    xml_txt = xml_builder.generate_WUFI_XML_from_object(phx_Project)
 
     print(f"> Saving the XML file to: ./{TARGET_FILE_XML}")
     xml_txt_to_file.write_XML_text_file(TARGET_FILE_XML, xml_txt)

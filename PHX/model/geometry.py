@@ -3,19 +3,21 @@
 
 """PHX Geometry Classes"""
 
+from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Any, ClassVar, Collection, List, Union, Iterable, Optional
+from typing import ClassVar, Collection, List, Union, Iterable
 
 
 @dataclass
-class Vertix:
+class PhxVertix:
     _count: ClassVar[int] = 0
+
     id_num: int = field(init=False, default=0)
     x: float = 0.0
     y: float = 0.0
     z: float = 0.0
 
-    def __eq__(self, other: 'Vertix') -> bool:
+    def __eq__(self, other: PhxVertix) -> bool:
         return (self.x == other.x) and \
             (self.y == other.y) and \
             (self.z == other.z) and \
@@ -35,18 +37,26 @@ class Vertix:
 
 
 @dataclass
-class Polygon:
+class PhxVector:
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+
+
+@dataclass
+class PhxPolygon:
     _count: ClassVar[int] = 0
+
     id_num: int = field(init=False, default=0)
-    normal_vector: Optional[Any] = None  # TODO: What the fuck should this be????
-    vertices: List[Vertix] = field(default_factory=list)
+    normal_vector: PhxVector = PhxVector()
+    vertices: List[PhxVertix] = field(default_factory=list)
     child_polygon_ids: List[int] = field(default_factory=list)
 
     @property
     def vertices_id_numbers(self) -> List[int]:
         return [v.id_num for v in self.vertices]
 
-    def add_vertix(self, _phx_vertix: Vertix) -> None:
+    def add_vertix(self, _phx_vertix: PhxVertix) -> None:
         self.vertices.append(_phx_vertix)
 
     def add_child_poly_id(self, _child_id: int) -> None:
@@ -58,19 +68,20 @@ class Polygon:
 
 
 @dataclass
-class Graphics3D:
-    polygons: List[Polygon] = field(default_factory=list)
+class PhxGraphics3D:
+    polygons: List[PhxPolygon] = field(default_factory=list)
 
     @property
-    def vertices(self) -> Iterable:
-        """Returns a set with all of the unique vertix objects of all the polygons in the collection."""
+    def vertices(self) -> List[PhxVertix]:
+        """Returns a soreted list with all of the unique vertix objects of all the polygons in the collection."""
 
-        return {vertix
-                for polygon in self.polygons
-                for vertix in polygon.vertices
-                }
+        vertix_set = {vertix
+                      for polygon in self.polygons
+                      for vertix in polygon.vertices
+                      }
+        return sorted(vertix_set, key=lambda x: x.id_num)
 
-    def add_polygons(self, _polygons: Union[List[Polygon], Polygon]) -> None:
+    def add_polygons(self, _polygons: Union[List[PhxPolygon], PhxPolygon]) -> None:
         """Adds a new Polygon object to the collection"""
 
         if not isinstance(_polygons, Collection):

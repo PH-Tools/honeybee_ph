@@ -66,8 +66,8 @@ def test_add_variant_to_project(reset_class_counters):
 
     assert not proj.variants
 
-    var_1 = project.Variant()
-    var_2 = project.Variant()
+    var_1 = project.PhxVariant()
+    var_2 = project.PhxVariant()
 
     assert var_1.id_num == 1
     assert var_2.id_num == 2

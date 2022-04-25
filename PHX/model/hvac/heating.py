@@ -97,6 +97,9 @@ class PhxHeaterBoilerWood(PhxHeatingDevice):
         default_factory=PhxHeaterBoilerWoodParams)
 
 
+PhxHeaterBoiler = Union[PhxHeaterBoilerFossil, PhxHeaterBoilerWood]
+
+
 # -----------------------------------------------------------------------------
 # District Heat
 

@@ -3,9 +3,8 @@
 
 """Functions used to build up an XML file from a Honeybee Object"""
 
-from typing import Union
+from typing import Union, Any
 from xml.dom.minidom import Document, Element
-from PHX.model.project import PhxProject
 from PHX.to_WUFI_XML import xml_writables, xml_converter
 
 
@@ -66,7 +65,7 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
 
     If the _item passed in is a basic type like a string or number (xml_writables.XML_Node),
     it will just get added directly to the XML document. If the _item is an Object (xml_writables.XML_Object), 
-    the functuon 'xml_converter.convert_HB_object_to_xml_writables_list()' will get called on the object, 
+    the function 'xml_converter.convert_HB_object_to_xml_writables_list()' will get called on the object, 
     and all returned attributes will be added to the XML document. If _item is a list (xml_writables.XML_List) 
     then each item in the list gets added to the XML document in turn.
 
@@ -102,12 +101,13 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
             add_children(_doc, new_parent_node, each_item)
 
 
-def generate_WUFI_XML_for_Project(_project: PhxProject) -> str:
+def generate_WUFI_XML_from_object(_phx_object: Any, _header: str = "WUFIplusProject") -> str:
     """Create all the XML Nodes as text for the input Honeybee Model
 
     Arguments:
     ----------
-        * _project (Project): The WUFI Project to generate the XML Text for
+        * _phx_object (Any): The PHX Object to start from. All child objects will 
+            be included in the output as well.
 
     Returns:
     --------
@@ -115,10 +115,10 @@ def generate_WUFI_XML_for_Project(_project: PhxProject) -> str:
     """
 
     doc = Document()
-    root = doc.createElementNS(None, "WUFIplusProject")
+    root = doc.createElementNS(None, _header)
     doc.appendChild(root)
 
-    for item in xml_converter.convert_HB_object_to_xml_writables_list(_project):
+    for item in xml_converter.convert_HB_object_to_xml_writables_list(_phx_object):
         add_children(doc, root, item)
 
     return doc.toprettyxml()
