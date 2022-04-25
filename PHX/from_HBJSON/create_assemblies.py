@@ -140,7 +140,6 @@ def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowC
 
     # -- Frames ---------------------------------------------------------------
     if ph_params.ph_frame:
-        print('here!', ph_params.ph_frame.top.u_factor)
         # -- Use Detailed PH-Params
         phx_window_type.frame_top.u_value = ph_params.ph_frame.top.u_factor
         phx_window_type.frame_top.width = ph_params.ph_frame.top.width
@@ -163,7 +162,6 @@ def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowC
         phx_window_type.frame_left.psi_install = ph_params.ph_frame.left.psi_install
     else:
         # -- Use the basic Honeybee Params
-        print('no here!', _hb_win_const.u_factor)
         phx_window_type.frame_top.u_value = _hb_win_const.u_factor
         phx_window_type.frame_top.width = 0.1
         phx_window_type.frame_top.psi_glazing = 0.0

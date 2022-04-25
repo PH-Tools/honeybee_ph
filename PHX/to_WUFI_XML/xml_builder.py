@@ -5,7 +5,7 @@
 
 from typing import Union
 from xml.dom.minidom import Document, Element
-from PHX.model.project import Project
+from PHX.model.project import PhxProject
 from PHX.to_WUFI_XML import xml_writables, xml_converter
 
 
@@ -102,7 +102,7 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
             add_children(_doc, new_parent_node, each_item)
 
 
-def generate_WUFI_XML_for_Project(_project: Project) -> str:
+def generate_WUFI_XML_for_Project(_project: PhxProject) -> str:
     """Create all the XML Nodes as text for the input Honeybee Model
 
     Arguments:

@@ -198,7 +198,7 @@ def _add_default_vent_schedule_to_Rooms(_hb_model: model.Model) -> model.Model:
     return _hb_model
 
 
-def build_util_patterns_ventilation_from_HB_Model(_project: project.Project, _hb_model: model.Model) -> None:
+def build_util_patterns_ventilation_from_HB_Model(_project: project.PhxProject, _hb_model: model.Model) -> None:
     """Build the Utilization Pattern collection for Ventilation patterns and add to the PHX-Project.
 
     Arguments:

@@ -1,9 +1,8 @@
-from re import S
-from PHX.model import project
+from PHX.model import project, constructions
 
 
 def test_blank_project(reset_class_counters):
-    proj = project.Project()
+    proj = project.PhxProject()
 
     assert str(proj)
     assert not proj.assembly_types
@@ -13,30 +12,8 @@ def test_blank_project(reset_class_counters):
     assert not proj.variants
 
 
-def test_add_variant(reset_class_counters):
-    proj = project.Project()
-
-    assert not proj.variants
-
-    var_1 = project.Variant()
-    var_2 = project.Variant()
-
-    assert var_1.id_num == 1
-    assert var_2.id_num == 2
-
-    proj.add_new_variant(var_1)
-    assert len(proj.variants) == 1
-    assert var_1 in proj.variants
-    assert var_2 not in proj.variants
-
-    proj.add_new_variant(var_2)
-    assert len(proj.variants) == 2
-    assert var_1 in proj.variants
-    assert var_2 in proj.variants
-
-
 def test_project_data(reset_class_counters):
-    proj = project.Project()
+    proj = project.PhxProject()
 
     # -- Set all the data
     fields = ['name', 'street', 'city', 'post_code',
@@ -82,3 +59,50 @@ def test_project_data(reset_class_counters):
     assert proj.project_data.responsible.telephone == 'responsible_telephone'
     assert proj.project_data.responsible.email == 'responsible_email'
     assert proj.project_data.responsible.license_number == 'responsible_license_number'
+
+
+def test_add_variant_to_project(reset_class_counters):
+    proj = project.PhxProject()
+
+    assert not proj.variants
+
+    var_1 = project.Variant()
+    var_2 = project.Variant()
+
+    assert var_1.id_num == 1
+    assert var_2.id_num == 2
+
+    proj.add_new_variant(var_1)
+    assert len(proj.variants) == 1
+    assert var_1 in proj.variants
+    assert var_2 not in proj.variants
+
+    proj.add_new_variant(var_2)
+    assert len(proj.variants) == 2
+    assert var_1 in proj.variants
+    assert var_2 in proj.variants
+
+
+def test_add_assembly_to_project(reset_class_counters):
+    pr_1 = project.PhxProject()
+
+    assmbly_1 = constructions.Assembly()
+    assmbly_2 = constructions.Assembly()
+
+    pr_1.add_new_assembly(assmbly_1.identifier, assmbly_1)
+    assert pr_1.assembly_in_project(assmbly_1.identifier)
+    assert not pr_1.assembly_in_project(assmbly_2.identifier)
+    assert assmbly_1 in pr_1.assembly_types
+    assert assmbly_2 not in pr_1.assembly_types
+
+    pr_1.add_new_assembly(assmbly_2.identifier, assmbly_2)
+    assert pr_1.assembly_in_project(assmbly_2.identifier)
+    assert pr_1.assembly_in_project(assmbly_2.identifier)
+    assert assmbly_1 in pr_1.assembly_types
+    assert assmbly_2 in pr_1.assembly_types
+
+    pr_2 = project.PhxProject()
+    assert not pr_2.assembly_in_project(assmbly_1.identifier)
+    assert not pr_2.assembly_in_project(assmbly_2.identifier)
+    assert assmbly_1 not in pr_2.assembly_types
+    assert assmbly_2 not in pr_2.assembly_types

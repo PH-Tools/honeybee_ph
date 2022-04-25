@@ -57,7 +57,7 @@ class ProjectData:
 
 
 @dataclass
-class Project:
+class PhxProject:
     name: str = "unnamed_project"
 
     _assembly_types: dict[str, constructions.Assembly] = field(default_factory=dict)
@@ -94,4 +94,4 @@ class Project:
         return _key in self._assembly_types.keys()
 
     def __str__(self):
-        return f"PHX-Project: {self.name}"
+        return f"{self.__class__.__name__}"

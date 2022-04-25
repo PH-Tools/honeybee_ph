@@ -16,7 +16,7 @@ TOL_LEV2 = 10  # Value tolerance for rounding. ie; 9.843181919194 -> 9.843181919
 # -- PROJECT --
 
 
-def _Project(_wufi_project: project.Project) -> List[xml_writable]:
+def _Project(_wufi_project: project.PhxProject) -> List[xml_writable]:
     return [
         XML_Node("DataVersion", _wufi_project.data_version),
         XML_Node("UnitSystem", _wufi_project.data_version),
@@ -686,9 +686,9 @@ def _DeviceHeaterDistrictDeviceParams(_d: hvac.PhxHeaterDistrictHeat) -> List[xm
 
 def _DeviceHeaterHeatPump(_s: hvac.PhxMechanicalSubSystem) -> List[xml_writable]:
     param_schemas = {
-        hvac.PhxHeaterHeatPumpParamsAnnual.hp_type.value: '_DeviceHeaterHeatPumpPhParamsAnnual',
-        hvac.PhxHeaterHeatPumpParamsMonthly.hp_type.value: '_DeviceHeaterHeatPumpPhParamsMonthly',
-        hvac.PhxHeaterHeatPumpParamsHotWater.hp_type.value: '_DeviceHeaterHeatPumpPhParamsHotWater',
+        hvac.PhxHeaterHeatPumpAnnualParams.hp_type.value: '_DeviceHeaterHeatPumpPhParamsAnnual',
+        hvac.PhxHeaterHeatPumpMonthlyParams.hp_type.value: '_DeviceHeaterHeatPumpPhParamsMonthly',
+        hvac.PhxHeaterHeatPumpHotWaterParams.hp_type.value: '_DeviceHeaterHeatPumpPhParamsHotWater',
     }
     _d: hvac.PhxHeaterHeatPump = _s.device
     return [
@@ -711,7 +711,7 @@ def _DeviceHeaterHeatPump(_s: hvac.PhxMechanicalSubSystem) -> List[xml_writable]
     ]
 
 
-def _DeviceHeaterHeatPumpPhParamsAnnual(_p: hvac.PhxHeaterHeatPumpParamsAnnual) -> List[xml_writable]:
+def _DeviceHeaterHeatPumpPhParamsAnnual(_p: hvac.PhxHeaterHeatPumpAnnualParams) -> List[xml_writable]:
     return [
         XML_Node("AuxiliaryEnergy", _p.aux_energy),
         XML_Node("AuxiliaryEnergyDHW", _p.aux_energy_dhw),
@@ -722,7 +722,7 @@ def _DeviceHeaterHeatPumpPhParamsAnnual(_p: hvac.PhxHeaterHeatPumpParamsAnnual) 
     ]
 
 
-def _DeviceHeaterHeatPumpPhParamsMonthly(_p: hvac.PhxHeaterHeatPumpParamsMonthly) -> List[xml_writable]:
+def _DeviceHeaterHeatPumpPhParamsMonthly(_p: hvac.PhxHeaterHeatPumpMonthlyParams) -> List[xml_writable]:
     return [
         XML_Node("AuxiliaryEnergy", _p.aux_energy),
         XML_Node("AuxiliaryEnergyDHW", _p.aux_energy_dhw),
@@ -735,7 +735,7 @@ def _DeviceHeaterHeatPumpPhParamsMonthly(_p: hvac.PhxHeaterHeatPumpParamsMonthly
     ]
 
 
-def _DeviceHeaterHeatPumpPhParamsHotWater(_p: hvac.PhxHeaterHeatPumpParamsHotWater) -> List[xml_writable]:
+def _DeviceHeaterHeatPumpPhParamsHotWater(_p: hvac.PhxHeaterHeatPumpHotWaterParams) -> List[xml_writable]:
     return [
         XML_Node("AuxiliaryEnergy", _p.aux_energy),
         XML_Node("AuxiliaryEnergyDHW", _p.aux_energy_dhw),

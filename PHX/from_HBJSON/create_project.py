@@ -9,7 +9,7 @@ from typing import Tuple, List
 from honeybee import model
 from honeybee import room
 
-from PHX.model.project import Project
+from PHX.model.project import PhxProject
 from PHX.from_HBJSON import cleanup, create_assemblies, create_variant, create_shades
 from PHX.from_HBJSON import create_schedules
 
@@ -40,7 +40,7 @@ def sort_hb_rooms_by_bldg_segment(_hb_rooms: Tuple[room.Room]) -> List[List[room
     return list(rooms_by_segment.values())
 
 
-def convert_HB_model_to_WUFI_Project(_hb_model: model.Model, group_components: bool = False) -> Project:
+def convert_HB_model_to_WUFI_Project(_hb_model: model.Model, group_components: bool = False) -> PhxProject:
     """Return a complete WUFI Project object with values based on the HB Model
 
     Arguments:
@@ -54,7 +54,7 @@ def convert_HB_model_to_WUFI_Project(_hb_model: model.Model, group_components: b
         * (Project): The new WUFI Project object. 
     """
 
-    project = Project()
+    project = PhxProject()
     create_assemblies.build_opaque_assemblies_from_HB_model(project, _hb_model)
     create_assemblies.build_transparent_assemblies_from_HB_Model(project, _hb_model)
     create_schedules.build_util_patterns_ventilation_from_HB_Model(project, _hb_model)

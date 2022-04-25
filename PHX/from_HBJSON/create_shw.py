@@ -58,7 +58,7 @@ def build_phx_hw_storage_subsystem(_hbph_tank: hot_water.PhSHWTank) -> hvac.PhxM
     return phx_strg_subsystem
 
 
-def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> hvac.PhxHeater:
+def build_phx_hw_heater(_hbph_heater: hot_water.PhSHWHeaterElectric) -> hvac.PhxHeatingDevice:
     """Returns a new PHX Hot-Water Heater based on the HBPH Hot Water Heater input.
 
     Arguments:

@@ -4,8 +4,9 @@
 """PHX Construction, Materials Classes"""
 
 from __future__ import annotations
-from typing import ClassVar
+from typing import ClassVar, Union
 from dataclasses import dataclass, field
+import uuid
 
 
 @dataclass
@@ -28,6 +29,8 @@ class Layer:
 @dataclass
 class Assembly:
     _count: ClassVar[int] = 0
+
+    _identifier: Union[uuid.UUID, str] = field(init=False, default_factory=uuid.uuid4)
     id_num: int = field(init=False, default=0)
     display_name: str = ""
     layer_order: int = 2  # Outside to Inside
@@ -37,6 +40,16 @@ class Assembly:
     def __post_init__(self) -> None:
         self.__class__._count += 1
         self.id_num = self.__class__._count
+
+    @property
+    def identifier(self):
+        return str(self._identifier)
+
+    @identifier.setter
+    def identifier(self, _in: str):
+        if not _in:
+            return
+        self._identifier = str(_in)
 
 
 @dataclass

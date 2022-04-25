@@ -1,27 +1,42 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""PHX Passive House Mechanical Equipment Classes"""
+"""PHX Mechanical Heating Devices"""
 
+from __future__ import annotations
 from typing import Optional, Union
+from dataclasses import dataclass, field
+
 from PHX.model.hvac.enums import DeviceType, HeatPumpType, FuelType
 from PHX.model.hvac import _base
+
+
+@dataclass
+class PhxHeatingDevice(_base.PhxMechanicalEquipment):
+    def __post_init__(self):
+        super().__post_init__()
 
 
 # -----------------------------------------------------------------------------
 # Electric
 
+@dataclass
+class PhxHeaterElectricParams(_base.PhxMechanicalEquipmentParams):
+    pass
 
-class PhxHeaterElectric(_base.PhxMechanicalEquipment):
-    def __init__(self):
-        super().__init__()
-        self.device_type: DeviceType = DeviceType.ELECTRIC
+
+@dataclass
+class PhxHeaterElectric(PhxHeatingDevice):
+    device_type: DeviceType = field(init=False, default=DeviceType.ELECTRIC)
+    params: PhxHeaterElectricParams = field(
+        default_factory=PhxHeaterElectricParams)
 
 
 # -----------------------------------------------------------------------------
 # Boilers
 
 
+@dataclass
 class PhxHeaterBoilerFossilParams(_base.PhxMechanicalEquipmentParams):
     _fuel: FuelType = FuelType.GAS
     condensing: bool = True
@@ -44,6 +59,7 @@ class PhxHeaterBoilerFossilParams(_base.PhxMechanicalEquipmentParams):
         self._fuel = FuelType(_in)
 
 
+@dataclass
 class PhxHeaterBoilerWoodParams(_base.PhxMechanicalEquipmentParams):
     _fuel: FuelType = FuelType.WOOD_LOG
     effic_in_basic_cycle: float = 0.6
@@ -67,46 +83,50 @@ class PhxHeaterBoilerWoodParams(_base.PhxMechanicalEquipmentParams):
         self._fuel = FuelType(_in)
 
 
-class PhxHeaterBoiler(_base.PhxMechanicalEquipment):
-    def __init__(self):
-        super().__init__()
-        self.device_type: DeviceType = DeviceType.BOILER
+@dataclass
+class PhxHeaterBoilerFossil(PhxHeatingDevice):
+    device_type: DeviceType = field(init=False, default=DeviceType.BOILER)
+    params: PhxHeaterBoilerFossilParams = field(
+        default_factory=PhxHeaterBoilerFossilParams)
 
-    @classmethod
-    def fossil(cls) -> 'PhxHeaterBoiler':
-        obj = cls()
-        obj.params = PhxHeaterBoilerFossilParams()
-        return obj
 
-    @classmethod
-    def wood(cls) -> 'PhxHeaterBoiler':
-        obj = cls()
-        obj.params = PhxHeaterBoilerWoodParams()
-        return obj
+@dataclass
+class PhxHeaterBoilerWood(PhxHeatingDevice):
+    device_type: DeviceType = field(init=False, default=DeviceType.BOILER)
+    params: PhxHeaterBoilerWoodParams = field(
+        default_factory=PhxHeaterBoilerWoodParams)
 
 
 # -----------------------------------------------------------------------------
 # District Heat
 
 
-class PhxHeaterDistrictHeat(_base.PhxMechanicalEquipment):
-    def __init__(self):
-        super().__init__()
-        self.device_type: DeviceType = DeviceType.DISTRICT_HEAT
+@dataclass
+class PhxHeaterDistrictHeatParams(_base.PhxMechanicalEquipmentParams):
+    pass
+
+
+@dataclass
+class PhxHeaterDistrictHeat(PhxHeatingDevice):
+    device_type: DeviceType = field(init=False, default=DeviceType.DISTRICT_HEAT)
+    params: PhxHeaterDistrictHeatParams = field(
+        default_factory=PhxHeaterDistrictHeatParams)
 
 
 # -----------------------------------------------------------------------------
 # Heat Pumps
 
 
-class PhxHeaterHeatPumpParamsAnnual(_base.PhxMechanicalEquipmentParams):
-    hp_type: HeatPumpType = HeatPumpType.ANNUAL
+@dataclass
+class PhxHeaterHeatPumpAnnualParams(_base.PhxMechanicalEquipmentParams):
+    hp_type: HeatPumpType = field(init=False, default=HeatPumpType.ANNUAL)
     annual_COP: Optional[float] = None
     total_system_perf_ratio: Optional[float] = None
 
 
-class PhxHeaterHeatPumpParamsMonthly(_base.PhxMechanicalEquipmentParams):
-    hp_type: HeatPumpType = HeatPumpType.RATED_MONTHLY
+@dataclass
+class PhxHeaterHeatPumpMonthlyParams(_base.PhxMechanicalEquipmentParams):
+    hp_type: HeatPumpType = field(init=False, default=HeatPumpType.RATED_MONTHLY)
     COP_1: Optional[float] = None
     COP_2: Optional[float] = None
     ambient_temp_1: Optional[float] = None
@@ -143,49 +163,46 @@ class PhxHeaterHeatPumpParamsMonthly(_base.PhxMechanicalEquipmentParams):
             self.ambient_temp_2 = _in[0]
 
 
-class PhxHeaterHeatPumpParamsHotWater(_base.PhxMechanicalEquipmentParams):
-    hp_type: HeatPumpType = HeatPumpType.HOT_WATER
+@dataclass
+class PhxHeaterHeatPumpHotWaterParams(_base.PhxMechanicalEquipmentParams):
+    hp_type: HeatPumpType = field(init=False, default=HeatPumpType.HOT_WATER)
     annual_COP: Optional[float] = None
     annual_system_perf_ratio: Optional[float] = None
     annual_energy_factor: Optional[float] = None
 
 
-class PhxHeaterHeatPumpParamsCombined(_base.PhxMechanicalEquipmentParams):
-    hp_type: HeatPumpType = HeatPumpType.COMBINED
+@dataclass
+class PhxHeaterHeatPumpCombinedParams(_base.PhxMechanicalEquipmentParams):
+    hp_type: HeatPumpType = field(init=False, default=HeatPumpType.COMBINED)
 
 
-class PhxHeaterHeatPump(_base.PhxMechanicalEquipment):
-    def __init__(self):
-        super().__init__()
-        self.device_type: DeviceType = DeviceType.HEAT_PUMP
-
-    @classmethod
-    def annual(cls) -> 'PhxHeaterHeatPump':
-        new_obj = cls()
-        new_obj.params = PhxHeaterHeatPumpParamsAnnual()
-        return new_obj
-
-    @classmethod
-    def monthly(cls) -> 'PhxHeaterHeatPump':
-        new_obj = cls()
-        new_obj.params = PhxHeaterHeatPumpParamsMonthly()
-        return new_obj
-
-    @classmethod
-    def hot_water(cls) -> 'PhxHeaterHeatPump':
-        new_obj = cls()
-        new_obj.params = PhxHeaterHeatPumpParamsHotWater()
-        return new_obj
-
-    @classmethod
-    def combined(cls) -> 'PhxHeaterHeatPump':
-        new_obj = cls()
-        new_obj.params = PhxHeaterHeatPumpParamsCombined()
-        return new_obj
+@dataclass
+class PhxHeaterHeatPumpAnnual(PhxHeatingDevice):
+    device_type: DeviceType = DeviceType.HEAT_PUMP
+    params: PhxHeaterHeatPumpAnnualParams = field(
+        default_factory=PhxHeaterHeatPumpAnnualParams)
 
 
-PhxHeater = Union[PhxHeaterElectric,
-                  PhxHeaterBoiler,
-                  PhxHeaterDistrictHeat,
-                  PhxHeaterHeatPump,
-                  ]
+@dataclass
+class PhxHeaterHeatPumpMonthly(PhxHeatingDevice):
+    device_type: DeviceType = DeviceType.HEAT_PUMP
+    params: PhxHeaterHeatPumpMonthlyParams = field(
+        default_factory=PhxHeaterHeatPumpMonthlyParams)
+
+
+@dataclass
+class PhxHeaterHeatPumpHotWater(PhxHeatingDevice):
+    device_type: DeviceType = DeviceType.HEAT_PUMP
+    params: PhxHeaterHeatPumpHotWaterParams = field(
+        default_factory=PhxHeaterHeatPumpHotWaterParams)
+
+
+@dataclass
+class PhxHeaterHeatPumpCombined(PhxHeatingDevice):
+    device_type: DeviceType = DeviceType.HEAT_PUMP
+    params: PhxHeaterHeatPumpCombinedParams = field(
+        default_factory=PhxHeaterHeatPumpCombinedParams)
+
+
+PhxHeaterHeatPump = Union[PhxHeaterHeatPumpAnnual, PhxHeaterHeatPumpMonthly,
+                          PhxHeaterHeatPumpHotWater, PhxHeaterHeatPumpCombined]

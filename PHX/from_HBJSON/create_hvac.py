@@ -150,7 +150,7 @@ def build_phx_heating_hp_combined(_hbeph_heater: heating.PhHeatingSystem) -> hva
     return phx_obj
 
 
-def build_phx_heating_device(_htg_sys: heating.PhHeatingSystem) -> hvac.PhxHeater:
+def build_phx_heating_device(_htg_sys: heating.PhHeatingSystem) -> hvac.PhxHeatingDevice:
     """Returns a new PHX-Heating-Device based on an input HBE-PH Heating System.
 
     Arguments:
@@ -160,7 +160,7 @@ def build_phx_heating_device(_htg_sys: heating.PhHeatingSystem) -> hvac.PhxHeate
 
     Returns:
     --------
-        * (mech.heating.PhxHeater): The new PHX Heating System created.
+        * (mech.heating.PhxHeatingDevice): The new PHX Heating System created.
     """
 
     # -- Mapping HBEPH -> PHX types
@@ -232,7 +232,7 @@ def build_phx_cooling_panel(_hbeph_cooling: cooling.PhCoolingSystem) -> hvac.Phx
     return phx_obj
 
 
-def build_phx_cooling_device(_clg_sys: cooling.PhCoolingSystem) -> hvac.PhxHeater:
+def build_phx_cooling_device(_clg_sys: cooling.PhCoolingSystem) -> hvac.PhxHeatingDevice:
     """Returns a new PHX-Cooling-Device based on an input HBE-PH cooling System.
 
     Arguments:
@@ -242,7 +242,7 @@ def build_phx_cooling_device(_clg_sys: cooling.PhCoolingSystem) -> hvac.PhxHeate
 
     Returns:
     --------
-        * (mech.cooling.PhxHeater): The new PHX cooling System created.
+        * (mech.cooling.PhxHeatingDevice): The new PHX cooling System created.
     """
 
     # -- Mapping HBEPH -> PHX types

@@ -6,7 +6,8 @@
 from __future__ import annotations
 from inspect import signature
 from dataclasses import dataclass, field
-from typing import Optional, ClassVar
+from typing import Optional, ClassVar, Union
+import uuid
 
 from PHX.model.hvac.enums import DeviceType
 
@@ -108,11 +109,11 @@ class PhxMechanicalEquipment:
             return self
         else:
             return self + other
-    
+
     @classmethod
     def from_kwargs(cls, **kwargs):
         """Allow for the create of base object from arbitrary kwarg input.
-        
+
         This is used by subclasses dring __add__ or __copy__, otherwise fields
         such as 'id_num' or any other init=False fields result in an AttributeError.
         """
@@ -130,6 +131,7 @@ class PhxMechanicalEquipment:
         # use the native ones to create the class ...
         return cls(**native_args)
 
+
 @dataclass
 class PhxMechanicalSubSystem:
     """Base class for a sub-system (heating, cooling, ventilation, hot-water)
@@ -140,12 +142,23 @@ class PhxMechanicalSubSystem:
 
     _count: ClassVar[int] = 0
 
+    _identifier: Union[uuid.UUID, str] = field(init=False, default_factory=uuid.uuid4)
     id_num: int = field(init=False, default=0)
     display_name: str = '_unnamed_mech_subsystem_'
     device: PhxMechanicalEquipment = field(default_factory=PhxMechanicalEquipment)
     distribution = None  # TODO: Distribution....
     percent_coverage: float = 0.0
     usage_profile: PhxUsageProfile = field(default_factory=PhxUsageProfile)
+
+    @property
+    def identifier(self):
+        return str(self._identifier)
+
+    @identifier.setter
+    def identifier(self, _in: str):
+        if not _in:
+            return
+        self._identifier = str(_in)
 
     @property
     def system_type(self):

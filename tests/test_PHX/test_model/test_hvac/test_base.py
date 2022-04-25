@@ -26,6 +26,34 @@ def test_add_default_PhxMechEquipmentParams(reset_class_counters):
     assert p3.in_conditioned_space == True
 
 
+def test_r_add_default_PhxMechEquipmentParams(reset_class_counters):
+    p1 = _base.PhxMechanicalEquipmentParams()
+    p2 = _base.PhxMechanicalEquipmentParams()
+
+    p3 = p1.__radd__(p2)
+    assert p3.aux_energy == None
+    assert p3.aux_energy_dhw == None
+    assert p3.solar_fraction == None
+    assert p3.in_conditioned_space == True
+
+    p4 = p2.__radd__(p1)
+    assert p4.aux_energy == None
+    assert p4.aux_energy_dhw == None
+    assert p4.solar_fraction == None
+    assert p4.in_conditioned_space == True
+
+
+def test_sum_default_PhxMechEquipmentParams(reset_class_counters):
+    p1 = _base.PhxMechanicalEquipmentParams()
+    p2 = _base.PhxMechanicalEquipmentParams()
+
+    p3: _base.PhxMechanicalEquipmentParams = sum([p1, p2])
+    assert p3.aux_energy == None
+    assert p3.aux_energy_dhw == None
+    assert p3.solar_fraction == None
+    assert p3.in_conditioned_space == True
+
+
 def test_add_mixed_PhxMechEquipmentParams(reset_class_counters):
     p1 = _base.PhxMechanicalEquipmentParams(
         aux_energy=12,
@@ -128,3 +156,16 @@ def test_default_PhxMechanicalSubSystem(reset_class_counters):
     assert sys_2.system_type == enums.DeviceType.ELECTRIC
     assert str(sys_2)
     assert repr(sys_2)
+
+
+def test_set_PhxMechanicalSubSystem_identifier(reset_class_counters):
+    sys_1 = _base.PhxMechanicalSubSystem()
+
+    sys_1.identifier = 'this is a test'
+    assert sys_1.identifier == 'this is a test'
+
+    sys_1.identifier = 12
+    assert sys_1.identifier == '12'
+
+    sys_1.identifier = None
+    assert sys_1.identifier == '12'
