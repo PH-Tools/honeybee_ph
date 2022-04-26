@@ -105,7 +105,7 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
     return None
 
 
-def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowConstruction) -> constructions.PhxConstuctionWindow:
+def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowConstruction) -> constructions.PhxConstructionWindow:
     """Create a new PHX-WindowType based on a HB-Window-Construction.
 
     If any detailed PH-Params exist for the frame or glass on the HB-Window-Construction's 
@@ -122,8 +122,8 @@ def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowC
         * (constructions.WindowType): The new PHX-WindowType.
     """
 
-    phx_window_type = constructions.PhxConstuctionWindow()
-    phx_window_type.id_num = constructions.PhxConstuctionWindow._count
+    phx_window_type = constructions.PhxConstructionWindow()
+    phx_window_type.id_num = constructions.PhxConstructionWindow._count
     phx_window_type.display_name = _hb_win_const.display_name
 
     ph_params: WindowConstructionPhProperties = _hb_win_const.properties.ph

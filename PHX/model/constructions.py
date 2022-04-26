@@ -65,7 +65,7 @@ class PhxWindowFrameElement:
 
 
 @dataclass
-class PhxConstuctionWindow:
+class PhxConstructionWindow:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
     display_name: str = ""

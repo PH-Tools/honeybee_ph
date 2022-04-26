@@ -14,7 +14,7 @@ def test_default_PH_Building(reset_class_counters):
 
 def test_add_single_foundation(reset_class_counters):
     obj_1 = certification.PhxPHBuilding()
-    f_1 = ground.Foundation()
+    f_1 = ground.PhxFoundation()
     obj_1.add_foundation(f_1)
 
     assert len(obj_1.foundations) == 1

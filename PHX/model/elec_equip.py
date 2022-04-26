@@ -9,7 +9,7 @@ import uuid
 
 
 @dataclass
-class PhxElectricalEquipment:
+class PhxElectricalDevice:
     """Base class for PHX Electrical Equipment (dishwashers, laundry, lighting, etc.)"""
     _count: ClassVar[int] = 0
 
@@ -30,7 +30,7 @@ class PhxElectricalEquipment:
         self.id_num = self.__class__._count
 
 
-class PhxDishwasher(PhxElectricalEquipment):
+class PhxDeviceDishwasher(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "Kitchen Dishwasher"
@@ -39,7 +39,7 @@ class PhxDishwasher(PhxElectricalEquipment):
         self.water_connection: int = 1
 
 
-class PhxClothesWasher(PhxElectricalEquipment):
+class PhxDeviceClothesWasher(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "Laundry - washer"
@@ -49,7 +49,7 @@ class PhxClothesWasher(PhxElectricalEquipment):
         self.utilization_factor: float = 1
 
 
-class PhxClothesDryer(PhxElectricalEquipment):
+class PhxDeviceClothesDryer(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "Laundry - dryer"
@@ -60,71 +60,71 @@ class PhxClothesDryer(PhxElectricalEquipment):
         self.field_utilization_factor: float = 1.18
 
 
-class PhxRefrigerator(PhxElectricalEquipment):
+class PhxDeviceRefrigerator(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "Kitchen refrigerator"
 
 
-class PhxFreezer(PhxElectricalEquipment):
+class PhxDeviceFreezer(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "kitchen freezer"
 
 
-class PhxFridgeFreezer(PhxElectricalEquipment):
+class PhxDeviceFridgeFreezer(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "Kitchen fridge/freeze combo"
 
 
-class PhxCooktop(PhxElectricalEquipment):
+class PhxDeviceCooktop(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "Kitchen cooking"
         self.cooktop_type: int = 1  # Electric
 
 
-class PhxMEL(PhxElectricalEquipment):
+class PhxDeviceMEL(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "PHIUS+ MELS"
 
 
-class PhxLightingInterior(PhxElectricalEquipment):
+class PhxDeviceLightingInterior(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "PHIUS+ Interior Lighting"
         self.frac_high_efficiency: float = 1.0
 
 
-class PhxLightingExterior(PhxElectricalEquipment):
+class PhxDeviceLightingExterior(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "PHIUS+ Exterior Lighting"
         self.frac_high_efficiency: float = 1.0
 
 
-class PhxLightingGarage(PhxElectricalEquipment):
+class PhxDeviceLightingGarage(PhxElectricalDevice):
     def __init__(self):
         super().__init__()
         self.display_name = "PHIUS+ Garage Lighting"
         self.frac_high_efficiency: float = 1.0
 
 
-class PhxCustomElec(PhxElectricalEquipment):
+class PhxDeviceCustomElec(PhxElectricalDevice):
     def __init__(self):
         self.display_name = "User defined"
         super().__init__()
 
 
-class PhxCustomLighting(PhxElectricalEquipment):
+class PhxDeviceCustomLighting(PhxElectricalDevice):
     def __init__(self):
         self.display_name = "User defined - lighting"
         super().__init__()
 
 
-class PhxCustomMEL(PhxElectricalEquipment):
+class PhxDeviceCustomMEL(PhxElectricalDevice):
     def __init__(self):
         self.display_name = "User defined - Misc electrical loads"
         super().__init__()
@@ -134,37 +134,37 @@ class PhxCustomMEL(PhxElectricalEquipment):
 
 
 @dataclass
-class PhxElectricEquipmentCollection:
-    """A collection of all the electric-equipment (laundry, lighting, etc.) on the Zone"""
-    _equipment: dict = field(default_factory=dict)
+class PhxElectricDeviceCollection:
+    """A collection of all the PhxElectricalDevices (laundry, lighting, etc.) in the Zone"""
+    _devices: dict = field(default_factory=dict)
 
     @property
-    def equipment(self) -> List[PhxElectricalEquipment]:
-        if not self._equipment:
+    def devices(self) -> List[PhxElectricalDevice]:
+        if not self._devices:
             return []
-        return sorted(self._equipment.values(), key=lambda e: e.display_name)
+        return sorted(self._devices.values(), key=lambda e: e.display_name)
 
-    def equipment_in_collection(self, _equipment_key) -> bool:
-        """Returns True if the key supplied is in the existing equipment set."""
-        return _equipment_key in self._equipment.keys()
+    def devices_in_collection(self, _device_key) -> bool:
+        """Returns True if the key supplied is in the existing device set."""
+        return _device_key in self._devices.keys()
 
-    def get_equipment_by_key(self, _key: str) -> Optional[PhxElectricalEquipment]:
-        return self._equipment.get(_key, None)
+    def get_equipment_by_key(self, _key: str) -> Optional[PhxElectricalDevice]:
+        return self._devices.get(_key, None)
 
-    def add_new_equipment(self, _key: str, _equipment: PhxElectricalEquipment) -> None:
+    def add_new_device(self, _key: str, _device: PhxElectricalDevice) -> None:
         """Adds a new PHX Electric-Equipment device to the collection.
 
         Arguments:
         ----------
             * _key (str): The key to use when storing the new electric-equipment
-            * _equipment (PhxElectricalEquipment): The new PHX electric-equipment to 
+            * _devices (PhxElectricalDevice): The new PhxElectricalDevice to 
                 add to the collection.
 
         Returns:
         --------
             * None
         """
-        self._equipment[_key] = _equipment
+        self._devices[_key] = _device
 
     def __bool__(self) -> bool:
-        return bool(self._equipment)
+        return bool(self._devices)

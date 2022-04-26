@@ -24,8 +24,8 @@ class PhxZone:
     clearance_height: float = 2.5
     specific_heat_capacity: float = 132
     wufi_rooms: list[loads.PhxRoomVentilation] = field(default_factory=list)
-    elec_equipment_collection: elec_equip.PhxElectricEquipmentCollection = field(
-        default_factory=elec_equip.PhxElectricEquipmentCollection)
+    elec_equipment_collection: elec_equip.PhxElectricDeviceCollection = field(
+        default_factory=elec_equip.PhxElectricDeviceCollection)
     res_occupant_quantity: int = 0
     res_number_bedrooms: int = 0
 

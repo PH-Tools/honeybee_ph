@@ -102,7 +102,7 @@ def add_PH_Building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Ro
     ph_building.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
 
     # TODO: Foundations. For now: set to None
-    ph_building.add_foundation(ground.Foundation())
+    ph_building.add_foundation(ground.PhxFoundation())
 
     # Set the airtightness for Building
     ph_building.airtightness_q50 = _hb_room.properties.energy.infiltration.flow_per_exterior_area * 3600
@@ -410,7 +410,7 @@ def add_elec_equip_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Roo
     for equip_key, device in ee_properties_ph.equipment_collection.items():
         phx_elec_device = create_elec_equip.build_phx_elec_device(device)
         for zone in _variant.building.zones:
-            zone.elec_equipment_collection.add_new_equipment(
+            zone.elec_equipment_collection.add_new_device(
                 equip_key, phx_elec_device)
 
     return

@@ -24,13 +24,13 @@ class PhxPHBuilding:
     occupancy_setting_method: int = 2  # Design
 
     airtightness_q50: float = 1.0  # m3/hr-m2-envelope
-    foundations: list[ground.Foundation] = field(default_factory=list)
+    foundations: list[ground.PhxFoundation] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.__class__._count += 1
         self.id_num = self.__class__._count
 
-    def add_foundation(self, _input: ground.Foundation) -> None:
+    def add_foundation(self, _input: ground.PhxFoundation) -> None:
         self.foundations.append(_input)
 
 

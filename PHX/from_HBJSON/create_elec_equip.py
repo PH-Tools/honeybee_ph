@@ -2,7 +2,7 @@ from honeybee_energy_ph.load import ph_equipment
 from PHX.model import elec_equip
 
 
-def build_phx_elec_device(_hbph_device: ph_equipment.PhEquipment) -> elec_equip.PhxElectricalEquipment:
+def build_phx_elec_device(_hbph_device: ph_equipment.PhEquipment) -> elec_equip.PhxElectricalDevice:
     """Returns a new PHX Elec-Equipment Device based on the HBPH Elec Equipment input.
 
     Arguments:
@@ -16,20 +16,20 @@ def build_phx_elec_device(_hbph_device: ph_equipment.PhEquipment) -> elec_equip.
     """
     # -- Get the right PHX Appliance constructor based on the type of HBPH Equipment found
     devices = {
-        'PhDishwasher': elec_equip.PhxDishwasher,
-        'PhClothesWasher': elec_equip.PhxClothesWasher,
-        'PhClothesDryer': elec_equip.PhxClothesDryer,
-        'PhRefrigerator': elec_equip.PhxRefrigerator,
-        'PhFreezer': elec_equip.PhxFreezer,
-        'PhFridgeFreezer': elec_equip.PhxFridgeFreezer,
-        'PhCooktop': elec_equip.PhxCooktop,
-        'PhPhiusMEL': elec_equip.PhxMEL,
-        'PhPhiusLightingInterior': elec_equip.PhxLightingInterior,
-        'PhPhiusLightingExterior': elec_equip.PhxLightingExterior,
-        'PhPhiusLightingGarage': elec_equip.PhxLightingGarage,
-        'PhCustomAnnualElectric': elec_equip.PhxCustomElec,
-        'PhCustomAnnualLighting': elec_equip.PhxCustomLighting,
-        'PhCustomAnnualMEL': elec_equip.PhxCustomMEL,
+        'PhDishwasher': elec_equip.PhxDeviceDishwasher,
+        'PhClothesWasher': elec_equip.PhxDeviceClothesWasher,
+        'PhClothesDryer': elec_equip.PhxDeviceClothesDryer,
+        'PhRefrigerator': elec_equip.PhxDeviceRefrigerator,
+        'PhFreezer': elec_equip.PhxDeviceFreezer,
+        'PhFridgeFreezer': elec_equip.PhxDeviceFridgeFreezer,
+        'PhCooktop': elec_equip.PhxDeviceCooktop,
+        'PhPhiusMEL': elec_equip.PhxDeviceMEL,
+        'PhPhiusLightingInterior': elec_equip.PhxDeviceLightingInterior,
+        'PhPhiusLightingExterior': elec_equip.PhxDeviceLightingExterior,
+        'PhPhiusLightingGarage': elec_equip.PhxDeviceLightingGarage,
+        'PhCustomAnnualElectric': elec_equip.PhxDeviceCustomElec,
+        'PhCustomAnnualLighting': elec_equip.PhxDeviceCustomLighting,
+        'PhCustomAnnualMEL': elec_equip.PhxDeviceCustomMEL,
     }
 
     # -- Build the basic device

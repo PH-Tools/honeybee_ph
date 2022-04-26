@@ -4,7 +4,7 @@ from tests.test_PHX.test_to_WUFI_xml._utils import xml_string_to_list
 
 
 def test_default_PhxConstructionWindow(reset_class_counters):
-    w1 = constructions.PhxConstuctionWindow()
+    w1 = constructions.PhxConstructionWindow()
     result = generate_WUFI_XML_from_object(w1, _header="")
     assert xml_string_to_list(result) == [
         '<IdentNr>1</IdentNr>',

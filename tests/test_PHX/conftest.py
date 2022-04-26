@@ -34,10 +34,10 @@ def reset_class_counters():
     schedules.UtilizationPatternVent._count = 0
     certification.PhxPHBuilding._count = 0
     constructions.PhxConstructionOpaque._count = 0
-    constructions.PhxConstuctionWindow._count = 0
+    constructions.PhxConstructionWindow._count = 0
     building.PhxZone._count = 0
     building.PhxComponent._count = 0
-    elec_equip.PhxElectricalEquipment._count = 0
+    elec_equip.PhxElectricalDevice._count = 0
     PhxRoomVentilation._count = 0
     _base.PhxMechanicalEquipment._count = 0
     _base.PhxMechanicalSubSystem._count = 0
@@ -61,6 +61,7 @@ def reset_class_counters():
     heating.PhxHeaterHeatPumpCombined._count = 0
 
     water.PhxHotWaterDevice._count = 0
+    water.PhxHotWaterTank._count = 0
 
     ventilation.PhxDeviceVentilation._count = 0
 
@@ -72,10 +73,10 @@ def reset_class_counters():
     schedules.UtilizationPatternVent._count = 0
     certification.PhxPHBuilding._count = 0
     constructions.PhxConstructionOpaque._count = 0
-    constructions.PhxConstuctionWindow._count = 0
+    constructions.PhxConstructionWindow._count = 0
     building.PhxZone._count = 0
     building.PhxComponent._count = 0
-    elec_equip.PhxElectricalEquipment._count = 0
+    elec_equip.PhxElectricalDevice._count = 0
     PhxRoomVentilation._count = 0
     _base.PhxMechanicalEquipment._count = 0
     _base.PhxMechanicalSubSystem._count = 0
@@ -99,5 +100,6 @@ def reset_class_counters():
     heating.PhxHeaterHeatPumpCombined._count = 0
 
     water.PhxHotWaterDevice._count = 0
+    water.PhxHotWaterTank._count = 0
 
     ventilation.PhxDeviceVentilation._count = 0

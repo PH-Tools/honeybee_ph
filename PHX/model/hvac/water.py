@@ -14,7 +14,7 @@ from PHX.model.hvac import _base
 class PhxHotWaterDevice(_base.PhxMechanicalEquipment):
     def __post_init__(self):
         super().__post_init__()
-        self.usage_profile.ventilation = True
+        self.usage_profile.dhw_heating = True
 
 
 # -- Hot Water Tank -----------------------------------------------------------

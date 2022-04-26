@@ -3,7 +3,7 @@
 
 """Functions used to build up an XML file from a Honeybee Object"""
 
-from typing import Union, Any
+from typing import Union, Any, Optional
 from xml.dom.minidom import Document, Element
 from PHX.to_WUFI_XML import xml_writables, xml_converter
 
@@ -101,7 +101,9 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
             add_children(_doc, new_parent_node, each_item)
 
 
-def generate_WUFI_XML_from_object(_phx_object: Any, _header: str = "WUFIplusProject") -> str:
+def generate_WUFI_XML_from_object(_phx_object: Any,
+                                  _header: str = "WUFIplusProject",
+                                  _schema_name: Optional[str] = None) -> str:
     """Create all the XML Nodes as text for the input Honeybee Model
 
     Arguments:
@@ -118,7 +120,7 @@ def generate_WUFI_XML_from_object(_phx_object: Any, _header: str = "WUFIplusProj
     root = doc.createElementNS(None, _header)
     doc.appendChild(root)
 
-    for item in xml_converter.convert_HB_object_to_xml_writables_list(_phx_object):
+    for item in xml_converter.convert_HB_object_to_xml_writables_list(_phx_object, _schema_name):
         add_children(doc, root, item)
 
     return doc.toprettyxml()
