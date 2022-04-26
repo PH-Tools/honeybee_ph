@@ -63,11 +63,15 @@ def _add_text_node(_doc: Document, _parent_node: Element, _data: xml_writables.x
 def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml_writable) -> None:
     """Adds 'child' nodes to the XML Document and parent node recursively.
 
-    If the _item passed in is a basic type like a string or number (xml_writables.XML_Node),
-    it will just get added directly to the XML document. If the _item is an Object (xml_writables.XML_Object), 
-    the function 'xml_converter.convert_HB_object_to_xml_writables_list()' will get called on the object, 
-    and all returned attributes will be added to the XML document. If _item is a list (xml_writables.XML_List) 
-    then each item in the list gets added to the XML document in turn.
+    - If the _item is an Object (xml_writables.XML_Object), the function 
+    'xml_converter.convert_HB_object_to_xml_writables_list()' will get called on 
+    the object, and all the returned attributes will be added to the XML document. 
+
+    - If _item is a list (xml_writables.XML_List) then each item in the list 
+    gets added to the XML document in turn.
+
+    - If the _item passed in is a basic type like a string or number (xml_writables.XML_Node),
+    it will just get added directly to the XML document. 
 
     Arguments:
     ----------
@@ -76,11 +80,9 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
         * _item (xml_writables.xml_writable): The XML Data Node/Object/List to add to the parent node.
     """
 
-    if isinstance(_item, xml_writables.XML_Node):
-        # -- Basic Node, write out the value
-        _add_text_node(_doc, _parent_node, _item)
-
-    elif isinstance(_item, xml_writables.XML_Object):
+    if hasattr(_item, 'node_object'):
+        # isinstance(_item, xml_writables.XML_Object):
+        # -- Must be an XML_Object, so try and convert it to
         # -- Add a new node for the object, then try and add all its fields
         new_parent_node = _doc.createElementNS(None, _xml_str(_item.node_name))
         add_node_attributes(_item, new_parent_node)
@@ -91,7 +93,9 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
         ):
             add_children(_doc, new_parent_node, item)
 
-    elif isinstance(_item, xml_writables.XML_List):
+    elif hasattr(_item, 'node_items'):
+        # isinstance(_item, xml_writables.XML_List):
+        # -- It is an XML_List, so iterate over the node_items
         # -- Add a new node for the 'container', and then add each item in the list
         new_parent_node = _doc.createElementNS(None, _xml_str(_item.node_name))
         add_node_attributes(_item, new_parent_node)
@@ -99,6 +103,10 @@ def add_children(_doc: Document, _parent_node: Element, _item: xml_writables.xml
 
         for each_item in _item.node_items:
             add_children(_doc, new_parent_node, each_item)
+
+    else:
+        # -- Must be aBasic Node, so just write out the value
+        _add_text_node(_doc, _parent_node, _item)
 
 
 def generate_WUFI_XML_from_object(_phx_object: Any,
