@@ -86,8 +86,8 @@ def test_add_variant_to_project(reset_class_counters):
 def test_add_assembly_to_project(reset_class_counters):
     pr_1 = project.PhxProject()
 
-    assmbly_1 = constructions.Assembly()
-    assmbly_2 = constructions.Assembly()
+    assmbly_1 = constructions.PhxConstructionOpaque()
+    assmbly_2 = constructions.PhxConstructionOpaque()
 
     pr_1.add_new_assembly(assmbly_1.identifier, assmbly_1)
     assert pr_1.assembly_in_project(assmbly_1.identifier)

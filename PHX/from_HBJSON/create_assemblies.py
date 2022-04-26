@@ -28,7 +28,7 @@ def _conductivity_from_r_value(_r_value: float, _thickness: float) -> float:
     return conductivity
 
 
-def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMaterialNoMass]) -> constructions.Layer:
+def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMaterialNoMass]) -> constructions.PhxLayer:
     """Returns a new PHX-Layer with attributes based on a Honeybee-Material.
 
     Arguments:
@@ -39,7 +39,7 @@ def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMater
     --------
         * constructions.Layer: The new PHX-Layer object.
     """
-    new_layer = constructions.Layer()
+    new_layer = constructions.PhxLayer()
 
     if isinstance(_hb_material, EnergyMaterial):
         new_layer.thickness = _hb_material.thickness
@@ -91,8 +91,8 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
 
             if not _project.assembly_in_project(hb_const.identifier):
                 # -- Create a new Assembly with Layers from the Honeybee-Construction
-                new_assembly = constructions.Assembly()
-                new_assembly.id_num = constructions.Assembly._count
+                new_assembly = constructions.PhxConstructionOpaque()
+                new_assembly.id_num = constructions.PhxConstructionOpaque._count
                 new_assembly.display_name = hb_const.display_name
                 new_assembly.layers = [build_layer_from_hb_material(layer)
                                        for layer in hb_const.materials]
@@ -105,7 +105,7 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
     return None
 
 
-def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowConstruction) -> constructions.WindowType:
+def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowConstruction) -> constructions.PhxConstuctionWindow:
     """Create a new PHX-WindowType based on a HB-Window-Construction.
 
     If any detailed PH-Params exist for the frame or glass on the HB-Window-Construction's 
@@ -122,8 +122,8 @@ def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowC
         * (constructions.WindowType): The new PHX-WindowType.
     """
 
-    phx_window_type = constructions.WindowType()
-    phx_window_type.id_num = constructions.WindowType._count
+    phx_window_type = constructions.PhxConstuctionWindow()
+    phx_window_type.id_num = constructions.PhxConstuctionWindow._count
     phx_window_type.display_name = _hb_win_const.display_name
 
     ph_params: WindowConstructionPhProperties = _hb_win_const.properties.ph

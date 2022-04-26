@@ -11,7 +11,7 @@ from PHX.model.hvac import _base
 
 
 @dataclass
-class PhxVentilationDevice(_base.PhxMechanicalEquipment):
+class PhxDeviceVentilation(_base.PhxMechanicalEquipment):
     def __post_init__(self):
         super().__post_init__()
         self.usage_profile.ventilation = True
@@ -21,7 +21,7 @@ class PhxVentilationDevice(_base.PhxMechanicalEquipment):
 
 
 @dataclass
-class PhxVentilatorParams(_base.PhxMechanicalEquipmentParams):
+class PhxDeviceVentilatorParams(_base.PhxMechanicalEquipmentParams):
     sensible_heat_recovery: float = 0.0
     latent_heat_recovery: float = 0.0
     quantity: int = 0
@@ -29,7 +29,7 @@ class PhxVentilatorParams(_base.PhxMechanicalEquipmentParams):
     frost_protection_reqd: bool = True
     temperature_below_defrost_used: float = -5.0
 
-    def __add__(self, other: PhxVentilatorParams) -> PhxVentilatorParams:
+    def __add__(self, other: PhxDeviceVentilatorParams) -> PhxDeviceVentilatorParams:
         base = super().__add__(other)
         new_obj = self.__class__(**vars(base))
         new_obj.sensible_heat_recovery = (
@@ -47,12 +47,12 @@ class PhxVentilatorParams(_base.PhxMechanicalEquipmentParams):
 
 
 @dataclass
-class PhxVentilator(PhxVentilationDevice):
+class PhxDeviceVentilator(PhxDeviceVentilation):
     device_type: DeviceType = field(init=False, default=DeviceType.VENTILATION)
-    params: PhxVentilatorParams = field(
-        default_factory=PhxVentilatorParams)
+    params: PhxDeviceVentilatorParams = field(
+        default_factory=PhxDeviceVentilatorParams)
 
-    def __add__(self, other: PhxVentilator) -> PhxVentilator:
+    def __add__(self, other: PhxDeviceVentilator) -> PhxDeviceVentilator:
         base = super().__add__(other)
         new_obj = self.__class__.from_kwargs(**vars(base))
         return new_obj

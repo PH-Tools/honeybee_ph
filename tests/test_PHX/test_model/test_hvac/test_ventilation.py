@@ -2,8 +2,8 @@ from PHX.model.hvac import ventilation
 
 
 def test_add_default_PhxVentilatorParams(reset_class_counters):
-    p1 = ventilation.PhxVentilatorParams()
-    p2 = ventilation.PhxVentilatorParams()
+    p1 = ventilation.PhxDeviceVentilatorParams()
+    p2 = ventilation.PhxDeviceVentilatorParams()
 
     p3 = p1 + p2
 
@@ -17,7 +17,7 @@ def test_add_default_PhxVentilatorParams(reset_class_counters):
 
 
 def test_add_mixed_PhxVentilatorParams(reset_class_counters):
-    p1 = ventilation.PhxVentilatorParams(
+    p1 = ventilation.PhxDeviceVentilatorParams(
         sensible_heat_recovery=10,
         latent_heat_recovery=10,
         quantity=2,
@@ -25,7 +25,7 @@ def test_add_mixed_PhxVentilatorParams(reset_class_counters):
         frost_protection_reqd=True,
         temperature_below_defrost_used=-5.0,
     )
-    p2 = ventilation.PhxVentilatorParams(
+    p2 = ventilation.PhxDeviceVentilatorParams(
         sensible_heat_recovery=20,
         latent_heat_recovery=20,
         quantity=3,
@@ -44,17 +44,17 @@ def test_add_mixed_PhxVentilatorParams(reset_class_counters):
 
 
 def test_default_PhxVentilator(reset_class_counters):
-    p1 = ventilation.PhxVentilator()
-    p2 = ventilation.PhxVentilator()
+    p1 = ventilation.PhxDeviceVentilator()
+    p2 = ventilation.PhxDeviceVentilator()
 
     assert p1.id_num == 1
     assert p2.id_num == 2
 
 
 def test__PhxVentilator_params(reset_class_counters):
-    d1 = ventilation.PhxVentilator()
+    d1 = ventilation.PhxDeviceVentilator()
     d1.params.quantity = 1
-    d2 = ventilation.PhxVentilator()
+    d2 = ventilation.PhxDeviceVentilator()
     d2.params.quantity = 12
 
     assert d1.params != d2.params
@@ -62,8 +62,8 @@ def test__PhxVentilator_params(reset_class_counters):
 
 
 def test_add_default_PhxVentilator(reset_class_counters):
-    p1 = ventilation.PhxVentilator()
-    p2 = ventilation.PhxVentilator()
+    p1 = ventilation.PhxDeviceVentilator()
+    p2 = ventilation.PhxDeviceVentilator()
 
     p3 = p1 + p2
 
@@ -71,8 +71,8 @@ def test_add_default_PhxVentilator(reset_class_counters):
 
 
 def test_add_mixed_PhxVentilator(reset_class_counters):
-    d1 = ventilation.PhxVentilator()
-    d1.params = ventilation.PhxVentilatorParams(
+    d1 = ventilation.PhxDeviceVentilator()
+    d1.params = ventilation.PhxDeviceVentilatorParams(
         sensible_heat_recovery=10,
         latent_heat_recovery=10,
         quantity=2,
@@ -80,8 +80,8 @@ def test_add_mixed_PhxVentilator(reset_class_counters):
         frost_protection_reqd=True,
         temperature_below_defrost_used=-5.0,
     )
-    d2 = ventilation.PhxVentilator()
-    d2.params = ventilation.PhxVentilatorParams(
+    d2 = ventilation.PhxDeviceVentilator()
+    d2.params = ventilation.PhxDeviceVentilatorParams(
         sensible_heat_recovery=20,
         latent_heat_recovery=20,
         quantity=3,

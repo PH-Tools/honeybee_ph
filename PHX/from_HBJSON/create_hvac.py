@@ -46,7 +46,7 @@ def _transfer_attributes(_hbeph_obj: _base._PhHVACBase,
 # -- Ventilation
 
 
-def build_phx_ventilator(_hbeph_vent: ventilation.PhVentilationSystem) -> hvac.PhxVentilator:
+def build_phx_ventilator(_hbeph_vent: ventilation.PhVentilationSystem) -> hvac.PhxDeviceVentilator:
     """Returns a new Fresh-Air Ventilator built from the hb-energy hvac paramaters.
 
     This will look at the Space's Host-Room .properties.energy.hvac for data.
@@ -61,7 +61,7 @@ def build_phx_ventilator(_hbeph_vent: ventilation.PhVentilationSystem) -> hvac.P
         * (mech_equip.Ventilator): The new Passive House Ventilator created.
     """
 
-    phx_vent = hvac.PhxVentilator()
+    phx_vent = hvac.PhxDeviceVentilator()
 
     if not _hbeph_vent.ventilation_unit:
         return phx_vent

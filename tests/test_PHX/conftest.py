@@ -33,8 +33,8 @@ def reset_class_counters():
     geometry.PhxPolygon._count = 0
     schedules.UtilizationPatternVent._count = 0
     certification.PhxPHBuilding._count = 0
-    constructions.Assembly._count = 0
-    constructions.WindowType._count = 0
+    constructions.PhxConstructionOpaque._count = 0
+    constructions.PhxConstuctionWindow._count = 0
     building.PhxZone._count = 0
     building.PhxComponent._count = 0
     elec_equip.PhxElectricalEquipment._count = 0
@@ -62,7 +62,7 @@ def reset_class_counters():
 
     water.PhxHotWaterDevice._count = 0
 
-    ventilation.PhxVentilationDevice._count = 0
+    ventilation.PhxDeviceVentilation._count = 0
 
     yield
 
@@ -71,8 +71,8 @@ def reset_class_counters():
     geometry.PhxPolygon._count = 0
     schedules.UtilizationPatternVent._count = 0
     certification.PhxPHBuilding._count = 0
-    constructions.Assembly._count = 0
-    constructions.WindowType._count = 0
+    constructions.PhxConstructionOpaque._count = 0
+    constructions.PhxConstuctionWindow._count = 0
     building.PhxZone._count = 0
     building.PhxComponent._count = 0
     elec_equip.PhxElectricalEquipment._count = 0
@@ -100,4 +100,4 @@ def reset_class_counters():
 
     water.PhxHotWaterDevice._count = 0
 
-    ventilation.PhxVentilationDevice._count = 0
+    ventilation.PhxDeviceVentilation._count = 0

@@ -10,7 +10,7 @@ import uuid
 
 
 @dataclass
-class Material:
+class PhxMaterial:
     display_name: str = ""
     conductivity: float = 0.0
     density: float = 0.0
@@ -21,21 +21,22 @@ class Material:
 
 
 @dataclass
-class Layer:
+class PhxLayer:
     thickness: float = 0.0
-    material: Material = field(default_factory=Material)
+    material: PhxMaterial = field(default_factory=PhxMaterial)
 
 
 @dataclass
-class Assembly:
+class PhxConstructionOpaque:
     _count: ClassVar[int] = 0
 
-    _identifier: Union[uuid.UUID, str] = field(init=False, default_factory=uuid.uuid4)
+    _identifier: Union[uuid.UUID, str] = field(
+        init=False, default_factory=uuid.uuid4)
     id_num: int = field(init=False, default=0)
     display_name: str = ""
     layer_order: int = 2  # Outside to Inside
     grid_kind: int = 2  # Medium
-    layers: list[Layer] = field(default_factory=list)
+    layers: list[PhxLayer] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.__class__._count += 1
@@ -51,9 +52,12 @@ class Assembly:
             return
         self._identifier = str(_in)
 
+# ------------------------------------------------------------
+# Windows
+
 
 @dataclass
-class WindowFrameElement:
+class PhxWindowFrameElement:
     width: float = 0.1  # m
     u_value: float = 1.0  # W/m2k
     psi_glazing: float = 0.00  # W/mk
@@ -61,7 +65,7 @@ class WindowFrameElement:
 
 
 @dataclass
-class WindowType:
+class PhxConstuctionWindow:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
     display_name: str = ""
@@ -73,10 +77,14 @@ class WindowType:
     u_value_glass: float = 1.0
     u_value_frame: float = 1.0
 
-    frame_top: WindowFrameElement = field(default_factory=WindowFrameElement)
-    frame_right: WindowFrameElement = field(default_factory=WindowFrameElement)
-    frame_bottom: WindowFrameElement = field(default_factory=WindowFrameElement)
-    frame_left: WindowFrameElement = field(default_factory=WindowFrameElement)
+    frame_top: PhxWindowFrameElement = field(
+        default_factory=PhxWindowFrameElement)
+    frame_right: PhxWindowFrameElement = field(
+        default_factory=PhxWindowFrameElement)
+    frame_bottom: PhxWindowFrameElement = field(
+        default_factory=PhxWindowFrameElement)
+    frame_left: PhxWindowFrameElement = field(
+        default_factory=PhxWindowFrameElement)
     frame_factor: float = 0.75
 
     glass_mean_emissivity: float = 0.1
