@@ -194,7 +194,8 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
 
     # -------------------------------------------------------------------------
     # -- Set the new Merged-Room's properties.ph and
-    # -- properties.energy to match the 'reference' room to start with
+    # -- properties.energy to match the 'reference' room to start with, but leave
+    # -- off the PH-Spaces so they don't get duplicated
     dup_ph_prop = reference_room._properties.ph.duplicate(
         new_room._properties.ph, include_spaces=False)
     setattr(new_room._properties, '_ph', dup_ph_prop)
@@ -208,7 +209,8 @@ def merge_rooms(_hb_rooms: List[room.Room]) -> room.Room:
     # -- NOTE: this has to be done AFTER the duplicate()
     # -- call, otherwise not all the spaces will transfer over properly.
     # -- NOTE: Skip the reference room so it isn't counted twice.
-    for hb_room in _hb_rooms[1:]:
+    for hb_room in _hb_rooms:
+        # for hb_room in _hb_rooms[1:]: #TODO <--- verify this change....
         for existing_space in hb_room.properties.ph.spaces:
             # -- Preserve the original HB-Room's energy and ph properties over
             # -- on the space. We need to do this cus' the HB-Room is being removed
