@@ -23,7 +23,7 @@
 Collects and organizes data for a Ventilator Unit (HRV/ERV). Used to build up a 
 PH-Style Ventilation System.
 -
-EM February 1, 2022
+EM April 28, 2022
     Args:
         unit_name_: (Optional[float]) The name of the Ventilator Unit
         sensible_hr_: (Optional[float]) Input the Ventialtion Unit's Heat Recovery %. Default is 75% 
@@ -45,7 +45,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Ventilator"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='FEB_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_28_2022')
 if DEV:
     reload(honeybee_energy_ph.hvac.ventilation)
     reload(honeybee_ph_utils.preview)

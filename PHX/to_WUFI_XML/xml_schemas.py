@@ -126,7 +126,7 @@ def _PhxZone(_z: building.PhxZone) -> List[xml_writable]:
         XML_Node("OccupantQuantityUserDef", int(
             _z.res_occupant_quantity), "unit", "-"),
         XML_Node("NumberBedrooms", int(_z.res_number_bedrooms), "unit", "-"),
-        XML_List("HomeDevice", [XML_Object("Device", d, "index", i)
+        XML_List("HomeDevice", [XML_Object("Device", d, "index", i, _schema_name='_PhxElectricalDevice')
                  for i, d in enumerate(_z.elec_equipment_collection.devices)]),
     ]
 
@@ -1200,7 +1200,7 @@ def _PhxElectricalDevice(_d: elec_equip.PhxElectricalDevice) -> List[xml_writabl
         XML_Node('EnergyDemandNormUse', _d.energy_demand_per_use),
         XML_Node('CEF_CombinedEnergyFactor', _d.combined_energy_factor),
     ]
+
     device_schema = getattr(sys.modules[__name__], f'_{_d.__class__.__name__}')
     appliance_specific_attributes = device_schema(_d)
-
     return common_attributes + appliance_specific_attributes

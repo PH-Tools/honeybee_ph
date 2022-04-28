@@ -24,15 +24,31 @@ from honeybee_energy_ph.load import ph_equipment
 class HBElecEquipWithRooms:
     """An HBE-ElectricEquipment object, with a list of the rooms it is assigned to."""
 
-    def __init__(self):
-        self.hb_electric_equipment = None
-        self.hb_rooms = []
+    def __init__(self, _hb_electric_equipment):
+        # type: (equipment.ElectricEquipment) -> None
+        self.hb_electric_equipment = _hb_electric_equipment.duplicate()
+        self.hb_rooms = []  # type: list[room.Room]
 
     def set_hb_room_ee(self):
         # type: () -> None
         """Set all of the HB-Rooms in the set with the HBE-ElecEquipment obj."""
+        # -- Duplicate the HBE-ElecEquipment and
+        # -- manually reset the identifier and name
+        dup_hb_ee = self.hb_electric_equipment.duplicate()
+        dup_hb_ee.identifier = clean_and_id_ep_string(dup_hb_ee.display_name)
+
+        new_rooms = []
         for hb_room in self.hb_rooms:
-            hb_room.properties.energy.electric_equipment = self.hb_electric_equipment
+            dup_room = hb_room.duplicate()
+            dup_room.properties.energy.electric_equipment = dup_hb_ee
+            new_rooms.append(dup_room)
+
+        self.hb_rooms = new_rooms
+
+    def add_hbph_equipment(self, ph_equip_item):
+        # type: (ph_equipment.PhEquipment) -> None
+        self.hb_electric_equipment.properties.ph.equipment_collection.add_equipment(
+            ph_equip_item)
 
     def set_hb_ee_wattage(self):
         # type: () -> None
@@ -67,12 +83,14 @@ class HBElecEquipCollection:
 
     def add_to_collection(self, _hb_room):
         # type: (room.Room) -> None
+        """Use the HB-Room's ElectricEquipment.identifier as the key to log the HBElecEquipWithRooms"""
         ee_id = _hb_room.properties.energy.electric_equipment.identifier
         try:
-            self._collection[ee_id].hb_rooms.append(_hb_room)
+            self._collection[ee_id].hb_rooms.append(_hb_room.duplicate())
         except KeyError:
-            new_ee_with_rooms = HBElecEquipWithRooms()
-            new_ee_with_rooms.hb_electric_equipment = _hb_room.properties.energy.electric_equipment
+            new_ee_with_rooms = HBElecEquipWithRooms(
+                _hb_electric_equipment=_hb_room.properties.energy.electric_equipment
+            )
             new_ee_with_rooms.hb_rooms.append(_hb_room)
             self._collection[ee_id] = new_ee_with_rooms
 

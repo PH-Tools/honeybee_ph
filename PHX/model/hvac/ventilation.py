@@ -24,7 +24,7 @@ class PhxDeviceVentilation(_base.PhxMechanicalEquipment):
 class PhxDeviceVentilatorParams(_base.PhxMechanicalEquipmentParams):
     sensible_heat_recovery: float = 0.0
     latent_heat_recovery: float = 0.0
-    quantity: int = 0
+    quantity: int = 1
     electric_efficiency: float = 0.55
     frost_protection_reqd: bool = True
     temperature_below_defrost_used: float = -5.0

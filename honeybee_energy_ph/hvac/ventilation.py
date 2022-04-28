@@ -16,7 +16,7 @@ class Ventilator(_base._PhHVACBase):
         super(Ventilator, self).__init__()
         self.display_name = '_unnamed_ventilator_'
         self.id_num = 0
-        self.quantity = 0
+        self.quantity = 1
         self.sensible_heat_recovery = 0.0
         self.latent_heat_recovery = 0.0
         self.electric_efficiency = 0.55
