@@ -10,7 +10,7 @@ filterwarnings = [
 
 [tool.coverage.run]
 # --- For testing...
-command_line = "-m pytest tests/test_PHX"
+command_line = "-m pytest tests"
 source = ["PHX"]
 # ---
 branch = true

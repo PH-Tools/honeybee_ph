@@ -22,8 +22,6 @@ from typing import Dict
 from honeybee import model
 from honeybee import face
 
-# from honeybee_energy_ph.properties.construction.opaque import PH_OpaqueConstruction
-# from honeybee_energy_ph.properties.construction.window import PH_WindowConstruction
 from ladybug_geometry_ph.geometry3d_ph import pointvector
 
 
@@ -40,7 +38,7 @@ def convert_face_3d(_lbt_geom: face.Face3D) -> face.Face3D:
 
     Arguments:
     ----------
-        * _lbt_geometry (face.Face3D): A Labybug face.Face3D object to convert the vertices of.
+        * _lbt_geometry (face.Face3D): A Ladybug face.Face3D object to convert the vertices of.
 
     Returns:
     --------
@@ -77,7 +75,7 @@ def convert_model_LBT_geometry(_model: model.Model) -> model.Model:
 
     Returns:
     --------
-        * model.Model: The Honeybee Model with properties and objects modified as needed.
+        * (model.Model): The Honeybee Model with properties and objects modified as needed.
     """
 
     # -- This bit is a little dicey. HB-Room is not really made to let us swap out
