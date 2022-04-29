@@ -23,12 +23,17 @@
 Create a new detailed Passive House style equipment which can be added to the 
 honeybee Rooms.
 -
-EM April 2, 2022
+EM April 29, 2022
 """
 
-import Grasshopper
+import scriptcontext as sc
+import Rhino as rh
+import rhinoscriptsyntax as rs
+import ghpythonlib.components as ghc
+import Grasshopper as gh
+
 import honeybee_ph_utils.preview
-import honeybee_ph_rhino.gh_io
+from honeybee_ph_rhino import gh_io
 import honeybee_ph_rhino.gh_compo_io.ghio_equipment
 import honeybee_energy_ph.load.ph_equipment
 
@@ -37,12 +42,18 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create PH Equipment"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_29_2022')
 if DEV:
     reload(honeybee_ph_rhino.gh_io)
     reload(honeybee_ph_rhino.gh_compo_io.ghio_equipment)
     #reload(honeybee_energy_ph.load.ph_equipment)
     reload(honeybee_ph_utils.preview)
+
+
+# ------------------------------------------------------------------------------
+# -- GH Interface
+IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
+
 
 #-------------------------------------------------------------------------------
 class EquipmentTypeInputError(Exception):
@@ -51,12 +62,11 @@ class EquipmentTypeInputError(Exception):
         "{}".format(_in, _valid_types)
         super(EquipmentTypeInputError, self).__init__(self.msg)
 
-
 #-------------------------------------------------------------------------------
 # -- Setup the input nodes, get all the user input values
 input_dict = honeybee_ph_rhino.gh_compo_io.ghio_equipment.get_component_inputs(_type)
-honeybee_ph_rhino.gh_io.setup_component_inputs(ghenv, input_dict, _start_i=2)
-input_values_dict = honeybee_ph_rhino.gh_io.get_component_input_values(ghenv)
+honeybee_ph_rhino.gh_io.setup_component_inputs(IGH, input_dict, _start_i=2)
+input_values_dict = gh_io.get_component_input_values(ghenv)
 
 #-------------------------------------------------------------------------------
 # -- Build the new PH equipment object
@@ -91,7 +101,7 @@ if _type:
             setattr(equipment_, attr_name, input_val)
 else:
     msg = "Set the 'equipment_type' to configure the user-inputs."
-    ghenv.Component.AddRuntimeMessage(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning, msg)
+    ghenv.Component.AddRuntimeMessage(gh.Kernel.GH_RuntimeMessageLevel.Warning, msg)
 
 
 #-------------------------------------------------------------------------------

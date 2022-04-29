@@ -43,7 +43,7 @@ def test_default_PhxRoomVentilation(reset_class_counters):
         '<HeatRecovery>0.0</HeatRecovery>',
         '<MoistureRecovery >0.0</MoistureRecovery >',
         '<PH_Parameters>',
-        '<Quantity>0</Quantity>',
+        '<Quantity>1</Quantity>',
         '<HumidityRecoveryEfficiency>0.0</HumidityRecoveryEfficiency>',
         '<ElectricEfficiency>0.55</ElectricEfficiency>',
         '<DefrostRequired>true</DefrostRequired>',

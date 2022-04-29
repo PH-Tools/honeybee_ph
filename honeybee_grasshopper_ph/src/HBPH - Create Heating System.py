@@ -22,7 +22,7 @@
 """
 Create a PH-Style Heating Equipment which can be added to HB-Rooms.
 -
-EM April 16, 2022
+EM April 29, 2022
     Args:
         _system_type: (int) Enter the type of heating system.
         
@@ -30,23 +30,32 @@ EM April 16, 2022
         heating_system_: The new HBPH-Heating System which can be added to HB-Rooms.
 """
 
-import Grasshopper
+import scriptcontext as sc
+import Rhino as rh
+import rhinoscriptsyntax as rs
+import ghpythonlib.components as ghc
+import Grasshopper as gh
+
 from honeybee_ph_utils import preview
 from honeybee_ph_rhino import gh_io
 from honeybee_ph_rhino.gh_compo_io import ghio_heating
 from honeybee_energy_ph.hvac import heating
-
+from honeybee_ph_rhino import gh_io
 
 #-------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create Heating System"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_16_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_29_2022')
 if DEV:
     reload(gh_io)
     reload(ghio_heating)
     reload(preview)
+
+# ------------------------------------------------------------------------------
+# -- GH Interface
+IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 
 #-------------------------------------------------------------------------------
@@ -60,7 +69,7 @@ class HeatingTypeInputError(Exception):
 #-------------------------------------------------------------------------------
 # -- Setup the input nodes, get all the user input values
 input_dict = ghio_heating.get_component_inputs(_system_type)
-gh_io.setup_component_inputs(ghenv, input_dict, _start_i=1)
+gh_io.setup_component_inputs(IGH, input_dict, _start_i=1)
 input_values_dict = gh_io.get_component_input_values(ghenv)
 
 
@@ -87,11 +96,10 @@ if _system_type:
 
         input_val = input_values_dict.get(attr_name)
         if input_val:
-            
             setattr(heating_system_, attr_name, input_val)
 else:
     msg = "Set the '_system_type' to configure the user-inputs."
-    ghenv.Component.AddRuntimeMessage(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning, msg)
+    ghenv.Component.AddRuntimeMessage(gh.Kernel.GH_RuntimeMessageLevel.Warning, msg)
 
 
 #-------------------------------------------------------------------------------

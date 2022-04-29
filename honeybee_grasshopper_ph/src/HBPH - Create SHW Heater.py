@@ -23,12 +23,16 @@
 Create a new Hot-Water Heater with detailed Passive-House style inputs which 
 can then be added to the HB-Energy SHW.
 -
-EM April 1, 2022
+EM April 29, 2022
 """
 
-import Grasshopper
+import scriptcontext as sc
+import Rhino as rh
+import rhinoscriptsyntax as rs
+import ghpythonlib.components as ghc
+import Grasshopper as gh
 
-import honeybee_ph_rhino.gh_io
+from honeybee_ph_rhino import gh_io
 import honeybee_ph_rhino.gh_compo_io.ghio_hw_heaters
 import honeybee_energy_ph.hvac.hot_water
 import honeybee_ph_utils.preview
@@ -38,13 +42,16 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create SHW Heater"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_29_2022')
 if DEV:
-    reload(honeybee_ph_rhino.gh_io)
+    reload(gh_io)
     reload(honeybee_ph_rhino.gh_compo_io.ghio_hw_heaters)
     reload(honeybee_energy_ph.hvac.hot_water)
     reload(honeybee_ph_utils.preview)
 
+# ------------------------------------------------------------------------------
+# -- GH Interface
+IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 #-------------------------------------------------------------------------------
 class HeaterTypeInputError(Exception):
@@ -56,7 +63,7 @@ class HeaterTypeInputError(Exception):
 #-------------------------------------------------------------------------------
 # -- Setup the input nodes, get all the user input values
 input_dict = honeybee_ph_rhino.gh_compo_io.ghio_hw_heaters.get_component_inputs(heater_type)
-honeybee_ph_rhino.gh_io.setup_component_inputs(ghenv, input_dict)
+honeybee_ph_rhino.gh_io.setup_component_inputs(IGH, input_dict)
 input_values_dict = honeybee_ph_rhino.gh_io.get_component_input_values(ghenv)
 
 
@@ -83,7 +90,7 @@ if heater_type:
             setattr(heater_, attr_name, input_val)
 else:
     msg = "Set the 'heater_type' to configure the user-inputs."
-    ghenv.Component.AddRuntimeMessage(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning, msg)
+    ghenv.Component.AddRuntimeMessage(gh.Kernel.GH_RuntimeMessageLevel.Warning, msg)
 
 #-------------------------------------------------------------------------------
 # -- Preview

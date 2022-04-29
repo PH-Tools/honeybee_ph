@@ -9,7 +9,7 @@ probably would not need something like this? I suppose it does help reduce coupl
 """
 
 try:
-    from typing import Any
+    from typing import Any, Sequence, Union
 except ImportError:
     pass  # Python 3
 
@@ -427,12 +427,14 @@ class IGH:
 class ComponentInput:
     """GH-Component Input Node data class."""
 
-    def __init__(self, _name, _description):
+    def __init__(self, _name='-', _description='', _access=0):
+        # type: (str, str, int) -> None
         self.name = _name
         self.description = _description
+        self.access = _access  # 0='item, 1='list', 2='tree'
 
     def __str__(self):
-        return '{}(name={})'.format(self.__class__.__name__, self.name)
+        return '{}(name={})'.format(self.__class__.__name__, self.name, self.input_type)
 
     def __repr__(self):
         return str(self)
@@ -528,13 +530,13 @@ def clean_get(_list, _i, _default=None):
             return _default
 
 
-def setup_component_inputs(ghenv, _input_dict, _start_i=1, _end_i=20):
-    # type: (Any, dict[int, ComponentInput], int, int) -> None
+def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
+    # type: (IGH, dict[int, ComponentInput], int, int) -> None
     """Dynamic GH component input node configuration.
 
     Arguments:
     ----------
-        * ghenv (): The Grasshopper ghenv variable.
+        * IGH (): The Grasshopper Interface object.
         * _input_dict (dict[int, ComponentInput]): The input dict with the field names
             and descriptions to use for the component input nodes.
         * _start_i (int): Optional starting node number. Default=1
@@ -548,14 +550,24 @@ def setup_component_inputs(ghenv, _input_dict, _start_i=1, _end_i=20):
         input_item = _input_dict.get(input_num, ComponentInput('-', '-'))
 
         try:
-            ghenv.Component.Params.Input[input_num].NickName = input_item.name
-            ghenv.Component.Params.Input[input_num].Name = input_item.name
-            ghenv.Component.Params.Input[input_num].Description = input_item.description
+            IGH.ghenv.Component.Params.Input[input_num].NickName = input_item.name
+            IGH.ghenv.Component.Params.Input[input_num].Name = input_item.name
+            IGH.ghenv.Component.Params.Input[input_num].Description = input_item.description
+            access = IGH.Grasshopper.Kernel.GH_ParamAccess(input_item.access)
+            IGH.ghenv.Component.Params.Input[input_num].Access = access
         except ValueError:
             # -- past end of component inputs
             pass
 
     return None
+
+
+def _get_component_input_value(_input):
+    # type: (Sequence[Any]) -> Union[float, str]
+    try:
+        return float(_input[0])
+    except:
+        return str(_input[0])
 
 
 def get_component_input_values(ghenv):
@@ -574,11 +586,21 @@ def get_component_input_values(ghenv):
     inputs = {}
     for input in ghenv.Component.Params.Input:
         try:
-            values = list(input.VolatileData[0])
+            # Cast from GH_Goo to a normal PH-List
             try:
-                val = float(str(values[0]))
+                input_list = list(input.VolatileData[0])
             except:
-                val = str(values[0])
+                input_list = []
+
+            if str(input.Access) == 'list':
+                val = []
+                for v in input_list:
+                    val.append(_get_component_input_value([v]))
+            elif str(input.Access) == 'tree':
+                raise NotImplementedError
+            else:
+                val = _get_component_input_value(input_list)
+
             inputs[input.Name] = val
         except:
             inputs[input.Name] = None

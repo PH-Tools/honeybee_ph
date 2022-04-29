@@ -47,8 +47,8 @@ inputs_heat_pump_annual.update({
 
 inputs_heat_pump_monthly = copy(inputs_base)
 inputs_heat_pump_monthly.update({
-    3: ComponentInput(_name='monthly_COPS', _description='(list[float]): A List of COP values.'),
-    4: ComponentInput(_name='monthly_temps', _description='(list[float]): A List of temp [deg C] values.'),
+    3: ComponentInput(_name='monthly_COPS', _description='(list[float]): A List of COP values.', _access=1),
+    4: ComponentInput(_name='monthly_temps', _description='(list[float]): A List of temp [deg C] values.', _access=1),
 })
 
 # -----------------------------------------------------------------------------

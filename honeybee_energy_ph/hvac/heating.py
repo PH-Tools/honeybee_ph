@@ -5,7 +5,7 @@
 
 import sys
 try:
-    from typing import Any, Optional
+    from typing import Any, Optional, Sequence
 except ImportError:
     pass  # IronPython 2.7
 
@@ -263,6 +263,34 @@ class PhHeatingHeatPumpRatedMonthly(PhHeatingSystem):
         self.ambient_temp_1 = -8.333  # =17F
         self.COP_2 = 2.5
         self.ambient_temp_2 = 8.333  # =47F
+
+    @property
+    def monthly_COPS(self):
+        return [self.COP_1, self.COP_2]
+
+    @monthly_COPS.setter
+    def monthly_COPS(self, _cops):
+        # type: (Sequence[float]) -> None
+        self.COP_1 = _cops[0]
+        try:
+            self.COP_2 = _cops[1]
+        except IndexError:
+            self.COP_2 = _cops[0]
+        return
+
+    @property
+    def monthly_temps(self):
+        return [self.ambient_temp_1, self.ambient_temp_2]
+
+    @monthly_temps.setter
+    def monthly_temps(self, _cops):
+        # type: (Sequence[float]) -> None
+        self.ambient_temp_1 = _cops[0]
+        try:
+            self.ambient_temp_2 = _cops[1]
+        except IndexError:
+            self.ambient_temp_2 = _cops[0]
+        return
 
     def to_dict(self):
         # type: () -> dict[str, Any]

@@ -7,10 +7,9 @@ def test_add_default_PhxVentilatorParams(reset_class_counters):
 
     p3 = p1 + p2
 
-    assert p1 == p2 == p3
     assert p3.sensible_heat_recovery == p1.sensible_heat_recovery
     assert p3.latent_heat_recovery == p1.latent_heat_recovery
-    assert p3.quantity == p1.quantity
+    assert p3.quantity == 2
     assert p3.electric_efficiency == p1.electric_efficiency
     assert p3.frost_protection_reqd == p1.frost_protection_reqd
     assert p3.temperature_below_defrost_used == p1.temperature_below_defrost_used

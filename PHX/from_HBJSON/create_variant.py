@@ -70,12 +70,14 @@ def add_phius_certification_from_hb_room(_variant: project.PhxVariant, _hb_room:
         * None
     """
 
-    _variant.ph_certification.ph_certificate_criteria = _hb_room.properties.ph.ph_bldg_segment.ph_certification.certification_criteria
-    _variant.ph_certification.ph_selection_target_data = _hb_room.properties.ph.ph_bldg_segment.ph_certification.localization_selection_type
-    _variant.ph_certification.annual_heating_demand = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_demand
-    _variant.ph_certification.annual_cooling_demand = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_cooling_demand
-    _variant.ph_certification.peak_heating_load = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_heating_load
-    _variant.ph_certification.peak_cooling_load = _hb_room.properties.ph.ph_bldg_segment.ph_certification.PHIUS2021_cooling_load
+    hbph_cert = _hb_room.properties.ph.ph_bldg_segment.ph_certification  # alias
+
+    _variant.ph_certification.certification_criteria.ph_certificate_criteria = hbph_cert.certification_criteria
+    _variant.ph_certification.certification_criteria.ph_selection_target_data = hbph_cert.localization_selection_type
+    _variant.ph_certification.certification_criteria.annual_heating_demand = hbph_cert.PHIUS2021_heating_demand
+    _variant.ph_certification.certification_criteria.annual_cooling_demand = hbph_cert.PHIUS2021_cooling_demand
+    _variant.ph_certification.certification_criteria.peak_heating_load = hbph_cert.PHIUS2021_heating_load
+    _variant.ph_certification.certification_criteria.peak_cooling_load = hbph_cert.PHIUS2021_cooling_load
 
     return None
 
