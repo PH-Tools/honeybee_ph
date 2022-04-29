@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""Functions to build PHX-Building from Honeybee Rooms"""
+"""Functions to create a new PhxBuilding from Honeybee-Rooms"""
+
 from typing import Any, Optional, List
 
 from honeybee import room, aperture, face
+
 from PHX.model import building
 from PHX.from_HBJSON import create_rooms
 

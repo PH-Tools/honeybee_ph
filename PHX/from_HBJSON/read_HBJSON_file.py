@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""Functions for importing / translating Honeybee Models into WUFI-JSON """
+"""Functions for importing / converting Honeybee Models into PHX Models"""
 
 # -- Dev Note: Required to import all the base packages to run the __init__ startup routines
 # -- which ensures that .ph properties slot is added to all HB Objects. This must be done before

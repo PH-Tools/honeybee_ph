@@ -1,8 +1,7 @@
 # -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
 
-"""Passive House Equipments (Electric Equipment)"""
-
+"""HB-PH Electric Equipment"""
 
 try:
     from typing import Any

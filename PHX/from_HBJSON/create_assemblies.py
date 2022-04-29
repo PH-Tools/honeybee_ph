@@ -3,13 +3,16 @@
 
 """Functions used to create Project elements from the Honeybee-Model"""
 
+from typing import Union
+
 from honeybee import model
 from honeybee_energy.material.opaque import EnergyMaterial, EnergyMaterialNoMass
 from honeybee_energy.construction import window
+
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_ph_utils import iso_10077_1
+
 from PHX.model import constructions
-from typing import Union
 
 
 def _conductivity_from_r_value(_r_value: float, _thickness: float) -> float:
