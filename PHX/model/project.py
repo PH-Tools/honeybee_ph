@@ -19,8 +19,10 @@ class PhxVariant:
     name: str = "unnamed_variant"
     remarks: str = ""
     plugin: str = ""
-    graphics3D: geometry.PhxGraphics3D = field(default_factory=geometry.PhxGraphics3D)
-    building: building.PhxBuilding = field(default_factory=building.PhxBuilding)
+    graphics3D: geometry.PhxGraphics3D = field(
+        default_factory=geometry.PhxGraphics3D)
+    building: building.PhxBuilding = field(
+        default_factory=building.PhxBuilding)
     ph_certification: certification.PhxPHCertification = field(
         default_factory=certification.PhxPHCertification)
     location: climate.PhxLocation = field(default_factory=climate.PhxLocation)
@@ -60,8 +62,10 @@ class PhxProjectData:
 class PhxProject:
     name: str = "unnamed_project"
 
-    _assembly_types: dict[str, constructions.PhxConstructionOpaque] = field(default_factory=dict)
-    _window_types: dict[str, Any] = field(default_factory=dict)
+    _assembly_types: dict[str, constructions.PhxConstructionOpaque] = field(
+        default_factory=dict)
+    _window_types: dict[str, constructions.PhxConstructionWindow] = field(
+        default_factory=dict)
     utilization_patterns_ventilation: schedules.UtilPat_Vent_Collection = field(
         default_factory=schedules.UtilPat_Vent_Collection)
     utilization_patterns_ph: list = field(default_factory=list)

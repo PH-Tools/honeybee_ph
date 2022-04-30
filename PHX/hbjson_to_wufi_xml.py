@@ -61,8 +61,9 @@ if __name__ == '__main__':
     hb_model = read_HBJSON_file.convert_hbjson_dict_to_hb_model(hb_json_dict)
 
     # --- Generate the WUFI Project file.
-    print(f'> Generating the PHX-Project from the Honeybee-Model: "{hb_model}"')
-    phx_Project = create_project.convert_HB_model_to_WUFI_Project(
+    print(
+        f'> Generating the PHX-Project from the Honeybee-Model: "{hb_model}"')
+    phx_Project = create_project.convert_hb_model_to_PhxProject(
         hb_model, group_components=True)
 
     # --- Output the WUFI Project as an XML Text File
