@@ -1,4 +1,5 @@
-from PHX.model.hvac import cooling, enums
+from PHX.model.enums import hvac
+from PHX.model.hvac import cooling
 
 
 def test_default_PhxCoolingDevice(reset_class_counters):
@@ -73,8 +74,8 @@ def test_default_PhxCoolingVentilation(reset_class_counters):
 
     assert dev_1.id_num == 1
     assert dev_2.id_num == 2
-    assert dev_1.device_type == enums.DeviceType.HEAT_PUMP
-    assert dev_2.device_type == enums.DeviceType.HEAT_PUMP
+    assert dev_1.device_type == hvac.DeviceType.HEAT_PUMP
+    assert dev_2.device_type == hvac.DeviceType.HEAT_PUMP
     assert dev_1.usage_profile.cooling == True
     assert dev_2.usage_profile.cooling == True
 
@@ -196,8 +197,8 @@ def test_default_PhxCoolingRecirculation(reset_class_counters):
 
     assert dev_1.id_num == 1
     assert dev_2.id_num == 2
-    assert dev_1.device_type == enums.DeviceType.HEAT_PUMP
-    assert dev_2.device_type == enums.DeviceType.HEAT_PUMP
+    assert dev_1.device_type == hvac.DeviceType.HEAT_PUMP
+    assert dev_2.device_type == hvac.DeviceType.HEAT_PUMP
     assert dev_1.usage_profile.cooling == True
     assert dev_2.usage_profile.cooling == True
 
@@ -313,8 +314,8 @@ def test_default_PhxCoolingDehumidification(reset_class_counters):
 
     assert dev_1.id_num == 1
     assert dev_2.id_num == 2
-    assert dev_1.device_type == enums.DeviceType.HEAT_PUMP
-    assert dev_2.device_type == enums.DeviceType.HEAT_PUMP
+    assert dev_1.device_type == hvac.DeviceType.HEAT_PUMP
+    assert dev_2.device_type == hvac.DeviceType.HEAT_PUMP
     assert dev_1.usage_profile.cooling == True
     assert dev_2.usage_profile.cooling == True
 
@@ -383,11 +384,11 @@ def test_default_PhxCoolingPanelParams(reset_class_counters):
 
 def test_mixed_PhxCoolingPanelParams(reset_class_counters):
     p1 = cooling.PhxCoolingPanelParams(
-        hp_type=enums.HeatPumpType.ANNUAL,
+        hp_type=hvac.HeatPumpType.ANNUAL,
         annual_COP=6,
     )
     p2 = cooling.PhxCoolingPanelParams(
-        hp_type=enums.HeatPumpType.ANNUAL,
+        hp_type=hvac.HeatPumpType.ANNUAL,
         annual_COP=4,
     )
 
@@ -412,8 +413,8 @@ def test_default_PhxCoolingPanel(reset_class_counters):
 
     assert dev_1.id_num == 1
     assert dev_2.id_num == 2
-    assert dev_1.device_type == enums.DeviceType.HEAT_PUMP
-    assert dev_2.device_type == enums.DeviceType.HEAT_PUMP
+    assert dev_1.device_type == hvac.DeviceType.HEAT_PUMP
+    assert dev_2.device_type == hvac.DeviceType.HEAT_PUMP
     assert dev_1.usage_profile.cooling == True
     assert dev_2.usage_profile.cooling == True
 
@@ -434,12 +435,12 @@ def test_add_default_PhxCoolingPanel(reset_class_counters):
 def test_add_mixed_PhxCoolingPanel(reset_class_counters):
     dev_1 = cooling.PhxCoolingPanel()
     dev_1.params = cooling.PhxCoolingPanelParams(
-        hp_type=enums.HeatPumpType.ANNUAL,
+        hp_type=hvac.HeatPumpType.ANNUAL,
         annual_COP=6,
     )
     dev_2 = cooling.PhxCoolingPanel()
     dev_2.params = cooling.PhxCoolingPanelParams(
-        hp_type=enums.HeatPumpType.ANNUAL,
+        hp_type=hvac.HeatPumpType.ANNUAL,
         annual_COP=4,
     )
 

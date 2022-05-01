@@ -3,85 +3,74 @@
 
 """Functions to create a new PhxBuilding from Honeybee-Rooms"""
 
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Union
 
 from honeybee import room, aperture, face
 
 from PHX.model import building
 from PHX.from_HBJSON import create_rooms
+from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
 
 
-def get_wufi_enum(_schema_nm: str, _key: str, _default: Any, _sub_schema: Optional[str] = None) -> int:
-    """Convert Honeybe attribute values into corresponding WUFI integer enums.
+def _hb_face_type_to_phx_enum(_hb_face: face.Face) -> ComponentFaceType:
+    mapping = {
+        "Wall": ComponentFaceType.OPAQUE,
+        "RoofCeiling": ComponentFaceType.OPAQUE,
+        "Floor": ComponentFaceType.OPAQUE,
+        "AirBoundary": ComponentFaceType.AIRBOUNDARY,
+    }
+    return mapping[str(_hb_face.type)]
 
-    Arguments:
-    ----------
-        * _schema_nm (str): The primary schema-key to lookup
-        * _key (str): The secondary key to look up in the designated schema-dict.
-        * default (Any): The default value to return if no schema is found mathcing
-            the key(s) input
-        * _sub_schema (str | None): The secondary key to lookup within the designated
-            schema.
 
-    Returns:
-    --------
-        * int: The WUFI integer corresponding to the input key(s) or the default
-            value is none found in the schema.
-    """
+def _hb_ext_exposure_to_phx_enum(_hb_face: Union[face.Face, aperture.Aperture]) -> ComponentExposureExterior:
+    mapping = {
+        "Outdoors": ComponentExposureExterior.EXTERIOR,
+        "Ground": ComponentExposureExterior.GROUND,
+        "Surface": ComponentExposureExterior.SURFACE,
+    }
+    return mapping[str(_hb_face.boundary_condition)]
 
-    schemas = {
-        'face_type': {  # <---- _schema_nm
-            "Wall": 1,  # <---- _key
-            "RoofCeiling": 1,
-            "Floor": 1,
-            "AirBoundary": 3,
+
+def _hb_int_color_to_phx_enum(_hb_face: face.Face) -> ComponentColor:
+    mapping = {
+        "Wall": {
+            "Outdoors": ComponentColor.EXT_WALL_OUTER,
+            "Surface": ComponentColor.INNER_WALL,
+            "Ground": ComponentColor.SURFACE_GROUND_CONTACT,
         },
-        'exposure_ext': {
-            "Outdoors": -1,
-            "Ground": -2,
-            "Surface": -3,
+        "RoofCeiling": {
+            "Outdoors": ComponentColor.SLOPED_ROOF_OUTER,
+            "Surface": ComponentColor.CEILING,
+            "Ground": ComponentColor.SURFACE_GROUND_CONTACT,
         },
-        'color_interior': {
-            "Wall": {  # <------ _sub_schema
-                "Outdoors": 1,
-                "Surface": 3,
-                "Ground": 1,
-            },
-            "RoofCeiling": {
-                "Outdoors": 8,
-                "Surface": 6,
-                "Ground": 12,
-            },
-            "Floor": {
-                "Outdoors": 5,
-                "Surface": 5,
-                "Ground": 12,
-            },
-        },
-        'color_exterior': {
-            "Wall": {
-                "Outdoors": 2,
-                "Surface": 3,
-                "Ground": 12,
-            },
-            "RoofCeiling": {
-                "Outdoors": 7,
-                "Surface": 6,
-                "Ground": 12,
-            },
-            "Floor": {
-                "Outdoors": 5,
-                "Surface": 5,
-                "Ground": 12,
-            },
+        "Floor": {
+            "Outdoors": ComponentColor.FLOOR,
+            "Surface": ComponentColor.FLOOR,
+            "Ground": ComponentColor.SURFACE_GROUND_CONTACT,
         },
     }
+    return mapping[str(_hb_face.type)][str(_hb_face.boundary_condition)]
 
-    schema = schemas.get(_schema_nm, {})
-    if _sub_schema:
-        schema = schema.get(_sub_schema, {})
 
-    return schema.get(_key, _default)
+def _hb_ext_color_to_phx_enum(_hb_face: face.Face) -> ComponentColor:
+    mapping = {
+        "Wall": {
+            "Outdoors": ComponentColor.EXT_WALL_OUTER,
+            "Surface": ComponentColor.INNER_WALL,
+            "Ground": ComponentColor.EXT_WALL_OUTER,
+        },
+        "RoofCeiling": {
+            "Outdoors": ComponentColor.SLOPED_ROOF_INNER,
+            "Surface": ComponentColor.CEILING,
+            "Ground": ComponentColor.SURFACE_GROUND_CONTACT,
+        },
+        "Floor": {
+            "Outdoors": ComponentColor.FLOOR,
+            "Surface": ComponentColor.FLOOR,
+            "Ground": ComponentColor.SURFACE_GROUND_CONTACT,
+        },
+    }
+    return mapping[str(_hb_face.type)][str(_hb_face.boundary_condition)]
 
 
 def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.PhxComponent:
@@ -101,13 +90,11 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     new_compo.name = _aperture.display_name
     new_compo.id_num = building.PhxComponent._count
 
-    new_compo.type = 2  # Transparent
-
-    new_compo.exposure_exterior = get_wufi_enum(
-        "exposure_ext", str(_aperture.boundary_condition), 1)
+    new_compo.face_type = ComponentFaceType.TRANSPARENT
+    new_compo.exposure_exterior = _hb_ext_exposure_to_phx_enum(_aperture)
     new_compo.exposure_interior = _hb_room.properties.ph.id_num
-    new_compo.color_interior = 4  # Window
-    new_compo.color_exterior = 4  # Window
+    new_compo.color_interior = ComponentColor.WINDOW
+    new_compo.color_exterior = ComponentColor.WINDOW
     new_compo.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
 
     new_compo.add_polygon_id(_aperture.properties.ph.id_num)
@@ -133,14 +120,11 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
     new_compo.id_num = building.PhxComponent._count
     new_compo.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
 
-    new_compo.type = get_wufi_enum("face_type", str(_hb_face.type), 1)
-    new_compo.exposure_exterior = get_wufi_enum(
-        "exposure_ext", str(_hb_face.boundary_condition), 1)
+    new_compo.face_type = _hb_face_type_to_phx_enum(_hb_face)
+    new_compo.exposure_exterior = _hb_ext_exposure_to_phx_enum(_hb_face)
     new_compo.exposure_interior = _hb_room.properties.ph.id_num
-    new_compo.color_interior = get_wufi_enum(
-        "color_interior", str(_hb_face.boundary_condition), 1, str(_hb_face.type))
-    new_compo.color_exterior = get_wufi_enum(
-        "color_exterior", str(_hb_face.boundary_condition), 1, str(_hb_face.type))
+    new_compo.color_interior = _hb_int_color_to_phx_enum(_hb_face)
+    new_compo.color_exterior = _hb_ext_color_to_phx_enum(_hb_face)
     new_compo.add_polygon_id(_hb_face.properties.ph.id_num)
 
     return new_compo

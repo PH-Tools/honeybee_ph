@@ -1,4 +1,5 @@
-from PHX.model.hvac import _base, enums
+from PHX.model.enums import hvac
+from PHX.model.hvac import _base
 
 
 def test_PhxUsageProfile_add(reset_class_counters):
@@ -148,12 +149,12 @@ def test_default_PhxMechanicalSubSystem(reset_class_counters):
 
     assert sys_1 != sys_2
     assert sys_1.id_num == 1
-    assert sys_1.system_type == enums.DeviceType.ELECTRIC
+    assert sys_1.system_type == hvac.DeviceType.ELECTRIC
     assert str(sys_1)
     assert repr(sys_1)
 
     assert sys_2.id_num == 2
-    assert sys_2.system_type == enums.DeviceType.ELECTRIC
+    assert sys_2.system_type == hvac.DeviceType.ELECTRIC
     assert str(sys_2)
     assert repr(sys_2)
 

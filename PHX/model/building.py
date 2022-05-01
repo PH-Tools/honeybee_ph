@@ -11,6 +11,7 @@ from functools import reduce
 import operator
 
 from PHX.model import loads, elec_equip
+from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
 
 
 @dataclass
@@ -39,10 +40,10 @@ class PhxComponent:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
     name: str = ""
-    type: int = 1
-    color_interior: int = 1
-    color_exterior: int = 1
-    exposure_exterior: int = -1
+    face_type: ComponentFaceType = ComponentFaceType.OPAQUE
+    color_interior: ComponentColor = ComponentColor.EXT_WALL_INNER
+    color_exterior: ComponentColor = ComponentColor.EXT_WALL_INNER
+    exposure_exterior: ComponentExposureExterior = ComponentExposureExterior.EXTERIOR
     exposure_interior: int = 1
     interior_attachment_id: int = -1
     assembly_type_id_num: int = -1
@@ -55,7 +56,7 @@ class PhxComponent:
 
     @property
     def unique_key(self) -> str:
-        return f'{self.type}-{self.exposure_interior}-{self.interior_attachment_id}-'\
+        return f'{self.face_type}-{self.exposure_interior}-{self.interior_attachment_id}-'\
             f'{self.exposure_exterior}-{self.assembly_type_id_num}-{self.window_type_id_num}'
 
     def add_polygon_id(self, _input: int) -> None:

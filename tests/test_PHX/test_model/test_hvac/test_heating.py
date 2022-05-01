@@ -1,4 +1,5 @@
-from PHX.model.hvac import heating, enums
+from PHX.model.enums import hvac
+from PHX.model.hvac import heating
 
 
 def test_PhxHeatingDevice(reset_class_counters):
@@ -37,8 +38,8 @@ def test_PhxHeaterBoilerFossil_set_fuel(reset_class_counters):
     d2 = heating.PhxHeaterBoilerFossil()
     d2.params.fuel = 2
 
-    assert d1.params.fuel == enums.FuelType.GAS
-    assert d2.params.fuel == enums.FuelType.OIL
+    assert d1.params.fuel == hvac.FuelType.GAS
+    assert d2.params.fuel == hvac.FuelType.OIL
 
 
 def test_default_PhxHeaterBoilerWood(reset_class_counters):
@@ -55,8 +56,8 @@ def test_PhxHeaterBoilerWood_set_fuel(reset_class_counters):
     d2 = heating.PhxHeaterBoilerWood()
     d2.params.fuel = 4
 
-    assert d1.params.fuel == enums.FuelType.WOOD_LOG
-    assert d2.params.fuel == enums.FuelType.WOOD_PELLET
+    assert d1.params.fuel == hvac.FuelType.WOOD_LOG
+    assert d2.params.fuel == hvac.FuelType.WOOD_PELLET
 
 # -----------------------------------------------------------------------------
 # District Heat

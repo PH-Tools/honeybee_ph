@@ -6,14 +6,14 @@
 from rich import print
 import pathlib
 from PHX.from_HBJSON import read_HBJSON_file, create_project
-from PHX.to_PHPP.phpp import app
+from PHX.to_PHPP.phpp import phpp_app
+import xlwings as xw
 
 if __name__ == '__main__':
-    # --- Input / Output file Path
+    # --- Input file Path
     # -------------------------------------------------------------------------
-    SOURCE_FILE = pathlib.Path("sample", "hbjson", "Ridgeway_VI_220429.hbjson")
-    TARGET_FILE_PHPP = pathlib.Path(
-        "sample", "wufi_xml", "Ridgeway_VI_220429.xlsx")
+    SOURCE_FILE = pathlib.Path("tests", "_source_hbjson",
+                               "Default_Room_Single_Zone_wih_Apertures.hbjson")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -------------------------------------------------------------------------
@@ -29,10 +29,23 @@ if __name__ == '__main__':
         hb_model, group_components=True)
 
     # --- Connect to open instance of XL
-    phpp_conn = app.Connection()
-    with phpp_conn.silent():
-        print('[bold green]> writing to excel....[/bold green]')
+    # -------------------------------------------------------------------------
+    phpp_conn = phpp_app.PHPPConnection()
+    if phpp_conn.xl.connection_is_open():
+        file = phpp_conn.xl.wb.name
+        print(f'[bold green]> connected to excel doc: {file}[/bold green]')
+    with phpp_conn.xl.in_silent_mode():
+        # phpp_conn.u_values.clear_sheet()
+        for phx_construction in phx_project.assembly_types:
+            phpp_conn.u_values.write_phx_construction_to_sheet(phx_construction)
 
+        # phpp_conn.components.clear_sheet()
+        for phx_construction in phx_project.window_types:
+            phpp_conn.components.write_phx_construction_to_sheet(phx_construction)
+
+        # print(phpp_conn.u_values.get_next_empty_constructor_row_num())
+
+        #print('[bold green]> writing to excel....[/bold green]')
         # phpp_conn.areas.clear_sheet()
 
         # --- Write the surfaces to Excel

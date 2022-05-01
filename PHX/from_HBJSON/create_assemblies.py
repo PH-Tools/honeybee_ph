@@ -46,6 +46,7 @@ def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMater
 
     if isinstance(_hb_material, EnergyMaterial):
         new_layer.thickness = _hb_material.thickness
+        new_layer.material.display_name = _hb_material.display_name
         new_layer.material.conductivity = _hb_material.conductivity
         new_layer.material.density = _hb_material.density
         new_layer.material.heat_capacity = _hb_material.specific_heat
@@ -57,6 +58,7 @@ def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMater
 
     elif isinstance(_hb_material, EnergyMaterialNoMass):
         new_layer.thickness = 0.1  # m = 4". Use as default since No-Mass has no thickness
+        new_layer.material.display_name = _hb_material.display_name
         new_layer.material.conductivity = _conductivity_from_r_value(
             _hb_material.r_value, new_layer.thickness)
         new_layer.material.density = _hb_material.mass_area_density

@@ -6,7 +6,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 
-from PHX.model.hvac.enums import DeviceType
+from PHX.model.enums.hvac import DeviceType
 from PHX.model.hvac import _base
 
 

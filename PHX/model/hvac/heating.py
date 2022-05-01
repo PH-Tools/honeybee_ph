@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Optional, Union
 from dataclasses import dataclass, field
 
-from PHX.model.hvac.enums import DeviceType, HeatPumpType, FuelType
+from PHX.model.enums.hvac import DeviceType, HeatPumpType, FuelType
 from PHX.model.hvac import _base
 
 

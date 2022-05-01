@@ -1,4 +1,5 @@
-from PHX.model.hvac import water, enums
+from PHX.model.enums import hvac
+from PHX.model.hvac import water
 
 
 def test_add_default_PhxHotWaterTankParams(reset_class_counters):
@@ -24,7 +25,7 @@ def test_add_mixed_PhxHotWaterTankParams(reset_class_counters):
         solar_losses=4,
         storage_loss_rate=2,
         standby_losses=10,
-        input_option=enums.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
+        input_option=hvac.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
         storage_capacity=10,
         tank_room_temp=1,
         tank_water_temp=4,
@@ -34,7 +35,7 @@ def test_add_mixed_PhxHotWaterTankParams(reset_class_counters):
         solar_losses=4,
         storage_loss_rate=4,
         standby_losses=20,
-        input_option=enums.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
+        input_option=hvac.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
         storage_capacity=20,
         tank_room_temp=2,
         tank_water_temp=8,
@@ -87,7 +88,7 @@ def test_add_mixed_PhxHotWaterTank(reset_class_counters):
         solar_losses=4,
         storage_loss_rate=2,
         standby_losses=10,
-        input_option=enums.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
+        input_option=hvac.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
         storage_capacity=10,
         tank_room_temp=1,
         tank_water_temp=4,
@@ -98,7 +99,7 @@ def test_add_mixed_PhxHotWaterTank(reset_class_counters):
         solar_losses=4,
         storage_loss_rate=4,
         standby_losses=20,
-        input_option=enums.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
+        input_option=hvac.PhxHotWaterInputOptions.SPEC_TOTAL_LOSSES,
         storage_capacity=20,
         tank_room_temp=2,
         tank_water_temp=8,

@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from typing import Optional, ClassVar, Union
 import uuid
 
-from PHX.model.hvac.enums import DeviceType
+from PHX.model.enums.hvac import DeviceType
 
 
 @dataclass
