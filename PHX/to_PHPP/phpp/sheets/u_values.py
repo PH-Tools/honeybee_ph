@@ -30,7 +30,18 @@ class UValueConstructor:
                             _xl: xl_app.XLConnection,
                             _sheet_name: str,
                             _phx_const: constructions.PhxConstructionOpaque) -> None:
-        _xl.write_data(_sheet_name, f'M{self.start_row}', _phx_const.display_name)
+        """Add the PhxConstructionWindow attributes to the Components worksheet.
+
+        Arguments:
+        ----------
+            * _xl: (xl_app.XLConection) The XL connection to use.
+            * _sheet_name: (str) The name of the worksheet to write to.
+            * _phx_const: (construction.PhxConstructionOpaque) The PHX-Construction
+                to add to the PHPP library.
+        """
+
+        _xl.write_data(
+            _sheet_name, f'M{self.start_row}', _phx_const.display_name)
 
         # -- default surface films for now.
         _xl.write_data(_sheet_name, f'M{self.start_row+2}', 0.0)
@@ -42,9 +53,17 @@ class UValueConstructor:
                 _sheet_name, f'L{self.start_row+6+i}', layer.material.display_name)
             _xl.write_data(
                 _sheet_name, f'M{self.start_row+6+i}', layer.material.conductivity)
-            _xl.write_data(_sheet_name, f'S{self.start_row+6+i}', layer.thickness*1000)
+            _xl.write_data(
+                _sheet_name, f'S{self.start_row+6+i}', layer.thickness*1000)
 
     def clear(self, _xl: xl_app.XLConnection, _sheet_name: str) -> None:
+        """Clear all the values from the excel worksheet's row
+
+        Arguments:
+        ----------
+            * _xl: (xl_app.XLConnection) The Excel connection to use.
+            * _sheet_name: (str) The name of the worksheet to clear the values on.
+        """
         _xl.clear_data(_sheet_name, f'M{self.start_row}')
         _xl.clear_data(_sheet_name, f'S{self.start_row}')
         _xl.clear_data(_sheet_name, f'M{self.start_row+2}')
@@ -54,7 +73,8 @@ class UValueConstructor:
         _xl.clear_data(_sheet_name, f'M{self.start_row+17}')
 
         for i in range(8):
-            _xl.clear_data(_sheet_name, f'L{self.start_row+6+i}:S{self.start_row+6+i}')
+            _xl.clear_data(
+                _sheet_name, f'L{self.start_row+6+i}:S{self.start_row+6+i}')
 
 
 @dataclass

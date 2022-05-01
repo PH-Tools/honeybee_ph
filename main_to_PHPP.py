@@ -7,7 +7,6 @@ from rich import print
 import pathlib
 from PHX.from_HBJSON import read_HBJSON_file, create_project
 from PHX.to_PHPP.phpp import phpp_app
-import xlwings as xw
 
 if __name__ == '__main__':
     # --- Input file Path
@@ -37,11 +36,13 @@ if __name__ == '__main__':
     with phpp_conn.xl.in_silent_mode():
         # phpp_conn.u_values.clear_sheet()
         for phx_construction in phx_project.assembly_types:
-            phpp_conn.u_values.write_phx_construction_to_sheet(phx_construction)
+            phpp_conn.u_values.write_phx_construction_to_sheet(
+                phx_construction)
 
         # phpp_conn.components.clear_sheet()
         for phx_construction in phx_project.window_types:
-            phpp_conn.components.write_phx_construction_to_sheet(phx_construction)
+            phpp_conn.components.write_phx_construction_to_sheet(
+                phx_construction)
 
         # print(phpp_conn.u_values.get_next_empty_constructor_row_num())
 

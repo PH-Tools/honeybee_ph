@@ -26,22 +26,43 @@ class FrameComponentsError(Exception):
 
 @dataclass
 class GlazingEntry:
-    row: int
+    """An individual Glazing entry/row"""
+
+    row_num: int
     description_value: xl_typing.xl_range_value
 
     @property
     def description_range(self) -> str:
-        return f'IE{self.row}'
+        return f'IE{self.row_num}'
 
     def write_data_to_sheet(self, _xl: xl_app.XLConnection,
                             _sheet_name: str,
                             _phx_const: constructions.PhxConstructionWindow) -> None:
-        _xl.write_data(_sheet_name, f'IE{self.row}', _phx_const.display_name)
-        _xl.write_data(_sheet_name, f'IF{self.row}', _phx_const.glass_g_value)
-        _xl.write_data(_sheet_name, f'IG{self.row}', _phx_const.u_value_glass)
+        """Add the PhxConstructionWindow attributes to the Components worksheet.
+
+        Arguments:
+        ----------
+            * _xl: (xl_app.XLConection) The XL connection to use.
+            * _sheet_name: (str) The name of the worksheet to write to.
+            * _phx_const: (construction.PhxConstructionWindow) The PHX Window
+                construciton to add to the PHPP library.
+        """
+        _xl.write_data(
+            _sheet_name, f'IE{self.row_num}', _phx_const.display_name)
+        _xl.write_data(
+            _sheet_name, f'IF{self.row_num}', _phx_const.glass_g_value)
+        _xl.write_data(
+            _sheet_name, f'IG{self.row_num}', _phx_const.u_value_glass)
 
     def clear(self, _xl: xl_app.XLConnection, _sheet_name: str) -> None:
-        _xl.clear_data(_sheet_name, f'IE{self.row}:IG{self.row}')
+        """Clear all the values from the excel worksheet's row
+
+        Arguments:
+        ----------
+            * _xl: (xl_app.XLConnection) The Excel connection to use.
+            * _sheet_name: (str) The name of the worksheet to clear the values on.
+        """
+        _xl.clear_data(_sheet_name, f'IE{self.row_num}:IG{self.row_num}')
 
 
 @dataclass
@@ -56,29 +77,61 @@ class FrameEntry:
     def write_data_to_sheet(self, _xl: xl_app.XLConnection,
                             _sheet_name: str,
                             _phx_const: constructions.PhxConstructionWindow) -> None:
+        """Add the PhxConstructionOpaueattributes to the Components worksheet.
+
+        Arguments:
+        ----------
+            * _xl: (xl_app.XLConection) The XL connection to use.
+            * _sheet_name: (str) The name of the worksheet to write to.
+            * _phx_const: (construction.PhxConstructionWindow) The PHX Construction
+                construciton to add to the PHPP library.
+        """
         _xl.write_data(_sheet_name, f'IL{self.row}', _phx_const.display_name)
 
-        _xl.write_data(_sheet_name, f'IM{self.row}', _phx_const.frame_left.u_value)
-        _xl.write_data(_sheet_name, f'IN{self.row}', _phx_const.frame_right.u_value)
-        _xl.write_data(_sheet_name, f'IO{self.row}', _phx_const.frame_bottom.u_value)
-        _xl.write_data(_sheet_name, f'IP{self.row}', _phx_const.frame_top.u_value)
+        _xl.write_data(_sheet_name, f'IM{self.row}',
+                       _phx_const.frame_left.u_value)
+        _xl.write_data(_sheet_name, f'IN{self.row}',
+                       _phx_const.frame_right.u_value)
+        _xl.write_data(_sheet_name, f'IO{self.row}',
+                       _phx_const.frame_bottom.u_value)
+        _xl.write_data(_sheet_name, f'IP{self.row}',
+                       _phx_const.frame_top.u_value)
 
-        _xl.write_data(_sheet_name, f'IQ{self.row}', _phx_const.frame_left.width)
-        _xl.write_data(_sheet_name, f'IR{self.row}', _phx_const.frame_right.width)
-        _xl.write_data(_sheet_name, f'IS{self.row}', _phx_const.frame_bottom.width)
-        _xl.write_data(_sheet_name, f'IT{self.row}', _phx_const.frame_top.width)
+        _xl.write_data(_sheet_name, f'IQ{self.row}',
+                       _phx_const.frame_left.width)
+        _xl.write_data(_sheet_name, f'IR{self.row}',
+                       _phx_const.frame_right.width)
+        _xl.write_data(_sheet_name, f'IS{self.row}',
+                       _phx_const.frame_bottom.width)
+        _xl.write_data(
+            _sheet_name, f'IT{self.row}', _phx_const.frame_top.width)
 
-        _xl.write_data(_sheet_name, f'IU{self.row}', _phx_const.frame_left.psi_glazing)
-        _xl.write_data(_sheet_name, f'IV{self.row}', _phx_const.frame_right.psi_glazing)
-        _xl.write_data(_sheet_name, f'IW{self.row}', _phx_const.frame_bottom.psi_glazing)
-        _xl.write_data(_sheet_name, f'IX{self.row}', _phx_const.frame_top.psi_glazing)
+        _xl.write_data(_sheet_name, f'IU{self.row}',
+                       _phx_const.frame_left.psi_glazing)
+        _xl.write_data(_sheet_name, f'IV{self.row}',
+                       _phx_const.frame_right.psi_glazing)
+        _xl.write_data(_sheet_name, f'IW{self.row}',
+                       _phx_const.frame_bottom.psi_glazing)
+        _xl.write_data(_sheet_name, f'IX{self.row}',
+                       _phx_const.frame_top.psi_glazing)
 
-        _xl.write_data(_sheet_name, f'IY{self.row}', _phx_const.frame_left.psi_install)
-        _xl.write_data(_sheet_name, f'IZ{self.row}', _phx_const.frame_right.psi_install)
-        _xl.write_data(_sheet_name, f'JA{self.row}', _phx_const.frame_bottom.psi_install)
-        _xl.write_data(_sheet_name, f'JB{self.row}', _phx_const.frame_top.psi_install)
+        _xl.write_data(_sheet_name, f'IY{self.row}',
+                       _phx_const.frame_left.psi_install)
+        _xl.write_data(_sheet_name, f'IZ{self.row}',
+                       _phx_const.frame_right.psi_install)
+        _xl.write_data(_sheet_name, f'JA{self.row}',
+                       _phx_const.frame_bottom.psi_install)
+        _xl.write_data(_sheet_name, f'JB{self.row}',
+                       _phx_const.frame_top.psi_install)
 
     def clear(self, _xl: xl_app.XLConnection, _sheet_name: str) -> None:
+        """Clear all the values from the excel worksheet's row
+
+        Arguments:
+        ----------
+            * _xl: (xl_app.XLConnection) The Excel connection to use.
+            * _sheet_name: (str) The name of the worksheet to clear the values on.
+        """
         _xl.clear_data(_sheet_name, f'IL{self.row}:JB{self.row}')
 
 
@@ -103,6 +156,15 @@ class Components:
         self.shape = ComponentsShape()
 
     def get_glazing_entries(self) -> List[GlazingEntry]:
+        """Return a list of all the glazing entry locations on the worksheet.
+
+        This will try and find the cell marked "Glazing" in column 'ID' and use that
+        as the reference point for all entry lines.
+
+        Returns:
+        -------
+            (List[GlazingEntry]): A list of all the GlazingEntry elements/locations found.
+        """
         col_1 = 'ID'
         col_2 = 'IE'
         glazing_block_start = self.xl.get_row_num_of_value_in_column(
@@ -137,6 +199,15 @@ class Components:
         return glazing_entries
 
     def get_frame_entries(self) -> List[FrameEntry]:
+        """Return a list of all the frame entry locations on the worksheet.
+
+        This will try and find the cell marked "Window frames" in column 'IK' and use that
+        as the reference point for all entry lines.
+
+        Returns:
+        -------
+            (List[FrameEntry]): A list of all the GlazingEntry elements/locations found.
+        """
         col_1 = 'IK'
         col_2 = 'IL'
         frame_block_start = self.xl.get_row_num_of_value_in_column(
@@ -170,10 +241,29 @@ class Components:
         return frame_entries
 
     def get_worksheet_shape(self) -> None:
+        """Find the worksheet entry locations for all Glazing and Frames.
+
+        This method will set the values for the shape.glazings and shape.frames
+        While this method can be called at any time, it should not have to be rebuilt 
+        unless the user has added / deleted rows or moved input locations around in the 
+        PHPP document.
+        """
         self.shape.glazings = self.get_glazing_entries()
         self.shape.frames = self.get_frame_entries()
 
     def get_next_empty_glazing_entry(self, _check_shape: bool = False) -> GlazingEntry:
+        """Return the next empty GlazingEntry slot found in the worksheet.
+
+        Arguments:
+        ----------
+            * _check_shape: (Optional[bool]) default=False. Set True to re-run the 
+            worksheet shape finder in case the user has added/deleted any rows.
+
+        Returns:
+        --------
+            * (GlazingEntry): The first empty GlazingEntry slot found in the worksheet library.
+        """
+
         if _check_shape or not self.shape.glazings:
             self.get_worksheet_shape()
 
@@ -185,6 +275,17 @@ class Components:
             'Error: Can not find an empty Glazing Entry in the {self.sheet_name} sheet?')
 
     def get_next_empty_frame_entry(self, _check_shape: bool = False) -> FrameEntry:
+        """Return the next empty FrameEntry slot found in the worksheet.
+
+        Arguments:
+        ----------
+            * _check_shape: (Optional[bool]) default=False. Set True to re-run the 
+            worksheet shape finder in case the user has added/deleted any rows.
+
+        Returns:
+        --------
+            * (FrameEntry): The first empty FrameEntry slot found in the worksheet library.
+        """
         if _check_shape or not self.shape.frames:
             self.get_worksheet_shape()
 
@@ -196,6 +297,7 @@ class Components:
             'Error: Can not find an empty Frame Entry in the {self.sheet_name} sheet?')
 
     def clear_sheet(self) -> None:
+        """Remove all the values in the Glazing and Frame sections of the Worksheet."""
         if not self.shape.glazings or not self.shape.frames:
             self.get_worksheet_shape()
 
@@ -206,6 +308,15 @@ class Components:
             frame_entry.clear(self.xl, self.sheet_name)
 
     def write_phx_construction_to_sheet(self, _phx_const: constructions.PhxConstructionWindow) -> None:
+        """Write a new PHX-Construction to the PHPP Components Library.
+
+        This will add both glazing and frame values from the PHX-Construction.
+
+        Arguments:
+        ---------
+            * _phx_const: (constructions.PhxConstructionWindow) The PHX Construction to add to the
+                PHPP Components library.
+        """
         if not self.shape.glazings or not self.shape.frames:
             self.get_worksheet_shape()
 

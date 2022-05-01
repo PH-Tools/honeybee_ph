@@ -70,12 +70,8 @@ class XLConnection:
             return False
         return True
 
-    def get_row_num_of_value_in_column(self,
-                                       sheet_name: str,
-                                       row_start: int,
-                                       row_end: int,
-                                       col: str,
-                                       find: str) -> Optional[int]:
+    def get_row_num_of_value_in_column(self, sheet_name: str, row_start: int,
+                                       row_end: int,  col: str, find: str) -> Optional[int]:
         """Returns the row number of the first instance of a specific value found within a column, or None if not found.
 
         Arguments:
@@ -118,17 +114,13 @@ class XLConnection:
         """
         return self.wb.sheets[_sheet_name]
 
-    def get_single_column_data(self,
-                               _sheet_name: str,
-                               _col: str,
-                               _row_start: int = 1,
-                               _row_end: int = 100,
-                               ) -> List[xl_range_value]:
+    def get_single_column_data(self, _sheet_name: str, _col: str, _row_start: int = 1,
+                               _row_end: int = 100, ) -> List[xl_range_value]:
         """Return a list with the values read from a single column of the excel document.
 
         Arguments:
         ----------
-            * _sheet_name: (str) The Worksheet to read from.
+            * _sheet_name: (str) The Excel Worksheet to read from.
             * _col: (str) The Column letter to read.
             * _row_start: (int) default=1
             * _row_end: (int) default=100
@@ -139,13 +131,8 @@ class XLConnection:
 
         return self.get_sheet_by_name(_sheet_name).range(f'{_col}{_row_start}:{_col}{_row_end}').value
 
-    def get_multiple_column_data(self,
-                                 _sheet_name: str,
-                                 _col_start: str,
-                                 _col_end: str,
-                                 _row_start: int = 1,
-                                 _row_end: int = 100,
-                                 ) -> List[List[xl_range_value]]:
+    def get_multiple_column_data(self, _sheet_name: str, _col_start: str, _col_end: str,
+                                 _row_start: int = 1, _row_end: int = 100, ) -> List[List[xl_range_value]]:
         """Return a list with the values read from a specified block of the xl document.
 
         Arguments:
@@ -172,6 +159,17 @@ class XLConnection:
             f'{_col_start}{_row_start}:{_col_end}{_row_end}').options(ndim=_ndim).value
 
     def get_data(self, _sheet_name: str, _range: str) -> xl_writable:
+        """Return a value or values from Excel
+
+        Arguments:
+        ----------
+            * _sheet_name: (str) The name of the worksheet to read from.
+            * _range: (str) The cell range to write to (ie: "A1") or a set of ranges (ie: "A1:B4")
+
+        Returns:
+        ---------
+            * (xl_writable): The resultant value/values returned from excel.
+        """
         return self.get_sheet_by_name(_sheet_name).range(_range).value
 
     def write_data(self, _sheet_name: str, _range: str, _val: xl_writable) -> None:
