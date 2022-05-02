@@ -36,12 +36,12 @@ def _PhxProject(_wufi_project: project.PhxProject) -> List[xml_writable]:
         XML_List(
             "Assemblies",
             [XML_Object("Assembly", at_id, "index", i)
-             for i, at_id in enumerate(_wufi_project.assembly_types)],
+             for i, at_id in enumerate(_wufi_project.assembly_types.values())],
         ),
         XML_List(
             "WindowTypes",
             [XML_Object("WindowType", wt_id, "index", i)
-             for i, wt_id in enumerate(_wufi_project.window_types)],
+             for i, wt_id in enumerate(_wufi_project.window_types.values())],
         ),
     ]
 
@@ -107,7 +107,7 @@ def _PhxBuilding(_b: building.PhxBuilding) -> List[xml_writable]:
 
 def _PhxZone(_z: building.PhxZone) -> List[xml_writable]:
     return [
-        XML_Node("Name", _z.name),
+        XML_Node("Name", _z.display_name),
         XML_Node("KindZone", 1, "choice", "Simulated zone"),
         XML_Node("IdentNr", _z.id_num),
         XML_List("RoomsVentilation", [XML_Object("Room", rm, "index", i, _schema_name="_PhxRoomVentilation")
@@ -136,7 +136,7 @@ def _PhxComponent(_c: building.PhxComponent) -> List[xml_writable]:
         XML_Node("IdentNr", _c.id_num),
         XML_Node("Name", _c.display_name),
         XML_Node("Visual", True),
-        XML_Node("Type", _c.face_type.value),
+        XML_Node("Type", _c.face_opacity.value),
         XML_Node("IdentNrColorI", _c.color_interior.value),
         XML_Node("IdentNrColorE", _c.color_exterior.value),
         XML_Node("InnerAttachment", _c.exposure_interior),

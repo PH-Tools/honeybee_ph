@@ -3,21 +3,27 @@
 
 """Functions to build PHX-Variant from Honeybee Rooms"""
 
+from typing import Dict
+
 from honeybee import room
 
 from honeybee_ph import location
 from honeybee_energy_ph.properties.load import equipment
-from PHX.model import project, certification, ground, climate
-from PHX.from_HBJSON import create_building, create_geometry, create_hvac, create_shw, create_elec_equip
+from PHX.model import project, certification, ground, climate, constructions
+from PHX.from_HBJSON import create_building, create_hvac, create_shw, create_elec_equip
 
 
-def add_building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Room, group_components: bool = False) -> None:
+def add_building_from_hb_room(_variant: project.PhxVariant,
+                              _hb_room: room.Room,
+                              _assembly_dict: Dict[str, constructions.PhxConstructionOpaque],
+                              group_components: bool = False) -> None:
     """Create the  PHX-Building with all Components and Zones based on a Honeybee-Room.
 
     Arguments:
     ----------
         * _variaint (project.Variant): The PHX-Variant to add the building to.
         * _hb_room (room.Room): The honeybee-Room to use as the source.
+        * _assembly_dict (Dict[str, constructions.PhxConstructionOpaque]): The Assembly Type dict.
         * group_components (bool): default=False. Set to true to have the converter
             group the components by assembly-type.
 
@@ -26,7 +32,7 @@ def add_building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Room,
         * None
     """
     _variant.building.add_components(
-        create_building.create_components_from_hb_room(_hb_room))
+        create_building.create_components_from_hb_room(_hb_room, _assembly_dict))
     _variant.building.add_zones(
         create_building.create_zones_from_hb_room(_hb_room))
 
@@ -395,12 +401,15 @@ def add_elec_equip_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Roo
     return
 
 
-def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project.PhxVariant:
+def from_hb_room(_hb_room: room.Room,
+                 _assembly_dict: Dict[str, constructions.PhxConstructionOpaque],
+                 group_components: bool = False) -> project.PhxVariant:
     """Create a new PHX-Variant based on a single PH/Honeybee Room.
 
     Arguments:
     ----------
         * _hb_room (honeybee.room.Room): The honeybee room to base the Variant on.
+        * _assembly_dict (Dict[str, constructions.PhxConstructionOpaque]): The Assembly Type dict.
         * group_components (bool): default=False. Set to true to have the converter
             group the components by assembly-type.
 
@@ -422,7 +431,7 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     add_cooling_systems_from_hb_rooms(new_variant, _hb_room)
     add_dhw_heaters_from_hb_rooms(new_variant, _hb_room)
     add_dhw_storage_from_hb_rooms(new_variant, _hb_room)
-    add_building_from_hb_room(new_variant, _hb_room, group_components)
+    add_building_from_hb_room(new_variant, _hb_room, _assembly_dict, group_components)
     add_phius_certification_from_hb_room(new_variant, _hb_room)
     add_PH_Building_from_hb_room(new_variant, _hb_room)
     add_climate_from_hb_room(new_variant, _hb_room)

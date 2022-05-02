@@ -4,7 +4,7 @@
 """PHX Project Classes"""
 
 from __future__ import annotations
-from typing import Any, ClassVar, List, Dict
+from typing import ClassVar, List, Dict
 from dataclasses import dataclass, field
 
 from PHX.model import schedules
@@ -68,9 +68,9 @@ class PhxProjectData:
 class PhxProject:
     name: str = "unnamed_project"
 
-    _assembly_types: Dict[str, constructions.PhxConstructionOpaque] = field(
+    assembly_types: Dict[str, constructions.PhxConstructionOpaque] = field(
         default_factory=dict)
-    _window_types: Dict[str, constructions.PhxConstructionWindow] = field(
+    window_types: Dict[str, constructions.PhxConstructionWindow] = field(
         default_factory=dict)
     utilization_patterns_ventilation: schedules.UtilPat_Vent_Collection = field(
         default_factory=schedules.UtilPat_Vent_Collection)
@@ -85,23 +85,9 @@ class PhxProject:
     scope: int = 3
     visualized_geometry: int = 2
 
-    @property
-    def assembly_types(self):
-        return self._assembly_types.values()
-
-    @property
-    def window_types(self):
-        return self._window_types.values()
-
     def add_new_variant(self, _variant: PhxVariant) -> None:
         """Adds a new PHX Variant to the Project."""
         self.variants.append(_variant)
-
-    def add_new_assembly(self, _key, _assembly: constructions.PhxConstructionOpaque) -> None:
-        self._assembly_types[_key] = _assembly
-
-    def assembly_in_project(self, _key) -> bool:
-        return _key in self._assembly_types.keys()
 
     def __str__(self):
         return f"{self.__class__.__name__}"

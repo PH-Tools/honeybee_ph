@@ -52,6 +52,9 @@ class PhxConstructionOpaque:
             return
         self._identifier = str(_in)
 
+    def __hash__(self):
+        return hash(self.identifier)
+
 # ------------------------------------------------------------
 # Windows
 

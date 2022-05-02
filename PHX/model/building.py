@@ -10,15 +10,15 @@ from collections import defaultdict
 from functools import reduce
 import operator
 
-from PHX.model import loads, elec_equip, geometry
-from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
+from PHX.model import loads, elec_equip, geometry, constructions
+from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentFaceOpacity, ComponentColor
 
 
 @dataclass
 class PhxZone:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
-    name: str = ""
+    display_name: str = ""
     volume_gross: float = 0.0
     volume_net: float = 0.0
     weighted_net_floor_area: float = 0.0
@@ -38,16 +38,21 @@ class PhxZone:
 @dataclass
 class PhxComponent:
     _count: ClassVar[int] = 0
+
     id_num: int = field(init=False, default=0)
     display_name: str = ""
-    face_type: ComponentFaceType = ComponentFaceType.OPAQUE
+    face_type: ComponentFaceType = ComponentFaceType.WALL
+    face_opacity: ComponentFaceOpacity = ComponentFaceOpacity.OPAQUE
     color_interior: ComponentColor = ComponentColor.EXT_WALL_INNER
     color_exterior: ComponentColor = ComponentColor.EXT_WALL_INNER
     exposure_exterior: ComponentExposureExterior = ComponentExposureExterior.EXTERIOR
     exposure_interior: int = 1
     interior_attachment_id: int = -1
-    assembly_type_id_num: int = -1
+
+    assembly: constructions.PhxConstructionOpaque = constructions.PhxConstructionOpaque()
     window_type_id_num: int = -1
+    assembly_type_id_num: int = -1
+
     polygons: List[geometry.PhxPolygon] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -60,7 +65,7 @@ class PhxComponent:
 
     @property
     def unique_key(self) -> str:
-        return f'{self.face_type}-{self.exposure_interior}-{self.interior_attachment_id}-'\
+        return f'{self.face_opacity}-{self.exposure_interior}-{self.interior_attachment_id}-'\
             f'{self.exposure_exterior}-{self.assembly_type_id_num}-{self.window_type_id_num}'
 
     def add_polygons(self,
@@ -119,15 +124,36 @@ class PhxBuilding:
 
     @property
     def opaque_components(self) -> List[PhxComponent]:
+        def is_opaque_envelope(_compo: PhxComponent):
+            if _compo.face_opacity != ComponentFaceOpacity.OPAQUE:
+                return False
+            if _compo.exposure_interior == -1:
+                return False
+            return True
+
         return sorted(
-            [c for c in self.components if c.face_type == ComponentFaceType.OPAQUE],
+            [c for c in self.components if is_opaque_envelope(c)],
             key=lambda _: _.display_name
         )
 
     @property
     def transparent_components(self) -> List[PhxComponent]:
         return sorted(
-            [c for c in self.components if c.face_type == ComponentFaceType.TRANSPARENT],
+            [c for c in self.components if c.face_opacity == ComponentFaceOpacity.TRANSPARENT],
+            key=lambda _: _.display_name
+        )
+
+    @property
+    def shading_components(self) -> List[PhxComponent]:
+        def is_opaque_shading(_compo: PhxComponent):
+            if _compo.face_opacity != ComponentFaceOpacity.OPAQUE:
+                return False
+            if _compo.exposure_interior != -1:
+                return False
+            return True
+
+        return sorted(
+            [c for c in self.components if is_opaque_shading(c)],
             key=lambda _: _.display_name
         )
 

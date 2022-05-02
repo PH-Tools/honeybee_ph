@@ -8,6 +8,7 @@ from typing import List, Optional, Collection
 from dataclasses import dataclass, field
 
 from PHX.model import geometry, building
+from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentFaceOpacity, ComponentColor
 from PHX.to_PHPP.phpp import xl_app
 from PHX.to_PHPP.phpp import sheets
 
@@ -51,9 +52,24 @@ class SurfaceEntry:
     def description_range(self) -> str:
         return f'L{self.row_num}'
 
+    def get_phpp_group_number(self, _phx_component: building.PhxComponent) -> int:
+        if _phx_component.face_type == ComponentFaceType.WALL:
+            if _phx_component.exposure_exterior == ComponentExposureExterior.EXTERIOR:
+                return 8
+            else:
+                return 9
+        elif _phx_component.face_type == ComponentFaceType.FLOOR:
+            return 11
+        elif _phx_component.face_type == ComponentFaceType.ROOF_CEILING:
+            return 10
+        else:
+            return 12
+
     def write_data_to_sheet(self, _xl: xl_app.XLConnection,
                             _sheet_name: str,
-                            _phx_polygon: geometry.PhxPolygon) -> None:
+                            _phx_polygon: geometry.PhxPolygon,
+                            _phx_component: building.PhxComponent,
+                            _phpp_assembly_id: Optional[str]) -> None:
         """Add the PhxPolygon attributes to the Areas worksheet.
 
         Arguments:
@@ -62,13 +78,26 @@ class SurfaceEntry:
             * _sheet_name: (str) The name of the worksheet to write to.
             * _phx_polygon: (geometry.PhxPolygon) The PHX-Polygon to add to the 
                 Areas worksheet.
+            * _phx_component: (building.PhxComponent) The host PhxComponent with 
+                assembly, exposure data.
         """
+
         _xl.write_data(
             _sheet_name, f'L{self.row_num}', _phx_polygon.display_name)
+        _xl.write_data(
+            _sheet_name, f'M{self.row_num}', self.get_phpp_group_number(_phx_component))
         _xl.write_data(
             _sheet_name, f'P{self.row_num}', 1)
         _xl.write_data(
             _sheet_name, f'V{self.row_num}', _phx_polygon.area)
+        _xl.write_data(
+            _sheet_name, f'AC{self.row_num}', _phpp_assembly_id)
+        _xl.write_data(
+            _sheet_name, f'AJ{self.row_num}', 0.5)
+        _xl.write_data(
+            _sheet_name, f'AK{self.row_num}', 0.6)
+        _xl.write_data(
+            _sheet_name, f'AL{self.row_num}', 0.9)
 
     def clear(self, _xl: xl_app.XLConnection, _sheet_name: str) -> None:
         """Clear all the values from the excel worksheet's row
@@ -248,21 +277,19 @@ class Areas:
         if not self.shape.surface_entries or not self.shape.thermal_bridge_entries:
             self.get_worksheet_shape()
 
-    def write_phx_polygons_to_sheet(self, _phx_polygons: Collection[geometry.PhxPolygon]) -> None:
-        if not self.shape.surface_entries or not self.shape.thermal_bridge_entries:
-            self.get_worksheet_shape()
+        assembly_phpp_id = self.u_values.get_constructor_phpp_id_by_name(
+            _phx_component.assembly.display_name)
 
-        if not isinstance(_phx_polygons, Collection):
-            _phx_polygons = [_phx_polygons]
+        for phx_polygon in _phx_component.polygons:
 
-        for phx_poly in _phx_polygons:
             for exg_srfc_entry in self.shape.surface_entries:
-                if exg_srfc_entry.description_value == phx_poly.display_name:
+                if exg_srfc_entry.description_value == phx_polygon.display_name:
                     surface_entry = exg_srfc_entry
                     break
             else:
                 surface_entry = self.get_next_empty_surface_entry()
 
             surface_entry.clear(self.xl, self.sheet_name)
-            surface_entry.write_data_to_sheet(self.xl, self.sheet_name, phx_poly)
-            surface_entry.description_value = phx_poly.display_name
+            surface_entry.write_data_to_sheet(
+                self.xl, self.sheet_name, phx_polygon, _phx_component, assembly_phpp_id)
+            surface_entry.description_value = phx_polygon.display_name

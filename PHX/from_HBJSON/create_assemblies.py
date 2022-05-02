@@ -12,7 +12,7 @@ from honeybee_energy.construction import window
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_ph_utils import iso_10077_1
 
-from PHX.model import constructions
+from PHX.model import constructions, project
 
 
 def _conductivity_from_r_value(_r_value: float, _thickness: float) -> float:
@@ -76,7 +76,7 @@ def build_layer_from_hb_material(_hb_material: Union[EnergyMaterial, EnergyMater
     return new_layer
 
 
-def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> None:
+def build_opaque_assemblies_from_HB_model(_project: project.PhxProject, _hb_model: model.Model) -> None:
     """Build Opaque Constructions from Honeybee Faces and add to the PHX-Project.
 
     Will also align the id_nums of the face's Construction with the Assembly in the Project dict.
@@ -94,7 +94,7 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
         for face in room.faces:
             hb_const = face.properties.energy.construction
 
-            if not _project.assembly_in_project(hb_const.identifier):
+            if not hb_const.identifier in _project.assembly_types:
                 # -- Create a new Assembly with Layers from the Honeybee-Construction
                 new_assembly = constructions.PhxConstructionOpaque()
                 new_assembly.id_num = constructions.PhxConstructionOpaque._count
@@ -103,9 +103,9 @@ def build_opaque_assemblies_from_HB_model(_project, _hb_model: model.Model) -> N
                                        for layer in hb_const.materials]
 
                 # -- Add the assembly to the Project
-                _project.add_new_assembly(hb_const.identifier, new_assembly)
+                _project.assembly_types[hb_const.identifier] = new_assembly
 
-            hb_const.properties.ph.id_num = _project._assembly_types[hb_const.identifier].id_num
+            hb_const.properties.ph.id_num = _project.assembly_types[hb_const.identifier].id_num
 
     return None
 
@@ -200,13 +200,14 @@ def build_phx_window_type_from_hb_win_construction(_hb_win_const: window.WindowC
     return phx_window_type
 
 
-def build_transparent_assemblies_from_HB_Model(_project, _hb_model: model.Model) -> None:
+def build_transparent_assemblies_from_HB_Model(_project: project.PhxProject, _hb_model: model.Model) -> None:
     """Create PHX-WindowTypes (constructions) from an HB Model and add to the PHX-Project
 
     Will also align the id_nums of the Aperture Construction's with the WindowType in the Project dict.
 
     Arguments:
     ----------
+        * _project (_project: project.PhxProject): The PhxProject to store the new window type on.
         * _hb_model (model.Model): The Honeybee Model to use as the source.
 
     Returns:
@@ -219,14 +220,14 @@ def build_transparent_assemblies_from_HB_Model(_project, _hb_model: model.Model)
             for aperture in face._apertures:
                 hb_win_construction = aperture.properties.energy.construction
 
-                if hb_win_construction.identifier not in _project._window_types.keys():
+                if hb_win_construction.identifier not in _project.window_types:
 
                     phx_aperture_constr = build_phx_window_type_from_hb_win_construction(
                         hb_win_construction)
 
-                    _project._window_types[hb_win_construction.identifier] = phx_aperture_constr
+                    _project.window_types[hb_win_construction.identifier] = phx_aperture_constr
 
-                hb_win_construction.properties.ph.id_num = _project._window_types[
+                hb_win_construction.properties.ph.id_num = _project.window_types[
                     hb_win_construction.identifier].id_num
 
     return None

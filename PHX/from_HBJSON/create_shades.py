@@ -6,7 +6,7 @@
 from honeybee import model, shade
 
 from PHX.model import project, building
-from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
+from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceOpacity, ComponentColor
 from PHX.from_HBJSON import create_geometry
 
 
@@ -27,7 +27,7 @@ def create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.Ph
     new_compo.display_name = _shade.display_name
     new_compo.id_num = building.PhxComponent._count
 
-    new_compo.face_type = ComponentFaceType.OPAQUE
+    new_compo.face_opacity = ComponentFaceOpacity.OPAQUE
 
     new_compo.exposure_exterior = ComponentExposureExterior.EXTERIOR
     new_compo.exposure_interior = -1

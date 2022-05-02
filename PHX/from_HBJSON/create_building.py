@@ -3,21 +3,32 @@
 
 """Functions to create a new PhxBuilding from Honeybee-Rooms"""
 
-from typing import List, Union
+from typing import List, Union, Dict
 
 from honeybee import room, aperture, face
+from honeybee import facetype
 
-from PHX.model import building
+from PHX.model import building, constructions
 from PHX.from_HBJSON import create_rooms, create_geometry
-from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
+from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceOpacity, ComponentColor, ComponentFaceType
 
 
-def _hb_face_type_to_phx_enum(_hb_face: face.Face) -> ComponentFaceType:
+def _hb_face_opacity_to_phx_enum(_hb_face: face.Face) -> ComponentFaceOpacity:
     mapping = {
-        "Wall": ComponentFaceType.OPAQUE,
-        "RoofCeiling": ComponentFaceType.OPAQUE,
-        "Floor": ComponentFaceType.OPAQUE,
-        "AirBoundary": ComponentFaceType.AIRBOUNDARY,
+        "Wall": ComponentFaceOpacity.OPAQUE,
+        "RoofCeiling": ComponentFaceOpacity.OPAQUE,
+        "Floor": ComponentFaceOpacity.OPAQUE,
+        "AirBoundary": ComponentFaceOpacity.AIRBOUNDARY,
+    }
+    return mapping[str(_hb_face.type)]
+
+
+def _hb_face_type_to_phx_enum(_hb_face:  face.Face) -> ComponentFaceType:
+    mapping = {
+        'Wall': ComponentFaceType.WALL,
+        'Floor': ComponentFaceType.FLOOR,
+        'RoofCeiling': ComponentFaceType.ROOF_CEILING,
+        'AirBoundary': ComponentFaceType.AIR_BOUNDARY,
     }
     return mapping[str(_hb_face.type)]
 
@@ -85,32 +96,36 @@ def create_component_from_hb_aperture(_aperture: aperture.Aperture, _hb_room: ro
     --------
         * building.Component: A new Transparent (window) Component.
     """
-    new_compo = building.PhxComponent()
+    new_compo_aperture = building.PhxComponent()
 
-    new_compo.display_name = _aperture.display_name
-    new_compo.id_num = building.PhxComponent._count
+    new_compo_aperture.display_name = _aperture.display_name
+    new_compo_aperture.id_num = building.PhxComponent._count
 
-    new_compo.face_type = ComponentFaceType.TRANSPARENT
-    new_compo.exposure_exterior = _hb_ext_exposure_to_phx_enum(_aperture)
-    new_compo.exposure_interior = _hb_room.properties.ph.id_num
-    new_compo.color_interior = ComponentColor.WINDOW
-    new_compo.color_exterior = ComponentColor.WINDOW
-    new_compo.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
+    new_compo_aperture.face_type = ComponentFaceType.WINDOW
+    new_compo_aperture.face_opacity = ComponentFaceOpacity.TRANSPARENT
+    new_compo_aperture.exposure_exterior = _hb_ext_exposure_to_phx_enum(_aperture)
+    new_compo_aperture.exposure_interior = _hb_room.properties.ph.id_num
+    new_compo_aperture.color_interior = ComponentColor.WINDOW
+    new_compo_aperture.color_exterior = ComponentColor.WINDOW
+    new_compo_aperture.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
 
     # -- Polygons
     phx_polygon = create_geometry.create_PhxPolygon_from_hb_aperture(_aperture)
-    new_compo.add_polygons(phx_polygon)
+    new_compo_aperture.add_polygons(phx_polygon)
 
-    return new_compo
+    return new_compo_aperture
 
 
-def create_components_from_hb_face(_hb_face: face.Face, _hb_room: room.Room) -> List[building.PhxComponent]:
-    """Returns a new Opaque Component based on a Honeybee Face,
+def create_components_from_hb_face(_hb_face: face.Face,
+                                   _hb_room: room.Room,
+                                   _assembly_dict: Dict[str, constructions.PhxConstructionOpaque]) -> List[building.PhxComponent]:
+    """Returns a new Opaque Component (and any child components) based on a Honeybee Face,
 
     Arguments:
     ----------
         * _hb_face (face.Face): The Honeybee-Face to use as the source.
         * _hb_room (room.Room)L The Honeybee-Room to use as the source.
+        * _assembly_dict (Dict[str, constructions.PhxConstructionOpaque]): The Assembly Type dict.
 
     Returns:
     --------
@@ -122,9 +137,11 @@ def create_components_from_hb_face(_hb_face: face.Face, _hb_room: room.Room) -> 
 
     new_compo_opaque.display_name = _hb_face.display_name
     new_compo_opaque.id_num = building.PhxComponent._count
+    new_compo_opaque.assembly = _assembly_dict[_hb_face.properties.energy.construction.identifier]
     new_compo_opaque.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
 
     new_compo_opaque.face_type = _hb_face_type_to_phx_enum(_hb_face)
+    new_compo_opaque.face_opacity = _hb_face_opacity_to_phx_enum(_hb_face)
     new_compo_opaque.exposure_exterior = _hb_ext_exposure_to_phx_enum(_hb_face)
     new_compo_opaque.exposure_interior = _hb_room.properties.ph.id_num
     new_compo_opaque.color_interior = _hb_int_color_to_phx_enum(_hb_face)
@@ -145,12 +162,14 @@ def create_components_from_hb_face(_hb_face: face.Face, _hb_room: room.Room) -> 
     return new_compos
 
 
-def create_components_from_hb_room(_hb_room: room.Room) -> List[building.PhxComponent]:
+def create_components_from_hb_room(_hb_room: room.Room,
+                                   _assembly_dict: Dict[str, constructions.PhxConstructionOpaque]) -> List[building.PhxComponent]:
     """Create new Opaque and Transparent PHX-Components based on Honeybee-Room Faces.
 
     Arguments:
     ----------
         * _hb_room (room.Room): The honeybee-Room to use as the source.
+        * _assembly_dict (Dict[str, constructions.PhxConstructionOpaque]): The Assembly Type dict.
 
     Returns:
     --------
@@ -158,7 +177,7 @@ def create_components_from_hb_room(_hb_room: room.Room) -> List[building.PhxComp
     """
     compos: List[building.PhxComponent] = []
     for hb_face in _hb_room:
-        compos += create_components_from_hb_face(hb_face, _hb_room)
+        compos += create_components_from_hb_face(hb_face, _hb_room, _assembly_dict)
 
     return compos
 
@@ -177,7 +196,7 @@ def create_zones_from_hb_room(_hb_room: room.Room) -> building.PhxZone:
     new_zone = building.PhxZone()
 
     new_zone.id_num = building.PhxZone._count
-    new_zone.name = _hb_room.display_name
+    new_zone.display_name = _hb_room.display_name
 
     # -- Sort the room order by full_name
     sorted_spaces = sorted(_hb_room.properties.ph.spaces, key=lambda x: x.full_name)

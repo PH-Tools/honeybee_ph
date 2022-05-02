@@ -6,13 +6,21 @@
 from enum import Enum
 
 
+class ComponentFaceType(Enum):
+    WALL = 1
+    FLOOR = 2
+    ROOF_CEILING = 3
+    AIR_BOUNDARY = 3
+    WINDOW = 4
+
+
 class ComponentExposureExterior(Enum):
     EXTERIOR = -1
     GROUND = -2
     SURFACE = -3
 
 
-class ComponentFaceType(Enum):
+class ComponentFaceOpacity(Enum):
     OPAQUE = 1
     TRANSPARENT = 2
     AIRBOUNDARY = 3

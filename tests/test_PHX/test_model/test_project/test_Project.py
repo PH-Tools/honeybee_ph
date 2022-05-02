@@ -86,23 +86,17 @@ def test_add_variant_to_project(reset_class_counters):
 def test_add_assembly_to_project(reset_class_counters):
     pr_1 = project.PhxProject()
 
-    assmbly_1 = constructions.PhxConstructionOpaque()
-    assmbly_2 = constructions.PhxConstructionOpaque()
+    assembly_1 = constructions.PhxConstructionOpaque()
+    assembly_2 = constructions.PhxConstructionOpaque()
 
-    pr_1.add_new_assembly(assmbly_1.identifier, assmbly_1)
-    assert pr_1.assembly_in_project(assmbly_1.identifier)
-    assert not pr_1.assembly_in_project(assmbly_2.identifier)
-    assert assmbly_1 in pr_1.assembly_types
-    assert assmbly_2 not in pr_1.assembly_types
+    pr_1.assembly_types[assembly_1.identifier] = assembly_1
+    assert assembly_1.identifier in pr_1.assembly_types
+    assert assembly_2.identifier not in pr_1.assembly_types
 
-    pr_1.add_new_assembly(assmbly_2.identifier, assmbly_2)
-    assert pr_1.assembly_in_project(assmbly_2.identifier)
-    assert pr_1.assembly_in_project(assmbly_2.identifier)
-    assert assmbly_1 in pr_1.assembly_types
-    assert assmbly_2 in pr_1.assembly_types
+    pr_1.assembly_types[assembly_2.identifier] = assembly_2
+    assert assembly_1.identifier in pr_1.assembly_types
+    assert assembly_2.identifier in pr_1.assembly_types
 
     pr_2 = project.PhxProject()
-    assert not pr_2.assembly_in_project(assmbly_1.identifier)
-    assert not pr_2.assembly_in_project(assmbly_2.identifier)
-    assert assmbly_1 not in pr_2.assembly_types
-    assert assmbly_2 not in pr_2.assembly_types
+    assert assembly_1.identifier not in pr_2.assembly_types
+    assert assembly_2.identifier not in pr_2.assembly_types

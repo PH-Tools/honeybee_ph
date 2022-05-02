@@ -35,22 +35,18 @@ if __name__ == '__main__':
         print(f'[bold green]> connected to excel doc: {file}[/bold green]')
     with phpp_conn.xl.in_silent_mode():
         # phpp_conn.u_values.clear_sheet()
-        # for phx_construction in phx_project.assembly_types:
-        #     phpp_conn.u_values.write_phx_construction_to_sheet(
-        #         phx_construction)
+        for phx_construction in phx_project.assembly_types.values():
+            phpp_conn.u_values.write_phx_construction_to_sheet(
+                phx_construction)
 
         # phpp_conn.components.clear_sheet()
-        # for phx_construction in phx_project.window_types:
-        #     phpp_conn.components.write_phx_construction_to_sheet(
-        #         phx_construction)
+        for phx_construction in phx_project.window_types.values():
+            phpp_conn.components.write_phx_construction_to_sheet(
+                phx_construction)
 
         for phx_variant in phx_project.variants:
             for component in phx_variant.building.opaque_components:
                 phpp_conn.areas.write_phx_component_to_sheet(component)
-
-                phx_polys = phx_variant.graphics3D.get_polygons_by_id(
-                    component.polygon_ids)
-                phpp_conn.areas.write_phx_polygons_to_sheet(phx_polys)
 
                 # print(phpp_conn.u_values.get_next_empty_constructor_row_num())
 

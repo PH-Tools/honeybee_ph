@@ -147,6 +147,25 @@ class UValues:
 
         return constructors
 
+    def get_constructor_phpp_id_by_name(self, _name) -> Optional[str]:
+        """Returns the full PHPP-style value for the constructor with a specified name. 
+
+        ie: "Exterior Wall" in constructor 1 will return "01ud-Exterior Wall"
+
+        Argument:
+        ---------
+            * _name: (str) The name to search for.
+
+        Returns:
+        --------
+            * (str): The full PHPP-style id for the construction. ie: "01ud-MyConstruction"
+        """
+        row = self.xl.get_row_num_of_value_in_column(self.sheet_name, 1, 500, 'M', _name)
+        if not row:
+            return
+        prefix = self.xl.get_data(self.sheet_name, f'L{row}')
+        return f'{prefix}-{_name}'
+
     def get_next_empty_constructor(self, _check_shape: bool = False) -> UValueConstructor:
         """Finds the first 'empty' U-Value constructor in the U-Values worksheet.
             Looks at the 'Title' to tell if a constructor is empty or not.
