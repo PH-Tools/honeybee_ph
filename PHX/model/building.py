@@ -4,13 +4,13 @@
 """PHX Building Classes"""
 
 from __future__ import annotations
-from typing import ClassVar, Collection, List
+from typing import ClassVar, Collection, List, Set, Union
 from dataclasses import dataclass, field
 from collections import defaultdict
 from functools import reduce
 import operator
 
-from PHX.model import loads, elec_equip
+from PHX.model import loads, elec_equip, geometry
 from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
 
 
@@ -48,27 +48,36 @@ class PhxComponent:
     interior_attachment_id: int = -1
     assembly_type_id_num: int = -1
     window_type_id_num: int = -1
-    polygon_ids: set[int] = field(default_factory=set)
+    polygons: List[geometry.PhxPolygon] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self.__class__._count += 1
         self.id_num = self.__class__._count
 
     @property
+    def polygon_ids(self) -> Set[int]:
+        return {polygon.id_num for polygon in self.polygons}
+
+    @property
     def unique_key(self) -> str:
         return f'{self.face_type}-{self.exposure_interior}-{self.interior_attachment_id}-'\
             f'{self.exposure_exterior}-{self.assembly_type_id_num}-{self.window_type_id_num}'
 
-    def add_polygon_id(self, _input: int) -> None:
-        self.polygon_ids.add(_input)
+    def add_polygons(self,
+                     _input: Union[Collection[geometry.PhxPolygon], geometry.PhxPolygon]) -> None:
+        if not isinstance(_input, Collection):
+            _input = (_input,)
 
-    def __add__(self, other: PhxComponent) -> 'PhxComponent':
+        for polygon in _input:
+            self.polygons.append(polygon)
+
+    def __add__(self, other: PhxComponent) -> PhxComponent:
         new_obj = self.__class__()
         for attr_name, attr_val in vars(self).items():
             setattr(new_obj, attr_name, attr_val)
 
         new_obj.display_name = 'Merged_Component'
-        new_obj.polygon_ids = set.union(self.polygon_ids, other.polygon_ids)
+        new_obj.polygons = self.polygons + other.polygons
         return new_obj
 
 
@@ -77,18 +86,18 @@ class PhxBuilding:
     components: List[PhxComponent] = field(default_factory=list)
     zones: List[PhxZone] = field(default_factory=list)
 
-    def add_components(self, _components: PhxComponent | list[PhxComponent]) -> None:
+    def add_components(self, _components: Union[PhxComponent, Collection[PhxComponent]]) -> None:
         """Add a new PHX-Component to the PHX-Building"""
         if not isinstance(_components, Collection):
-            _components = [_components]
+            _components = (_components,)
 
         for compo in _components:
             self.components.append(compo)
 
-    def add_zones(self, _zones: PhxZone | list[PhxZone]) -> None:
+    def add_zones(self, _zones: Union[PhxZone, Collection[PhxZone]]) -> None:
         """Add a new PHX-Zone to the PHX-Building"""
         if not isinstance(_zones, Collection):
-            _zones = [_zones]
+            _zones = (_zones,)
 
         for zone in _zones:
             self.zones.append(zone)

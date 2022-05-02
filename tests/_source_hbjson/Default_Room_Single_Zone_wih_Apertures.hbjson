@@ -194,7 +194,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "ee744948-2955-4690-9d34-664f1dda659f", 
+          "identifier": "ddf55be3-e2a6-4a76-abb3-0719582d7a57", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -246,7 +246,7 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_4_0cf13479 Ideal Loads Air System", 
+          "identifier": "Room_7_8d7fb100 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -2127,18 +2127,18 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_5a77034f", 
+  "identifier": "unnamed_fa736f67", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "ee744948-2955-4690-9d34-664f1dda659f", 
+          "ph_bldg_segment_id": "ddf55be3-e2a6-4a76-abb3-0719582d7a57", 
           "spaces": []
         }, 
         "energy": {
-          "hvac": "Room_4_0cf13479 Ideal Loads Air System", 
+          "hvac": "Room_7_8d7fb100 Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2147,8 +2147,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_4_0cf13479", 
-      "display_name": "Room_4", 
+      "identifier": "Room_7_8d7fb100", 
+      "display_name": "Room_7", 
       "faces": [
         {
           "boundary_condition": {
@@ -2217,8 +2217,8 @@
                 "type": "Face3D", 
                 "plane": {
                   "x": [
-                    1.0, 
-                    0.0, 
+                    -1.0, 
+                    -0.0, 
                     0.0
                   ], 
                   "n": [
@@ -2227,32 +2227,32 @@
                     0.0
                   ], 
                   "o": [
+                    0.82294901687515765, 
                     0.0, 
-                    0.0, 
-                    0.0
+                    0.49376941012509468
                   ], 
                   "type": "Plane"
                 }, 
                 "boundary": [
                   [
-                    0.40625, 
+                    0.82294901687515765, 
                     0.0, 
-                    2.7999999999999998
+                    2.5062305898749053
                   ], 
                   [
-                    0.40625, 
+                    0.82294901687515765, 
                     0.0, 
-                    0.80000000000000004
+                    0.49376941012509468
                   ], 
                   [
-                    2.09375, 
+                    4.1770509831248424, 
                     0.0, 
-                    0.80000000000000004
+                    0.49376941012509468
                   ], 
                   [
-                    2.09375, 
+                    4.1770509831248424, 
                     0.0, 
-                    2.7999999999999998
+                    2.5062305898749053
                   ]
                 ]
               }, 
@@ -2269,78 +2269,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_4_0cf13479..Face0_Glz0", 
-              "display_name": "Room_4_0cf13479..Face0_Glz0", 
-              "is_operable": false, 
-              "type": "Aperture"
-            }, 
-            {
-              "boundary_condition": {
-                "view_factor": {
-                  "type": "Autocalculate"
-                }, 
-                "wind_exposure": true, 
-                "sun_exposure": true, 
-                "type": "Outdoors"
-              }, 
-              "geometry": {
-                "type": "Face3D", 
-                "plane": {
-                  "x": [
-                    1.0, 
-                    0.0, 
-                    0.0
-                  ], 
-                  "n": [
-                    0.0, 
-                    -1.0, 
-                    0.0
-                  ], 
-                  "o": [
-                    0.0, 
-                    0.0, 
-                    0.0
-                  ], 
-                  "type": "Plane"
-                }, 
-                "boundary": [
-                  [
-                    2.90625, 
-                    0.0, 
-                    2.7999999999999998
-                  ], 
-                  [
-                    2.90625, 
-                    0.0, 
-                    0.80000000000000004
-                  ], 
-                  [
-                    4.59375, 
-                    0.0, 
-                    0.80000000000000004
-                  ], 
-                  [
-                    4.59375, 
-                    0.0, 
-                    2.7999999999999998
-                  ]
-                ]
-              }, 
-              "properties": {
-                "ph": {
-                  "type": "AperturePhPropertiesAbridged", 
-                  "id_num": 0
-                }, 
-                "energy": {
-                  "type": "ApertureEnergyPropertiesAbridged"
-                }, 
-                "type": "AperturePropertiesAbridged", 
-                "radiance": {
-                  "type": "ApertureRadiancePropertiesAbridged"
-                }
-              }, 
-              "identifier": "Room_4_0cf13479..Face0_Glz1", 
-              "display_name": "Room_4_0cf13479..Face0_Glz1", 
+              "identifier": "Room_7_8d7fb100..Face0_Glz0", 
+              "display_name": "Room_7_8d7fb100..Face0_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2358,8 +2288,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_0cf13479..Face0", 
-          "display_name": "Room_4_0cf13479..Face0", 
+          "identifier": "Room_7_8d7fb100..Face0", 
+          "display_name": "Room_7_8d7fb100..Face0", 
           "type": "Face"
         }, 
         {
@@ -2430,7 +2360,7 @@
                 "plane": {
                   "x": [
                     0.0, 
-                    1.0, 
+                    -1.0, 
                     0.0
                   ], 
                   "n": [
@@ -2440,31 +2370,31 @@
                   ], 
                   "o": [
                     5.0, 
-                    0.0, 
-                    0.0
+                    0.65835921350012616, 
+                    0.49376941012509468
                   ], 
                   "type": "Plane"
                 }, 
                 "boundary": [
                   [
                     5.0, 
-                    0.64999999999999991, 
-                    2.7999999999999998
+                    0.65835921350012616, 
+                    2.5062305898749053
                   ], 
                   [
                     5.0, 
-                    0.64999999999999991, 
-                    0.80000000000000004
+                    0.65835921350012616, 
+                    0.49376941012509468
                   ], 
                   [
                     5.0, 
-                    3.3500000000000001, 
-                    0.80000000000000004
+                    3.3416407864998741, 
+                    0.49376941012509468
                   ], 
                   [
                     5.0, 
-                    3.3500000000000001, 
-                    2.7999999999999998
+                    3.3416407864998741, 
+                    2.5062305898749053
                   ]
                 ]
               }, 
@@ -2481,8 +2411,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_4_0cf13479..Face1_Glz0", 
-              "display_name": "Room_4_0cf13479..Face1_Glz0", 
+              "identifier": "Room_7_8d7fb100..Face1_Glz0", 
+              "display_name": "Room_7_8d7fb100..Face1_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2500,8 +2430,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_0cf13479..Face1", 
-          "display_name": "Room_4_0cf13479..Face1", 
+          "identifier": "Room_7_8d7fb100..Face1", 
+          "display_name": "Room_7_8d7fb100..Face1", 
           "type": "Face"
         }, 
         {
@@ -2571,42 +2501,42 @@
                 "type": "Face3D", 
                 "plane": {
                   "x": [
-                    -1.0, 
-                    0.0, 
+                    1.0, 
+                    -0.0, 
                     0.0
                   ], 
                   "n": [
                     0.0, 
                     1.0, 
-                    -0.0
+                    0.0
                   ], 
                   "o": [
-                    5.0, 
+                    4.1770509831248424, 
                     4.0, 
-                    0.0
+                    0.49376941012509468
                   ], 
                   "type": "Plane"
                 }, 
                 "boundary": [
                   [
-                    4.59375, 
+                    4.1770509831248424, 
                     4.0, 
-                    2.7999999999999998
+                    2.5062305898749053
                   ], 
                   [
-                    4.59375, 
+                    4.1770509831248424, 
                     4.0, 
-                    0.80000000000000004
+                    0.49376941012509468
                   ], 
                   [
-                    2.90625, 
+                    0.82294901687515765, 
                     4.0, 
-                    0.80000000000000004
+                    0.49376941012509468
                   ], 
                   [
-                    2.90625, 
+                    0.82294901687515765, 
                     4.0, 
-                    2.7999999999999998
+                    2.5062305898749053
                   ]
                 ]
               }, 
@@ -2623,78 +2553,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_4_0cf13479..Face2_Glz0", 
-              "display_name": "Room_4_0cf13479..Face2_Glz0", 
-              "is_operable": false, 
-              "type": "Aperture"
-            }, 
-            {
-              "boundary_condition": {
-                "view_factor": {
-                  "type": "Autocalculate"
-                }, 
-                "wind_exposure": true, 
-                "sun_exposure": true, 
-                "type": "Outdoors"
-              }, 
-              "geometry": {
-                "type": "Face3D", 
-                "plane": {
-                  "x": [
-                    -1.0, 
-                    0.0, 
-                    0.0
-                  ], 
-                  "n": [
-                    0.0, 
-                    1.0, 
-                    -0.0
-                  ], 
-                  "o": [
-                    5.0, 
-                    4.0, 
-                    0.0
-                  ], 
-                  "type": "Plane"
-                }, 
-                "boundary": [
-                  [
-                    2.09375, 
-                    4.0, 
-                    2.7999999999999998
-                  ], 
-                  [
-                    2.09375, 
-                    4.0, 
-                    0.80000000000000004
-                  ], 
-                  [
-                    0.40625, 
-                    4.0, 
-                    0.80000000000000004
-                  ], 
-                  [
-                    0.40625, 
-                    4.0, 
-                    2.7999999999999998
-                  ]
-                ]
-              }, 
-              "properties": {
-                "ph": {
-                  "type": "AperturePhPropertiesAbridged", 
-                  "id_num": 0
-                }, 
-                "energy": {
-                  "type": "ApertureEnergyPropertiesAbridged"
-                }, 
-                "type": "AperturePropertiesAbridged", 
-                "radiance": {
-                  "type": "ApertureRadiancePropertiesAbridged"
-                }
-              }, 
-              "identifier": "Room_4_0cf13479..Face2_Glz1", 
-              "display_name": "Room_4_0cf13479..Face2_Glz1", 
+              "identifier": "Room_7_8d7fb100..Face2_Glz0", 
+              "display_name": "Room_7_8d7fb100..Face2_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2712,8 +2572,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_0cf13479..Face2", 
-          "display_name": "Room_4_0cf13479..Face2", 
+          "identifier": "Room_7_8d7fb100..Face2", 
+          "display_name": "Room_7_8d7fb100..Face2", 
           "type": "Face"
         }, 
         {
@@ -2784,7 +2644,7 @@
                 "plane": {
                   "x": [
                     0.0, 
-                    -1.0, 
+                    1.0, 
                     0.0
                   ], 
                   "n": [
@@ -2794,31 +2654,31 @@
                   ], 
                   "o": [
                     0.0, 
-                    4.0, 
-                    0.0
+                    3.3416407864998741, 
+                    0.49376941012509468
                   ], 
                   "type": "Plane"
                 }, 
                 "boundary": [
                   [
                     0.0, 
-                    3.3500000000000001, 
-                    2.7999999999999998
+                    3.3416407864998741, 
+                    2.5062305898749053
                   ], 
                   [
                     0.0, 
-                    3.3500000000000001, 
-                    0.80000000000000004
+                    3.3416407864998741, 
+                    0.49376941012509468
                   ], 
                   [
                     0.0, 
-                    0.64999999999999991, 
-                    0.80000000000000004
+                    0.65835921350012616, 
+                    0.49376941012509468
                   ], 
                   [
                     0.0, 
-                    0.64999999999999991, 
-                    2.7999999999999998
+                    0.65835921350012616, 
+                    2.5062305898749053
                   ]
                 ]
               }, 
@@ -2835,8 +2695,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_4_0cf13479..Face3_Glz0", 
-              "display_name": "Room_4_0cf13479..Face3_Glz0", 
+              "identifier": "Room_7_8d7fb100..Face3_Glz0", 
+              "display_name": "Room_7_8d7fb100..Face3_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2854,8 +2714,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_0cf13479..Face3", 
-          "display_name": "Room_4_0cf13479..Face3", 
+          "identifier": "Room_7_8d7fb100..Face3", 
+          "display_name": "Room_7_8d7fb100..Face3", 
           "type": "Face"
         }, 
         {
@@ -2919,8 +2779,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_0cf13479..Face4", 
-          "display_name": "Room_4_0cf13479..Face4", 
+          "identifier": "Room_7_8d7fb100..Face4", 
+          "display_name": "Room_7_8d7fb100..Face4", 
           "type": "Face"
         }, 
         {
@@ -2989,8 +2849,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_0cf13479..Face5", 
-          "display_name": "Room_4_0cf13479..Face5", 
+          "identifier": "Room_7_8d7fb100..Face5", 
+          "display_name": "Room_7_8d7fb100..Face5", 
           "type": "Face"
         }
       ], 

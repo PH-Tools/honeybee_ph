@@ -76,8 +76,12 @@ class PhxPolygon:
     def add_vertix(self, _phx_vertix: PhxVertix) -> None:
         self.vertices.append(_phx_vertix)
 
-    def add_child_poly_id(self, _child_id: int) -> None:
-        self.child_polygon_ids.append(_child_id)
+    def add_child_poly_id(self, _child_ids: Union[Collection[int], int]) -> None:
+        if not isinstance(_child_ids, Collection):
+            _child_ids = (_child_ids,)
+
+        for child_id in _child_ids:
+            self.child_polygon_ids.append(child_id)
 
 
 @dataclass
@@ -94,7 +98,7 @@ class PhxGraphics3D:
              },
             key=lambda _: _.id_num)
 
-    def add_polygons(self, _polygons: Union[List[PhxPolygon], PhxPolygon]) -> None:
+    def add_polygons(self, _polygons: Union[Collection[PhxPolygon], PhxPolygon]) -> None:
         """Adds a new Polygon object to the collection"""
 
         if not isinstance(_polygons, Collection):

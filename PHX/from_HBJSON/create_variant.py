@@ -11,29 +11,6 @@ from PHX.model import project, certification, ground, climate
 from PHX.from_HBJSON import create_building, create_geometry, create_hvac, create_shw, create_elec_equip
 
 
-def add_geometry_from_hb_rooms(_variant: project.PhxVariant, _hb_room: room.Room) -> None:
-    """Create geometry from a Honeybee-Room and add the geometry to the PHX-Variant.
-
-    Arguments:
-    ----------
-        * _variant (project.Variant): The PHX-Variant to add the Geometry to.
-        * _hb_room (room.Room): The Honeybee-Room to use as the source for the geometry.
-
-    Returns:
-    --------
-        * None
-    """
-
-    for hb_face in _hb_room.faces:
-        # Dev Note: To get the right IDs, have to generate the Children (window) Polygons FIRST.
-        for aperture in hb_face.apertures:
-            _variant.graphics3D.add_polygons(
-                create_geometry.create_PHX_Polyon_from_hb_aperture(aperture))
-
-        _variant.graphics3D.add_polygons(
-            create_geometry.create_PHX_Polyon_from_hb_face(hb_face))
-
-
 def add_building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Room, group_components: bool = False) -> None:
     """Create the  PHX-Building with all Components and Zones based on a Honeybee-Room.
 
@@ -445,7 +422,6 @@ def from_hb_room(_hb_room: room.Room, group_components: bool = False) -> project
     add_cooling_systems_from_hb_rooms(new_variant, _hb_room)
     add_dhw_heaters_from_hb_rooms(new_variant, _hb_room)
     add_dhw_storage_from_hb_rooms(new_variant, _hb_room)
-    add_geometry_from_hb_rooms(new_variant, _hb_room)
     add_building_from_hb_room(new_variant, _hb_room, group_components)
     add_phius_certification_from_hb_room(new_variant, _hb_room)
     add_PH_Building_from_hb_room(new_variant, _hb_room)

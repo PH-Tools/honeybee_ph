@@ -57,10 +57,8 @@ def convert_hb_model_to_PhxProject(_hb_model: model.Model, group_components: boo
 
     project = PhxProject()
     create_assemblies.build_opaque_assemblies_from_HB_model(project, _hb_model)
-    create_assemblies.build_transparent_assemblies_from_HB_Model(
-        project, _hb_model)
-    create_schedules.build_util_patterns_ventilation_from_HB_Model(
-        project, _hb_model)
+    create_assemblies.build_transparent_assemblies_from_HB_Model(project, _hb_model)
+    create_schedules.build_util_patterns_ventilation_from_HB_Model(project, _hb_model)
 
     # -- TODO: Make all these operations if..else... with flags in the func arguments
     # -- Merge the rooms together by their Building Segment, Add to the Project
@@ -68,10 +66,9 @@ def convert_hb_model_to_PhxProject(_hb_model: model.Model, group_components: boo
     # -- try and weld the vertices too in order to reduce load-time.
     for room_group in sort_hb_rooms_by_bldg_segment(_hb_model.rooms):
         merged_hb_room = cleanup.merge_rooms(room_group)
-        new_variant = create_variant.from_hb_room(
-            merged_hb_room, group_components)
+        new_variant = create_variant.from_hb_room(merged_hb_room, group_components)
         new_variant = cleanup.weld_vertices(new_variant)
-        create_shades.add_model_shades_to_variant(new_variant, _hb_model)
+        create_shades.add_hb_model_shades_to_variant(new_variant, _hb_model)
 
         project.add_new_variant(new_variant)
 

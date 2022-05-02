@@ -11,9 +11,10 @@ from PHX.to_WUFI_XML import xml_builder, xml_txt_to_file
 if __name__ == '__main__':
     # --- Input / Output file Path
     # -------------------------------------------------------------------------
-    SOURCE_FILE = pathlib.Path("sample", "hbjson", "Ridgeway_VI_220429.hbjson")
+    SOURCE_FILE = pathlib.Path("tests", "_source_hbjson",
+                               "Default_Room_Single_Zone.hbjson")
     TARGET_FILE_XML = pathlib.Path(
-        "sample", "wufi_xml", "Ridgeway_VI_220429.xml")
+        "tests", "_results_xml", "Default_Room_Single_Zone.xml")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -------------------------------------------------------------------------

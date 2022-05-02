@@ -40,7 +40,7 @@ def create_PhxVector_from_lbt_vec3D(_lbt_vector3d: Vector3D) -> geometry.PhxVect
     )
 
 
-def create_PHX_Polyon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geometry.PhxPolygon:
+def create_PhxPolygon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geometry.PhxPolygon:
     """Return a new PHX-Polygon based on a honeybee-aperture.
 
     Arguments:
@@ -51,23 +51,19 @@ def create_PHX_Polyon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geome
     --------
         * geometry.Polygon: The new PHX-Polygon object.
     """
-    new_polygon = geometry.PhxPolygon()
+    phx_polygon = geometry.PhxPolygon()
 
-    new_polygon.id_num = geometry.PhxPolygon._count  # TODO: WHY?
-    new_polygon.display_name = _hb_aperture.display_name
-    new_polygon.area = _hb_aperture.geometry.area
-    new_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_aperture.normal)
+    phx_polygon.display_name = _hb_aperture.display_name
+    phx_polygon.area = _hb_aperture.geometry.area
+    phx_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_aperture.normal)
 
     for v in _hb_aperture.vertices:
-        new_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
+        phx_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
 
-    # -- reset the hb-face num to keep everything aligned
-    _hb_aperture.properties._ph.id_num = new_polygon.id_num
-
-    return new_polygon
+    return phx_polygon
 
 
-def create_PHX_Polyon_from_hb_face(_hb_face: face.Face) -> geometry.PhxPolygon:
+def create_PhxPolygon_from_hb_face(_hb_face: face.Face) -> geometry.PhxPolygon:
     """Return a new PHX-Polygon based on a honeybee-face.
 
     Arguments:
@@ -78,26 +74,19 @@ def create_PHX_Polyon_from_hb_face(_hb_face: face.Face) -> geometry.PhxPolygon:
     --------
         * geometry.Polygon: The new PHX-Polygon object.
     """
-    new_polygon = geometry.PhxPolygon()
+    phx_polygon = geometry.PhxPolygon()
 
-    new_polygon.id_num = geometry.PhxPolygon._count  # TODO: WHY?
-    new_polygon.display_name = _hb_face.display_name
-    new_polygon.area = _hb_face.geometry.area
-    new_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_face.normal)
+    phx_polygon.display_name = _hb_face.display_name
+    phx_polygon.area = _hb_face.geometry.area
+    phx_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_face.normal)
 
     for v in _hb_face.vertices:
-        new_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
+        phx_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
 
-    for aperture in _hb_face.apertures:
-        new_polygon.add_child_poly_id(aperture.properties.ph.id_num)
-
-    # -- reset the hb-face num to keep everything aligned
-    _hb_face.properties._ph.id_num = new_polygon.id_num
-
-    return new_polygon
+    return phx_polygon
 
 
-def create_PHX_Polygon_from_hb_shade(_hb_shade: shade.Shade) -> geometry.PhxPolygon:
+def create_PhxPolygon_from_hb_shade(_hb_shade: shade.Shade) -> geometry.PhxPolygon:
     """Returns a new PHX-Polygon based on a honeybee-shade.
 
     Arguments:
@@ -109,13 +98,11 @@ def create_PHX_Polygon_from_hb_shade(_hb_shade: shade.Shade) -> geometry.PhxPoly
         * geometry.Polygon: The new PHX-Polygon created from the Honeybee-Shade.
 
     """
-    new_polygon = geometry.PhxPolygon()
+    phx_polygon = geometry.PhxPolygon()
 
-    new_polygon.id_num = geometry.PhxPolygon._count  # TODO: WHY?
-    _hb_shade.properties.ph.id_num = new_polygon.id_num
-    new_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(
-        _hb_shade.normal)
+    phx_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_shade.normal)
+
     for v in _hb_shade.vertices:
-        new_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
+        phx_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
 
-    return new_polygon
+    return phx_polygon

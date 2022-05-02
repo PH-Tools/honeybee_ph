@@ -24,14 +24,14 @@ def test_add_with_empty_poly_ids(reset_class_counters):
     assert not c3.polygon_ids
 
 
-def test_add_with_poly_ids(reset_class_counters, polygon_1x1x0, polygon_2x2x0):
+def test_add_polygons(reset_class_counters, polygon_1x1x0, polygon_2x2x0):
     c1 = building.PhxComponent()
-    c1.add_polygon_id(polygon_1x1x0.id_num)
+    c1.add_polygons(polygon_1x1x0)
     c2 = building.PhxComponent()
-    c2.add_polygon_id(polygon_2x2x0.id_num)
+    c2.add_polygons(polygon_2x2x0)
 
     c3 = c1 + c2
     assert c3 != c2 != c1
-    assert len(c3.polygon_ids) == 2
-    assert polygon_1x1x0.id_num in c3.polygon_ids
-    assert polygon_2x2x0.id_num in c3.polygon_ids
+    assert len(c3.polygons) == 2
+    assert polygon_1x1x0 in c3.polygons
+    assert polygon_2x2x0 in c3.polygons

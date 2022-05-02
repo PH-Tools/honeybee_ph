@@ -3,12 +3,12 @@
 
 """Functions to create a new PhxBuilding from Honeybee-Rooms"""
 
-from typing import Any, Optional, List, Union
+from typing import List, Union
 
 from honeybee import room, aperture, face
 
 from PHX.model import building
-from PHX.from_HBJSON import create_rooms
+from PHX.from_HBJSON import create_rooms, create_geometry
 from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType, ComponentColor
 
 
@@ -73,7 +73,7 @@ def _hb_ext_color_to_phx_enum(_hb_face: face.Face) -> ComponentColor:
     return mapping[str(_hb_face.type)][str(_hb_face.boundary_condition)]
 
 
-def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.PhxComponent:
+def create_component_from_hb_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.PhxComponent:
     """Create a new Transparent (window) Component based on a Honeybee Aperture.
 
     Arguments:
@@ -97,12 +97,14 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     new_compo.color_exterior = ComponentColor.WINDOW
     new_compo.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
 
-    new_compo.add_polygon_id(_aperture.properties.ph.id_num)
+    # -- Polygons
+    phx_polygon = create_geometry.create_PhxPolygon_from_hb_aperture(_aperture)
+    new_compo.add_polygons(phx_polygon)
 
     return new_compo
 
 
-def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) -> building.PhxComponent:
+def create_components_from_hb_face(_hb_face: face.Face, _hb_room: room.Room) -> List[building.PhxComponent]:
     """Returns a new Opaque Component based on a Honeybee Face,
 
     Arguments:
@@ -114,20 +116,33 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
     --------
         * building.Component: The new Opaque Component.
     """
-    new_compo = building.PhxComponent()
+    new_compos: List[building.PhxComponent] = []
 
-    new_compo.display_name = _hb_face.display_name
-    new_compo.id_num = building.PhxComponent._count
-    new_compo.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
+    new_compo_opaque = building.PhxComponent()
 
-    new_compo.face_type = _hb_face_type_to_phx_enum(_hb_face)
-    new_compo.exposure_exterior = _hb_ext_exposure_to_phx_enum(_hb_face)
-    new_compo.exposure_interior = _hb_room.properties.ph.id_num
-    new_compo.color_interior = _hb_int_color_to_phx_enum(_hb_face)
-    new_compo.color_exterior = _hb_ext_color_to_phx_enum(_hb_face)
-    new_compo.add_polygon_id(_hb_face.properties.ph.id_num)
+    new_compo_opaque.display_name = _hb_face.display_name
+    new_compo_opaque.id_num = building.PhxComponent._count
+    new_compo_opaque.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
 
-    return new_compo
+    new_compo_opaque.face_type = _hb_face_type_to_phx_enum(_hb_face)
+    new_compo_opaque.exposure_exterior = _hb_ext_exposure_to_phx_enum(_hb_face)
+    new_compo_opaque.exposure_interior = _hb_room.properties.ph.id_num
+    new_compo_opaque.color_interior = _hb_int_color_to_phx_enum(_hb_face)
+    new_compo_opaque.color_exterior = _hb_ext_color_to_phx_enum(_hb_face)
+
+    # -- Create Polygon
+    phx_polygon = create_geometry.create_PhxPolygon_from_hb_face(_hb_face)
+    new_compo_opaque.add_polygons(phx_polygon)
+
+    new_compos.append(new_compo_opaque)
+
+    # -- Create Children, register their Poly-Ids with the Parent
+    for hb_aperture in _hb_face.apertures:
+        phx_compo_aperture = create_component_from_hb_aperture(hb_aperture, _hb_room)
+        phx_polygon.add_child_poly_id(phx_compo_aperture.polygon_ids)
+        new_compos.append(phx_compo_aperture)
+
+    return new_compos
 
 
 def create_components_from_hb_room(_hb_room: room.Room) -> List[building.PhxComponent]:
@@ -141,12 +156,9 @@ def create_components_from_hb_room(_hb_room: room.Room) -> List[building.PhxComp
     --------
         * list[building.Component]: A list of the new PHX-Components.
     """
-    compos = []
+    compos: List[building.PhxComponent] = []
     for hb_face in _hb_room:
-        for aperture in hb_face.apertures:
-            compos.append(create_component_from_aperture(aperture, _hb_room))
-
-        compos.append(create_component_from_opaque_face(hb_face, _hb_room))
+        compos += create_components_from_hb_face(hb_face, _hb_room)
 
     return compos
 

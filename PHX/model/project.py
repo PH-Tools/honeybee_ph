@@ -19,8 +19,6 @@ class PhxVariant:
     name: str = "unnamed_variant"
     remarks: str = ""
     plugin: str = ""
-    graphics3D: geometry.PhxGraphics3D = field(
-        default_factory=geometry.PhxGraphics3D)
     building: building.PhxBuilding = field(
         default_factory=building.PhxBuilding)
     ph_certification: certification.PhxPHCertification = field(
@@ -28,6 +26,14 @@ class PhxVariant:
     location: climate.PhxLocation = field(default_factory=climate.PhxLocation)
     mech_systems: collection.PhxMechanicalEquipmentCollection = field(
         default_factory=collection.PhxMechanicalEquipmentCollection)
+
+    @property
+    def graphics3D(self):
+        """Collects all of the geometry (Polygons, Vertices) in the Project."""
+        phx_graphics3D = geometry.PhxGraphics3D()
+        for phx_component in self.building.components:
+            phx_graphics3D.add_polygons(phx_component.polygons)
+        return phx_graphics3D
 
     def __post_init__(self) -> None:
         self.__class__._count += 1
