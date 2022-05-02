@@ -4,7 +4,7 @@
 """PHX Building Classes"""
 
 from __future__ import annotations
-from typing import ClassVar, Collection
+from typing import ClassVar, Collection, List
 from dataclasses import dataclass, field
 from collections import defaultdict
 from functools import reduce
@@ -24,7 +24,7 @@ class PhxZone:
     weighted_net_floor_area: float = 0.0
     clearance_height: float = 2.5
     specific_heat_capacity: float = 132
-    wufi_rooms: list[loads.PhxRoomVentilation] = field(default_factory=list)
+    wufi_rooms: List[loads.PhxRoomVentilation] = field(default_factory=list)
     elec_equipment_collection: elec_equip.PhxElectricDeviceCollection = field(
         default_factory=elec_equip.PhxElectricDeviceCollection)
     res_occupant_quantity: int = 0
@@ -39,7 +39,7 @@ class PhxZone:
 class PhxComponent:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
-    name: str = ""
+    display_name: str = ""
     face_type: ComponentFaceType = ComponentFaceType.OPAQUE
     color_interior: ComponentColor = ComponentColor.EXT_WALL_INNER
     color_exterior: ComponentColor = ComponentColor.EXT_WALL_INNER
@@ -67,15 +67,15 @@ class PhxComponent:
         for attr_name, attr_val in vars(self).items():
             setattr(new_obj, attr_name, attr_val)
 
-        new_obj.name = 'Merged_Component'
+        new_obj.display_name = 'Merged_Component'
         new_obj.polygon_ids = set.union(self.polygon_ids, other.polygon_ids)
         return new_obj
 
 
 @dataclass
 class PhxBuilding:
-    components: list[PhxComponent] = field(default_factory=list)
-    zones: list[PhxZone] = field(default_factory=list)
+    components: List[PhxComponent] = field(default_factory=list)
+    zones: List[PhxZone] = field(default_factory=list)
 
     def add_components(self, _components: PhxComponent | list[PhxComponent]) -> None:
         """Add a new PHX-Component to the PHX-Building"""
@@ -107,6 +107,20 @@ class PhxBuilding:
 
         # -- Reset the Building's Components
         self.components = grouped_components
+
+    @property
+    def opaque_components(self) -> List[PhxComponent]:
+        return sorted(
+            [c for c in self.components if c.face_type == ComponentFaceType.OPAQUE],
+            key=lambda _: _.display_name
+        )
+
+    @property
+    def transparent_components(self) -> List[PhxComponent]:
+        return sorted(
+            [c for c in self.components if c.face_type == ComponentFaceType.TRANSPARENT],
+            key=lambda _: _.display_name
+        )
 
     @property
     def polygon_ids(self) -> set[int]:

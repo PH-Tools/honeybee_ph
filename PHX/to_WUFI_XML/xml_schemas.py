@@ -134,7 +134,7 @@ def _PhxZone(_z: building.PhxZone) -> List[xml_writable]:
 def _PhxComponent(_c: building.PhxComponent) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _c.id_num),
-        XML_Node("Name", _c.name),
+        XML_Node("Name", _c.display_name),
         XML_Node("Visual", True),
         XML_Node("Type", _c.face_type.value),
         XML_Node("IdentNrColorI", _c.color_interior.value),

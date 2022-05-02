@@ -48,9 +48,26 @@ class PhxPolygon:
     _count: ClassVar[int] = 0
 
     id_num: int = field(init=False, default=0)
+    _display_name: str = ''
+    area: float = 0.0
     normal_vector: PhxVector = PhxVector()
     vertices: List[PhxVertix] = field(default_factory=list)
     child_polygon_ids: List[int] = field(default_factory=list)
+
+    @property
+    def display_name(self) -> str:
+        if not self._display_name:
+            return str(self.id_num)
+        else:
+            return self._display_name
+
+    @display_name.setter
+    def display_name(self, _in: str):
+        self._display_name = str(_in)
+
+    def __post_init__(self):
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
 
     @property
     def vertices_id_numbers(self) -> List[int]:
@@ -62,10 +79,6 @@ class PhxPolygon:
     def add_child_poly_id(self, _child_id: int) -> None:
         self.child_polygon_ids.append(_child_id)
 
-    def __post_init__(self):
-        self.__class__._count += 1
-        self.id_num = self.__class__._count
-
 
 @dataclass
 class PhxGraphics3D:
@@ -73,13 +86,13 @@ class PhxGraphics3D:
 
     @property
     def vertices(self) -> List[PhxVertix]:
-        """Returns a soreted list with all of the unique vertix objects of all the polygons in the collection."""
-
-        vertix_set = {vertix
-                      for polygon in self.polygons
-                      for vertix in polygon.vertices
-                      }
-        return sorted(vertix_set, key=lambda x: x.id_num)
+        """Returns a sorted list with all of the unique vertix objects of all the polygons in the collection."""
+        return sorted(
+            {vertix
+             for polygon in self.polygons
+             for vertix in polygon.vertices
+             },
+            key=lambda _: _.id_num)
 
     def add_polygons(self, _polygons: Union[List[PhxPolygon], PhxPolygon]) -> None:
         """Adds a new Polygon object to the collection"""
@@ -89,6 +102,27 @@ class PhxGraphics3D:
 
         for polygon in _polygons:
             self.polygons.append(polygon)
+
+    def get_polygons_by_id(self, _ids: Collection[int]) -> List[PhxPolygon]:
+        """Returns a sorted list of polygons in the collection matching the IDs supplied.
+
+        Arguments:
+        ----------
+            * _ids: (Collection[int]): A collection of one or more id_nums to look for.
+
+        Returns:
+        --------
+            * List[PhxPolygon]: A sorted (by display_name) list of all the 
+                polygons with matching id_nums.
+        """
+
+        if not isinstance(_ids, Collection):
+            _ids = {_ids}
+
+        return sorted(
+            [p for p in self.polygons if p.id_num in _ids],
+            key=lambda _: _.display_name
+        )
 
     def __bool__(self) -> bool:
         return bool(self.polygons)

@@ -43,7 +43,7 @@ def _create_new_component_from_orphaned_shade(_shade: shade.Shade) -> building.P
 
     new_compo = building.PhxComponent()
 
-    new_compo.name = _shade.display_name
+    new_compo.display_name = _shade.display_name
     new_compo.id_num = building.PhxComponent._count
 
     new_compo.face_type = 1  # Opaque

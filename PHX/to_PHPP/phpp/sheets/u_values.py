@@ -34,7 +34,7 @@ class UValueConstructor:
 
         Arguments:
         ----------
-            * _xl: (xl_app.XLConection) The XL connection to use.
+            * _xl: (xl_app.XLConnection) The XL connection to use.
             * _sheet_name: (str) The name of the worksheet to write to.
             * _phx_const: (construction.PhxConstructionOpaque) The PHX-Construction
                 to add to the PHPP library.

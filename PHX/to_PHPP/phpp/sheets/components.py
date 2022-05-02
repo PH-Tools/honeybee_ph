@@ -42,10 +42,10 @@ class GlazingEntry:
 
         Arguments:
         ----------
-            * _xl: (xl_app.XLConection) The XL connection to use.
+            * _xl: (xl_app.XLConnection) The XL connection to use.
             * _sheet_name: (str) The name of the worksheet to write to.
             * _phx_const: (construction.PhxConstructionWindow) The PHX Window
-                construciton to add to the PHPP library.
+                construction to add to the PHPP library.
         """
         _xl.write_data(
             _sheet_name, f'IE{self.row_num}', _phx_const.display_name)
@@ -67,61 +67,61 @@ class GlazingEntry:
 
 @dataclass
 class FrameEntry:
-    row: int
+    row_num: int
     description_value: xl_typing.xl_range_value
 
     @property
     def description_range(self) -> str:
-        return f'IL{self.row}'
+        return f'IL{self.row_num}'
 
     def write_data_to_sheet(self, _xl: xl_app.XLConnection,
                             _sheet_name: str,
                             _phx_const: constructions.PhxConstructionWindow) -> None:
-        """Add the PhxConstructionOpaueattributes to the Components worksheet.
+        """Add the PhxConstructionOpaque attributes to the Components worksheet.
 
         Arguments:
         ----------
-            * _xl: (xl_app.XLConection) The XL connection to use.
+            * _xl: (xl_app.XLConnection) The XL connection to use.
             * _sheet_name: (str) The name of the worksheet to write to.
             * _phx_const: (construction.PhxConstructionWindow) The PHX Construction
-                construciton to add to the PHPP library.
+                construction to add to the PHPP library.
         """
-        _xl.write_data(_sheet_name, f'IL{self.row}', _phx_const.display_name)
+        _xl.write_data(_sheet_name, f'IL{self.row_num}', _phx_const.display_name)
 
-        _xl.write_data(_sheet_name, f'IM{self.row}',
+        _xl.write_data(_sheet_name, f'IM{self.row_num}',
                        _phx_const.frame_left.u_value)
-        _xl.write_data(_sheet_name, f'IN{self.row}',
+        _xl.write_data(_sheet_name, f'IN{self.row_num}',
                        _phx_const.frame_right.u_value)
-        _xl.write_data(_sheet_name, f'IO{self.row}',
+        _xl.write_data(_sheet_name, f'IO{self.row_num}',
                        _phx_const.frame_bottom.u_value)
-        _xl.write_data(_sheet_name, f'IP{self.row}',
+        _xl.write_data(_sheet_name, f'IP{self.row_num}',
                        _phx_const.frame_top.u_value)
 
-        _xl.write_data(_sheet_name, f'IQ{self.row}',
+        _xl.write_data(_sheet_name, f'IQ{self.row_num}',
                        _phx_const.frame_left.width)
-        _xl.write_data(_sheet_name, f'IR{self.row}',
+        _xl.write_data(_sheet_name, f'IR{self.row_num}',
                        _phx_const.frame_right.width)
-        _xl.write_data(_sheet_name, f'IS{self.row}',
+        _xl.write_data(_sheet_name, f'IS{self.row_num}',
                        _phx_const.frame_bottom.width)
         _xl.write_data(
-            _sheet_name, f'IT{self.row}', _phx_const.frame_top.width)
+            _sheet_name, f'IT{self.row_num}', _phx_const.frame_top.width)
 
-        _xl.write_data(_sheet_name, f'IU{self.row}',
+        _xl.write_data(_sheet_name, f'IU{self.row_num}',
                        _phx_const.frame_left.psi_glazing)
-        _xl.write_data(_sheet_name, f'IV{self.row}',
+        _xl.write_data(_sheet_name, f'IV{self.row_num}',
                        _phx_const.frame_right.psi_glazing)
-        _xl.write_data(_sheet_name, f'IW{self.row}',
+        _xl.write_data(_sheet_name, f'IW{self.row_num}',
                        _phx_const.frame_bottom.psi_glazing)
-        _xl.write_data(_sheet_name, f'IX{self.row}',
+        _xl.write_data(_sheet_name, f'IX{self.row_num}',
                        _phx_const.frame_top.psi_glazing)
 
-        _xl.write_data(_sheet_name, f'IY{self.row}',
+        _xl.write_data(_sheet_name, f'IY{self.row_num}',
                        _phx_const.frame_left.psi_install)
-        _xl.write_data(_sheet_name, f'IZ{self.row}',
+        _xl.write_data(_sheet_name, f'IZ{self.row_num}',
                        _phx_const.frame_right.psi_install)
-        _xl.write_data(_sheet_name, f'JA{self.row}',
+        _xl.write_data(_sheet_name, f'JA{self.row_num}',
                        _phx_const.frame_bottom.psi_install)
-        _xl.write_data(_sheet_name, f'JB{self.row}',
+        _xl.write_data(_sheet_name, f'JB{self.row_num}',
                        _phx_const.frame_top.psi_install)
 
     def clear(self, _xl: xl_app.XLConnection, _sheet_name: str) -> None:
@@ -132,7 +132,7 @@ class FrameEntry:
             * _xl: (xl_app.XLConnection) The Excel connection to use.
             * _sheet_name: (str) The name of the worksheet to clear the values on.
         """
-        _xl.clear_data(_sheet_name, f'IL{self.row}:JB{self.row}')
+        _xl.clear_data(_sheet_name, f'IL{self.row_num}:JB{self.row_num}')
 
 
 @dataclass
@@ -151,8 +151,8 @@ class Components:
 
     sheet_name = 'Components'
 
-    def __init__(self, _xl):
-        self.xl: xl_app.XLConnection = _xl
+    def __init__(self, _xl: xl_app.XLConnection):
+        self.xl = _xl
         self.shape = ComponentsShape()
 
     def get_glazing_entries(self) -> List[GlazingEntry]:

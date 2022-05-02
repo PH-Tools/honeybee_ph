@@ -4,7 +4,7 @@
 """PHX Project Classes"""
 
 from __future__ import annotations
-from typing import Any, ClassVar
+from typing import Any, ClassVar, List, Dict
 from dataclasses import dataclass, field
 
 from PHX.model import schedules
@@ -62,14 +62,14 @@ class PhxProjectData:
 class PhxProject:
     name: str = "unnamed_project"
 
-    _assembly_types: dict[str, constructions.PhxConstructionOpaque] = field(
+    _assembly_types: Dict[str, constructions.PhxConstructionOpaque] = field(
         default_factory=dict)
-    _window_types: dict[str, constructions.PhxConstructionWindow] = field(
+    _window_types: Dict[str, constructions.PhxConstructionWindow] = field(
         default_factory=dict)
     utilization_patterns_ventilation: schedules.UtilPat_Vent_Collection = field(
         default_factory=schedules.UtilPat_Vent_Collection)
-    utilization_patterns_ph: list = field(default_factory=list)
-    variants: list = field(default_factory=list)
+    utilization_patterns_ph: List = field(default_factory=list)
+    variants: List[PhxVariant] = field(default_factory=list)
 
     project_data: PhxProjectData = field(default_factory=PhxProjectData)
 

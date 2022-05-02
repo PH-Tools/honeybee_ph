@@ -87,7 +87,7 @@ def create_component_from_aperture(_aperture: aperture.Aperture, _hb_room: room.
     """
     new_compo = building.PhxComponent()
 
-    new_compo.name = _aperture.display_name
+    new_compo.display_name = _aperture.display_name
     new_compo.id_num = building.PhxComponent._count
 
     new_compo.face_type = ComponentFaceType.TRANSPARENT
@@ -116,7 +116,7 @@ def create_component_from_opaque_face(_hb_face: face.Face, _hb_room: room.Room) 
     """
     new_compo = building.PhxComponent()
 
-    new_compo.name = _hb_face.display_name
+    new_compo.display_name = _hb_face.display_name
     new_compo.id_num = building.PhxComponent._count
     new_compo.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
 

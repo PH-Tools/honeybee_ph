@@ -13,6 +13,6 @@ class PHPPConnection:
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
-        self.areas = sheets.Areas(self.xl)
         self.u_values = sheets.UValues(self.xl)
         self.components = sheets.Components(self.xl)
+        self.areas = sheets.Areas(self.xl, self.u_values)

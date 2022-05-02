@@ -35,32 +35,40 @@ if __name__ == '__main__':
         print(f'[bold green]> connected to excel doc: {file}[/bold green]')
     with phpp_conn.xl.in_silent_mode():
         # phpp_conn.u_values.clear_sheet()
-        for phx_construction in phx_project.assembly_types:
-            phpp_conn.u_values.write_phx_construction_to_sheet(
-                phx_construction)
+        # for phx_construction in phx_project.assembly_types:
+        #     phpp_conn.u_values.write_phx_construction_to_sheet(
+        #         phx_construction)
 
         # phpp_conn.components.clear_sheet()
-        for phx_construction in phx_project.window_types:
-            phpp_conn.components.write_phx_construction_to_sheet(
-                phx_construction)
+        # for phx_construction in phx_project.window_types:
+        #     phpp_conn.components.write_phx_construction_to_sheet(
+        #         phx_construction)
 
-        # print(phpp_conn.u_values.get_next_empty_constructor_row_num())
+        for phx_variant in phx_project.variants:
+            for component in phx_variant.building.opaque_components:
+                phpp_conn.areas.write_phx_component_to_sheet(component)
 
-        #print('[bold green]> writing to excel....[/bold green]')
-        # phpp_conn.areas.clear_sheet()
+                phx_polys = phx_variant.graphics3D.get_polygons_by_id(
+                    component.polygon_ids)
+                phpp_conn.areas.write_phx_polygons_to_sheet(phx_polys)
 
-        # --- Write the surfaces to Excel
-        #phpp_conn.areas.add_new_surfaces([my_first_surface, my_second_surface])
-        # phpp_conn.areas.add_new_surface( my_second_surface )
+                # print(phpp_conn.u_values.get_next_empty_constructor_row_num())
 
-        # --- Write the Constructions to Excel
-        #phpp_conn.u_values.add_new_construction( constr_1 )
+                #print('[bold green]> writing to excel....[/bold green]')
+                # phpp_conn.areas.clear_sheet()
 
-    # # --- Output the WUFI Project as an XML Text File
-    # # -------------------------------------------------------------------------
-    # print(
-    #     f"[bold]> Generating XML Text for the Honeybee Model: [{hb_model}][/bold]")
-    # xml_txt = xml_builder.generate_WUFI_XML_from_object(phx_project)
+                # --- Write the surfaces to Excel
+                #phpp_conn.areas.add_new_surfaces([my_first_surface, my_second_surface])
+                # phpp_conn.areas.add_new_surface( my_second_surface )
 
-    # print(f"[bold]> Saving the XML file to: ./{TARGET_FILE_XML}[/bold]")
-    # xml_txt_to_file.write_XML_text_file(TARGET_FILE_XML, xml_txt)
+                # --- Write the Constructions to Excel
+                #phpp_conn.u_values.add_new_construction( constr_1 )
+
+                # # --- Output the WUFI Project as an XML Text File
+                # # -------------------------------------------------------------------------
+                # print(
+                #     f"[bold]> Generating XML Text for the Honeybee Model: [{hb_model}][/bold]")
+                # xml_txt = xml_builder.generate_WUFI_XML_from_object(phx_project)
+
+                # print(f"[bold]> Saving the XML file to: ./{TARGET_FILE_XML}[/bold]")
+                # xml_txt_to_file.write_XML_text_file(TARGET_FILE_XML, xml_txt)
