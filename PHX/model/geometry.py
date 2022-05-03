@@ -5,7 +5,8 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import ClassVar, Collection, List, Union, Iterable
+import math
+from typing import ClassVar, Collection, List, Union, Optional
 
 
 @dataclass
@@ -54,6 +55,10 @@ class PhxPolygon:
     vertices: List[PhxVertix] = field(default_factory=list)
     child_polygon_ids: List[int] = field(default_factory=list)
 
+    def __post_init__(self):
+        self.__class__._count += 1
+        self.id_num = self.__class__._count
+
     @property
     def display_name(self) -> str:
         if not self._display_name:
@@ -65,13 +70,72 @@ class PhxPolygon:
     def display_name(self, _in: str):
         self._display_name = str(_in)
 
-    def __post_init__(self):
-        self.__class__._count += 1
-        self.id_num = self.__class__._count
-
     @property
     def vertices_id_numbers(self) -> List[int]:
         return [v.id_num for v in self.vertices]
+
+    @property
+    def angle_from_horizontal(self) -> float:
+        """Return the surface normal's angle (degrees) off horizontal.
+
+        ie: pointing 'up'=0, vertical surface=90, pointing 'down'=180
+
+        https://www.omnicalculator.com/math/angle-between-two-vectors
+
+        Returns:
+        -------
+            * (float): Degrees. The surface normal angle off horizontal.
+        """
+
+        # Get the input Vector's X and Y parts
+        a = self.normal_vector
+        b = PhxVector(0, 0, 1.0)
+
+        try:
+            angle = math.acos(
+                (a.x * b.x + a.y * b.y + a.z * b.z) /
+                (math.sqrt(a.x**2 + a.y**2 + a.z**2) *
+                 math.sqrt(b.x**2 + b.y**2 + b.z**2))
+            )
+        except ZeroDivisionError:
+            angle = 0.0
+
+        return math.degrees(angle)
+
+    @property
+    def cardinal_orientation_angle(self, _reference_vector: Optional[PhxVector] = None) -> float:
+        """Calculate polygon normal's horizontal angle off a reference. By default, the
+        reference vector will be (x=0,y=1,z=0) assuming north is y-direction.
+
+        http://frasergreenroyd.com/obtaining-the-angle-between-two-vectors-for-360-degrees/
+        Results 0=north, 90=east, 180=south, 270=west
+
+        Arguments:
+        ----------
+            * _reference_vector: (PhxVector) The reference vector representing 
+                'North'. By default, will use (x=0, y=1, z=0) as the north vector.
+
+        Returns:
+        --------
+            (float) Degrees. The clockwise angle off reference of the surface normal.
+        """
+
+        if not _reference_vector:
+            _reference_vector = PhxVector(0, 1.0, 0)
+
+        a_x = self.normal_vector.x
+        a_y = self.normal_vector.y
+
+        b_x = _reference_vector.x
+        b_y = _reference_vector.y
+
+        angle = math.atan2(b_y, b_x) - math.atan2(a_y, a_x)
+        angle = math.degrees(angle)
+
+        if angle < 0:
+            angle = angle + 360
+
+        return(angle)
 
     def add_vertix(self, _phx_vertix: PhxVertix) -> None:
         self.vertices.append(_phx_vertix)
