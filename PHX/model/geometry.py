@@ -103,6 +103,22 @@ class PhxPolygon:
         return math.degrees(angle)
 
     @property
+    def is_horizontal(self, tolerance: float = 0.0001) -> bool:
+        a = self.angle_from_horizontal
+        if abs(a) < tolerance:
+            return True
+        elif abs(180 - abs(a)) < tolerance:
+            return True
+        return False
+
+    @property
+    def is_vertical(self, tolerance: float = 0.0001) -> bool:
+        a = self.angle_from_horizontal
+        if abs(90 - abs(a)) < tolerance:
+            return True
+        return False
+
+    @property
     def cardinal_orientation_angle(self, _reference_vector: Optional[PhxVector] = None) -> float:
         """Calculate polygon normal's horizontal angle off a reference. By default, the
         reference vector will be (x=0,y=1,z=0) assuming north is y-direction.
@@ -119,6 +135,8 @@ class PhxPolygon:
         --------
             (float) Degrees. The clockwise angle off reference of the surface normal.
         """
+        if self.is_horizontal:
+            return 0.0
 
         if not _reference_vector:
             _reference_vector = PhxVector(0, 1.0, 0)
@@ -135,7 +153,7 @@ class PhxPolygon:
         if angle < 0:
             angle = angle + 360
 
-        return(angle)
+        return angle
 
     def add_vertix(self, _phx_vertix: PhxVertix) -> None:
         self.vertices.append(_phx_vertix)
