@@ -4,7 +4,7 @@
 """Controller for managing the PHPP Connection."""
 
 from PHX.to_PHPP.phpp import xl_app
-from PHX.to_PHPP.phpp import sheets
+from PHX.to_PHPP.phpp import io
 
 
 class PHPPConnection:
@@ -13,6 +13,6 @@ class PHPPConnection:
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
-        self.u_values = sheets.UValues(self.xl)
-        self.components = sheets.Components(self.xl)
-        self.areas = sheets.Areas(self.xl, self.u_values)
+        self.u_values = io.UValues(self.xl)
+        self.components = io.Components(self.xl)
+        self.areas = io.Areas(self.xl)

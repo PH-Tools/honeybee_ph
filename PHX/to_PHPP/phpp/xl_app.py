@@ -9,7 +9,7 @@ from contextlib import contextmanager
 import xlwings as xw
 from rich import print
 
-from PHX.to_PHPP.phpp.xl_typing import xl_writable, xl_range_value
+from PHX.to_PHPP.phpp import xl_data
 
 
 # -----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ class XLConnection:
         return self.wb.sheets[_sheet_name]
 
     def get_single_column_data(self, _sheet_name: str, _col: str, _row_start: int = 1,
-                               _row_end: int = 100, ) -> List[xl_range_value]:
+                               _row_end: int = 100, ) -> List[xl_data.xl_range_value]:
         """Return a list with the values read from a single column of the excel document.
 
         Arguments:
@@ -132,7 +132,7 @@ class XLConnection:
         return self.get_sheet_by_name(_sheet_name).range(f'{_col}{_row_start}:{_col}{_row_end}').value
 
     def get_multiple_column_data(self, _sheet_name: str, _col_start: str, _col_end: str,
-                                 _row_start: int = 1, _row_end: int = 100, ) -> List[List[xl_range_value]]:
+                                 _row_start: int = 1, _row_end: int = 100, ) -> List[List[xl_data.xl_range_value]]:
         """Return a list with the values read from a specified block of the xl document.
 
         Arguments:
@@ -158,7 +158,7 @@ class XLConnection:
         return self.get_sheet_by_name(_sheet_name).range(
             f'{_col_start}{_row_start}:{_col_end}{_row_end}').options(ndim=_ndim).value
 
-    def get_data(self, _sheet_name: str, _range: str) -> xl_writable:
+    def get_data(self, _sheet_name: str, _range: str) -> xl_data.xl_writable:
         """Return a value or values from Excel
 
         Arguments:
@@ -172,7 +172,17 @@ class XLConnection:
         """
         return self.get_sheet_by_name(_sheet_name).range(_range).value
 
-    def write_data(self, _sheet_name: str, _range: str, _val: xl_writable) -> None:
+    def write_xl_item(self, _xl_item: xl_data.XlItem) -> None:
+        """Writes a single XLItem to the worksheet
+
+        Arguments:
+        ---------
+            * _xl_item: (XLItem) The XLItem with a sheet_name, range and value to write.
+         """
+        self.get_sheet_by_name(_xl_item.sheet_name).range(
+            _xl_item.range).value = _xl_item.value
+
+    def write_data(self, _sheet_name: str, _range: str, _val: xl_data.xl_writable) -> None:
         """Writes a value to a specific cell range in the excel sheet 
 
         Arguments:

@@ -5,8 +5,11 @@
 
 from rich import print
 import pathlib
+from typing import List
+
 from PHX.from_HBJSON import read_HBJSON_file, create_project
 from PHX.to_PHPP.phpp import phpp_app
+from PHX.to_PHPP.phpp.model import areas_surface, uvalues_constructor, component_glazing, component_frame
 
 if __name__ == '__main__':
     # --- Input file Path
@@ -33,38 +36,41 @@ if __name__ == '__main__':
     if phpp_conn.xl.connection_is_open():
         file = phpp_conn.xl.wb.name
         print(f'[bold green]> connected to excel doc: {file}[/bold green]')
+
     with phpp_conn.xl.in_silent_mode():
-        # phpp_conn.u_values.clear_sheet()
+
+        # -- Constructions / U-Values
+        construction_blocks = []
         for phx_construction in phx_project.assembly_types.values():
-            phpp_conn.u_values.write_phx_construction_to_sheet(
-                phx_construction)
+            construction_blocks.append(
+                uvalues_constructor.ConstructorBlock(phx_construction)
+            )
+        phpp_conn.u_values.write_construction_blocks(construction_blocks)
 
-        # phpp_conn.components.clear_sheet()
+        # -- Frame and Glazing Components
+        glazing_component_rows = []
+        frame_component_rows = []
         for phx_construction in phx_project.window_types.values():
-            phpp_conn.components.write_phx_construction_to_sheet(
-                phx_construction)
+            glazing_component_rows.append(
+                component_glazing.GlazingRow(phx_construction)
+            )
+            frame_component_rows.append(
+                component_frame.FrameRow(phx_construction)
+            )
+        phpp_conn.components.write_glazings(glazing_component_rows)
+        phpp_conn.components.write_frames(frame_component_rows)
 
+        # -- Surfaces
+        surfaces: List[areas_surface.SurfaceRow] = []
         for phx_variant in phx_project.variants:
             for component in phx_variant.building.opaque_components:
-                phpp_conn.areas.write_phx_component_to_sheet(component)
-
-                # print(phpp_conn.u_values.get_next_empty_constructor_row_num())
-
-                #print('[bold green]> writing to excel....[/bold green]')
-                # phpp_conn.areas.clear_sheet()
-
-                # --- Write the surfaces to Excel
-                #phpp_conn.areas.add_new_surfaces([my_first_surface, my_second_surface])
-                # phpp_conn.areas.add_new_surface( my_second_surface )
-
-                # --- Write the Constructions to Excel
-                #phpp_conn.u_values.add_new_construction( constr_1 )
-
-                # # --- Output the WUFI Project as an XML Text File
-                # # -------------------------------------------------------------------------
-                # print(
-                #     f"[bold]> Generating XML Text for the Honeybee Model: [{hb_model}][/bold]")
-                # xml_txt = xml_builder.generate_WUFI_XML_from_object(phx_project)
-
-                # print(f"[bold]> Saving the XML file to: ./{TARGET_FILE_XML}[/bold]")
-                # xml_txt_to_file.write_XML_text_file(TARGET_FILE_XML, xml_txt)
+                for polygon in component.polygons:
+                    surfaces.append(
+                        areas_surface.SurfaceRow(
+                            polygon,
+                            component,
+                            phpp_conn.u_values.get_constructor_phpp_id_by_name(
+                                component.assembly.display_name)
+                        )
+                    )
+        phpp_conn.areas.write_surfaces(surfaces)
