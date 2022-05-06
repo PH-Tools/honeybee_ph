@@ -16,6 +16,7 @@ from PHX.to_PHPP.phpp import xl_data
 @dataclass
 class SurfaceRow:
     """A single Areas/Surface entry row."""
+
     columns: ClassVar[Dict] = {
         'description': 'L',
         'group_number': 'M',

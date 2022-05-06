@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 from PHX.to_PHPP.phpp import xl_app
+from PHX.to_PHPP.phpp.xl_data import col_offset
 from PHX.to_PHPP.phpp.model import component_frame, component_glazing
 
 
@@ -17,22 +18,22 @@ class Glazings:
         self.section_header_row: Optional[int] = None
         self.section_first_entry_row: Optional[int] = None
 
-    def find_section_header_row(self) -> int:
-        xl_data = self.xl.get_single_column_data(self.sheet_name, 'ID', 1, 100,)
+    def find_section_header_row(self, search_col: str = 'ID') -> int:
+        xl_data = self.xl.get_single_column_data(self.sheet_name, search_col, 1, 100,)
 
         for i,  val in enumerate(xl_data):
             if 'Glazing' == val:
                 return i
         else:
             raise Exception(
-                "Error: Cannot find the 'Glazing' header on the 'Components' sheet, column ID?")
+                f"Error: Cannot find the 'Glazing' header on the 'Components' sheet, column {search_col}?")
 
-    def find_section_first_entry_row(self) -> int:
+    def find_section_first_entry_row(self, search_col: str = 'ID') -> int:
         if not self.section_header_row:
             self.section_header_row = self.find_section_header_row()
 
         xl_data = self.xl.get_single_column_data(
-            self.sheet_name, 'ID', self.section_header_row, self.section_header_row+25,
+            self.sheet_name, search_col, self.section_header_row, self.section_header_row+25,
         )
 
         for i, val in enumerate(xl_data, start=self.section_header_row):
@@ -40,11 +41,19 @@ class Glazings:
                 return i
         else:
             raise Exception(
-                "Error: Cannot find the 'Glazing' entry start on the 'Components' sheet, column ID?")
+                f"Error: Cannot find the 'Glazing' entry start on the 'Components' sheet, column {search_col}?")
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
         self.section_first_entry_row = self.find_section_first_entry_row()
+
+    def get_glazing_phpp_id_by_name(self, _name: str, search_col: str = 'IE') -> Optional[str]:
+        row = self.xl.get_row_num_of_value_in_column(
+            self.sheet_name, 1, 500, search_col, _name)
+        if not row:
+            return
+        prefix = self.xl.get_data(self.sheet_name, f'{col_offset(search_col, -1)}{row}')
+        return f'{prefix}-{_name}'
 
 
 class Frames:
@@ -54,22 +63,22 @@ class Frames:
         self.section_header_row: Optional[int] = None
         self.section_first_entry_row: Optional[int] = None
 
-    def find_section_header_row(self) -> int:
-        xl_data = self.xl.get_single_column_data(self.sheet_name, 'IK', 1, 100,)
+    def find_section_header_row(self, search_col: str = 'IK') -> int:
+        xl_data = self.xl.get_single_column_data(self.sheet_name, search_col, 1, 100,)
 
         for i,  val in enumerate(xl_data):
             if 'Window frames' == val:
                 return i
         else:
             raise Exception(
-                "Error: Cannot find the 'Window frames' header on the 'Components' sheet, column IK?")
+                f"Error: Cannot find the 'Window frames' header on the 'Components' sheet, column {search_col}?")
 
-    def find_section_first_entry_row(self) -> int:
+    def find_section_first_entry_row(self, search_col: str = 'IK') -> int:
         if not self.section_header_row:
             self.section_header_row = self.find_section_header_row()
 
         xl_data = self.xl.get_single_column_data(
-            self.sheet_name, 'IK', self.section_header_row, self.section_header_row+25,
+            self.sheet_name, search_col, self.section_header_row, self.section_header_row+25,
         )
 
         for i, val in enumerate(xl_data, start=self.section_header_row):
@@ -77,11 +86,20 @@ class Frames:
                 return i
         else:
             raise Exception(
-                "Error: Cannot find the 'Window frames' entry start on the 'Components' sheet, column IK?")
+                f"Error: Cannot find the 'Window frames' entry start on the 'Components' sheet, column {search_col}?")
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
         self.section_first_entry_row = self.find_section_first_entry_row()
+
+    def get_frame_phpp_id_by_name(self, _name: str, search_col: str = 'IL') -> str:
+        row = self.xl.get_row_num_of_value_in_column(
+            self.sheet_name, 1, 500, search_col, _name)
+        if not row:
+            msg = f'Error: Cannot find a Frame component named: "{_name}" in column {search_col}?'
+            raise Exception(msg)
+        prefix = self.xl.get_data(self.sheet_name, f'{col_offset(search_col, -1)}{row}')
+        return f'{prefix}-{_name}'
 
 
 class Components:

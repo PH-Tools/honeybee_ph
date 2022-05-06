@@ -84,13 +84,16 @@ def _hb_ext_color_to_phx_enum(_hb_face: face.Face) -> ComponentColor:
     return mapping[str(_hb_face.type)][str(_hb_face.boundary_condition)]
 
 
-def create_component_from_hb_aperture(_aperture: aperture.Aperture, _hb_room: room.Room) -> building.PhxComponent:
+def create_component_from_hb_aperture(_aperture: aperture.Aperture,
+                                      _hb_room: room.Room,
+                                      _window_type_dict: Dict[str, constructions.PhxConstructionWindow]) -> building.PhxComponent:
     """Create a new Transparent (window) Component based on a Honeybee Aperture.
 
     Arguments:
     ----------
         * _aperture (aperture.Aperture): The Honeybee-Aperture to use as the source.
         * _hb_room (room.Room): The Honeybee-Room to use as the source.
+        * _window_type_dict (Dict[str, constructions.PhxConstructionWindow]): The Window Type dict.
 
     Returns:
     --------
@@ -107,6 +110,8 @@ def create_component_from_hb_aperture(_aperture: aperture.Aperture, _hb_room: ro
     new_compo_aperture.exposure_interior = _hb_room.properties.ph.id_num
     new_compo_aperture.color_interior = ComponentColor.WINDOW
     new_compo_aperture.color_exterior = ComponentColor.WINDOW
+
+    new_compo_aperture.window_type = _window_type_dict[_aperture.properties.energy.construction.identifier]
     new_compo_aperture.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
 
     # -- Polygons
@@ -118,7 +123,8 @@ def create_component_from_hb_aperture(_aperture: aperture.Aperture, _hb_room: ro
 
 def create_components_from_hb_face(_hb_face: face.Face,
                                    _hb_room: room.Room,
-                                   _assembly_dict: Dict[str, constructions.PhxConstructionOpaque]) -> List[building.PhxComponent]:
+                                   _assembly_dict: Dict[str, constructions.PhxConstructionOpaque],
+                                   _window_type_dict: Dict[str, constructions.PhxConstructionWindow]) -> List[building.PhxComponent]:
     """Returns a new Opaque Component (and any child components) based on a Honeybee Face,
 
     Arguments:
@@ -126,6 +132,7 @@ def create_components_from_hb_face(_hb_face: face.Face,
         * _hb_face (face.Face): The Honeybee-Face to use as the source.
         * _hb_room (room.Room)L The Honeybee-Room to use as the source.
         * _assembly_dict (Dict[str, constructions.PhxConstructionOpaque]): The Assembly Type dict.
+        * _window_type_dict (Dict[str, constructions.PhxConstructionWindow]): The Window Type dict.
 
     Returns:
     --------
@@ -155,7 +162,8 @@ def create_components_from_hb_face(_hb_face: face.Face,
 
     # -- Create Children, register their Poly-Ids with the Parent
     for hb_aperture in _hb_face.apertures:
-        phx_compo_aperture = create_component_from_hb_aperture(hb_aperture, _hb_room)
+        phx_compo_aperture = create_component_from_hb_aperture(
+            hb_aperture, _hb_room, _window_type_dict)
         phx_polygon.add_child_poly_id(phx_compo_aperture.polygon_ids)
         new_compos.append(phx_compo_aperture)
 
@@ -163,13 +171,16 @@ def create_components_from_hb_face(_hb_face: face.Face,
 
 
 def create_components_from_hb_room(_hb_room: room.Room,
-                                   _assembly_dict: Dict[str, constructions.PhxConstructionOpaque]) -> List[building.PhxComponent]:
+                                   _assembly_dict: Dict[str, constructions.PhxConstructionOpaque],
+                                   _window_type_dict: Dict[str, constructions.PhxConstructionWindow],
+                                   ) -> List[building.PhxComponent]:
     """Create new Opaque and Transparent PHX-Components based on Honeybee-Room Faces.
 
     Arguments:
     ----------
         * _hb_room (room.Room): The honeybee-Room to use as the source.
         * _assembly_dict (Dict[str, constructions.PhxConstructionOpaque]): The Assembly Type dict.
+        * _assembly_dict (Dict[str, constructions.PhxConstructionWindow]): The Window Type dict.
 
     Returns:
     --------
@@ -177,7 +188,8 @@ def create_components_from_hb_room(_hb_room: room.Room,
     """
     compos: List[building.PhxComponent] = []
     for hb_face in _hb_room:
-        compos += create_components_from_hb_face(hb_face, _hb_room, _assembly_dict)
+        compos += create_components_from_hb_face(hb_face, _hb_room,
+                                                 _assembly_dict, _window_type_dict)
 
     return compos
 

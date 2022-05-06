@@ -4,7 +4,7 @@
 """PHX Building Classes"""
 
 from __future__ import annotations
-from typing import ClassVar, Collection, List, Set, Union
+from typing import ClassVar, Collection, List, Set, Union, Optional
 from dataclasses import dataclass, field
 from collections import defaultdict
 from functools import reduce
@@ -50,8 +50,9 @@ class PhxComponent:
     interior_attachment_id: int = -1
 
     assembly: constructions.PhxConstructionOpaque = constructions.PhxConstructionOpaque()
-    window_type_id_num: int = -1
     assembly_type_id_num: int = -1
+    window_type: constructions.PhxConstructionWindow = constructions.PhxConstructionWindow()
+    window_type_id_num: int = -1
 
     polygons: List[geometry.PhxPolygon] = field(default_factory=list)
 
@@ -164,6 +165,33 @@ class PhxBuilding:
         for compo in self.components:
             p_ids.update(compo.polygon_ids)
         return p_ids
+
+    @property
+    def polygons(self) -> List[geometry.PhxPolygon]:
+        return [poly for component in self.components for poly in component.polygons]
+
+    def get_component_by_polygon_id(self, _id_num: int) -> PhxComponent:
+        """Return a component if the specified polygon id is part of its set."""
+        for component in self.components:
+            if _id_num in component.polygon_ids:
+                return component
+        raise Exception(
+            f'Error: Cannot find a component with a polygon id_num of {_id_num}')
+
+    def get_polygon_by_id_num(self, _id_num: int) -> geometry.PhxPolygon:
+        """Return a single Polygon from the collection, given and id-number, or None if not found."""
+        for polygon in self.polygons:
+            if polygon.id_num == _id_num:
+                return polygon
+        raise Exception(f'Error: Cannot find a polygon with the id_num: {_id_num}')
+
+    def get_host_polygon_by_child_id_num(self, _id_num: int) -> geometry.PhxPolygon:
+        """Return a single Polygon from the collection if it has the specified ID as a 'child', or None if not found."""
+        for polygon in self.polygons:
+            if _id_num in polygon.child_polygon_ids:
+                return polygon
+        raise Exception(
+            f'Error: Cannot find a host polygon for the child id_num: {_id_num}')
 
     def __bool__(self) -> bool:
         return bool(self.components) or bool(self.zones)

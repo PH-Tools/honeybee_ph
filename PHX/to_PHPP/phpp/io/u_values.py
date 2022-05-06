@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 from PHX.to_PHPP.phpp import xl_app
+from PHX.to_PHPP.phpp.xl_data import col_offset
 from PHX.to_PHPP.phpp.model import uvalues_constructor
 
 
@@ -47,7 +48,7 @@ class UValues:
 
         # -- Get the data from Excel in one operation
         col_1 = _search_column
-        col_2 = chr(ord(col_1) + 1)
+        col_2 = col_offset(col_1, 1)
         col_data = self.xl.get_multiple_column_data(
             _sheet_name=self.sheet_name,
             _col_start=col_1,
@@ -77,10 +78,12 @@ class UValues:
         --------
             * (Optional[str]): The full PHPP-style id for the construction. ie: "01ud-MyConstruction"
         """
-        row = self.xl.get_row_num_of_value_in_column(self.sheet_name, 1, 500, 'M', _name)
+        search_col = 'M'
+        row = self.xl.get_row_num_of_value_in_column(
+            self.sheet_name, 1, 500, search_col, _name)
         if not row:
             return
-        prefix = self.xl.get_data(self.sheet_name, f'L{row}')
+        prefix = self.xl.get_data(self.sheet_name, f'{col_offset(search_col, -1)}{row}')
         return f'{prefix}-{_name}'
 
     def write_construction_blocks(self, _phx_constructions: List[uvalues_constructor.ConstructorBlock]) -> None:

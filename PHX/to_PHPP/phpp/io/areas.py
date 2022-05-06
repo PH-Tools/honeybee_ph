@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 from PHX.to_PHPP.phpp import xl_app
+from PHX.to_PHPP.phpp.xl_data import col_offset
 from PHX.to_PHPP.phpp.model import areas_surface
 
 
@@ -41,6 +42,7 @@ class Surfaces:
         self.section_first_entry_row: Optional[int] = None
 
     def find_section_header_row(self) -> int:
+        """Return the row number of the 'Area input' section header."""
         xl_data = self.xl.get_single_column_data(self.sheet_name, 'K', 1, 100,)
 
         for i,  val in enumerate(xl_data):
@@ -50,6 +52,7 @@ class Surfaces:
             raise AreasHeaderRowError()
 
     def find_section_first_entry_row(self) -> int:
+        """Return the row number of the very first user-input entry row in the 'Area input' section."""
         if not self.section_header_row:
             self.section_header_row = self.find_section_header_row()
 
@@ -66,6 +69,20 @@ class Surfaces:
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
         self.section_first_entry_row = self.find_section_first_entry_row()
+
+    def get_surface_phpp_id_by_name(self, _name: str, search_col: str = 'L') -> str:
+        """Return the PHPP-Style id ("1-NorthRoofSurface", ...) when given the surface name."""
+        if not self.section_first_entry_row:
+            self.section_first_entry_row = self.find_section_header_row()
+
+        row = self.xl.get_row_num_of_value_in_column(
+            self.sheet_name, self.section_first_entry_row, self.section_first_entry_row+500, search_col, _name
+        )
+        if not row:
+            raise Exception(
+                f'Error: Cannot locate the phpp surface named: {_name} in column {search_col}?')
+        prefix = self.xl.get_data(self.sheet_name, f'{col_offset(search_col, -1)}{row}')
+        return f'{int(prefix)}-{_name}'
 
 
 class ThermalBridges:

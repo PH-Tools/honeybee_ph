@@ -16,3 +16,4 @@ class PHPPConnection:
         self.u_values = io.UValues(self.xl)
         self.components = io.Components(self.xl)
         self.areas = io.Areas(self.xl)
+        self.windows = io.Windows(self.xl)
