@@ -4,7 +4,7 @@
 """PHX Building Classes"""
 
 from __future__ import annotations
-from typing import ClassVar, Collection, List, Union
+from typing import ClassVar, Collection, List, Union, Set
 from dataclasses import dataclass, field
 from collections import defaultdict
 from functools import reduce
@@ -58,7 +58,7 @@ class PhxBuilding:
             self.zones.append(zone)
 
     def merge_opaque_components_by_assembly(self) -> None:
-        """Merge together the Components in the Building if they gave the same Attributes."""
+        """Merge together all the Opaque-Components in the Building if they gave the same Attributes."""
         # -- Group the opaque components by their unique key / type
         new_component_groups = defaultdict(list)
         for c in self.opaque_components:
@@ -74,6 +74,7 @@ class PhxBuilding:
         self._components = grouped_opaque_components
 
     def merge_aperture_components_by_assembly(self) -> None:
+        """Merge together all the Aperture-Components in the Building if they gave the same Attributes."""
         # -- Group the aperture components by their unique key / type
         new_components: List[PhxComponentOpaque] = []
         for c in self.opaque_components:
@@ -96,6 +97,13 @@ class PhxBuilding:
 
     @property
     def all_components(self) -> List[Union[PhxComponentOpaque, PhxComponentAperture]]:
+        """Return a list of all the Opaque and Aperture Componets in the Building.
+
+        Returns:
+        --------
+            * (List[Union[PhxComponentOpaque, PhxComponentAperture]]) A list of all
+                the opaque and aperture components.
+        """
         all_components: List[Union[PhxComponentOpaque,
                                    PhxComponentAperture]] = []
         for c in self._components:
@@ -105,10 +113,23 @@ class PhxBuilding:
 
     @property
     def opaque_components(self) -> List[PhxComponentOpaque]:
+        """Returns a sorted list (by display name) of all the opaque components in the building.
+
+        Returns:
+        --------
+            * (List[PhxComponentOpaque]) A sorted list of all the opaque components.
+        """
         return sorted(self._components, key=lambda _: _.display_name)
 
     @property
     def shading_components(self) -> List[PhxComponentOpaque]:
+        """Returns a list of all the shading components in the building.
+
+        Returns:
+        --------
+            * (List[PhxComponentOpaque]) A sorted list of all the shading components.
+        """
+
         def is_shading_shading(_compo: PhxComponentOpaque):
             if _compo.face_opacity != ComponentFaceOpacity.OPAQUE:
                 return False
@@ -122,8 +143,8 @@ class PhxBuilding:
         )
 
     @property
-    def polygon_ids(self) -> set[int]:
-        """Return a set of all the Polygon IDs of of all the Components in the building."""
+    def polygon_ids(self) -> Set[int]:
+        """Return a Set of all the Polygon IDs of all Polygons from all the Components in the building."""
         p_ids = set()
         for compo in self.all_components:
             p_ids.update(compo.polygon_ids)
@@ -131,31 +152,8 @@ class PhxBuilding:
 
     @property
     def polygons(self) -> List[geometry.PhxPolygon]:
+        """Returns a list of all the Polygons of all the Components in the building."""
         return [poly for component in self.all_components for poly in component.polygons]
-
-    def get_opaque_component_by_polygon_id(self, _id_num: int) -> PhxComponentOpaque:
-        """Return a component if the specified polygon id is part of its set."""
-        for component in self.opaque_components:
-            if _id_num in component.polygon_ids:
-                return component
-        raise Exception(
-            f'Error: Cannot find a component with a polygon id_num of {_id_num}')
-
-    def get_polygon_by_id_num(self, _id_num: int) -> geometry.PhxPolygon:
-        """Return a single Polygon from the collection, given and id-number, or None if not found."""
-        for polygon in self.polygons:
-            if polygon.id_num == _id_num:
-                return polygon
-        raise Exception(
-            f'Error: Cannot find a polygon with the id_num: {_id_num}')
-
-    def get_host_polygon_by_child_id_num(self, _id_num: int) -> geometry.PhxPolygon:
-        """Return a single Polygon from the collection if it has the specified ID as a 'child', or None if not found."""
-        for polygon in self.polygons:
-            if _id_num in polygon.child_polygon_ids:
-                return polygon
-        raise Exception(
-            f'Error: Cannot find a host polygon for the child id_num: {_id_num}')
 
     def __bool__(self) -> bool:
         return bool(self.opaque_components) or bool(self.zones)

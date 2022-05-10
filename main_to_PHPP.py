@@ -78,24 +78,28 @@ if __name__ == '__main__':
         # -- Windows
         phpp_windows: List[windows_rows.WindowRow] = []
         for phx_variant in phx_project.variants:
-            for window_component in phx_variant.building.transparent_components:
-                for phx_polygon in window_component.polygons:
-
-                    host_polygon = phx_variant.building.get_host_polygon_by_child_id_num(
-                        phx_polygon.id_num)
-                    phpp_host_surface_id_name = phpp_conn.areas.surfaces.get_surface_phpp_id_by_name(
-                        host_polygon.display_name)
-                    phpp_id_frame = phpp_conn.components.frames.get_frame_phpp_id_by_name(
-                        window_component.window_type.display_name)
-                    phpp_id_glazing = phpp_conn.components.frames.get_frame_phpp_id_by_name(
-                        window_component.window_type.display_name)
-
-                    phpp_windows.append(
-                        windows_rows.WindowRow(
-                            phx_polygon=phx_polygon,
-                            phpp_host_surface_id_name=phpp_host_surface_id_name,
-                            phpp_id_frame=phpp_id_frame,
-                            phpp_id_glazing=phpp_id_glazing
+            for phx_component in phx_variant.building.opaque_components:
+                for phx_aperture in phx_component.apertures:
+                    for ap_polygon in phx_aperture.polygons:
+                        host_polygon = phx_component.get_host_polygon_by_child_id_num(
+                            ap_polygon.id_num
                         )
-                    )
+                        phpp_host_surface_id_name = phpp_conn.areas.surfaces.get_surface_phpp_id_by_name(
+                            host_polygon.display_name
+                        )
+                        phpp_id_frame = phpp_conn.components.frames.get_frame_phpp_id_by_name(
+                            phx_aperture.window_type.display_name
+                        )
+                        phpp_id_glazing = phpp_conn.components.frames.get_frame_phpp_id_by_name(
+                            phx_aperture.window_type.display_name
+                        )
+
+                        phpp_windows.append(
+                            windows_rows.WindowRow(
+                                phx_polygon=ap_polygon,
+                                phpp_host_surface_id_name=phpp_host_surface_id_name,
+                                phpp_id_frame=phpp_id_frame,
+                                phpp_id_glazing=phpp_id_glazing
+                            )
+                        )
         phpp_conn.windows.write_windows(phpp_windows)
