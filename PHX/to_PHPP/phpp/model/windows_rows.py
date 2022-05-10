@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict, List, Tuple, Optional
 from functools import partial
 
-from PHX.model import geometry, building
+from PHX.model import building, geometry
 
 from PHX.to_PHPP.phpp import xl_data
 

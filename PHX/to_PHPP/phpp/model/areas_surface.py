@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List, Tuple, Optional, ClassVar, Dict
 from functools import partial
 
-from PHX.model import building, geometry
+from PHX.model import components, geometry
 from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType
 
 from PHX.to_PHPP.phpp import xl_data
@@ -32,7 +32,7 @@ class SurfaceRow:
 
     __slots__ = ('phx_polygon', 'phx_component', 'phpp_assembly_id_name')
     phx_polygon: geometry.PhxPolygon
-    phx_component: building.PhxComponent
+    phx_component: components.PhxComponentOpaque
     phpp_assembly_id_name: Optional[str]
 
     @property

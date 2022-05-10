@@ -39,7 +39,8 @@ def add_building_from_hb_room(_variant: project.PhxVariant,
         create_building.create_zones_from_hb_room(_hb_room))
 
     if group_components:
-        _variant.building.merge_components_by_assembly()
+        _variant.building.merge_opaque_components_by_assembly()
+        _variant.building.merge_aperture_components_by_assembly()
 
 
 def add_phius_certification_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Room) -> None:
@@ -243,11 +244,13 @@ def add_ventilation_systems_from_hb_rooms(_variant: project.PhxVariant, _hb_room
 
         # -- Get or Build the PHX Ventilation system
         # -- If the ventilator already exists, just use that one.
-        phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(vent_sys.key)
+        phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(
+            vent_sys.key)
         if not phx_subsystem:
             # -- otherwise, build a new PH-Ventilator from the HB-hvac
             phx_subsystem = create_hvac.build_phx_ventilation_sys(vent_sys)
-            _variant.mech_systems.add_new_mech_subsystem(vent_sys.key, phx_subsystem)
+            _variant.mech_systems.add_new_mech_subsystem(
+                vent_sys.key, phx_subsystem)
 
         vent_sys.id_num = phx_subsystem.id_num
 
@@ -276,11 +279,13 @@ def add_heating_systems_from_hb_rooms(_variant: project.PhxVariant, _hb_room: ro
         # -- Get or Build the PHX Heating systems
         # -- If the system already exists, just use that one.
         for hbph_sys in heating_systems:
-            phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(hbph_sys.key)
+            phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(
+                hbph_sys.key)
             if not phx_subsystem:
                 # -- otherwise, build a new PHX-Heating-Sys from the HB-hvac
                 phx_subsystem = create_hvac.build_phx_heating_sys(hbph_sys)
-                _variant.mech_systems.add_new_mech_subsystem(hbph_sys.key, phx_subsystem)
+                _variant.mech_systems.add_new_mech_subsystem(
+                    hbph_sys.key, phx_subsystem)
 
             hbph_sys.id_num = phx_subsystem.id_num
 
@@ -309,11 +314,13 @@ def add_cooling_systems_from_hb_rooms(_variant: project.PhxVariant, _hb_room: ro
         # -- Get or Build the PHX-Cooling systems
         # -- If the system already exists, just use that one.
         for hbph_sys in cooling_systems:
-            phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(hbph_sys.key)
+            phx_subsystem = _variant.mech_systems.get_mech_subsystem_by_key(
+                hbph_sys.key)
             if not phx_subsystem:
                 # -- otherwise, build a new PHX-Cooling-Sys from the HB-hvac
                 phx_subsystem = create_hvac.build_phx_cooling_sys(hbph_sys)
-                _variant.mech_systems.add_new_mech_subsystem(hbph_sys.key, phx_subsystem)
+                _variant.mech_systems.add_new_mech_subsystem(
+                    hbph_sys.key, phx_subsystem)
 
             hbph_sys.id_num = phx_subsystem.id_num
 
@@ -352,7 +359,8 @@ def add_dhw_storage_from_hb_rooms(_variant: project.PhxVariant, _hb_room: room.R
 
             # -- Build a new PHS-HW-Tank from the HB-hvac
             phx_subsystem = create_shw.build_phx_hw_storage_subsystem(hw_tank)
-            _variant.mech_systems.add_new_mech_subsystem(equip_key, phx_subsystem)
+            _variant.mech_systems.add_new_mech_subsystem(
+                equip_key, phx_subsystem)
 
     return None
 
@@ -375,7 +383,8 @@ def add_dhw_heaters_from_hb_rooms(_variant: project.PhxVariant, _hb_room: room.R
 
             # -- Build a new PHX-HW-Heater from the HBPH-HW-Heater
             phx_subsystem = create_shw.build_phx_hw_heating_subsystem(heater)
-            _variant.mech_systems.add_new_mech_subsystem(equip_key, phx_subsystem)
+            _variant.mech_systems.add_new_mech_subsystem(
+                equip_key, phx_subsystem)
 
     return None
 

@@ -6,9 +6,8 @@
 from typing import List, Union, Dict
 
 from honeybee import room, aperture, face
-from honeybee import facetype
 
-from PHX.model import building, constructions
+from PHX.model import building, constructions, components
 from PHX.from_HBJSON import create_rooms, create_geometry
 from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceOpacity, ComponentColor, ComponentFaceType
 
@@ -84,47 +83,41 @@ def _hb_ext_color_to_phx_enum(_hb_face: face.Face) -> ComponentColor:
     return mapping[str(_hb_face.type)][str(_hb_face.boundary_condition)]
 
 
-def create_component_from_hb_aperture(_aperture: aperture.Aperture,
-                                      _hb_room: room.Room,
-                                      _window_type_dict: Dict[str, constructions.PhxConstructionWindow]) -> building.PhxComponent:
+def create_component_from_hb_aperture(
+        _host_compo: components.PhxComponentOpaque,
+        _hb_aperture: aperture.Aperture,
+        _hb_room: room.Room,
+        _window_type_dict: Dict[str, constructions.PhxConstructionWindow]) -> building.PhxComponentAperture:
     """Create a new Transparent (window) Component based on a Honeybee Aperture.
 
     Arguments:
     ----------
-        * _aperture (aperture.Aperture): The Honeybee-Aperture to use as the source.
+        * _host (components.PhxComponentOpaque): The Aperture's parent opaque component.
+        * _hb_aperture (aperture.Aperture): The Honeybee-Aperture to use as the source.
         * _hb_room (room.Room): The Honeybee-Room to use as the source.
         * _window_type_dict (Dict[str, constructions.PhxConstructionWindow]): The Window Type dict.
 
     Returns:
     --------
-        * building.Component: A new Transparent (window) Component.
+        * componets.PhxComponentAperture: A new Transparent (window) Component.
     """
-    new_compo_aperture = building.PhxComponent()
-
-    new_compo_aperture.display_name = _aperture.display_name
-    new_compo_aperture.id_num = building.PhxComponent._count
-
-    new_compo_aperture.face_type = ComponentFaceType.WINDOW
-    new_compo_aperture.face_opacity = ComponentFaceOpacity.TRANSPARENT
-    new_compo_aperture.exposure_exterior = _hb_ext_exposure_to_phx_enum(_aperture)
-    new_compo_aperture.exposure_interior = _hb_room.properties.ph.id_num
-    new_compo_aperture.color_interior = ComponentColor.WINDOW
-    new_compo_aperture.color_exterior = ComponentColor.WINDOW
-
-    new_compo_aperture.window_type = _window_type_dict[_aperture.properties.energy.construction.identifier]
-    new_compo_aperture.window_type_id_num = _aperture.properties.energy.construction.properties.ph.id_num
+    phx_ap = building.PhxComponentAperture(_host=_host_compo)
+    phx_ap.display_name = _hb_aperture.display_name
+    phx_ap.exposure_interior = _hb_room.properties.ph.id_num
+    phx_ap.window_type = _window_type_dict[_hb_aperture.properties.energy.construction.identifier]
+    phx_ap.window_type_id_num = _hb_aperture.properties.energy.construction.properties.ph.id_num
 
     # -- Polygons
-    phx_polygon = create_geometry.create_PhxPolygon_from_hb_aperture(_aperture)
-    new_compo_aperture.add_polygons(phx_polygon)
+    phx_ap.add_polygons(
+        create_geometry.create_PhxPolygon_from_hb_aperture(_hb_aperture))
 
-    return new_compo_aperture
+    return phx_ap
 
 
 def create_components_from_hb_face(_hb_face: face.Face,
                                    _hb_room: room.Room,
                                    _assembly_dict: Dict[str, constructions.PhxConstructionOpaque],
-                                   _window_type_dict: Dict[str, constructions.PhxConstructionWindow]) -> List[building.PhxComponent]:
+                                   _window_type_dict: Dict[str, constructions.PhxConstructionWindow]) -> components.PhxComponentOpaque:
     """Returns a new Opaque Component (and any child components) based on a Honeybee Face,
 
     Arguments:
@@ -138,42 +131,37 @@ def create_components_from_hb_face(_hb_face: face.Face,
     --------
         * building.Component: The new Opaque Component.
     """
-    new_compos: List[building.PhxComponent] = []
 
-    new_compo_opaque = building.PhxComponent()
+    opaque_compo = components.PhxComponentOpaque()
+    opaque_compo.display_name = _hb_face.display_name
+    opaque_compo.assembly = _assembly_dict[_hb_face.properties.energy.construction.identifier]
+    opaque_compo.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
 
-    new_compo_opaque.display_name = _hb_face.display_name
-    new_compo_opaque.id_num = building.PhxComponent._count
-    new_compo_opaque.assembly = _assembly_dict[_hb_face.properties.energy.construction.identifier]
-    new_compo_opaque.assembly_type_id_num = _hb_face.properties.energy.construction.properties.ph.id_num
-
-    new_compo_opaque.face_type = _hb_face_type_to_phx_enum(_hb_face)
-    new_compo_opaque.face_opacity = _hb_face_opacity_to_phx_enum(_hb_face)
-    new_compo_opaque.exposure_exterior = _hb_ext_exposure_to_phx_enum(_hb_face)
-    new_compo_opaque.exposure_interior = _hb_room.properties.ph.id_num
-    new_compo_opaque.color_interior = _hb_int_color_to_phx_enum(_hb_face)
-    new_compo_opaque.color_exterior = _hb_ext_color_to_phx_enum(_hb_face)
+    opaque_compo.face_type = _hb_face_type_to_phx_enum(_hb_face)
+    opaque_compo.face_opacity = _hb_face_opacity_to_phx_enum(_hb_face)
+    opaque_compo.exposure_exterior = _hb_ext_exposure_to_phx_enum(_hb_face)
+    opaque_compo.exposure_interior = _hb_room.properties.ph.id_num
+    opaque_compo.color_interior = _hb_int_color_to_phx_enum(_hb_face)
+    opaque_compo.color_exterior = _hb_ext_color_to_phx_enum(_hb_face)
 
     # -- Create Polygon
     phx_polygon = create_geometry.create_PhxPolygon_from_hb_face(_hb_face)
-    new_compo_opaque.add_polygons(phx_polygon)
+    opaque_compo.add_polygons(phx_polygon)
 
-    new_compos.append(new_compo_opaque)
-
-    # -- Create Children, register their Poly-Ids with the Parent
+    # -- Create Child Apertures, register the Aperature with the Parent Compo
     for hb_aperture in _hb_face.apertures:
         phx_compo_aperture = create_component_from_hb_aperture(
-            hb_aperture, _hb_room, _window_type_dict)
+            opaque_compo, hb_aperture, _hb_room, _window_type_dict)
         phx_polygon.add_child_poly_id(phx_compo_aperture.polygon_ids)
-        new_compos.append(phx_compo_aperture)
+        opaque_compo.add_aperture(phx_compo_aperture)
 
-    return new_compos
+    return opaque_compo
 
 
 def create_components_from_hb_room(_hb_room: room.Room,
                                    _assembly_dict: Dict[str, constructions.PhxConstructionOpaque],
                                    _window_type_dict: Dict[str, constructions.PhxConstructionWindow],
-                                   ) -> List[building.PhxComponent]:
+                                   ) -> List[components.PhxComponentOpaque]:
     """Create new Opaque and Transparent PHX-Components based on Honeybee-Room Faces.
 
     Arguments:
@@ -184,14 +172,13 @@ def create_components_from_hb_room(_hb_room: room.Room,
 
     Returns:
     --------
-        * list[building.Component]: A list of the new PHX-Components.
+        * list[components.PhxComponentOpaque]: A list of the new opaque PhxComponents.
     """
-    compos: List[building.PhxComponent] = []
-    for hb_face in _hb_room:
-        compos += create_components_from_hb_face(hb_face, _hb_room,
-                                                 _assembly_dict, _window_type_dict)
-
-    return compos
+    return [
+        create_components_from_hb_face(
+            hb_face, _hb_room, _assembly_dict, _window_type_dict)
+        for hb_face in _hb_room
+    ]
 
 
 def create_zones_from_hb_room(_hb_room: room.Room) -> building.PhxZone:
@@ -211,7 +198,8 @@ def create_zones_from_hb_room(_hb_room: room.Room) -> building.PhxZone:
     new_zone.display_name = _hb_room.display_name
 
     # -- Sort the room order by full_name
-    sorted_spaces = sorted(_hb_room.properties.ph.spaces, key=lambda x: x.full_name)
+    sorted_spaces = sorted(_hb_room.properties.ph.spaces,
+                           key=lambda x: x.full_name)
 
     # -- Create a new WUFI-RoomVentilation for each space
     new_zone.wufi_rooms = [create_rooms.create_room_from_space(sp)

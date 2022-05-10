@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # --- Input file Path
     # -------------------------------------------------------------------------
     SOURCE_FILE = pathlib.Path("tests", "_source_hbjson",
-                               "Default_Room_Single_Zone_wih_Apertures.hbjson")
+                               "Default_Room_Single_Zone_with_Apertures.hbjson")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -------------------------------------------------------------------------

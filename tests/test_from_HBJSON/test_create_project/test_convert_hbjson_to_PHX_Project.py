@@ -6,8 +6,8 @@ from PHX.from_HBJSON import read_HBJSON_file, create_project
 @pytest.mark.parametrize("filename,results",
                          [
                              ('Default_Model_Single_Zone.hbjson', None),
-                             ('Default_Room_Single_Zone_wih_Apertures.hbjson', None),
-                             ('Default_Room_Single_Zone_wih_Shades.hbjson', None),
+                             ('Default_Room_Single_Zone_with_Apertures.hbjson', None),
+                             ('Default_Room_Single_Zone_with_Shades.hbjson', None),
                          ])
 def test_convert_model_PhxProject(filename, results):
     file_path = Path('tests', '_source_hbjson', filename)

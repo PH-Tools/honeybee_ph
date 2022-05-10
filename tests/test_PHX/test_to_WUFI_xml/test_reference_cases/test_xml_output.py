@@ -15,27 +15,27 @@ from PHX.to_WUFI_XML import xml_builder
                              ),
                              (
                                  Path('tests', '_source_hbjson',
-                                      'Default_Room_Multiple_Zones_wih_Apertures_Single_BldgSegment.hbjson'),
+                                      'Default_Room_Multiple_Zones_with_Apertures_Single_BldgSegment.hbjson'),
                                  Path('tests', '_reference_xml',
-                                      'Default_Room_Multiple_Zones_wih_Apertures_Single_BldgSegment.xml')
+                                      'Default_Room_Multiple_Zones_with_Apertures_Single_BldgSegment.xml')
                              ),
                              (
                                  Path('tests', '_source_hbjson',
-                                      'Default_Room_Multiple_Zones_wih_Apertures.hbjson'),
+                                      'Default_Room_Multiple_Zones_with_Apertures.hbjson'),
                                  Path('tests', '_reference_xml',
-                                      'Default_Room_Multiple_Zones_wih_Apertures.xml')
+                                      'Default_Room_Multiple_Zones_with_Apertures.xml')
                              ),
                              (
                                  Path('tests', '_source_hbjson',
-                                      'Default_Room_Single_Zone_wih_Apertures.hbjson'),
+                                      'Default_Room_Single_Zone_with_Apertures.hbjson'),
                                  Path('tests', '_reference_xml',
-                                      'Default_Room_Single_Zone_wih_Apertures.xml')
+                                      'Default_Room_Single_Zone_with_Apertures.xml')
                              ),
                              (
                                  Path('tests', '_source_hbjson',
-                                      'Default_Room_Single_Zone_wih_Shades.hbjson'),
+                                      'Default_Room_Single_Zone_with_Shades.hbjson'),
                                  Path('tests', '_reference_xml',
-                                      'Default_Room_Single_Zone_wih_Shades.xml')
+                                      'Default_Room_Single_Zone_with_Shades.xml')
                              ),
                          ])
 def test_xml_output(reset_class_counters, hbjson_file, xml_file):

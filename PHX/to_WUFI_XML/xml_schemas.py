@@ -6,9 +6,9 @@
 from typing import List
 import sys
 
-from PHX.model import elec_equip, project
-from PHX.model import (building, certification, climate, constructions,
-                       geometry, ground, schedules, hvac, loads)
+from PHX.model import (certification, climate, constructions,
+                       geometry, ground, schedules, hvac, loads,
+                       building, building, elec_equip, project, components)
 from PHX.to_WUFI_XML.xml_writables import XML_Node, XML_List, XML_Object, xml_writable
 
 TOL_LEV1 = 2  # Value tolerance for rounding. ie; 9.843181919194 -> 9.84
@@ -99,7 +99,7 @@ def _PhxProjectData(_project_data: project.PhxProjectData) -> List[xml_writable]
 def _PhxBuilding(_b: building.PhxBuilding) -> List[xml_writable]:
     return [
         XML_List("Components", [XML_Object("Component", c, "index", i)
-                 for i, c in enumerate(_b.components)]),
+                 for i, c in enumerate(_b.all_components)]),
         XML_List("Zones", [XML_Object("Zone", z, "index", i)
                  for i, z in enumerate(_b.zones)]),
     ]
@@ -131,7 +131,7 @@ def _PhxZone(_z: building.PhxZone) -> List[xml_writable]:
     ]
 
 
-def _PhxComponent(_c: building.PhxComponent) -> List[xml_writable]:
+def _PhxComponentOpaque(_c: components.PhxComponentOpaque) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _c.id_num),
         XML_Node("Name", _c.display_name),
@@ -143,6 +143,24 @@ def _PhxComponent(_c: building.PhxComponent) -> List[xml_writable]:
         XML_Node("OuterAttachment", _c.exposure_exterior.value),
         XML_Node("IdentNr_ComponentInnerSurface", _c.interior_attachment_id),
         XML_Node("IdentNrAssembly", _c.assembly_type_id_num),
+        XML_Node("IdentNrWindowType", -1),
+        XML_List("IdentNrPolygons", [XML_Node(
+            "IdentNr", n, "index", i) for i, n in enumerate(_c.polygon_ids)]),
+    ]
+
+
+def _PhxComponentAperture(_c: building.PhxComponentAperture) -> List[xml_writable]:
+    return [
+        XML_Node("IdentNr", _c.id_num),
+        XML_Node("Name", _c.display_name),
+        XML_Node("Visual", True),
+        XML_Node("Type", _c.face_opacity.value),
+        XML_Node("IdentNrColorI", _c.color_interior.value),
+        XML_Node("IdentNrColorE", _c.color_exterior.value),
+        XML_Node("InnerAttachment", _c.exposure_interior),
+        XML_Node("OuterAttachment", _c.exposure_exterior.value),
+        XML_Node("IdentNr_ComponentInnerSurface", _c.interior_attachment_id),
+        XML_Node("IdentNrAssembly", -1),
         XML_Node("IdentNrWindowType", _c.window_type_id_num),
         XML_List("IdentNrPolygons", [XML_Node(
             "IdentNr", n, "index", i) for i, n in enumerate(_c.polygon_ids)]),

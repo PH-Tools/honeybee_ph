@@ -7,8 +7,8 @@ from __future__ import annotations
 from typing import ClassVar, List, Dict
 from dataclasses import dataclass, field
 
-from PHX.model import schedules
-from PHX.model import building, certification, climate, constructions, geometry
+from PHX.model import building, schedules
+from PHX.model import certification, climate, constructions, geometry
 from PHX.model.hvac import collection
 
 
@@ -31,7 +31,7 @@ class PhxVariant:
     def graphics3D(self):
         """Collects all of the geometry (Polygons, Vertices) in the Project."""
         phx_graphics3D = geometry.PhxGraphics3D()
-        for phx_component in self.building.components:
+        for phx_component in self.building.all_components:
             phx_graphics3D.add_polygons(phx_component.polygons)
         return phx_graphics3D
 

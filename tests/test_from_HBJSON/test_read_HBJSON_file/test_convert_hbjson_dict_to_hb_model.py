@@ -55,8 +55,8 @@ def hb_rooms_are_equal(hb_room_1, hb_room_2):
 @pytest.mark.parametrize("filename,results",
                          [
                              ('Default_Model_Single_Zone.hbjson', None),
-                             ('Default_Room_Single_Zone_wih_Apertures.hbjson', None),
-                             ('Default_Room_Single_Zone_wih_Shades.hbjson', None),
+                             ('Default_Room_Single_Zone_with_Apertures.hbjson', None),
+                             ('Default_Room_Single_Zone_with_Shades.hbjson', None),
                          ])
 def test_read_default_single_zone_model_no_conversion(filename, results):
     file_path = Path('tests', '_source_hbjson', filename)
@@ -79,8 +79,8 @@ def test_read_default_single_zone_model_no_conversion(filename, results):
 @pytest.mark.parametrize("filename,results",
                          [
                              ('Default_Model_Single_Zone.hbjson', None),
-                             ('Default_Room_Single_Zone_wih_Apertures.hbjson', None),
-                             ('Default_Room_Single_Zone_wih_Shades.hbjson', None),
+                             ('Default_Room_Single_Zone_with_Apertures.hbjson', None),
+                             ('Default_Room_Single_Zone_with_Shades.hbjson', None),
                          ])
 def test_convert_model_LBT_geometry(filename, results):
     file_path = Path('tests', '_source_hbjson', filename)

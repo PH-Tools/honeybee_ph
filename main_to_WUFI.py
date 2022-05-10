@@ -12,9 +12,9 @@ if __name__ == '__main__':
     # --- Input / Output file Path
     # -------------------------------------------------------------------------
     SOURCE_FILE = pathlib.Path("tests", "_source_hbjson",
-                               "Default_Room_Single_Zone.hbjson")
+                               "Default_Room_Single_Zone_with_Shades.hbjson")
     TARGET_FILE_XML = pathlib.Path(
-        "tests", "_results_xml", "Default_Room_Single_Zone.xml")
+        "tests", "_results_xml", "Default_Room_Single_Zone_with_Shades.xml")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -------------------------------------------------------------------------

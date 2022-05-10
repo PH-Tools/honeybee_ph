@@ -1,5 +1,6 @@
 import pytest
-from PHX.model import project, geometry, schedules, certification, constructions, building, elec_equip
+from PHX.model import building, project, geometry, schedules, certification, constructions, elec_equip
+from PHX.model import components
 from PHX.model.loads.ventilation import PhxRoomVentilation
 from PHX.model.hvac import _base, cooling, collection, water, ventilation, heating
 
@@ -36,7 +37,7 @@ def reset_class_counters():
     constructions.PhxConstructionOpaque._count = 0
     constructions.PhxConstructionWindow._count = 0
     building.PhxZone._count = 0
-    building.PhxComponent._count = 0
+    components.PhxComponentBase._count = 0
     elec_equip.PhxElectricalDevice._count = 0
     PhxRoomVentilation._count = 0
     _base.PhxMechanicalEquipment._count = 0
@@ -75,7 +76,7 @@ def reset_class_counters():
     constructions.PhxConstructionOpaque._count = 0
     constructions.PhxConstructionWindow._count = 0
     building.PhxZone._count = 0
-    building.PhxComponent._count = 0
+    components.PhxComponentBase._count = 0
     elec_equip.PhxElectricalDevice._count = 0
     PhxRoomVentilation._count = 0
     _base.PhxMechanicalEquipment._count = 0

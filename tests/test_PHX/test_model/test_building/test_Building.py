@@ -1,5 +1,4 @@
-from distutils.command.build import build
-from PHX.model import building
+from PHX.model import building, components
 
 
 def test_default_Building(reset_class_counters):
@@ -9,34 +8,34 @@ def test_default_Building(reset_class_counters):
     assert id(b1) != id(b2)
     assert not b1
     assert not b2
-    assert not b1.components
-    assert not b2.components
+    assert not b1.opaque_components
+    assert not b2.opaque_components
     assert not b1.zones
     assert not b2.zones
 
 
 def test_add_single_component(reset_class_counters):
     b = building.PhxBuilding()
-    c1 = building.PhxComponent()
+    c1 = components.PhxComponentOpaque()
     b.add_components(c1)
 
     assert b
-    assert b.components
-    assert len(b.components) == 1
-    assert c1 in b.components
+    assert b._components
+    assert len(b._components) == 1
+    assert c1 in b._components
 
 
 def test_add_multiple_components(reset_class_counters):
     b = building.PhxBuilding()
-    c1 = building.PhxComponent()
-    c2 = building.PhxComponent()
+    c1 = components.PhxComponentOpaque()
+    c2 = components.PhxComponentOpaque()
     b.add_components([c1, c2])
 
     assert b
-    assert b.components
-    assert len(b.components) == 2
-    assert c1 in b.components
-    assert c2 in b.components
+    assert b._components
+    assert len(b._components) == 2
+    assert c1 in b._components
+    assert c2 in b._components
 
 
 def test_add_single_zone(reset_class_counters):
@@ -65,11 +64,11 @@ def test_add_multiple_zones(reset_class_counters):
 
 def test_group_compos_by_assembly_with_single_compo(reset_class_counters):
     b = building.PhxBuilding()
-    c1 = building.PhxComponent()
+    c1 = components.PhxComponentOpaque()
     b.add_components(c1)
-    b.merge_components_by_assembly()
+    b.merge_opaque_components_by_assembly()
 
     assert b
-    assert b.components
-    assert len(b.components) == 1
-    assert c1 in b.components
+    assert b._components
+    assert len(b._components) == 1
+    assert c1 in b._components
