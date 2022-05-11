@@ -9,13 +9,14 @@ import shutil
 from pathlib import Path
 
 
-def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
+def write_XML_text_file(_file_address: Path, _xml_text: str, _write_copy: bool = True) -> None:
     """Write xml text out to the specified file.
 
     Arguments:
     ----------
         * _file_address (pathlib.Path): The file path object to save to.
         * _xml_text (str): The XML text to write out to file.
+        * _write_copy (bool): default=True. Make a copy with a unique time-stamped name.
 
     Returns:
     --------
@@ -48,8 +49,9 @@ def write_XML_text_file(_file_address: Path, _xml_text: str) -> None:
         with open(save_address_1, "w", encoding="utf8") as f:
             f.writelines(_xml_text)
 
-        #  Make a working copy
-        shutil.copyfile(save_address_1, save_address_2)
+        if _write_copy:
+            #  Make a working copy
+            shutil.copyfile(save_address_1, save_address_2)
 
     except PermissionError:
         # - In case the file is being used by WUFI or something else, make a new copy.

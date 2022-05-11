@@ -58,49 +58,49 @@
 			<Graphics_3D>
 				<Vertices count="8">
 					<Vertix index="0">
-						<IdentNr>17</IdentNr>
+						<IdentNr>22</IdentNr>
 						<X>5.0</X>
 						<Y>4.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
 					<Vertix index="1">
-						<IdentNr>18</IdentNr>
+						<IdentNr>23</IdentNr>
 						<X>5.0</X>
 						<Y>0.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
 					<Vertix index="2">
-						<IdentNr>19</IdentNr>
+						<IdentNr>24</IdentNr>
 						<X>0.0</X>
 						<Y>0.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
 					<Vertix index="3">
-						<IdentNr>20</IdentNr>
+						<IdentNr>25</IdentNr>
 						<X>0.0</X>
 						<Y>4.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
 					<Vertix index="4">
-						<IdentNr>21</IdentNr>
+						<IdentNr>27</IdentNr>
 						<X>0.0</X>
 						<Y>4.0</Y>
 						<Z>3.0</Z>
 					</Vertix>
 					<Vertix index="5">
-						<IdentNr>22</IdentNr>
+						<IdentNr>28</IdentNr>
 						<X>0.0</X>
 						<Y>0.0</Y>
 						<Z>3.0</Z>
 					</Vertix>
 					<Vertix index="6">
-						<IdentNr>23</IdentNr>
+						<IdentNr>29</IdentNr>
 						<X>5.0</X>
 						<Y>0.0</Y>
 						<Z>3.0</Z>
 					</Vertix>
 					<Vertix index="7">
-						<IdentNr>24</IdentNr>
+						<IdentNr>30</IdentNr>
 						<X>5.0</X>
 						<Y>4.0</Y>
 						<Z>3.0</Z>
@@ -113,10 +113,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>-1.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">17</IdentNr>
-							<IdentNr index="1">18</IdentNr>
-							<IdentNr index="2">19</IdentNr>
-							<IdentNr index="3">20</IdentNr>
+							<IdentNr index="0">22</IdentNr>
+							<IdentNr index="1">23</IdentNr>
+							<IdentNr index="2">24</IdentNr>
+							<IdentNr index="3">25</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -126,10 +126,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>1.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">21</IdentNr>
-							<IdentNr index="1">22</IdentNr>
-							<IdentNr index="2">23</IdentNr>
-							<IdentNr index="3">24</IdentNr>
+							<IdentNr index="0">27</IdentNr>
+							<IdentNr index="1">28</IdentNr>
+							<IdentNr index="2">29</IdentNr>
+							<IdentNr index="3">30</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -139,10 +139,10 @@
 						<NormalVectorY>-1.0</NormalVectorY>
 						<NormalVectorZ>0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">22</IdentNr>
-							<IdentNr index="1">19</IdentNr>
-							<IdentNr index="2">18</IdentNr>
-							<IdentNr index="3">23</IdentNr>
+							<IdentNr index="0">23</IdentNr>
+							<IdentNr index="1">24</IdentNr>
+							<IdentNr index="2">28</IdentNr>
+							<IdentNr index="3">29</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -152,10 +152,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">23</IdentNr>
-							<IdentNr index="1">18</IdentNr>
-							<IdentNr index="2">17</IdentNr>
-							<IdentNr index="3">24</IdentNr>
+							<IdentNr index="0">22</IdentNr>
+							<IdentNr index="1">23</IdentNr>
+							<IdentNr index="2">29</IdentNr>
+							<IdentNr index="3">30</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -165,10 +165,10 @@
 						<NormalVectorY>1.0</NormalVectorY>
 						<NormalVectorZ>-0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">24</IdentNr>
-							<IdentNr index="1">17</IdentNr>
-							<IdentNr index="2">20</IdentNr>
-							<IdentNr index="3">21</IdentNr>
+							<IdentNr index="0">22</IdentNr>
+							<IdentNr index="1">25</IdentNr>
+							<IdentNr index="2">27</IdentNr>
+							<IdentNr index="3">30</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -178,10 +178,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">21</IdentNr>
-							<IdentNr index="1">20</IdentNr>
-							<IdentNr index="2">19</IdentNr>
-							<IdentNr index="3">22</IdentNr>
+							<IdentNr index="0">24</IdentNr>
+							<IdentNr index="1">25</IdentNr>
+							<IdentNr index="2">27</IdentNr>
+							<IdentNr index="3">28</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>

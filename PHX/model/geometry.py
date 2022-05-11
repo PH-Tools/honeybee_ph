@@ -25,8 +25,8 @@ class PhxVertix:
             (self.id_num == other.id_num)
 
     def __post_init__(self):
-        self.__class__._count += 1
-        self.id_num = self.__class__._count
+        PhxVertix._count += 1
+        self.id_num = PhxVertix._count
 
     @property
     def unique_key(self) -> str:
@@ -45,14 +45,23 @@ class PhxVector:
 
 
 @dataclass
+class PhxPlane:
+    normal: PhxVector = field(default_factory=PhxVector)
+    origin: PhxVertix = field(default_factory=PhxVertix)
+    x: PhxVector = field(default_factory=PhxVector)
+    y: PhxVector = field(default_factory=PhxVector)
+
+
+@dataclass
 class PhxPolygon:
     _count: ClassVar[int] = 0
 
     id_num: int = field(init=False, default=0)
     _display_name: str = ''
     area: float = 0.0
-    normal_vector: PhxVector = PhxVector()
+    normal_vector: PhxVector = field(default_factory=PhxVector)
     vertices: List[PhxVertix] = field(default_factory=list)
+    plane: PhxPlane = PhxPlane()
     child_polygon_ids: List[int] = field(default_factory=list)
 
     def __post_init__(self):
@@ -72,7 +81,7 @@ class PhxPolygon:
 
     @property
     def vertices_id_numbers(self) -> List[int]:
-        return [v.id_num for v in self.vertices]
+        return sorted(v.id_num for v in self.vertices)
 
     @property
     def angle_from_horizontal(self) -> float:

@@ -4,39 +4,36 @@
 """Functions for building PHX-Geometry from Ladybug / Honeybee Geometry."""
 
 from honeybee import aperture, face, shade
-from ladybug_geometry_ph.geometry3d_ph import pointvector
-from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
+from ladybug_geometry.geometry3d.plane import Plane
 from PHX.model import geometry
 
 
-def create_PHX_Vertix_from_LBT_P3D(_lbt_Point3D: pointvector.PH_Point3D) -> geometry.PhxVertix:
-    """Returns a new PHX Vertix object with attributes based on a Ladybug_PH PH_Point3D.
-
-    Arguments:
-    ----------
-        * _lbt_Point3D (pointvector.PH_Point3D): The PH_Point3D to base the new Vertix on.
-
-    Returns:
-    --------
-        * geometry.Vertix: The new PHX Vertix object.
-    """
-
-    new_pt = geometry.PhxVertix()
-    new_pt.id_num = geometry.PhxVertix._count
-    _lbt_Point3D.properties._ph.id_num = new_pt.id_num
-
-    new_pt.x = _lbt_Point3D.x
-    new_pt.y = _lbt_Point3D.y
-    new_pt.z = _lbt_Point3D.z
-
-    return new_pt
+def create_PHX_Vertix_from_lbt_Point3D(_lbt_Point3D: Point3D) -> geometry.PhxVertix:
+    """Returns a new PhxVertix object with attributes based on an LBT-Point3D."""
+    return geometry.PhxVertix(
+        _lbt_Point3D.x,
+        _lbt_Point3D.y,
+        _lbt_Point3D.z
+    )
 
 
-def create_PhxVector_from_lbt_vec3D(_lbt_vector3d: Vector3D) -> geometry.PhxVector:
+def create_PhxVector_from_lbt_Vector3D(_lbt_vector3d: Vector3D) -> geometry.PhxVector:
+    """Return a new PhxVector with attributes based on an LBT-Vector3D."""
     return geometry.PhxVector(
         _lbt_vector3d.x,
         _lbt_vector3d.y,
         _lbt_vector3d.z,
+    )
+
+
+def create_PhxPlane_from_lbt_Plane(_lbt_plane: Plane) -> geometry.PhxPlane:
+    """Return a new PhxPlane with attributes based on an LBT-Plane"""
+    return geometry.PhxPlane(
+        create_PhxVector_from_lbt_Vector3D(_lbt_plane.n),
+        create_PHX_Vertix_from_lbt_Point3D(_lbt_plane.o),
+        create_PhxVector_from_lbt_Vector3D(_lbt_plane.x),
+        create_PhxVector_from_lbt_Vector3D(_lbt_plane.y)
     )
 
 
@@ -55,10 +52,11 @@ def create_PhxPolygon_from_hb_aperture(_hb_aperture: aperture.Aperture) -> geome
 
     phx_polygon.display_name = _hb_aperture.display_name
     phx_polygon.area = _hb_aperture.geometry.area
-    phx_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_aperture.normal)
+    phx_polygon.normal_vector = create_PhxVector_from_lbt_Vector3D(_hb_aperture.normal)
 
     for v in _hb_aperture.vertices:
-        phx_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
+        phx_polygon.add_vertix(create_PHX_Vertix_from_lbt_Point3D(v))
+    phx_polygon.plane = create_PhxPlane_from_lbt_Plane(_hb_aperture.geometry.plane)
 
     return phx_polygon
 
@@ -78,10 +76,11 @@ def create_PhxPolygon_from_hb_face(_hb_face: face.Face) -> geometry.PhxPolygon:
 
     phx_polygon.display_name = _hb_face.display_name
     phx_polygon.area = _hb_face.geometry.area
-    phx_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_face.normal)
+    phx_polygon.normal_vector = create_PhxVector_from_lbt_Vector3D(_hb_face.normal)
 
     for v in _hb_face.vertices:
-        phx_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
+        phx_polygon.add_vertix(create_PHX_Vertix_from_lbt_Point3D(v))
+    phx_polygon.plane = create_PhxPlane_from_lbt_Plane(_hb_face.geometry.plane)
 
     return phx_polygon
 
@@ -100,9 +99,10 @@ def create_PhxPolygon_from_hb_shade(_hb_shade: shade.Shade) -> geometry.PhxPolyg
     """
     phx_polygon = geometry.PhxPolygon()
 
-    phx_polygon.normal_vector = create_PhxVector_from_lbt_vec3D(_hb_shade.normal)
+    phx_polygon.normal_vector = create_PhxVector_from_lbt_Vector3D(_hb_shade.normal)
 
     for v in _hb_shade.vertices:
-        phx_polygon.add_vertix(create_PHX_Vertix_from_LBT_P3D(v))
+        phx_polygon.add_vertix(create_PHX_Vertix_from_lbt_Point3D(v))
+    phx_polygon.plane = create_PhxPlane_from_lbt_Plane(_hb_shade.geometry.plane)
 
     return phx_polygon
