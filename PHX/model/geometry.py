@@ -6,7 +6,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 import math
-from typing import ClassVar, Collection, List, Union, Optional
+from typing import ClassVar, Collection, List, Union, Optional, Tuple
 
 
 @dataclass
@@ -39,30 +39,52 @@ class PhxVertix:
 
 @dataclass
 class PhxVector:
-    x: float = 0.0
-    y: float = 0.0
-    z: float = 0.0
+    x: float
+    y: float
+    z: float
+
+    @classmethod
+    def from_2_points(cls, _start_pt: PhxVertix, _end_pt: PhxVertix) -> PhxVector:
+        """Return a new PhxVector based on a start and end point."""
+        return cls(
+            _end_pt.x - _start_pt.x,
+            _end_pt.y - _start_pt.y,
+            _end_pt.z - _start_pt.z
+        )
+
+    def scale(self, _factor: float) -> None:
+        self.x = self.x * _factor
+        self.y = self.y * _factor
+        self.z = self.z * _factor
 
 
 @dataclass
 class PhxPlane:
-    normal: PhxVector = field(default_factory=PhxVector)
-    origin: PhxVertix = field(default_factory=PhxVertix)
-    x: PhxVector = field(default_factory=PhxVector)
-    y: PhxVector = field(default_factory=PhxVector)
+    normal: PhxVector
+    origin: PhxVertix
+    x: PhxVector
+    y: PhxVector
+
+
+@dataclass
+class PhxLineSegment:
+    vertix_1: PhxVertix
+    vertix_2: PhxVertix
 
 
 @dataclass
 class PhxPolygon:
     _count: ClassVar[int] = 0
 
-    id_num: int = field(init=False, default=0)
-    _display_name: str = ''
-    area: float = 0.0
-    normal_vector: PhxVector = field(default_factory=PhxVector)
+    _display_name: str
+    area: float
+    center: PhxVertix
+    normal_vector: PhxVector
+    plane: PhxPlane
     vertices: List[PhxVertix] = field(default_factory=list)
-    plane: PhxPlane = PhxPlane()
     child_polygon_ids: List[int] = field(default_factory=list)
+
+    id_num: int = field(init=False, default=0)
 
     def __post_init__(self):
         self.__class__._count += 1
@@ -173,6 +195,20 @@ class PhxPolygon:
 
         for child_id in _child_ids:
             self.child_polygon_ids.append(child_id)
+
+    @property
+    def boundary_segments(self) -> Tuple[PhxLineSegment]:
+        """Tuple of all PhxLineSegments bordering the PhxPolygon.
+
+        Note that this does not include segments for any holes in the face.
+        Just the outer boundary.
+        """
+        segments = []
+        for i, vert in enumerate(self.vertices):
+            _seg = PhxLineSegment(self.vertices[i - 1], vert)
+            segments.append(_seg)
+        segments.append(segments.pop(0))  # segments will start from the first vertex
+        return tuple(segments)
 
 
 @dataclass

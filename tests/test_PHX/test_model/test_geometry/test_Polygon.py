@@ -4,7 +4,18 @@ from PHX.model import geometry
 
 
 def test_blank_Polygon(reset_class_counters):
-    p1 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     assert p1.id_num == 1
     assert p1.normal_vector
     assert not p1.vertices
@@ -13,9 +24,42 @@ def test_blank_Polygon(reset_class_counters):
 
 
 def test_multiple_Polygon_id_numbers(reset_class_counters):
-    p1 = geometry.PhxPolygon()
-    p2 = geometry.PhxPolygon()
-    p3 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
+    p2 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
+    p3 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
 
     assert p1.id_num == 1
     assert p2.id_num == 2
@@ -23,7 +67,18 @@ def test_multiple_Polygon_id_numbers(reset_class_counters):
 
 
 def test_add_vertices_to_Polygon(reset_class_counters):
-    p1 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
 
     v1 = geometry.PhxVertix(0, 0, 0)
     v2 = geometry.PhxVertix(0, 1, 0)
@@ -49,13 +104,35 @@ def test_add_vertices_to_Polygon(reset_class_counters):
 
 
 def test_add_child_poly_id(reset_class_counters, polygon_1x1x0, polygon_2x2x0):
-    p1 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     p1.add_vertix(geometry.PhxVertix(0, 0, 0))
     p1.add_vertix(geometry.PhxVertix(0, 1, 0))
     p1.add_vertix(geometry.PhxVertix(1, 1, 0))
     p1.add_vertix(geometry.PhxVertix(1, 0, 0))
 
-    p2 = geometry.PhxPolygon()
+    p2 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     p2.add_vertix(geometry.PhxVertix(0, 0, 0))
     p2.add_vertix(geometry.PhxVertix(0, 2, 0))
     p2.add_vertix(geometry.PhxVertix(2, 2, 0))

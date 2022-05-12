@@ -19,7 +19,18 @@ def test_PhxGraphics3D_with_single_polygon(reset_class_counters):
     v2 = geometry.PhxVertix(1, 2, 3)
     v3 = geometry.PhxVertix(0.5, 0.25, 0.333)
 
-    p1 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     p1.add_vertix(v1)
     p1.add_vertix(v2)
     p1.add_vertix(v3)
@@ -53,7 +64,7 @@ def test_PhxGraphics3D_with_single_polygon(reset_class_counters):
         '<IdentNr>1</IdentNr>',
         '<NormalVectorX>0.0</NormalVectorX>',
         '<NormalVectorY>0.0</NormalVectorY>',
-        '<NormalVectorZ>0.0</NormalVectorZ>',
+        '<NormalVectorZ>1.0</NormalVectorZ>',
         '<IdentNrPoints count="3">',
         '<IdentNr index="0">1</IdentNr>',
         '<IdentNr index="1">2</IdentNr>',
@@ -61,8 +72,7 @@ def test_PhxGraphics3D_with_single_polygon(reset_class_counters):
         '</IdentNrPoints>',
         '<IdentNrPolygonsInside count="0"/>',
         '</Polygon>',
-        '</Polygons>'
-    ]
+        '</Polygons>']
 
 
 def test_PhxGraphics3D_with_multiple_polygon(reset_class_counters):
@@ -73,9 +83,42 @@ def test_PhxGraphics3D_with_multiple_polygon(reset_class_counters):
     v3 = geometry.PhxVertix(0.5, 0.25, 0.333)
     v4 = geometry.PhxVertix(0, 0, 0)
 
-    p1 = geometry.PhxPolygon()
-    p2 = geometry.PhxPolygon()
-    p3 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
+    p2 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
+    p3 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     p1.add_vertix(v1)
     p2.add_vertix(v2)
     p3.add_vertix(v3)
@@ -116,7 +159,7 @@ def test_PhxGraphics3D_with_multiple_polygon(reset_class_counters):
         '<IdentNr>1</IdentNr>',
         '<NormalVectorX>0.0</NormalVectorX>',
         '<NormalVectorY>0.0</NormalVectorY>',
-        '<NormalVectorZ>0.0</NormalVectorZ>',
+        '<NormalVectorZ>1.0</NormalVectorZ>',
         '<IdentNrPoints count="1">',
         '<IdentNr index="0">1</IdentNr>',
         '</IdentNrPoints>',
@@ -126,7 +169,7 @@ def test_PhxGraphics3D_with_multiple_polygon(reset_class_counters):
         '<IdentNr>2</IdentNr>',
         '<NormalVectorX>0.0</NormalVectorX>',
         '<NormalVectorY>0.0</NormalVectorY>',
-        '<NormalVectorZ>0.0</NormalVectorZ>',
+        '<NormalVectorZ>1.0</NormalVectorZ>',
         '<IdentNrPoints count="1">',
         '<IdentNr index="0">2</IdentNr>',
         '</IdentNrPoints>',
@@ -136,12 +179,11 @@ def test_PhxGraphics3D_with_multiple_polygon(reset_class_counters):
         '<IdentNr>3</IdentNr>',
         '<NormalVectorX>0.0</NormalVectorX>',
         '<NormalVectorY>0.0</NormalVectorY>',
-        '<NormalVectorZ>0.0</NormalVectorZ>',
+        '<NormalVectorZ>1.0</NormalVectorZ>',
         '<IdentNrPoints count="2">',
         '<IdentNr index="0">3</IdentNr>',
         '<IdentNr index="1">4</IdentNr>',
         '</IdentNrPoints>',
         '<IdentNrPolygonsInside count="0"/>',
         '</Polygon>',
-        '</Polygons>'
-    ]
+        '</Polygons>']

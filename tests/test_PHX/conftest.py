@@ -10,7 +10,18 @@ from PHX.model.hvac import _base, cooling, collection, water, ventilation, heati
 
 @pytest.fixture
 def polygon_1x1x0() -> geometry.PhxPolygon:
-    p1 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     p1.add_vertix(geometry.PhxVertix(0, 0, 0))
     p1.add_vertix(geometry.PhxVertix(0, 1, 0))
     p1.add_vertix(geometry.PhxVertix(1, 1, 0))
@@ -20,7 +31,18 @@ def polygon_1x1x0() -> geometry.PhxPolygon:
 
 @pytest.fixture
 def polygon_2x2x0() -> geometry.PhxPolygon:
-    p1 = geometry.PhxPolygon()
+    p1 = geometry.PhxPolygon(
+        'no_name',
+        100.0,
+        geometry.PhxVertix(1.0, 1.0, 0.0),
+        geometry.PhxVector(0.0, 0.0, 1.0),
+        geometry.PhxPlane(
+            geometry.PhxVector(0, 0, 1),
+            geometry.PhxVertix(1, 1, 0),
+            geometry.PhxVector(1, 0, 0),
+            geometry.PhxVector(0, 1, 0)
+        ),
+    )
     p1.add_vertix(geometry.PhxVertix(0, 0, 0))
     p1.add_vertix(geometry.PhxVertix(0, 2, 0))
     p1.add_vertix(geometry.PhxVertix(2, 2, 0))
@@ -30,8 +52,8 @@ def polygon_2x2x0() -> geometry.PhxPolygon:
 
 def _reset_phx_class_counters():
     project.PhxVariant._count = 0
-    geometry.PhxVertix._count = 0
     geometry.PhxPolygon._count = 0
+    geometry.PhxVertix._count = 0
     schedules.UtilizationPatternVent._count = 0
     certification.PhxPHBuilding._count = 0
     constructions.PhxConstructionOpaque._count = 0

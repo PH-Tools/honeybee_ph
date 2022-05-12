@@ -32,7 +32,7 @@ def create_new_component_from_orphaned_shade(_shade: shade.Shade) -> components.
     new_compo.color_exterior = ComponentColor.EXT_WALL_INNER
 
     # -- Polygons
-    phx_polygon = create_geometry.create_PhxPolygon_from_hb_shade(_shade)
+    phx_polygon = create_geometry.create_PhxPolygon_from_hb_Face(_shade)
     new_compo.add_polygons(phx_polygon)
 
     return new_compo

@@ -109,7 +109,7 @@ def create_component_from_hb_aperture(
 
     # -- Polygons
     phx_ap.add_polygons(
-        create_geometry.create_PhxPolygon_from_hb_aperture(_hb_aperture))
+        create_geometry.create_PhxPolygon_from_hb_Face(_hb_aperture))
 
     return phx_ap
 
@@ -145,7 +145,7 @@ def create_components_from_hb_face(_hb_face: face.Face,
     opaque_compo.color_exterior = _hb_ext_color_to_phx_enum(_hb_face)
 
     # -- Create Polygon
-    phx_polygon = create_geometry.create_PhxPolygon_from_hb_face(_hb_face)
+    phx_polygon = create_geometry.create_PhxPolygon_from_hb_Face(_hb_face)
     opaque_compo.add_polygons(phx_polygon)
 
     # -- Create Child Apertures, register the Aperature with the Parent Compo
