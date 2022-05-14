@@ -148,7 +148,7 @@ def get_paths(_repo="honeybee_ph", _branch='main'):
 
 def check_lbt_version(_min_version_allowed):
     # type: (Tuple[int, int, int]) -> None
-    lbt_version_installed = honeybee.config.folders.honeybee_core_version # -> (1, 51, 8)
+    lbt_version_installed = honeybee.config.folders.honeybee_core_version # -> (1, 50, 0)
     
     for ver_num in zip(lbt_version_installed, _min_version_allowed):
         assert lbt_version_installed >= _min_version_allowed, "Warning: Honeybee-PH is not "\
@@ -256,7 +256,7 @@ if _install:
     # --------------------------------------------------------------------------
     # -- Check version compatibility
     honeybee_ph_version = '0.1'
-    lbt_min_version = (1, 51, 8)
+    lbt_min_version = (1, 50, 0)
     check_lbt_version(lbt_min_version)
     
     
