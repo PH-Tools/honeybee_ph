@@ -28,31 +28,37 @@ order to download the latest version of the plugin libraries and components.
 This tool will download and install several new libraries into the Ladybug Tools
 python interpreter, and will download and install new Grasshopper components.
 -
-EM April 28, 2022
+EM May 14, 2022
     Args:
-        _install: Set to True to install Honeybee-PH on your machine.
+        _install: (bool) Set to True to install Honeybee-PH on your computer.
+        _branch_: (str) Optional branch to download. Default = 'main'
 """
 
 ghenv.Component.Name = 'HBPH Installer'
 ghenv.Component.NickName = 'HBPHInstall'
-ghenv.Component.Message = 'DEV | APR_28_2022'
+ghenv.Component.Message = 'DEV | MAY_14_2022'
 ghenv.Component.Category = 'Honeybee-PH'
 ghenv.Component.SubCategory = '0 | Installer'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 
-import os
-import System.Net
-import shutil
-import uuid
-import zipfile
+from exceptions import IOError
 from distutils import dir_util
+import shutil
+import System
+import os
+import urllib
+import zipfile
 
 import Rhino
 from Grasshopper.Folders import UserObjectFolders
 from Grasshopper.Kernel import GH_RuntimeMessageLevel as Message
 
+import honeybee
+
+
 def nukedir(target_dir, rmdir=False):
+    # type: (str, bool) -> None
     """Delete all the files inside target_dir.
 
     This function has been copied from ladybug.futil.
@@ -129,97 +135,61 @@ def copy_file_tree(source_folder, dest_folder, overwrite=True):
             copy_file_tree(src_file_path, dst_file_path, overwrite)
 
 
-
-def get_python_exe():
-    """Get the path to the Python installed in the ladybug_tools folder.
-
-    Will be None if Python is not installed.
-    """
-    home_folder = os.getenv('HOME') or os.path.expanduser('~')
-    py_install = os.path.join(home_folder, 'ladybug_tools', 'python')
-    py_exe_file = os.path.join(py_install, 'python.exe') if os.name == 'nt' else \
-        os.path.join(py_install, 'bin', 'python3')
-    py_site_pack = os.path.join(py_install, 'Lib', 'site-packages') if os.name == 'nt' else \
-        os.path.join(py_install, 'lib', 'python3.7', 'site-packages')
-    if os.path.isfile(py_exe_file):
-        return py_exe_file, py_site_pack
-    return None, None
+def get_paths(_repo="honeybee_ph", _branch='main'):
+    # type: () -> Tuple[str, str]
+    """Return the location of the url to download, and the target file location to save to."""
+    
+    download_url = "https://github.com/PH-Tools/{}/archive/refs/heads/{}.zip".format(_repo, _branch)
+    download_folder = honeybee.config.folders.python_package_path
+    download_file = os.path.join(download_folder, "main.zip")
+    
+    return download_url, download_file
 
 
-def get_honeybee_ph_directory():
-    """Get the directory where measures distributed with Ladybug Tools are installed."""
-    home_folder = os.getenv('HOME') or os.path.expanduser('~')
-    py_install = os.path.join(home_folder, 'ladybug_tools', 'python')
-    py_site_pack = os.path.join(py_install, 'Lib', 'site-packages') if os.name == 'nt' else \
-        os.path.join(py_install, 'lib', 'python3.7', 'site-packages')
-    if os.path.exists(py_site_pack):
-        return py_site_pack
-    return None
+def check_lbt_version(_min_version_allowed):
+    # type: (Tuple[int, int, int]) -> None
+    lbt_version_installed = honeybee.config.folders.honeybee_core_version # -> (1, 51, 8)
+    
+    for ver_num in zip(lbt_version_installed, _min_version_allowed):
+        assert lbt_version_installed >= _min_version_allowed, "Warning: Honeybee-PH is not "\
+            "compatible with the version of Ladybug Tools installed on this computer. Please "\
+            "update your Ladybug Tools installation to the latest version before proceeding "\
+            "with the installation. You can use the Ladybug 'LB Versioner' component to update "\
+            "your installation, and then restart Rhino before trying again."
 
 
-
-def download_file_by_name(url, target_folder, file_name, mkdir=False):
-    """Download a file to a directory.
-
-    This function has been copied from ladybug_rhino.download.
-
-    Args:
-        url: A string to a valid URL.
-        target_folder: Target folder for download (e.g. c:/ladybug)
-        file_name: File name (e.g. testPts.zip).
-        mkdir: Set to True to create the directory if doesn't exist (Default: False)
-    """
-    # create the target directory.
-    if not os.path.isdir(target_folder):
-        if mkdir:
-            preparedir(target_folder)
-        else:
-            created = preparedir(target_folder, False)
-            if not created:
-                raise ValueError("Failed to find %s." % target_folder)
-    file_path = os.path.join(target_folder, file_name)
-
-    # set the security protocol to the most recent version
+def download_honeybee_ph_from_github(_download_url, _download_file):
+    # type: (str, str) -> str
+    """Download the specified URL to the specified location on this computer."""
     try:
-        # TLS 1.2 is needed to download over https
-        System.Net.ServicePointManager.SecurityProtocol = \
-            System.Net.SecurityProtocolType.Tls12
-    except AttributeError:
-        # TLS 1.2 is not provided by MacOS .NET
-        if url.lower().startswith('https'):
-            print('This system lacks the necessary security'
-                  ' libraries to download over https.')
-
-    # attempt to download the file
-    client = System.Net.WebClient()
-    try:
-        client.DownloadFile(url, file_path)
+        urllib.urlretrieve(_download_url, _download_file)
+        print "Downloaded the file: ", _download_url
+        print "To: ", _download_file
+        return _download_file
+    except IOError as e:
+        msg = "There was an error downloading the Honeybee-PH pacakge to your computer."\
+            "If you have Ladybug Tools installed in you 'ProgramFiles' directory, (ie: if you"\
+            "are using Pollination instead of the Food4Rhino LBT installer) you may"\
+            "need to run Rhino 'as administrator' in order to install to this directory?"
+        raise IOError(msg)
     except Exception as e:
-        raise Exception(' Download failed with the error:{}'.format(e))
+        msg = "Error downloading the Honeybee-PH package to your computer."
+        raise e
 
 
-def unzip_file(source_file, dest_dir=None, mkdir=False):
+def unzip_file(source_file):
+    # type: (str) -> None
     """Unzip a compressed file.
-
-    This function has been copied from ladybug.futil.
-
-    Args:
-        source_file: Full path to a valid compressed file (e.g. c:/ladybug/testPts.zip)
-        dest_dir: Target folder to extract to (e.g. c:/ladybug).
-            Default is set to the same directory as the source file.
-        mkdir: Set to True to create the directory if doesn't exist (Default: False)
+    
+    Arguments:
+    ----------
+        * source_file: (str) Full path to a valid compressed file (e.g. c:/ladybug/testPts.zip)
+    Returns:
+    --------
+        * unzip_folde: (str) The full path to the folder unzipped
     """
-    # set default dest_dir and create it if need be.
-    if dest_dir is None:
-        dest_dir, fname = os.path.split(source_file)
-    elif not os.path.isdir(dest_dir):
-        if mkdir:
-            preparedir(dest_dir)
-        else:
-            created = preparedir(dest_dir, False)
-            if not created:
-                raise ValueError("Failed to find %s." % dest_dir)
-
+    dest_dir, fname = os.path.split(source_file)
+    
     # extract files to destination
     with zipfile.ZipFile(source_file) as zf:
         for member in zf.infolist():
@@ -231,15 +201,41 @@ def unzip_file(source_file, dest_dir=None, mkdir=False):
                     continue
                 dest_dir = os.path.join(dest_dir, word)
             zf.extract(member, dest_dir)
+    
+    return os.path.join(dest_dir, zf.infolist()[0].filename.replace('/', ''))
 
 
-def give_warning(message):
-    """Give a warning message (turning the component orange).
+def copy_honeybee_ph_py_packages(_unzipped_src_dir):
+    # type: (str) -> None
+    """Copy the Honeybee-PH core Python libraries from the unzip-folder up one folder level."""
+    
+    # get the folder 'up' one level from the unzipped source dir.
+    site_pckgs_folder = os.path.split(_unzipped_src_dir)[0]
+    
+    print '- '*25
+    print 'Copying Honeybee-PH Python Packages to: {}'.format(site_pckgs_folder)
+    
+    src_dirs_to_exclude = ['tests', 'docs', 'diagrams', 'honeybee_grasshopper_ph'] # don't copy these to site-packages
+    for dir in os.listdir(_unzipped_src_dir):
+        if dir in src_dirs_to_exclude:
+            continue
+        if not os.path.isdir(os.path.join(_unzipped_src_dir, dir)):
+            continue
 
-    Args:
-        message: Text string for the warning message.
-    """
-    ghenv.Component.AddRuntimeMessage(Message.Warning, message)
+        copy_file_tree(os.path.join(_unzipped_src_dir, dir), os.path.join(site_pckgs_folder, dir))
+
+
+def copy_honeybee_ph_ghcomponents(_unzipped_src_dir, _gh_user_objects_folder):
+    # type: (str, str) -> None
+    """Copy all of the GH-User objects from the unzipped source dir over the Grasshopper UserObjects dir."""
+    
+    hbph_gh_source_folder = os.path.join(_unzipped_src_dir, 'honeybee_grasshopper_ph', 'user_objects')
+    target = os.path.join(_gh_user_objects_folder[0], 'honeybee_grasshopper_ph')
+    
+    print '- '*25
+    print 'Copying Honeybee-PH Grasshoppper Components to: {}'.format(target)
+    
+    copy_file_tree(hbph_gh_source_folder, target)
 
 
 def give_popup_message(message, window_title=''):
@@ -256,103 +252,45 @@ def give_popup_message(message, window_title=''):
     Rhino.UI.Dialogs.ShowMessageBox(message, window_title, buttons, icon)
 
 
-
-def download_repo_github(repo, target_directory, version=None):
-    """Download a repo of a particular version from from github.
-
-    Args:
-        repo: The name of a repo to be downloaded (eg. 'lbt-grasshopper').
-        target_directory: the directory where the library should be downloaded to.
-        version: The version of the repository to download. If None, the most
-            recent version will be downloaded. (Default: None)
-        """
-    # download files
-    url = "https://github.com/PH-Tools/{}/archive/refs/heads/main.zip".format(repo)
-    zip_file = os.path.join(target_directory, '%s.zip' % repo)
-    print 'Downloading "{}"  github repository to: {}/...'.format(repo, target_directory)
-    download_file_by_name(url, target_directory, zip_file)
-
-    # unzip the file
-    unzip_file(zip_file, target_directory)
-
-    # try to clean up the downloaded zip file
-    try:
-        os.remove(zip_file)
-    except:
-        print 'Failed to remove downloaded zip file: {}.'.format(zip_file)
-
-    # return the directory where the unzipped files live
-    if version is None:
-        return os.path.join(target_directory, '{}-main'.format(repo))
-    else:
-        return os.path.join(target_directory, '{}-{}'.format(repo, version))
-
-
-def copy_honeybee_ph_py_packages(source):
-    
-    site_pckgs_folder = os.path.split(source)[0]
-    print '- '*25
-    print 'Copying Honeybee-PH Python Packages to: {}'.format(site_pckgs_folder)
-    
-    src_dirs_to_exclude = ['tests', 'docs', 'diagrams', 'honeybee_grasshopper_ph'] # don't copy these to site-packages
-    for dir in os.listdir(source):
-        if dir in src_dirs_to_exclude:
-            continue
-        if not os.path.isdir(os.path.join(source, dir)):
-            continue
-
-        copy_file_tree(os.path.join(source, dir), os.path.join(site_pckgs_folder, dir))
-    
-def copy_honeybee_ph_ghcomponents(source, target):
-    print '- '*25
-    print 'Copying Honeybee-PH Grasshoppper Components to: {}'.format(target)
-
-    copy_file_tree(source, target)
-    
-# versions of the Ladybug Tools libraries and resources to install
-honeybee_ph = '0.1'
-
-
 if _install:
-    
-    # ------------------------------------------------------------------------------------------
-    # ensure that Python has been installed in the ladybug_tools folder
-    home_folder = os.getenv('HOME') or os.path.expanduser('~')
-    py_exe, py_lib = get_python_exe()
-    assert py_exe is not None, \
-        'No Python installation was found at: {}.This is a requirement in ' \
-        'order to contine with installation'.format(
-            os.path.join(home_folder, 'ladybug_tools', 'python'))
-
-
-    # ------------------------------------------------------------------------------------------
-    # install the honeybee-ph core libraries
-    print 'Installing Honeybee-PH core Python libraries {}.'.format(honeybee_ph)
-    honeybee_ph_dir = get_honeybee_ph_directory()
-    download_folder = download_repo_github('honeybee_ph', honeybee_ph_dir)
-    copy_honeybee_ph_py_packages(download_folder)
-
+    # --------------------------------------------------------------------------
+    # -- Check version compatibility
+    honeybee_ph_version = '0.1'
+    lbt_min_version = (1, 51, 8)
+    check_lbt_version(lbt_min_version)
     
     
-    # ------------------------------------------------------------------------------------------
-    # install the grasshopper components
-    print 'Installing Ladybug Tools Grasshopper components.'
-    hbph_gh_source_folder = os.path.join(download_folder, 'honeybee_grasshopper_ph', 'user_objects')
-    uo_folder = UserObjectFolders[0]
-    hbph_uo_folder = os.path.join(uo_folder, 'honeybee_ph', 'user_objects')
-    copy_honeybee_ph_ghcomponents(hbph_gh_source_folder, hbph_uo_folder)
-
+    # --------------------------------------------------------------------------
+    # -- download honeybee-ph from github
+    download_url, download_file = get_paths('honeybee_ph', _branch_ or 'main')
+    download_file = download_honeybee_ph_from_github(download_url, download_file)
+    unzipped_folder = unzip_file(download_file)
+    
+    
+    # --------------------------------------------------------------------------
+    # -- copy honeybee-ph core libraries
+    copy_honeybee_ph_py_packages(unzipped_folder)
+    
+    
+    # --------------------------------------------------------------------------
+    # -- copy honeybee-ph grasshopper component
+    copy_honeybee_ph_ghcomponents(unzipped_folder, UserObjectFolders)
+    
+    
     # ------------------------------------------------------------------------------------------
     # give a success message
-    success_msg = 'Honeybee-PH {} has been successfully installed'.format(honeybee_ph)
+    success_msg = 'Honeybee-PH {} has been successfully installed'.format(honeybee_ph_version)
     restart_msg = 'RESTART RHINO to load the new components + library.'
     for msg in (success_msg, restart_msg):
         print(msg)
     give_popup_message(''.join([success_msg, restart_msg]), 'Installation Successful!')
-
-    # ------------------------------------------------------------------------------------------ 
+    
+    
+    # ------------------------------------------------------------------------------------------
     # remove the downloaded folder
-    nukedir(download_folder, True)
+    nukedir(unzipped_folder, True)
+    os.remove(download_file)
+    
     
 else:  # give a message to the user about what to do
-    print 'Make sure you have installed Ladybug Tools, are connected to the internet, and set _install to True!'
+    print 'Make sure you have installed Ladybug Tools (v1.4.1 or newer), are connected to the internet, and set _install to True!'
