@@ -108,12 +108,12 @@ class Components:
     Arguments:
     ----------
         * xl (xl_app.XLConnection): The Excel Connection to use.
+        * sheet_name (str):
     """
 
-    sheet_name = 'Components'
-
-    def __init__(self, _xl: xl_app.XLConnection):
+    def __init__(self, _xl: xl_app.XLConnection, sheet_name: str):
         self.xl = _xl
+        self.sheet_name = sheet_name
         self.glazings = Glazings(self.xl, self.sheet_name)
         self.frames = Frames(self.xl, self.sheet_name)
 

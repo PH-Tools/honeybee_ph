@@ -4,7 +4,7 @@
 """Model class for a PHPP Components/Glazing row."""
 
 from dataclasses import dataclass
-from typing import List, Tuple, ClassVar, Dict
+from typing import List, Tuple, Dict
 from functools import partial
 
 from PHX.model import constructions
@@ -15,13 +15,9 @@ from PHX.to_PHPP.phpp import xl_data
 @dataclass
 class GlazingRow:
     """A single Areas/Surface entry row."""
-    columns: ClassVar[Dict] = {
-        'description': 'IE',
-        'g_value': 'IF',
-        'u_value': 'IG',
-    }
 
-    __slots__ = ('phx_construction',)
+    __slots__ = ('columns', 'phx_construction',)
+    columns: Dict[str, str]
     phx_construction: constructions.PhxConstructionWindow
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:

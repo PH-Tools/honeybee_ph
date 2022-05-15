@@ -4,7 +4,7 @@
 """Model class for a PHPP Components/Window-Frame row."""
 
 from dataclasses import dataclass
-from typing import List, Tuple, ClassVar, Dict
+from typing import List, Tuple, Dict
 from functools import partial
 
 from PHX.model import constructions
@@ -15,27 +15,9 @@ from PHX.to_PHPP.phpp import xl_data
 @dataclass
 class FrameRow:
     """A single Areas/Surface entry row."""
-    columns: ClassVar[Dict] = {
-        'description': 'IL',
-        'u_value_left': 'IM',
-        'u_value_right': 'IN',
-        'u_value_bottom': 'IO',
-        'u_value_top': 'IP',
-        'width_left': 'IQ',
-        'width_right': 'IR',
-        'width_bottom': 'IS',
-        'width_top': 'IT',
-        'psi_g_left': 'IU',
-        'psi_g_right': 'IV',
-        'psi_g_bottom': 'IW',
-        'psi_g_top': 'IX',
-        'psi_i_left': 'IY',
-        'psi_i_right': 'IZ',
-        'psi_i_bottom': 'JA',
-        'psi_i_top': 'JB',
-    }
 
-    __slots__ = ('phx_construction',)
+    __slots__ = ('columns', 'phx_construction',)
+    columns: Dict[str, str]
     phx_construction: constructions.PhxConstructionWindow
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:

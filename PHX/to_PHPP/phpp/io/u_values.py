@@ -17,12 +17,12 @@ class UValues:
     Arguments:
     ----------
         * xl (xl_app.XLConnection): The Excel Connection to use.
+        * sheet_name (str): The localized name of the worksheet
     """
 
-    sheet_name = 'U-Values'
-
-    def __init__(self, _xl):
-        self.xl: xl_app.XLConnection = _xl
+    def __init__(self, _xl: xl_app.XLConnection, sheet_name: str):
+        self.xl = _xl
+        self.sheet_name = sheet_name
         self.constructor_start_rows: List[int] = []
 
     def get_start_rows(self,

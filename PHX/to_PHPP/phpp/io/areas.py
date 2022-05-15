@@ -99,10 +99,9 @@ class Areas:
         * xl: (xl_app.XLConnection) The Excel Connection to use
     """
 
-    sheet_name = 'Areas'
-
-    def __init__(self, _xl: xl_app.XLConnection):
+    def __init__(self, _xl: xl_app.XLConnection, sheet_name: str):
         self.xl = _xl
+        self.sheet_name = sheet_name
         self.surfaces = Surfaces(self.xl, self.sheet_name)
         self.thermal_bridges = ThermalBridges(self.xl, self.sheet_name)
 

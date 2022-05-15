@@ -16,24 +16,9 @@ from PHX.to_PHPP.phpp import xl_data
 class WindowRow:
     """A single Window entry row."""
 
-    columns: ClassVar[Dict[str, str]] = {
-        'quantity': 'L',
-        'description': 'M',
-        'width': 'Q',
-        'height': 'R',
-        'host': 'S',
-        'glazing_id': 'T',
-        'frame_id': 'U',
-        'psi_i_left': 'AA',
-        'psi_i_right': 'AB',
-        'psi_i_bottom': 'AC',
-        'psi_i_top': 'AD',
-        'comfort_exempt': 'BR',
-        'comfort_temp': 'BR',
-    }
-
-    __slots__ = ('phx_polygon', 'phx_construction', 'phpp_host_surface_id_name',
+    __slots__ = ('columns', 'phx_polygon', 'phx_construction', 'phpp_host_surface_id_name',
                  'phpp_id_frame', 'phpp_id_glazing')
+    columns: Dict[str, str]
     phx_polygon: geometry.PhxPolygonRectangular
     phx_construction: constructions.PhxConstructionWindow
     phpp_host_surface_id_name: Optional[str]

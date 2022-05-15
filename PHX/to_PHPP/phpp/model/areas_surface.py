@@ -4,7 +4,7 @@
 """Model class for a PHPP Areas / Surface-Entry row"""
 
 from dataclasses import dataclass
-from typing import List, Tuple, Optional, ClassVar, Dict
+from typing import List, Tuple, Optional, Dict
 from functools import partial
 
 from PHX.model import components, geometry
@@ -17,20 +17,8 @@ from PHX.to_PHPP.phpp import xl_data
 class SurfaceRow:
     """A single Areas/Surface entry row."""
 
-    columns: ClassVar[Dict] = {
-        'description': 'L',
-        'group_number': 'M',
-        'quantity': 'P',
-        'area': 'V',
-        'assembly_id': 'AC',
-        'orientation': 'AG',
-        'angle': 'AH',
-        'shading': 'AJ',
-        'absorptivity': 'AK',
-        'emissivity': 'AL',
-    }
-
-    __slots__ = ('phx_polygon', 'phx_component', 'phpp_assembly_id_name')
+    __slots__ = ('columns', 'phx_polygon', 'phx_component', 'phpp_assembly_id_name')
+    columns: Dict[str, str]
     phx_polygon: geometry.PhxPolygon
     phx_component: components.PhxComponentOpaque
     phpp_assembly_id_name: Optional[str]

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import ClassVar, Dict, List, Tuple
+from typing import Dict, List, Tuple
 from functools import partial
 
 from PHX.model import constructions
@@ -11,22 +11,8 @@ from PHX.to_PHPP.phpp import xl_data
 class ConstructorBlock:
     """A single U-Value/Constructor entry block."""
 
-    columns: ClassVar[Dict[str, str]] = {
-        'display_name': 'M',
-        'r_si': 'M',
-        'r_se': 'M',
-        'interior_insulation': 'S',
-        'sec_1_description': 'L',
-        'sec_1_conductivity': 'M',
-        'sec_2_description': 'N',
-        'sec_2_conductivity': 'O',
-        'sec_3_description': 'P',
-        'sec_3_conductivity': 'Q',
-        'thickness': 'S',
-        'u_val_supplement': 'M',
-    }
-
-    __slots__ = ('phx_const', )
+    __slots__ = ('phx_const', "columns")
+    columns: Dict[str, str]
     phx_const: constructions.PhxConstructionOpaque
 
     def _create_range(self, _field_name: str, _row_offset: int, _start_row: int) -> str:

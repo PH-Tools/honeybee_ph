@@ -5,11 +5,11 @@
 
 from rich import print
 import pathlib
-from typing import List
+import json
+from typing import Dict
 
 from PHX.from_HBJSON import read_HBJSON_file, create_project
 from PHX.to_PHPP.phpp import phpp_app
-from PHX.to_PHPP.phpp.model import areas_surface, uvalues_constructor, component_glazing, component_frame, windows_rows
 
 if __name__ == '__main__':
     # --- Input file Path
@@ -32,75 +32,19 @@ if __name__ == '__main__':
 
     # --- Connect to open instance of XL
     # -------------------------------------------------------------------------
-    phpp_conn = phpp_app.PHPPConnection()
+    phpp_shape_file = pathlib.Path(
+        "PHX", "to_PHPP", "phpp", "model", "shapes", "ENSI.json")
+    with open(phpp_shape_file) as f:
+        phpp_constants: Dict[str, Dict] = json.load(f)
+
+    phpp_conn = phpp_app.PHPPConnection(phpp_constants)
+
     if phpp_conn.xl.connection_is_open():
         file = phpp_conn.xl.wb.name
         print(f'[bold green]> connected to excel doc: {file}[/bold green]')
 
     with phpp_conn.xl.in_silent_mode():
-
-        # -- Constructions / U-Values
-        construction_blocks = []
-        for phx_construction in phx_project.assembly_types.values():
-            construction_blocks.append(
-                uvalues_constructor.ConstructorBlock(phx_construction)
-            )
-        phpp_conn.u_values.write_construction_blocks(construction_blocks)
-
-        # -- Frame and Glazing Components
-        glazing_component_rows = []
-        frame_component_rows = []
-        for phx_construction in phx_project.window_types.values():
-            glazing_component_rows.append(
-                component_glazing.GlazingRow(phx_construction)
-            )
-            frame_component_rows.append(
-                component_frame.FrameRow(phx_construction)
-            )
-        phpp_conn.components.write_glazings(glazing_component_rows)
-        phpp_conn.components.write_frames(frame_component_rows)
-
-        # -- Surfaces
-        surfaces: List[areas_surface.SurfaceRow] = []
-        for phx_variant in phx_project.variants:
-            for opaque_component in phx_variant.building.opaque_components:
-                for phx_polygon in opaque_component.polygons:
-                    surfaces.append(
-                        areas_surface.SurfaceRow(
-                            phx_polygon,
-                            opaque_component,
-                            phpp_conn.u_values.get_constructor_phpp_id_by_name(
-                                opaque_component.assembly.display_name)
-                        )
-                    )
-        phpp_conn.areas.write_surfaces(surfaces)
-
-        # -- Windows
-        phpp_windows: List[windows_rows.WindowRow] = []
-        for phx_variant in phx_project.variants:
-            for phx_component in phx_variant.building.opaque_components:
-                for phx_aperture in phx_component.apertures:
-                    for ap_polygon in phx_aperture.polygons:
-                        host_polygon = phx_component.get_host_polygon_by_child_id_num(
-                            ap_polygon.id_num
-                        )
-                        phpp_host_surface_id_name = phpp_conn.areas.surfaces.get_surface_phpp_id_by_name(
-                            host_polygon.display_name
-                        )
-                        phpp_id_frame = phpp_conn.components.frames.get_frame_phpp_id_by_name(
-                            phx_aperture.window_type.display_name
-                        )
-                        phpp_id_glazing = phpp_conn.components.frames.get_frame_phpp_id_by_name(
-                            phx_aperture.window_type.display_name
-                        )
-
-                        phpp_windows.append(
-                            windows_rows.WindowRow(
-                                phx_polygon=ap_polygon,
-                                phx_construction=phx_aperture.window_type,
-                                phpp_host_surface_id_name=phpp_host_surface_id_name,
-                                phpp_id_frame=phpp_id_frame,
-                                phpp_id_glazing=phpp_id_glazing
-                            )
-                        )
-        phpp_conn.windows.write_windows(phpp_windows)
+        phpp_conn.write_project_constructions(phx_project)
+        phpp_conn.write_project_window_components(phx_project)
+        phpp_conn.write_project_opaque_surfaces(phx_project)
+        phpp_conn.write_project_window_surfaces(phx_project)

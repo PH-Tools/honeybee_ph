@@ -11,12 +11,12 @@ from PHX.to_PHPP.phpp.model import windows_rows
 
 
 class Windows:
-    sheet_name = "Windows"
     header_row: Optional[int] = None
     first_entry_row: Optional[int] = None
 
-    def __init__(self, _xl: xl_app.XLConnection):
+    def __init__(self, _xl: xl_app.XLConnection, sheet_name: str):
         self.xl = _xl
+        self.sheet_name = sheet_name
 
     def find_header_row(self) -> int:
         xl_data = self.xl.get_single_column_data(self.sheet_name, 'L', 1, 100,)

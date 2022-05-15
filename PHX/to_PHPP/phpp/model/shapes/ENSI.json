@@ -1,0 +1,157 @@
+{
+    "VERIFICATION": {
+        "NAME": "Verification",
+        "COLUMNS": {}
+    },
+    "CLIMATE": {
+        "NAME": "Climate",
+        "COLUMNS": {}
+    },
+    "UVALUES": {
+        "NAME": "U-Values",
+        "COLUMNS": {
+            "display_name": "M",
+            "r_si": "M",
+            "r_se": "M",
+            "interior_insulation": "S",
+            "sec_1_description": "L",
+            "sec_1_conductivity": "M",
+            "sec_2_description": "N",
+            "sec_2_conductivity": "O",
+            "sec_3_description": "P",
+            "sec_3_conductivity": "Q",
+            "thickness": "S",
+            "u_val_supplement": "M"
+        }
+    },
+    "AREAS": {
+        "NAME": "Areas",
+        "COLUMNS": {
+            "description": "L",
+            "group_number": "M",
+            "quantity": "P",
+            "area": "V",
+            "assembly_id": "AC",
+            "orientation": "AG",
+            "angle": "AH",
+            "shading": "AJ",
+            "absorptivity": "AK",
+            "emissivity": "AL"
+        }
+    },
+    "GROUND": {
+        "NAME": "Ground",
+        "COLUMNS": {}
+    },
+    "COMPONENTS": {
+        "NAME": "Components",
+        "COLUMNS": {
+            "GLAZINGS": {
+                "description": "IE",
+                "g_value": "IF",
+                "u_value": "IG"
+            },
+            "FRAMES": {
+                "description": "IL",
+                "u_value_left": "IM",
+                "u_value_right": "IN",
+                "u_value_bottom": "IO",
+                "u_value_top": "IP",
+                "width_left": "IQ",
+                "width_right": "IR",
+                "width_bottom": "IS",
+                "width_top": "IT",
+                "psi_g_left": "IU",
+                "psi_g_right": "IV",
+                "psi_g_bottom": "IW",
+                "psi_g_top": "IX",
+                "psi_i_left": "IY",
+                "psi_i_right": "IZ",
+                "psi_i_bottom": "JA",
+                "psi_i_top": "JB"
+            }
+        }
+    },
+    "WINDOWS": {
+        "NAME": "Windows",
+        "COLUMNS": {
+            "quantity": "L",
+            "description": "M",
+            "width": "Q",
+            "height": "R",
+            "host": "S",
+            "glazing_id": "T",
+            "frame_id": "U",
+            "psi_i_left": "AA",
+            "psi_i_right": "AB",
+            "psi_i_bottom": "AC",
+            "psi_i_top": "AD",
+            "comfort_exempt": "BR",
+            "comfort_temp": "BR"
+        }
+    },
+    "SHADING": {
+        "NAME": "Shading",
+        "COLUMNS": {}
+    },
+    "VENTILATION": {
+        "NAME": "Ventilation",
+        "COLUMNS": {}
+    },
+    "ADDNL_VENT": {
+        "NAME": "Additional Vent",
+        "COLUMNS": {}
+    },
+    "SUMM_VENT": {
+        "NAME": "SummVent",
+        "COLUMNS": {}
+    },
+    "COOLING_UNITS": {
+        "NAME": "Cooling units",
+        "COLUMNS": {}
+    },
+    "DHW": {
+        "NAME": "DHW+Distribution",
+        "COLUMNS": {}
+    },
+    "SOLAR_DHW": {
+        "NAME": "SolarDHW",
+        "COLUMNS": {}
+    },
+    "PV": {
+        "NAME": "PV",
+        "COLUMNS": {}
+    },
+    "ELECTRICITY": {
+        "NAME": "Electricity",
+        "COLUMNS": {}
+    },
+    "USE_NON_RES": {
+        "NAME": "Use non-res",
+        "COLUMNS": {}
+    },
+    "ELEC_NON_RES": {
+        "NAME": "Electricity non-res",
+        "COLUMNS": {}
+    },
+    "AUX_ELEC": {
+        "NAME": "Aux Electricity",
+        "COLUMNS": {}
+    },
+    "IHG_NON_RES": {
+        "NAME": "IHG non-res",
+        "COLUMNS": {}
+    },
+    "PER": {
+        "NAME": "PER",
+        "COLUMNS": {}
+    },
+    "HP": {
+        "NAME": "HP",
+        "COLUMNS": {}
+    },
+    "BOILER": {
+        "NAME": "Boiler",
+        "COLUMNS": {}
+    }
+}
