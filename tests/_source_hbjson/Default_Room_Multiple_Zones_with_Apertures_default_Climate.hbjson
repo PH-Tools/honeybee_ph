@@ -1,140 +1,76 @@
 {
   "tolerance": 0.001, 
   "units": "Millimeters", 
-  "orphaned_shades": [
-    {
-      "geometry": {
-        "type": "Face3D", 
-        "plane": {
-          "x": [
-            0.0, 
-            0.0, 
-            1.0
-          ], 
-          "n": [
-            -0.70710678118654757, 
-            -0.70710678118654757, 
-            0.0
-          ], 
-          "o": [
-            0.0, 
-            0.0, 
-            0.0
-          ], 
-          "type": "Plane"
-        }, 
-        "boundary": [
-          [
-            -20.0, 
-            20.0, 
-            5.0
-          ], 
-          [
-            -20.0, 
-            20.0, 
-            0.0
-          ], 
-          [
-            0.0, 
-            0.0, 
-            0.0
-          ], 
-          [
-            0.0, 
-            0.0, 
-            5.0
-          ]
-        ]
-      }, 
-      "is_detached": true, 
-      "properties": {
-        "ph": {
-          "type": "ShadePhPropertiesAbridged", 
-          "id_num": 0
-        }, 
-        "energy": {
-          "type": "ShadeEnergyPropertiesAbridged"
-        }, 
-        "type": "ShadePropertiesAbridged", 
-        "radiance": {
-          "type": "ShadeRadiancePropertiesAbridged"
-        }
-      }, 
-      "identifier": "Shade_c3a903c5", 
-      "display_name": "Shade_c3a903c5", 
-      "type": "Shade"
-    }
-  ], 
   "properties": {
     "ph": {
       "bldg_segments": [
         {
           "climate": {
             "peak_heating_1": {
-              "temp": 0, 
-              "rad_global": 0, 
-              "rad_east": 0, 
-              "rad_west": 0, 
-              "rad_south": 0, 
-              "rad_north": 0
+              "temp": -6.7000000000000002, 
+              "rad_global": 121, 
+              "rad_east": 80, 
+              "rad_west": 113, 
+              "rad_south": 200, 
+              "rad_north": 46
             }, 
             "peak_cooling_2": {
-              "temp": 0, 
-              "rad_global": 0, 
-              "rad_east": 0, 
-              "rad_west": 0, 
-              "rad_south": 0, 
-              "rad_north": 0
+              "temp": 26.100000000000001, 
+              "rad_global": 230, 
+              "rad_east": 106, 
+              "rad_west": 159, 
+              "rad_south": 132, 
+              "rad_north": 64
             }, 
             "monthly_radiation_east": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": 46, 
+              "july": 78, 
+              "october": 54, 
+              "december": 28, 
+              "august": 84, 
+              "april": 65, 
+              "september": 60, 
+              "january": 32, 
+              "march": 57, 
+              "may": 82, 
+              "june": 76, 
+              "november": 33
             }, 
             "peak_cooling_1": {
-              "temp": 0, 
-              "rad_global": 0, 
-              "rad_east": 0, 
-              "rad_west": 0, 
-              "rad_south": 0, 
-              "rad_north": 0
+              "temp": 26.100000000000001, 
+              "rad_global": 230, 
+              "rad_east": 106, 
+              "rad_west": 159, 
+              "rad_south": 132, 
+              "rad_north": 64
             }, 
             "monthly_temperature_air": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": -0.20000000000000001, 
+              "july": 25.0, 
+              "october": 14.0, 
+              "december": 3.2999999999999998, 
+              "august": 24.800000000000001, 
+              "april": 10.9, 
+              "september": 19.899999999999999, 
+              "january": 1.2, 
+              "march": 5.5999999999999996, 
+              "may": 16.100000000000001, 
+              "june": 21.699999999999999, 
+              "november": 7.2999999999999998
             }, 
             "monthly_temperature_dewpoint": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": -7.4000000000000004, 
+              "july": 20.300000000000001, 
+              "october": 7.9000000000000004, 
+              "december": -2.7999999999999998, 
+              "august": 17.100000000000001, 
+              "april": 4.7000000000000002, 
+              "september": 13.199999999999999, 
+              "january": -4.2999999999999998, 
+              "march": 0.29999999999999999, 
+              "may": 9.0999999999999996, 
+              "june": 15.800000000000001, 
+              "november": 2.1000000000000001
             }, 
             "ground": {
               "depth_groundwater": 3, 
@@ -145,25 +81,25 @@
             }, 
             "average_wind_speed": 4, 
             "location": {
-              "weather_station_elevation": 3.0, 
+              "weather_station_elevation": 5.0, 
               "latitude": 40.600000000000001, 
               "longitude": -73.799999999999997, 
               "hours_from_UTC": -4, 
               "climate_zone": 1
             }, 
             "monthly_radiation_global": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": 72, 
+              "july": 177, 
+              "october": 109, 
+              "december": 46, 
+              "august": 182, 
+              "april": 133, 
+              "september": 124, 
+              "january": 50, 
+              "march": 111, 
+              "may": 170, 
+              "june": 176, 
+              "november": 62
             }, 
             "monthly_temperature_ground": {
               "february": 0, 
@@ -179,76 +115,157 @@
               "june": 0, 
               "november": 0
             }, 
-            "name": null, 
+            "name": "__unnamed_location__", 
             "peak_heating_2": {
-              "temp": 0, 
-              "rad_global": 0, 
-              "rad_east": 0, 
-              "rad_west": 0, 
-              "rad_south": 0, 
-              "rad_north": 0
+              "temp": -4.2000000000000002, 
+              "rad_global": 38, 
+              "rad_east": 22, 
+              "rad_west": 26, 
+              "rad_south": 46, 
+              "rad_north": 16
             }, 
-            "summer_daily_temperature_swing": 8, 
+            "summer_daily_temperature_swing": 8.0, 
             "monthly_temperature_sky": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": -20.0, 
+              "july": 14.5, 
+              "october": -2.7999999999999998, 
+              "december": -11.4, 
+              "august": 8.4000000000000004, 
+              "april": -4.7999999999999998, 
+              "september": 5.7999999999999998, 
+              "january": -17.399999999999999, 
+              "march": -10.9, 
+              "may": 1.0, 
+              "june": 9.8000000000000007, 
+              "november": -8.5999999999999996
             }, 
             "monthly_radiation_north": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": 29, 
+              "july": 59, 
+              "october": 30, 
+              "december": 16, 
+              "august": 50, 
+              "april": 39, 
+              "september": 34, 
+              "january": 21, 
+              "march": 34, 
+              "may": 56, 
+              "june": 60, 
+              "november": 20
             }, 
             "monthly_radiation_south": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": 106, 
+              "july": 78, 
+              "october": 129, 
+              "december": 87, 
+              "august": 104, 
+              "april": 86, 
+              "september": 97, 
+              "january": 83, 
+              "march": 103, 
+              "may": 80, 
+              "june": 73, 
+              "november": 87
             }, 
             "monthly_radiation_west": {
-              "february": 0, 
-              "july": 0, 
-              "october": 0, 
-              "december": 0, 
-              "august": 0, 
-              "april": 0, 
-              "september": 0, 
-              "january": 0, 
-              "march": 0, 
-              "may": 0, 
-              "june": 0, 
-              "november": 0
+              "february": 70, 
+              "july": 120, 
+              "october": 94, 
+              "december": 45, 
+              "august": 130, 
+              "april": 95, 
+              "september": 91, 
+              "january": 48, 
+              "march": 92, 
+              "may": 114, 
+              "june": 121, 
+              "november": 47
             }
           }, 
           "num_dwelling_units": 1, 
           "co2e_factors": {
-            "factors": []
+            "factors": [
+              {
+                "value": 409.9966, 
+                "units": "g/kWh", 
+                "fuel_name": "OIL_CGS_0_CHP"
+              }, 
+              {
+                "value": 309.9966, 
+                "units": "g/kWh", 
+                "fuel_name": "OIL"
+              }, 
+              {
+                "value": 250.0171, 
+                "units": "g/kWh", 
+                "fuel_name": "ELECTRICITY_PV"
+              }, 
+              {
+                "value": 239.9864, 
+                "units": "g/kWh", 
+                "fuel_name": "HARD_COAL_CGS_70_CHP"
+              }, 
+              {
+                "value": 270.0102, 
+                "units": "g/kWh", 
+                "fuel_name": "LPG"
+              }, 
+              {
+                "value": 250.0171, 
+                "units": "g/kWh", 
+                "fuel_name": "NATURAL_GAS"
+              }, 
+              {
+                "value": 680.0068, 
+                "units": "g/kWh", 
+                "fuel_name": "ELECTRICITY_MIX"
+              }, 
+              {
+                "value": 319.9932, 
+                "units": "g/kWh", 
+                "fuel_name": "HARD_COAL_CGS_35_CHP"
+              }, 
+              {
+                "value": 129.9898, 
+                "units": "g/kWh", 
+                "fuel_name": "GAS_CGS_35_CHP"
+              }, 
+              {
+                "value": 100, 
+                "units": "g/kWh", 
+                "fuel_name": "OIL_CGS_70_CHP"
+              }, 
+              {
+                "value": 409.9966, 
+                "units": "g/kWh", 
+                "fuel_name": "HARD_COAL_CGS_0_CHP"
+              }, 
+              {
+                "value": 439.9864, 
+                "units": "g/kWh", 
+                "fuel_name": "HARD_COAL"
+              }, 
+              {
+                "value": 53.428899999999999, 
+                "units": "g/kWh", 
+                "fuel_name": "WOOD"
+              }, 
+              {
+                "value": -70.010199999999998, 
+                "units": "g/kWh", 
+                "fuel_name": "GAS_CGS_70_CHP"
+              }, 
+              {
+                "value": 319.9932, 
+                "units": "g/kWh", 
+                "fuel_name": "GAS_CGS_0_CHP"
+              }, 
+              {
+                "value": 250.0171, 
+                "units": "g/kWh", 
+                "fuel_name": "OIL_CGS_35_CHP"
+              }
+            ]
           }, 
           "set_points": {
             "winter": 20.0, 
@@ -258,7 +275,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "15f3449e-615d-48f0-8533-ef4055e511d9", 
+          "identifier": "0a6180bb-88c3-42fb-b404-efbddc204d90", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -283,7 +300,88 @@
             "PHIUS2021_cooling_load": 10.0
           }, 
           "source_energy_factors": {
-            "factors": []
+            "factors": [
+              {
+                "value": 1.5, 
+                "units": "kWh/kWh", 
+                "fuel_name": "OIL_CGS_0_CHP"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "OIL"
+              }, 
+              {
+                "value": 1.7, 
+                "units": "kWh/kWh", 
+                "fuel_name": "ELECTRICITY_PV"
+              }, 
+              {
+                "value": 0.80000000000000004, 
+                "units": "kWh/kWh", 
+                "fuel_name": "HARD_COAL_CGS_70_CHP"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "LPG"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "NATURAL_GAS"
+              }, 
+              {
+                "value": 1.8, 
+                "units": "kWh/kWh", 
+                "fuel_name": "ELECTRICITY_MIX"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "HARD_COAL_CGS_35_CHP"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "GAS_CGS_35_CHP"
+              }, 
+              {
+                "value": 0.80000000000000004, 
+                "units": "kWh/kWh", 
+                "fuel_name": "OIL_CGS_70_CHP"
+              }, 
+              {
+                "value": 1.5, 
+                "units": "kWh/kWh", 
+                "fuel_name": "HARD_COAL_CGS_0_CHP"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "HARD_COAL"
+              }, 
+              {
+                "value": 0.20000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "WOOD"
+              }, 
+              {
+                "value": 0.69999999999999996, 
+                "units": "kWh/kWh", 
+                "fuel_name": "GAS_CGS_70_CHP"
+              }, 
+              {
+                "value": 1.5, 
+                "units": "kWh/kWh", 
+                "fuel_name": "GAS_CGS_0_CHP"
+              }, 
+              {
+                "value": 1.1000000000000001, 
+                "units": "kWh/kWh", 
+                "fuel_name": "OIL_CGS_35_CHP"
+              }
+            ]
           }, 
           "num_floor_levels": 1
         }
@@ -310,7 +408,33 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_4_2991b07e Ideal Loads Air System", 
+          "identifier": "Room_9_e5e921fc Ideal Loads Air System", 
+          "cooling_air_temperature": 13.0, 
+          "demand_controlled_ventilation": false, 
+          "cooling_limit": {
+            "type": "Autosize"
+          }, 
+          "sensible_heat_recovery": 0.0, 
+          "type": "IdealAirSystemAbridged"
+        }, 
+        {
+          "heating_air_temperature": 50.0, 
+          "latent_heat_recovery": 0.0, 
+          "economizer_type": "DifferentialDryBulb", 
+          "heating_limit": {
+            "type": "Autosize"
+          }, 
+          "properties": {
+            "ph": {
+              "id_num": 0, 
+              "heating_systems": [], 
+              "ventilation_system": null, 
+              "cooling_systems": [], 
+              "type": "IdealAirSystemPhProperties"
+            }, 
+            "type": "IdealAirSystemProperties"
+          }, 
+          "identifier": "Room_10_8c990d28 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -2186,35 +2310,23 @@
         "type": "GlobalModifierSet"
       }, 
       "modifier_sets": [], 
-      "modifiers": [
-        {
-          "roughness": 0.0, 
-          "b_reflectance": 0.20000000000000001, 
-          "identifier": "generic_context_0.20", 
-          "type": "Plastic", 
-          "r_reflectance": 0.20000000000000001, 
-          "g_reflectance": 0.20000000000000001, 
-          "specularity": 0.0, 
-          "dependencies": [], 
-          "modifier": null
-        }
-      ], 
+      "modifiers": [], 
       "type": "ModelRadianceProperties"
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_139705d6", 
+  "identifier": "unnamed_b9647811", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "15f3449e-615d-48f0-8533-ef4055e511d9", 
+          "ph_bldg_segment_id": "0a6180bb-88c3-42fb-b404-efbddc204d90", 
           "spaces": []
         }, 
         "energy": {
-          "hvac": "Room_4_2991b07e Ideal Loads Air System", 
+          "hvac": "Room_9_e5e921fc Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2223,8 +2335,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_4_2991b07e", 
-      "display_name": "Room_4", 
+      "identifier": "Room_9_e5e921fc", 
+      "display_name": "Room_9", 
       "faces": [
         {
           "boundary_condition": {
@@ -2279,6 +2391,78 @@
             ]
           }, 
           "face_type": "Wall", 
+          "apertures": [
+            {
+              "boundary_condition": {
+                "view_factor": {
+                  "type": "Autocalculate"
+                }, 
+                "wind_exposure": true, 
+                "sun_exposure": true, 
+                "type": "Outdoors"
+              }, 
+              "geometry": {
+                "type": "Face3D", 
+                "plane": {
+                  "x": [
+                    -1.0, 
+                    -0.0, 
+                    0.0
+                  ], 
+                  "n": [
+                    0.0, 
+                    -1.0, 
+                    0.0
+                  ], 
+                  "o": [
+                    0.82294901687515765, 
+                    0.0, 
+                    0.49376941012509468
+                  ], 
+                  "type": "Plane"
+                }, 
+                "boundary": [
+                  [
+                    0.82294901687515765, 
+                    0.0, 
+                    2.5062305898749053
+                  ], 
+                  [
+                    0.82294901687515765, 
+                    0.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    4.1770509831248424, 
+                    0.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    4.1770509831248424, 
+                    0.0, 
+                    2.5062305898749053
+                  ]
+                ]
+              }, 
+              "properties": {
+                "ph": {
+                  "type": "AperturePhPropertiesAbridged", 
+                  "id_num": 0
+                }, 
+                "energy": {
+                  "type": "ApertureEnergyPropertiesAbridged"
+                }, 
+                "type": "AperturePropertiesAbridged", 
+                "radiance": {
+                  "type": "ApertureRadiancePropertiesAbridged"
+                }
+              }, 
+              "identifier": "Room_9_e5e921fc..Face0_Glz0", 
+              "display_name": "Room_9_e5e921fc..Face0_Glz0", 
+              "is_operable": false, 
+              "type": "Aperture"
+            }
+          ], 
           "properties": {
             "ph": {
               "type": "FacePhPropertiesAbridged", 
@@ -2292,18 +2476,17 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_2991b07e..Face0", 
-          "display_name": "Room_4_2991b07e..Face0", 
+          "identifier": "Room_9_e5e921fc..Face0", 
+          "display_name": "Room_9_e5e921fc..Face0", 
           "type": "Face"
         }, 
         {
           "boundary_condition": {
-            "view_factor": {
-              "type": "Autocalculate"
-            }, 
-            "wind_exposure": true, 
-            "sun_exposure": true, 
-            "type": "Outdoors"
+            "boundary_condition_objects": [
+              "Room_10_8c990d28..Face3", 
+              "Room_10_8c990d28"
+            ], 
+            "type": "Surface"
           }, 
           "geometry": {
             "type": "Face3D", 
@@ -2362,8 +2545,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_2991b07e..Face1", 
-          "display_name": "Room_4_2991b07e..Face1", 
+          "identifier": "Room_9_e5e921fc..Face1", 
+          "display_name": "Room_9_e5e921fc..Face1", 
           "type": "Face"
         }, 
         {
@@ -2419,6 +2602,78 @@
             ]
           }, 
           "face_type": "Wall", 
+          "apertures": [
+            {
+              "boundary_condition": {
+                "view_factor": {
+                  "type": "Autocalculate"
+                }, 
+                "wind_exposure": true, 
+                "sun_exposure": true, 
+                "type": "Outdoors"
+              }, 
+              "geometry": {
+                "type": "Face3D", 
+                "plane": {
+                  "x": [
+                    1.0, 
+                    -0.0, 
+                    0.0
+                  ], 
+                  "n": [
+                    0.0, 
+                    1.0, 
+                    0.0
+                  ], 
+                  "o": [
+                    4.1770509831248424, 
+                    4.0, 
+                    0.49376941012509468
+                  ], 
+                  "type": "Plane"
+                }, 
+                "boundary": [
+                  [
+                    4.1770509831248424, 
+                    4.0, 
+                    2.5062305898749053
+                  ], 
+                  [
+                    4.1770509831248424, 
+                    4.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    0.82294901687515765, 
+                    4.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    0.82294901687515765, 
+                    4.0, 
+                    2.5062305898749053
+                  ]
+                ]
+              }, 
+              "properties": {
+                "ph": {
+                  "type": "AperturePhPropertiesAbridged", 
+                  "id_num": 0
+                }, 
+                "energy": {
+                  "type": "ApertureEnergyPropertiesAbridged"
+                }, 
+                "type": "AperturePropertiesAbridged", 
+                "radiance": {
+                  "type": "ApertureRadiancePropertiesAbridged"
+                }
+              }, 
+              "identifier": "Room_9_e5e921fc..Face2_Glz0", 
+              "display_name": "Room_9_e5e921fc..Face2_Glz0", 
+              "is_operable": false, 
+              "type": "Aperture"
+            }
+          ], 
           "properties": {
             "ph": {
               "type": "FacePhPropertiesAbridged", 
@@ -2432,8 +2687,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_2991b07e..Face2", 
-          "display_name": "Room_4_2991b07e..Face2", 
+          "identifier": "Room_9_e5e921fc..Face2", 
+          "display_name": "Room_9_e5e921fc..Face2", 
           "type": "Face"
         }, 
         {
@@ -2489,6 +2744,78 @@
             ]
           }, 
           "face_type": "Wall", 
+          "apertures": [
+            {
+              "boundary_condition": {
+                "view_factor": {
+                  "type": "Autocalculate"
+                }, 
+                "wind_exposure": true, 
+                "sun_exposure": true, 
+                "type": "Outdoors"
+              }, 
+              "geometry": {
+                "type": "Face3D", 
+                "plane": {
+                  "x": [
+                    0.0, 
+                    1.0, 
+                    0.0
+                  ], 
+                  "n": [
+                    -1.0, 
+                    0.0, 
+                    0.0
+                  ], 
+                  "o": [
+                    0.0, 
+                    3.3416407864998741, 
+                    0.49376941012509468
+                  ], 
+                  "type": "Plane"
+                }, 
+                "boundary": [
+                  [
+                    0.0, 
+                    3.3416407864998741, 
+                    2.5062305898749053
+                  ], 
+                  [
+                    0.0, 
+                    3.3416407864998741, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    0.0, 
+                    0.65835921350012616, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    0.0, 
+                    0.65835921350012616, 
+                    2.5062305898749053
+                  ]
+                ]
+              }, 
+              "properties": {
+                "ph": {
+                  "type": "AperturePhPropertiesAbridged", 
+                  "id_num": 0
+                }, 
+                "energy": {
+                  "type": "ApertureEnergyPropertiesAbridged"
+                }, 
+                "type": "AperturePropertiesAbridged", 
+                "radiance": {
+                  "type": "ApertureRadiancePropertiesAbridged"
+                }
+              }, 
+              "identifier": "Room_9_e5e921fc..Face3_Glz0", 
+              "display_name": "Room_9_e5e921fc..Face3_Glz0", 
+              "is_operable": false, 
+              "type": "Aperture"
+            }
+          ], 
           "properties": {
             "ph": {
               "type": "FacePhPropertiesAbridged", 
@@ -2502,8 +2829,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_2991b07e..Face3", 
-          "display_name": "Room_4_2991b07e..Face3", 
+          "identifier": "Room_9_e5e921fc..Face3", 
+          "display_name": "Room_9_e5e921fc..Face3", 
           "type": "Face"
         }, 
         {
@@ -2567,8 +2894,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_2991b07e..Face4", 
-          "display_name": "Room_4_2991b07e..Face4", 
+          "identifier": "Room_9_e5e921fc..Face4", 
+          "display_name": "Room_9_e5e921fc..Face4", 
           "type": "Face"
         }, 
         {
@@ -2637,8 +2964,661 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_4_2991b07e..Face5", 
-          "display_name": "Room_4_2991b07e..Face5", 
+          "identifier": "Room_9_e5e921fc..Face5", 
+          "display_name": "Room_9_e5e921fc..Face5", 
+          "type": "Face"
+        }
+      ], 
+      "type": "Room"
+    }, 
+    {
+      "properties": {
+        "ph": {
+          "type": "RoomPhPropertiesAbridged", 
+          "ph_bldg_segment_id": "0a6180bb-88c3-42fb-b404-efbddc204d90", 
+          "spaces": []
+        }, 
+        "energy": {
+          "hvac": "Room_10_8c990d28 Ideal Loads Air System", 
+          "type": "RoomEnergyPropertiesAbridged", 
+          "program_type": "Generic Office Program"
+        }, 
+        "type": "RoomPropertiesAbridged", 
+        "radiance": {
+          "type": "RoomRadiancePropertiesAbridged"
+        }
+      }, 
+      "identifier": "Room_10_8c990d28", 
+      "display_name": "Room_10", 
+      "faces": [
+        {
+          "boundary_condition": {
+            "view_factor": {
+              "type": "Autocalculate"
+            }, 
+            "wind_exposure": true, 
+            "sun_exposure": true, 
+            "type": "Outdoors"
+          }, 
+          "geometry": {
+            "type": "Face3D", 
+            "plane": {
+              "x": [
+                1.0, 
+                0.0, 
+                0.0
+              ], 
+              "n": [
+                0.0, 
+                -1.0, 
+                0.0
+              ], 
+              "o": [
+                5.0, 
+                0.0, 
+                0.0
+              ], 
+              "type": "Plane"
+            }, 
+            "boundary": [
+              [
+                5.0, 
+                0.0, 
+                3.0
+              ], 
+              [
+                5.0, 
+                0.0, 
+                0.0
+              ], 
+              [
+                12.0, 
+                0.0, 
+                0.0
+              ], 
+              [
+                12.0, 
+                0.0, 
+                3.0
+              ]
+            ]
+          }, 
+          "face_type": "Wall", 
+          "apertures": [
+            {
+              "boundary_condition": {
+                "view_factor": {
+                  "type": "Autocalculate"
+                }, 
+                "wind_exposure": true, 
+                "sun_exposure": true, 
+                "type": "Outdoors"
+              }, 
+              "geometry": {
+                "type": "Face3D", 
+                "plane": {
+                  "x": [
+                    -1.0, 
+                    -0.0, 
+                    0.0
+                  ], 
+                  "n": [
+                    0.0, 
+                    -1.0, 
+                    0.0
+                  ], 
+                  "o": [
+                    6.1521286236252202, 
+                    0.0, 
+                    0.49376941012509468
+                  ], 
+                  "type": "Plane"
+                }, 
+                "boundary": [
+                  [
+                    6.1521286236252202, 
+                    0.0, 
+                    2.5062305898749053
+                  ], 
+                  [
+                    6.1521286236252202, 
+                    0.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    10.84787137637478, 
+                    0.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    10.84787137637478, 
+                    0.0, 
+                    2.5062305898749053
+                  ]
+                ]
+              }, 
+              "properties": {
+                "ph": {
+                  "type": "AperturePhPropertiesAbridged", 
+                  "id_num": 0
+                }, 
+                "energy": {
+                  "type": "ApertureEnergyPropertiesAbridged"
+                }, 
+                "type": "AperturePropertiesAbridged", 
+                "radiance": {
+                  "type": "ApertureRadiancePropertiesAbridged"
+                }
+              }, 
+              "identifier": "Room_10_8c990d28..Face0_Glz0", 
+              "display_name": "Room_10_8c990d28..Face0_Glz0", 
+              "is_operable": false, 
+              "type": "Aperture"
+            }
+          ], 
+          "properties": {
+            "ph": {
+              "type": "FacePhPropertiesAbridged", 
+              "id_num": 0
+            }, 
+            "energy": {
+              "type": "FaceEnergyPropertiesAbridged"
+            }, 
+            "type": "FacePropertiesAbridged", 
+            "radiance": {
+              "type": "FaceRadiancePropertiesAbridged"
+            }
+          }, 
+          "identifier": "Room_10_8c990d28..Face0", 
+          "display_name": "Room_10_8c990d28..Face0", 
+          "type": "Face"
+        }, 
+        {
+          "boundary_condition": {
+            "view_factor": {
+              "type": "Autocalculate"
+            }, 
+            "wind_exposure": true, 
+            "sun_exposure": true, 
+            "type": "Outdoors"
+          }, 
+          "geometry": {
+            "type": "Face3D", 
+            "plane": {
+              "x": [
+                0.0, 
+                1.0, 
+                0.0
+              ], 
+              "n": [
+                1.0, 
+                0.0, 
+                0.0
+              ], 
+              "o": [
+                12.0, 
+                0.0, 
+                0.0
+              ], 
+              "type": "Plane"
+            }, 
+            "boundary": [
+              [
+                12.0, 
+                0.0, 
+                3.0
+              ], 
+              [
+                12.0, 
+                0.0, 
+                0.0
+              ], 
+              [
+                12.0, 
+                4.0, 
+                0.0
+              ], 
+              [
+                12.0, 
+                4.0, 
+                3.0
+              ]
+            ]
+          }, 
+          "face_type": "Wall", 
+          "apertures": [
+            {
+              "boundary_condition": {
+                "view_factor": {
+                  "type": "Autocalculate"
+                }, 
+                "wind_exposure": true, 
+                "sun_exposure": true, 
+                "type": "Outdoors"
+              }, 
+              "geometry": {
+                "type": "Face3D", 
+                "plane": {
+                  "x": [
+                    0.0, 
+                    -1.0, 
+                    0.0
+                  ], 
+                  "n": [
+                    1.0, 
+                    0.0, 
+                    0.0
+                  ], 
+                  "o": [
+                    12.0, 
+                    0.65835921350012616, 
+                    0.49376941012509468
+                  ], 
+                  "type": "Plane"
+                }, 
+                "boundary": [
+                  [
+                    12.0, 
+                    0.65835921350012616, 
+                    2.5062305898749053
+                  ], 
+                  [
+                    12.0, 
+                    0.65835921350012616, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    12.0, 
+                    3.3416407864998741, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    12.0, 
+                    3.3416407864998741, 
+                    2.5062305898749053
+                  ]
+                ]
+              }, 
+              "properties": {
+                "ph": {
+                  "type": "AperturePhPropertiesAbridged", 
+                  "id_num": 0
+                }, 
+                "energy": {
+                  "type": "ApertureEnergyPropertiesAbridged"
+                }, 
+                "type": "AperturePropertiesAbridged", 
+                "radiance": {
+                  "type": "ApertureRadiancePropertiesAbridged"
+                }
+              }, 
+              "identifier": "Room_10_8c990d28..Face1_Glz0", 
+              "display_name": "Room_10_8c990d28..Face1_Glz0", 
+              "is_operable": false, 
+              "type": "Aperture"
+            }
+          ], 
+          "properties": {
+            "ph": {
+              "type": "FacePhPropertiesAbridged", 
+              "id_num": 0
+            }, 
+            "energy": {
+              "type": "FaceEnergyPropertiesAbridged"
+            }, 
+            "type": "FacePropertiesAbridged", 
+            "radiance": {
+              "type": "FaceRadiancePropertiesAbridged"
+            }
+          }, 
+          "identifier": "Room_10_8c990d28..Face1", 
+          "display_name": "Room_10_8c990d28..Face1", 
+          "type": "Face"
+        }, 
+        {
+          "boundary_condition": {
+            "view_factor": {
+              "type": "Autocalculate"
+            }, 
+            "wind_exposure": true, 
+            "sun_exposure": true, 
+            "type": "Outdoors"
+          }, 
+          "geometry": {
+            "type": "Face3D", 
+            "plane": {
+              "x": [
+                -1.0, 
+                0.0, 
+                0.0
+              ], 
+              "n": [
+                0.0, 
+                1.0, 
+                -0.0
+              ], 
+              "o": [
+                12.0, 
+                4.0, 
+                0.0
+              ], 
+              "type": "Plane"
+            }, 
+            "boundary": [
+              [
+                12.0, 
+                4.0, 
+                3.0
+              ], 
+              [
+                12.0, 
+                4.0, 
+                0.0
+              ], 
+              [
+                5.0, 
+                4.0, 
+                0.0
+              ], 
+              [
+                5.0, 
+                4.0, 
+                3.0
+              ]
+            ]
+          }, 
+          "face_type": "Wall", 
+          "apertures": [
+            {
+              "boundary_condition": {
+                "view_factor": {
+                  "type": "Autocalculate"
+                }, 
+                "wind_exposure": true, 
+                "sun_exposure": true, 
+                "type": "Outdoors"
+              }, 
+              "geometry": {
+                "type": "Face3D", 
+                "plane": {
+                  "x": [
+                    1.0, 
+                    -0.0, 
+                    0.0
+                  ], 
+                  "n": [
+                    0.0, 
+                    1.0, 
+                    0.0
+                  ], 
+                  "o": [
+                    10.84787137637478, 
+                    4.0, 
+                    0.49376941012509468
+                  ], 
+                  "type": "Plane"
+                }, 
+                "boundary": [
+                  [
+                    10.84787137637478, 
+                    4.0, 
+                    2.5062305898749053
+                  ], 
+                  [
+                    10.84787137637478, 
+                    4.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    6.1521286236252202, 
+                    4.0, 
+                    0.49376941012509468
+                  ], 
+                  [
+                    6.1521286236252202, 
+                    4.0, 
+                    2.5062305898749053
+                  ]
+                ]
+              }, 
+              "properties": {
+                "ph": {
+                  "type": "AperturePhPropertiesAbridged", 
+                  "id_num": 0
+                }, 
+                "energy": {
+                  "type": "ApertureEnergyPropertiesAbridged"
+                }, 
+                "type": "AperturePropertiesAbridged", 
+                "radiance": {
+                  "type": "ApertureRadiancePropertiesAbridged"
+                }
+              }, 
+              "identifier": "Room_10_8c990d28..Face2_Glz0", 
+              "display_name": "Room_10_8c990d28..Face2_Glz0", 
+              "is_operable": false, 
+              "type": "Aperture"
+            }
+          ], 
+          "properties": {
+            "ph": {
+              "type": "FacePhPropertiesAbridged", 
+              "id_num": 0
+            }, 
+            "energy": {
+              "type": "FaceEnergyPropertiesAbridged"
+            }, 
+            "type": "FacePropertiesAbridged", 
+            "radiance": {
+              "type": "FaceRadiancePropertiesAbridged"
+            }
+          }, 
+          "identifier": "Room_10_8c990d28..Face2", 
+          "display_name": "Room_10_8c990d28..Face2", 
+          "type": "Face"
+        }, 
+        {
+          "boundary_condition": {
+            "boundary_condition_objects": [
+              "Room_9_e5e921fc..Face1", 
+              "Room_9_e5e921fc"
+            ], 
+            "type": "Surface"
+          }, 
+          "geometry": {
+            "type": "Face3D", 
+            "plane": {
+              "x": [
+                0.0, 
+                -1.0, 
+                0.0
+              ], 
+              "n": [
+                -1.0, 
+                0.0, 
+                0.0
+              ], 
+              "o": [
+                5.0, 
+                4.0, 
+                0.0
+              ], 
+              "type": "Plane"
+            }, 
+            "boundary": [
+              [
+                5.0, 
+                4.0, 
+                3.0
+              ], 
+              [
+                5.0, 
+                4.0, 
+                0.0
+              ], 
+              [
+                5.0, 
+                0.0, 
+                0.0
+              ], 
+              [
+                5.0, 
+                0.0, 
+                3.0
+              ]
+            ]
+          }, 
+          "face_type": "Wall", 
+          "properties": {
+            "ph": {
+              "type": "FacePhPropertiesAbridged", 
+              "id_num": 0
+            }, 
+            "energy": {
+              "type": "FaceEnergyPropertiesAbridged"
+            }, 
+            "type": "FacePropertiesAbridged", 
+            "radiance": {
+              "type": "FaceRadiancePropertiesAbridged"
+            }
+          }, 
+          "identifier": "Room_10_8c990d28..Face3", 
+          "display_name": "Room_10_8c990d28..Face3", 
+          "type": "Face"
+        }, 
+        {
+          "boundary_condition": {
+            "type": "Ground"
+          }, 
+          "geometry": {
+            "type": "Face3D", 
+            "plane": {
+              "x": [
+                0.0, 
+                1.0, 
+                0.0
+              ], 
+              "n": [
+                0.0, 
+                0.0, 
+                -1.0
+              ], 
+              "o": [
+                5.0, 
+                0.0, 
+                0.0
+              ], 
+              "type": "Plane"
+            }, 
+            "boundary": [
+              [
+                12.0, 
+                4.0, 
+                0.0
+              ], 
+              [
+                12.0, 
+                0.0, 
+                0.0
+              ], 
+              [
+                5.0, 
+                0.0, 
+                0.0
+              ], 
+              [
+                5.0, 
+                4.0, 
+                0.0
+              ]
+            ]
+          }, 
+          "face_type": "Floor", 
+          "properties": {
+            "ph": {
+              "type": "FacePhPropertiesAbridged", 
+              "id_num": 0
+            }, 
+            "energy": {
+              "type": "FaceEnergyPropertiesAbridged"
+            }, 
+            "type": "FacePropertiesAbridged", 
+            "radiance": {
+              "type": "FaceRadiancePropertiesAbridged"
+            }
+          }, 
+          "identifier": "Room_10_8c990d28..Face4", 
+          "display_name": "Room_10_8c990d28..Face4", 
+          "type": "Face"
+        }, 
+        {
+          "boundary_condition": {
+            "view_factor": {
+              "type": "Autocalculate"
+            }, 
+            "wind_exposure": true, 
+            "sun_exposure": true, 
+            "type": "Outdoors"
+          }, 
+          "geometry": {
+            "type": "Face3D", 
+            "plane": {
+              "x": [
+                1.0, 
+                0.0, 
+                0.0
+              ], 
+              "n": [
+                0.0, 
+                0.0, 
+                1.0
+              ], 
+              "o": [
+                5.0, 
+                0.0, 
+                3.0
+              ], 
+              "type": "Plane"
+            }, 
+            "boundary": [
+              [
+                5.0, 
+                4.0, 
+                3.0
+              ], 
+              [
+                5.0, 
+                0.0, 
+                3.0
+              ], 
+              [
+                12.0, 
+                0.0, 
+                3.0
+              ], 
+              [
+                12.0, 
+                4.0, 
+                3.0
+              ]
+            ]
+          }, 
+          "face_type": "RoofCeiling", 
+          "properties": {
+            "ph": {
+              "type": "FacePhPropertiesAbridged", 
+              "id_num": 0
+            }, 
+            "energy": {
+              "type": "FaceEnergyPropertiesAbridged"
+            }, 
+            "type": "FacePropertiesAbridged", 
+            "radiance": {
+              "type": "FaceRadiancePropertiesAbridged"
+            }
+          }, 
+          "identifier": "Room_10_8c990d28..Face5", 
+          "display_name": "Room_10_8c990d28..Face5", 
           "type": "Face"
         }
       ], 

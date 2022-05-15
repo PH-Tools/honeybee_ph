@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # --- Input file Path
     # -------------------------------------------------------------------------
     SOURCE_FILE = pathlib.Path("tests", "_source_hbjson",
-                               "Default_Room_Single_Zone_with_Apertures.hbjson")
+                               "Default_Room_Multiple_Zones_with_Apertures_default_Climate.hbjson")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -------------------------------------------------------------------------
@@ -44,6 +44,7 @@ if __name__ == '__main__':
         print(f'[bold green]> connected to excel doc: {file}[/bold green]')
 
     with phpp_conn.xl.in_silent_mode():
+        phpp_conn.write_climate_data(phx_project)
         phpp_conn.write_project_constructions(phx_project)
         phpp_conn.write_project_window_components(phx_project)
         phpp_conn.write_project_opaque_surfaces(phx_project)

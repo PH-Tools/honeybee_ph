@@ -7,7 +7,7 @@ from typing import List, Dict, Any
 
 from PHX.model import project
 from PHX.to_PHPP.phpp import xl_app, io
-from PHX.to_PHPP.phpp.model import (areas_surface, uvalues_constructor, component_glazing,
+from PHX.to_PHPP.phpp.model import (areas_surface, climate_entry, uvalues_constructor, component_glazing,
                                     component_frame, windows_rows)
 
 
@@ -20,11 +20,30 @@ class PHPPConnection:
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
+        self.climate = io.Climate(self.xl, self.worksheet_shape['CLIMATE']['NAME'])
         self.u_values = io.UValues(self.xl, self.worksheet_shape['UVALUES']['NAME'])
         self.components = io.Components(
             self.xl, self.worksheet_shape['COMPONENTS']['NAME'])
         self.areas = io.Areas(self.xl, self.worksheet_shape['AREAS']['NAME'])
         self.windows = io.Windows(self.xl, self.worksheet_shape['WINDOWS']['NAME'])
+
+    def write_climate_data(self, phx_project: project.PhxProject) -> None:
+        """Write the varaint's weather-station data to the PHPP 'Climate' worksheet."""
+        columns = self.worksheet_shape['CLIMATE']['COLUMNS']
+        for phx_variant in phx_project.variants:
+            # -- Write the actual weather station data
+            weather_station_data = climate_entry.ClimateDataBlock(
+                columns,
+                phx_variant.location
+            )
+            self.climate.write_climate_block(weather_station_data)
+
+            # -- Set the active weather station
+            active_climate_data = climate_entry.ClimateSettings(
+                columns,
+                phx_variant.location
+            )
+            self.climate.write_active_climate(active_climate_data)
 
     def write_project_constructions(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque constructions to the PHPP 'U-Values' worksheet."""

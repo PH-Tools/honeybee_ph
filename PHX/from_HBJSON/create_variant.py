@@ -123,7 +123,7 @@ def add_climate_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Room) 
     # -- Location
     _variant.location.site.latitude = ud_climate.location.latitude
     _variant.location.site.longitude = ud_climate.location.longitude
-    _variant.location.site.weather_station_elevation = ud_climate.location.weather_station_elevation
+    _variant.location.site.elevation = ud_climate.location.weather_station_elevation
     _variant.location.site.climate_zone = ud_climate.location.climate_zone
     _variant.location.site.hours_from_UTC = ud_climate.location.hours_from_UTC
 

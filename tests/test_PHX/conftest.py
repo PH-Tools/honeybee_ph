@@ -147,6 +147,12 @@ def reset_class_counters():
         Path('tests', '_reference_xml',
              'Default_Room_Single_Zone_with_Shades.xml')
     ),
+    (
+        Path('tests', '_source_hbjson',
+             'Default_Room_Multiple_Zones_with_Apertures_default_Climate.hbjson'),
+        Path('tests', '_reference_xml',
+             'Default_Room_Multiple_Zones_with_Apertures_default_Climate.xml')
+    ),
 ])
 def to_xml_reference_cases(request):
     """Yields file-paths to reference test-cases"""

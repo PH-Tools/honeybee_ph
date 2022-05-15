@@ -5,7 +5,35 @@
     },
     "CLIMATE": {
         "NAME": "Climate",
-        "COLUMNS": {}
+        "COLUMNS": {
+            "country": "D",
+            "region": "D",
+            "dataset": "D",
+            "elevation_override": "D",
+            "1": "E",
+            "2": "F",
+            "3": "G",
+            "4": "H",
+            "5": "I",
+            "6": "J",
+            "7": "K",
+            "8": "L",
+            "9": "M",
+            "10": "N",
+            "11": "O",
+            "12": "P",
+            "peak_heating_1": "Q",
+            "peak_heating_2": "R",
+            "peak_cooling_1": "S",
+            "peak_cooling_2": "T",
+            "PER": "U",
+            "latitude": "F",
+            "longitude": "H",
+            "elevation": "J",
+            "display_name": "L",
+            "summer_delta_t": "N",
+            "source": "P"
+        }
     },
     "UVALUES": {
         "NAME": "U-Values",

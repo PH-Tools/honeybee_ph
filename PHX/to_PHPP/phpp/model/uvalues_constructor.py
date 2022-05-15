@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 3.7 -*-
+
+"""Data-entry constructor for the U-Values Worksheet."""
+
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 from functools import partial
@@ -11,7 +16,7 @@ from PHX.to_PHPP.phpp import xl_data
 class ConstructorBlock:
     """A single U-Value/Constructor entry block."""
 
-    __slots__ = ('phx_const', "columns")
+    __slots__ = ("columns", "phx_const")
     columns: Dict[str, str]
     phx_const: constructions.PhxConstructionOpaque
 
@@ -40,23 +45,23 @@ class ConstructorBlock:
 
         return [xl_data.XlItem(_sheet_name, *item) for item in items]
 
-    def clear_constructor(self, _sheet_name: str, _start_row: int) -> List[xl_data.XlItem]:
-        create_range = partial(self._create_range, _start_row=_start_row)
+    # def clear_constructor(self, _sheet_name: str, _start_row: int) -> List[xl_data.XlItem]:
+    #     create_range = partial(self._create_range, _start_row=_start_row)
 
-        # -- Build the basic assembly attributes
-        items: List[Tuple[str, xl_data.xl_writable]] = [
-            (create_range('display_name', 2), ''),
-            (create_range('r_si', 4), ''),
-            (create_range('r_se', 5), ''),
-        ]
+    #     # -- Build the basic assembly attributes
+    #     items: List[Tuple[str, xl_data.xl_writable]] = [
+    #         (create_range('display_name', 2), ''),
+    #         (create_range('r_si', 4), ''),
+    #         (create_range('r_se', 5), ''),
+    #     ]
 
-        # -- Build all the layers of the assembly
-        for i in range(8, 15):
-            layer_items: List[Tuple[str, xl_data.xl_writable]] = [
-                (create_range('sec_1_description', i), ''),
-                (create_range('sec_1_conductivity', i), ''),
-                (create_range('thickness', i), ''),
-            ]
-            items.extend(layer_items)
+    #     # -- Build all the layers of the assembly
+    #     for i in range(8, 15):
+    #         layer_items: List[Tuple[str, xl_data.xl_writable]] = [
+    #             (create_range('sec_1_description', i), ''),
+    #             (create_range('sec_1_conductivity', i), ''),
+    #             (create_range('thickness', i), ''),
+    #         ]
+    #         items.extend(layer_items)
 
-        return [xl_data.XlItem(_sheet_name, *item) for item in items]
+    #     return [xl_data.XlItem(_sheet_name, *item) for item in items]

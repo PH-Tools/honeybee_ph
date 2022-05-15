@@ -85,7 +85,7 @@ class PhxSiteEnergyFactors:
 class PhxSite:
     latitude: float = 40.6
     longitude: float = -73.8
-    weather_station_elevation: float = 3.0
+    elevation: float = 3.0
     climate_zone: int = 1
     hours_from_UTC: int = -4
 
@@ -102,6 +102,7 @@ class PhxClimatePeakLoad:
 
 @dataclass
 class PhxClimate:
+    weather_station_elevation: float = 3.0
     selection: int = 6
     daily_temp_swing: float = 8.0
     avg_wind_speed: float = 4.0
@@ -124,6 +125,8 @@ class PhxClimate:
 
 @dataclass
 class PhxLocation:
+    display_name: str = "__unnamed_location__"
+    source: str = "__unknown__"
     selection: int = 1
     site: PhxSite = field(default_factory=PhxSite)
     climate: PhxClimate = field(default_factory=PhxClimate)

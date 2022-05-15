@@ -86,10 +86,10 @@ class UValues:
         prefix = self.xl.get_data(self.sheet_name, f'{col_offset(search_col, -1)}{row}')
         return f'{prefix}-{_name}'
 
-    def write_construction_blocks(self, _phx_constructions: List[uvalues_constructor.ConstructorBlock]) -> None:
+    def write_construction_blocks(self, _const_blocks: List[uvalues_constructor.ConstructorBlock]) -> None:
         if not self.constructor_start_rows:
             self.constructor_start_rows = self.get_start_rows()
 
-        for construction, start_row in zip(_phx_constructions, self.constructor_start_rows):
+        for construction, start_row in zip(_const_blocks, self.constructor_start_rows):
             for item in construction.create_xl_items(self.sheet_name, start_row):
                 self.xl.write_xl_item(item)

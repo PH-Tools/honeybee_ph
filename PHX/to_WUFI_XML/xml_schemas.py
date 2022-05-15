@@ -272,7 +272,7 @@ def _PH_ClimateLocation(_phx_location: climate.PhxLocation) -> List[xml_writable
         XML_Node('Latitude', _phx_location.site.latitude),
         XML_Node('Longitude', _phx_location.site.longitude),
         XML_Node('HeightNNWeatherStation',
-                 _phx_location.site.weather_station_elevation),
+                 _phx_location.site.elevation),
         XML_Node('dUTC', _phx_location.site.hours_from_UTC),
         XML_Node('ClimateZone', _phx_location.site.climate_zone),
 
@@ -375,7 +375,7 @@ def _PhxLocation(_phx_location: climate.PhxLocation) -> List[xml_writable]:
         XML_Node('Latitude_DB', _phx_location.site.latitude, 'unit', "°"),
         XML_Node('Longitude_DB', _phx_location.site.longitude,  'unit', "°"),
         XML_Node(
-            'HeightNN_DB', _phx_location.site.weather_station_elevation, 'unit', "m"),
+            'HeightNN_DB', _phx_location.site.elevation, 'unit', "m"),
         XML_Node('dUTC_DB', _phx_location.site.hours_from_UTC),
         # XML_Node('FileName_DB', _climate.),
         # XML_Node('Type_DB', _climate.),

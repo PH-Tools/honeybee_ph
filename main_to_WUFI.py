@@ -16,7 +16,8 @@ source_file_names = [
     "Default_Room_Multiple_Zones_with_Apertures_Single_BldgSegment.hbjson",
     "Default_Room_Multiple_Zones_with_Apertures.hbjson",
     "Default_Room_Single_Zone_with_Apertures.hbjson",
-    "Default_Room_Single_Zone_with_Shades.hbjson"
+    "Default_Room_Single_Zone_with_Shades.hbjson",
+    "Default_Room_Multiple_Zones_with_Apertures_default_Climate.hbjson"
 ]
 SOURCE_FILES = [pathlib.Path(SOURCE_DIR, n) for n in source_file_names]
 TARGET_DIR = pathlib.Path("tests", "_reference_xml")

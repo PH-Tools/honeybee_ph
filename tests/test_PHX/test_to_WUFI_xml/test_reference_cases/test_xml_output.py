@@ -21,4 +21,4 @@ def test_xml_output(to_xml_reference_cases):
 
     # -- Load the reference case
     ref_xml_text = read_WUFI_XML_file.read_WUFI_XML_from_file(xml_file)
-    #assert new_xml_txt == ref_xml_text
+    assert new_xml_txt == ref_xml_text
