@@ -109,7 +109,7 @@ def create_component_from_hb_aperture(
 
     # -- Polygons
     phx_ap.add_polygons(
-        create_geometry.create_PhxPolygon_from_hb_Face(_hb_aperture))
+        create_geometry.create_PhxPolygonRectangular_from_hb_Face(_hb_aperture))
 
     return phx_ap
 

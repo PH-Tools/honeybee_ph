@@ -97,6 +97,7 @@ if __name__ == '__main__':
                         phpp_windows.append(
                             windows_rows.WindowRow(
                                 phx_polygon=ap_polygon,
+                                phx_construction=phx_aperture.window_type,
                                 phpp_host_surface_id_name=phpp_host_surface_id_name,
                                 phpp_id_frame=phpp_id_frame,
                                 phpp_id_glazing=phpp_id_glazing

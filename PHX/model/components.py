@@ -153,7 +153,7 @@ class PhxComponentAperture(PhxComponentBase):
         self.window_type: constructions.PhxConstructionWindow = constructions.PhxConstructionWindow()
         self.window_type_id_num: int = -1
 
-        self.polygons: List[geometry.PhxPolygon] = []
+        self.polygons: List[geometry.PhxPolygonRectangular] = []
 
     @property
     def polygon_ids(self) -> Set[int]:

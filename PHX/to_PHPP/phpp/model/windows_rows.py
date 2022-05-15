@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import ClassVar, Dict, List, Tuple, Optional
 from functools import partial
 
-from PHX.model import building, geometry
+from PHX.model import constructions, geometry
 
 from PHX.to_PHPP.phpp import xl_data
 
@@ -32,9 +32,10 @@ class WindowRow:
         'comfort_temp': 'BR',
     }
 
-    __slots__ = ('phx_polygon', 'phpp_host_surface_id_name',
+    __slots__ = ('phx_polygon', 'phx_construction', 'phpp_host_surface_id_name',
                  'phpp_id_frame', 'phpp_id_glazing')
-    phx_polygon: geometry.PhxPolygon
+    phx_polygon: geometry.PhxPolygonRectangular
+    phx_construction: constructions.PhxConstructionWindow
     phpp_host_surface_id_name: Optional[str]
     phpp_id_frame: Optional[str]
     phpp_id_glazing: Optional[str]
@@ -61,6 +62,16 @@ class WindowRow:
             (create_range('host'), self.phpp_host_surface_id_name),
             (create_range('glazing_id'), self.phpp_id_frame),
             (create_range('frame_id'), self.phpp_id_glazing),
+
+            # -- TODO: Make these real values
+            (create_range('width'), self.phx_polygon.width),
+            (create_range('height'), self.phx_polygon.height),
+
+            # -- TODO: Install condition, not Psi-Install
+            (create_range('psi_i_left'), self.phx_construction.frame_left.psi_install),
+            (create_range('psi_i_right'), self.phx_construction.frame_right.psi_install),
+            (create_range('psi_i_bottom'), self.phx_construction.frame_bottom.psi_install),
+            (create_range('psi_i_top'), self.phx_construction.frame_top.psi_install),
         ]
 
         return [xl_data.XlItem(_sheet_name, *item) for item in items]

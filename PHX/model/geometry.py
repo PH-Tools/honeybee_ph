@@ -9,6 +9,13 @@ import math
 from typing import ClassVar, Collection, List, Union, Optional, Tuple
 
 
+class PolygonEdgeError(Exception):
+    def __init__(self, _polygon: PhxPolygonRectangular, _segment_name: str):
+        self.msg = f"Error: Cannot create PhxPolygonRectangle {_polygon}"\
+            f"segment {_segment_name}. Missing 1 or more vertices?"
+        super().__init__(self.msg)
+
+
 @dataclass
 class PhxVertix:
     _count: ClassVar[int] = 0
@@ -71,9 +78,22 @@ class PhxLineSegment:
     vertix_1: PhxVertix
     vertix_2: PhxVertix
 
+    @property
+    def length(self) -> float:
+        return abs(
+            math.sqrt(
+                (
+                    (self.vertix_2.x - self.vertix_1.x)**2 +
+                    (self.vertix_2.y - self.vertix_1.y)**2 +
+                    (self.vertix_2.z - self.vertix_1.z)**2
+                )
+            )
+        )
+
 
 @dataclass
 class PhxPolygon:
+    """A Polygon surface defined by 3 or more vertices."""
     _count: ClassVar[int] = 0
 
     _display_name: str
@@ -81,14 +101,15 @@ class PhxPolygon:
     center: PhxVertix
     normal_vector: PhxVector
     plane: PhxPlane
-    vertices: List[PhxVertix] = field(default_factory=list)
-    child_polygon_ids: List[int] = field(default_factory=list)
+
+    _vertices: List[PhxVertix] = field(init=False, default_factory=list)
+    child_polygon_ids: List[int] = field(init=False, default_factory=list)
 
     id_num: int = field(init=False, default=0)
 
     def __post_init__(self):
-        self.__class__._count += 1
-        self.id_num = self.__class__._count
+        PhxPolygon._count += 1
+        self.id_num = PhxPolygon._count
 
     @property
     def display_name(self) -> str:
@@ -100,6 +121,10 @@ class PhxPolygon:
     @display_name.setter
     def display_name(self, _in: str):
         self._display_name = str(_in)
+
+    @property
+    def vertices(self) -> List[PhxVertix]:
+        return self._vertices
 
     @property
     def vertices_id_numbers(self) -> List[int]:
@@ -196,19 +221,72 @@ class PhxPolygon:
         for child_id in _child_ids:
             self.child_polygon_ids.append(child_id)
 
-    @property
-    def boundary_segments(self) -> Tuple[PhxLineSegment]:
-        """Tuple of all PhxLineSegments bordering the PhxPolygon.
 
-        Note that this does not include segments for any holes in the face.
-        Just the outer boundary.
-        """
-        segments = []
-        for i, vert in enumerate(self.vertices):
-            _seg = PhxLineSegment(self.vertices[i - 1], vert)
-            segments.append(_seg)
-        segments.append(segments.pop(0))  # segments will start from the first vertex
-        return tuple(segments)
+@dataclass
+class PhxPolygonRectangular(PhxPolygon):
+    """A Polygon with additional geometric attributes for rectangular surfaces."""
+
+    vertix_upper_left: Optional[PhxVertix] = field(init=False, default=None)
+    vertix_lower_left: Optional[PhxVertix] = field(init=False, default=None)
+    vertix_lower_right: Optional[PhxVertix] = field(init=False, default=None)
+    vertix_upper_right: Optional[PhxVertix] = field(init=False, default=None)
+
+    def __post_init__(self):
+        super().__post_init__()
+
+    @property
+    def edge_top(self) -> PhxLineSegment:
+        """Returns the PhxLineSegment representing the 'Top' side of the Polygon (viewed from outside)."""
+        if not self.vertix_upper_right or not self.vertix_upper_left:
+            raise PolygonEdgeError(self, 'top')
+        return PhxLineSegment(self.vertix_upper_right, self.vertix_upper_left)
+
+    @property
+    def edge_left(self) -> PhxLineSegment:
+        """Returns the PhxLineSegment representing the 'Left' side of the Polygon (viewed from outside)."""
+        if not self.vertix_upper_left or not self.vertix_lower_left:
+            raise PolygonEdgeError(self, 'left')
+        return PhxLineSegment(self.vertix_upper_left, self.vertix_lower_left)
+
+    @property
+    def edge_bottom(self) -> PhxLineSegment:
+        """Returns the PhxLineSegment representing the 'Bottom' side of the Polygon (viewed from outside)."""
+        if not self.vertix_lower_left or not self.vertix_lower_right:
+            raise PolygonEdgeError(self, 'bottom')
+        return PhxLineSegment(self.vertix_lower_left, self.vertix_lower_right)
+
+    @property
+    def edge_right(self) -> PhxLineSegment:
+        """Returns the PhxLineSegment representing the 'Right' side of the Polygon (viewed from outside)."""
+        if not self.vertix_lower_right or not self.vertix_upper_right:
+            raise PolygonEdgeError(self, 'right')
+        return PhxLineSegment(self.vertix_lower_right, self.vertix_upper_right)
+
+    @property
+    def width(self) -> float:
+        return self.edge_left.length
+
+    @property
+    def height(self) -> float:
+        return self.edge_top.length
+
+    def add_vertix(self, _phx_vertix: PhxVertix) -> None:
+        print(
+            f'Method "add_vertix()" is not allowed for {self.__class__.__name__} objects.'
+            f'Please assign the vertix corners directly (vertix_upper_left-left, vertix_lower_left-right, etc..)'
+        )
+
+    @property
+    def vertices(self) -> List[PhxVertix]:
+        """Return a List of the PhxPolygonRectangle Vertices (counter-clockwise from upper-left)."""
+        corner_verts = [
+            self.vertix_upper_left,
+            self.vertix_lower_left,
+            self.vertix_lower_right,
+            self.vertix_upper_right,
+        ]
+        # filter out any 'None' vertices
+        return [v for v in corner_verts if v]
 
 
 @dataclass

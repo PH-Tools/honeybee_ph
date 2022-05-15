@@ -400,7 +400,7 @@ def _PhxGraphics3D(_graphics3D: geometry.PhxGraphics3D) -> List[xml_writable]:
     return [
         XML_List("Vertices", [XML_Object("Vertix", var, "index", i)
                  for i, var in enumerate(_graphics3D.vertices)]),
-        XML_List("Polygons", [XML_Object("Polygon", var, "index", i)
+        XML_List("Polygons", [XML_Object("Polygon", var, "index", i, _schema_name="_PhxPolygon")
                  for i, var in enumerate(_graphics3D.polygons)]),
     ]
 
