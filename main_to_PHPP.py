@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # --- Input file Path
     # -------------------------------------------------------------------------
     SOURCE_FILE = pathlib.Path("tests", "_source_hbjson",
-                               "Default_Room_Multiple_Zones_with_Apertures_default_Climate.hbjson")
+                               "Default_Room_Single_Zone_with_Ventilation.hbjson")
 
     # --- Read in an existing HB_JSON and re-build the HB Objects
     # -------------------------------------------------------------------------
@@ -29,10 +29,9 @@ if __name__ == '__main__':
     phx_project = create_project.convert_hb_model_to_PhxProject(
         hb_model, group_components=True)
 
-    # --- Connect to open instance of XL
+    # --- Load the correct PHPP Shape, Connect to open instance of XL
     # -------------------------------------------------------------------------
-    phpp_shape_file = pathlib.Path(
-        "PHX", "to_PHPP", "phpp_model", "shape", "ENSI.json")
+    phpp_shape_file = pathlib.Path("PHX", "to_PHPP", "phpp_model", "shape", "ENSI.json")
     phpp_shape = PhppShape.parse_file(phpp_shape_file)
     phpp_conn = phpp_app.PHPPConnection(phpp_shape)
 
@@ -44,5 +43,8 @@ if __name__ == '__main__':
         phpp_conn.write_climate_data(phx_project)
         phpp_conn.write_project_constructions(phx_project)
         phpp_conn.write_project_window_components(phx_project)
+        phpp_conn.write_project_ventilation_components(phx_project)
         phpp_conn.write_project_opaque_surfaces(phx_project)
         phpp_conn.write_project_window_surfaces(phx_project)
+        phpp_conn.write_project_ventilators(phx_project)
+        phpp_conn.write_project_spaces(phx_project)

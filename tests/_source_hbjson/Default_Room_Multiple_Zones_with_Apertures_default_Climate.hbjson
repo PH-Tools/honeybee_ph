@@ -1,6 +1,6 @@
 {
-  "tolerance": 0.001, 
-  "units": "Millimeters", 
+  "tolerance": 0.01, 
+  "units": "Meters", 
   "properties": {
     "ph": {
       "bldg_segments": [
@@ -275,7 +275,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "0a6180bb-88c3-42fb-b404-efbddc204d90", 
+          "identifier": "14e1c2d1-2e11-4251-8021-b101e229e16e", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -408,7 +408,7 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_9_e5e921fc Ideal Loads Air System", 
+          "identifier": "Room_19_c2f24bae Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -434,7 +434,7 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_10_8c990d28 Ideal Loads Air System", 
+          "identifier": "Room_20_daa96505 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -2315,18 +2315,18 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_b9647811", 
+  "identifier": "unnamed_b13b61ba", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "0a6180bb-88c3-42fb-b404-efbddc204d90", 
+          "ph_bldg_segment_id": "14e1c2d1-2e11-4251-8021-b101e229e16e", 
           "spaces": []
         }, 
         "energy": {
-          "hvac": "Room_9_e5e921fc Ideal Loads Air System", 
+          "hvac": "Room_19_c2f24bae Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2335,8 +2335,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_9_e5e921fc", 
-      "display_name": "Room_9", 
+      "identifier": "Room_19_c2f24bae", 
+      "display_name": "Room_19", 
       "faces": [
         {
           "boundary_condition": {
@@ -2457,8 +2457,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_9_e5e921fc..Face0_Glz0", 
-              "display_name": "Room_9_e5e921fc..Face0_Glz0", 
+              "identifier": "Room_19_c2f24bae..Face0_Glz0", 
+              "display_name": "Room_19_c2f24bae..Face0_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2476,15 +2476,15 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_9_e5e921fc..Face0", 
-          "display_name": "Room_9_e5e921fc..Face0", 
+          "identifier": "Room_19_c2f24bae..Face0", 
+          "display_name": "Room_19_c2f24bae..Face0", 
           "type": "Face"
         }, 
         {
           "boundary_condition": {
             "boundary_condition_objects": [
-              "Room_10_8c990d28..Face3", 
-              "Room_10_8c990d28"
+              "Room_20_daa96505..Face3", 
+              "Room_20_daa96505"
             ], 
             "type": "Surface"
           }, 
@@ -2545,8 +2545,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_9_e5e921fc..Face1", 
-          "display_name": "Room_9_e5e921fc..Face1", 
+          "identifier": "Room_19_c2f24bae..Face1", 
+          "display_name": "Room_19_c2f24bae..Face1", 
           "type": "Face"
         }, 
         {
@@ -2668,8 +2668,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_9_e5e921fc..Face2_Glz0", 
-              "display_name": "Room_9_e5e921fc..Face2_Glz0", 
+              "identifier": "Room_19_c2f24bae..Face2_Glz0", 
+              "display_name": "Room_19_c2f24bae..Face2_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2687,8 +2687,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_9_e5e921fc..Face2", 
-          "display_name": "Room_9_e5e921fc..Face2", 
+          "identifier": "Room_19_c2f24bae..Face2", 
+          "display_name": "Room_19_c2f24bae..Face2", 
           "type": "Face"
         }, 
         {
@@ -2810,8 +2810,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_9_e5e921fc..Face3_Glz0", 
-              "display_name": "Room_9_e5e921fc..Face3_Glz0", 
+              "identifier": "Room_19_c2f24bae..Face3_Glz0", 
+              "display_name": "Room_19_c2f24bae..Face3_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -2829,8 +2829,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_9_e5e921fc..Face3", 
-          "display_name": "Room_9_e5e921fc..Face3", 
+          "identifier": "Room_19_c2f24bae..Face3", 
+          "display_name": "Room_19_c2f24bae..Face3", 
           "type": "Face"
         }, 
         {
@@ -2894,8 +2894,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_9_e5e921fc..Face4", 
-          "display_name": "Room_9_e5e921fc..Face4", 
+          "identifier": "Room_19_c2f24bae..Face4", 
+          "display_name": "Room_19_c2f24bae..Face4", 
           "type": "Face"
         }, 
         {
@@ -2964,8 +2964,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_9_e5e921fc..Face5", 
-          "display_name": "Room_9_e5e921fc..Face5", 
+          "identifier": "Room_19_c2f24bae..Face5", 
+          "display_name": "Room_19_c2f24bae..Face5", 
           "type": "Face"
         }
       ], 
@@ -2975,11 +2975,11 @@
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "0a6180bb-88c3-42fb-b404-efbddc204d90", 
+          "ph_bldg_segment_id": "14e1c2d1-2e11-4251-8021-b101e229e16e", 
           "spaces": []
         }, 
         "energy": {
-          "hvac": "Room_10_8c990d28 Ideal Loads Air System", 
+          "hvac": "Room_20_daa96505 Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2988,8 +2988,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_10_8c990d28", 
-      "display_name": "Room_10", 
+      "identifier": "Room_20_daa96505", 
+      "display_name": "Room_20", 
       "faces": [
         {
           "boundary_condition": {
@@ -3110,8 +3110,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_10_8c990d28..Face0_Glz0", 
-              "display_name": "Room_10_8c990d28..Face0_Glz0", 
+              "identifier": "Room_20_daa96505..Face0_Glz0", 
+              "display_name": "Room_20_daa96505..Face0_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -3129,8 +3129,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_10_8c990d28..Face0", 
-          "display_name": "Room_10_8c990d28..Face0", 
+          "identifier": "Room_20_daa96505..Face0", 
+          "display_name": "Room_20_daa96505..Face0", 
           "type": "Face"
         }, 
         {
@@ -3252,8 +3252,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_10_8c990d28..Face1_Glz0", 
-              "display_name": "Room_10_8c990d28..Face1_Glz0", 
+              "identifier": "Room_20_daa96505..Face1_Glz0", 
+              "display_name": "Room_20_daa96505..Face1_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -3271,8 +3271,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_10_8c990d28..Face1", 
-          "display_name": "Room_10_8c990d28..Face1", 
+          "identifier": "Room_20_daa96505..Face1", 
+          "display_name": "Room_20_daa96505..Face1", 
           "type": "Face"
         }, 
         {
@@ -3394,8 +3394,8 @@
                   "type": "ApertureRadiancePropertiesAbridged"
                 }
               }, 
-              "identifier": "Room_10_8c990d28..Face2_Glz0", 
-              "display_name": "Room_10_8c990d28..Face2_Glz0", 
+              "identifier": "Room_20_daa96505..Face2_Glz0", 
+              "display_name": "Room_20_daa96505..Face2_Glz0", 
               "is_operable": false, 
               "type": "Aperture"
             }
@@ -3413,15 +3413,15 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_10_8c990d28..Face2", 
-          "display_name": "Room_10_8c990d28..Face2", 
+          "identifier": "Room_20_daa96505..Face2", 
+          "display_name": "Room_20_daa96505..Face2", 
           "type": "Face"
         }, 
         {
           "boundary_condition": {
             "boundary_condition_objects": [
-              "Room_9_e5e921fc..Face1", 
-              "Room_9_e5e921fc"
+              "Room_19_c2f24bae..Face1", 
+              "Room_19_c2f24bae"
             ], 
             "type": "Surface"
           }, 
@@ -3482,8 +3482,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_10_8c990d28..Face3", 
-          "display_name": "Room_10_8c990d28..Face3", 
+          "identifier": "Room_20_daa96505..Face3", 
+          "display_name": "Room_20_daa96505..Face3", 
           "type": "Face"
         }, 
         {
@@ -3547,8 +3547,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_10_8c990d28..Face4", 
-          "display_name": "Room_10_8c990d28..Face4", 
+          "identifier": "Room_20_daa96505..Face4", 
+          "display_name": "Room_20_daa96505..Face4", 
           "type": "Face"
         }, 
         {
@@ -3617,8 +3617,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_10_8c990d28..Face5", 
-          "display_name": "Room_10_8c990d28..Face5", 
+          "identifier": "Room_20_daa96505..Face5", 
+          "display_name": "Room_20_daa96505..Face5", 
           "type": "Face"
         }
       ], 

@@ -6,15 +6,17 @@
 from typing import List
 
 from PHX.model import project
-from PHX.to_PHPP import xl_app
 
+from PHX.to_PHPP import xl_app
 from PHX.to_PHPP import sheet_io
 from PHX.to_PHPP.phpp_model.shape.shape_model import PhppShape
-from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor, component_glazing,
-                                    component_frame, windows_rows)
+from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor,
+                                    component_glazing, component_frame, component_vent,
+                                    windows_rows, vent_space, vent_units, vent_ducts)
 
 
 class PHPPConnection:
+
     def __init__(self, _worksheet_shapes: PhppShape):
         # -- Get the localized (units, language) PHPP Shape with worksheet names and column locations
         self.worksheet_shape = _worksheet_shapes
@@ -29,6 +31,8 @@ class PHPPConnection:
             self.xl, self.worksheet_shape.COMPONENTS.name)
         self.areas = sheet_io.Areas(self.xl, self.worksheet_shape.AREAS.name)
         self.windows = sheet_io.Windows(self.xl, self.worksheet_shape.WINDOWS.name)
+        self.addnl_vent = sheet_io.AddnlVent(
+            self.xl, self.worksheet_shape.ADDNL_VENT.name)
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
         """Write the varaint's weather-station data to the PHPP 'Climate' worksheet."""
@@ -75,6 +79,20 @@ class PHPPConnection:
             )
         self.components.write_glazings(glazing_component_rows)
         self.components.write_frames(frame_component_rows)
+
+    def write_project_ventilation_components(self, phx_project: project.PhxProject) -> None:
+        """Write all of the ventilators from a PhxProject to the PHPP 'Components' worksheet."""
+        columns = self.worksheet_shape.COMPONENTS.columns.ventilators.dict()
+
+        phpp_ventilator_rows: List[component_vent.VentilatorRow] = []
+        for phx_variant in phx_project.variants:
+            for phx_vent_sys in phx_variant.mech_systems.ventilation_subsystems:
+                new_vent_row = component_vent.VentilatorRow(
+                    columns=columns,
+                    phx_vent_sys=phx_vent_sys.device,
+                )
+                phpp_ventilator_rows.append(new_vent_row)
+        self.components.write_ventilators(phpp_ventilator_rows)
 
     def write_project_opaque_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque surfaces from a PhxProject to the PHPP 'Areas' worksheet."""
@@ -128,3 +146,50 @@ class PHPPConnection:
                             )
                         )
         self.windows.write_windows(phpp_windows)
+
+    def write_project_ventilators(self, phx_project: project.PhxProject) -> None:
+        """Write all of the used Ventilator Units from a PhxProject to the PHPP 'Additional Vent' worksheet."""
+        columns = self.worksheet_shape.ADDNL_VENT.columns.units.dict()
+
+        phpp_vent_unit_rows: List[vent_units.VentUnitRow] = []
+        for phx_variant in phx_project.variants:
+            for phx_vent_sys in phx_variant.mech_systems.ventilation_subsystems:
+                phpp_id_ventilator = self.components.ventilators.get_ventilator_phpp_id_by_name(
+                    phx_vent_sys.device.display_name
+                )
+                new_vent_row = vent_units.VentUnitRow(
+                    columns=columns,
+                    phx_vent_sys=phx_vent_sys.device,
+                    phpp_id_ventilator=phpp_id_ventilator,
+                )
+                phpp_vent_unit_rows.append(new_vent_row)
+
+        self.addnl_vent.write_vent_units(phpp_vent_unit_rows)
+
+    def write_project_spaces(self, phx_project: project.PhxProject) -> None:
+        """Write all of the PH-Spaces from a PhxProject to the PHPP 'Additional Vent' worksheet."""
+        columns_rooms = self.worksheet_shape.ADDNL_VENT.columns.rooms.dict()
+        columns_units = self.worksheet_shape.ADDNL_VENT.columns.units.dict()
+
+        phpp_vent_rooms: List[vent_space.VentSpaceRow] = []
+        for phx_variant in phx_project.variants:
+            for zone in phx_variant.building.zones:
+                for room in zone.wufi_rooms:
+                    phx_mech_vent_system = phx_variant.mech_systems.get_mech_subsystem_by_id(
+                        room.vent_unit_id_num
+                    )
+                    phpp_id_ventilator = self.components.ventilators.get_ventilator_phpp_id_by_name(
+                        phx_mech_vent_system.device.display_name
+                    )
+                    phpp_row_ventilator = self.addnl_vent.vent_units.get_vent_unit_num_by_phpp_id(
+                        phpp_id_ventilator, columns_units['unit_selected']
+                    )
+
+                    phpp_rm = vent_space.VentSpaceRow(
+                        columns=columns_rooms,
+                        phx_room_vent=room,
+                        phpp_row_ventilator=phpp_row_ventilator
+                    )
+                    phpp_vent_rooms.append(phpp_rm)
+
+        self.addnl_vent.write_spaces(phpp_vent_rooms)

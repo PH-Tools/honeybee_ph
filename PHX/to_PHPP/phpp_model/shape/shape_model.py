@@ -123,9 +123,26 @@ class ColComponentsFrames(BaseModel):
     psi_i_top: str
 
 
+class ColComponentsVentilators(BaseModel):
+    display_name: str
+    sensible_heat_recovery: str
+    latent_heat_recovery: str
+    electric_efficiency: str
+    min_m3h: str
+    max_m3h: str
+    pa_per_section: str
+    pa_per_fittings: str
+    frost_protection_reqd: str
+    noise_35DBA: str
+    noise_supply_air: str
+    noise_extract_air: str
+    additional_info: str
+
+
 class ColComponents(BaseModel):
     glazings: ColComponentsGlazings
     frames: ColComponentsFrames
+    ventilators: ColComponentsVentilators
 
 
 class Components(BaseModel):
@@ -172,8 +189,60 @@ class Ventilation(BaseModel):
     columns: ColVentilation
 
 
+class ColAddnlVentRooms(BaseModel):
+    quantity: str
+    display_name: str
+    vent_unit_assigned: str
+    weighted_floor_area: str
+    clear_height: str
+    V_sup: str
+    V_eta: str
+    V_trans: str
+    util_hrs_day: str
+    util_days_wk: str
+    holiday_duration: str
+
+
+class ColAddnlVentUnits(BaseModel):
+    quantity: str
+    display_name: str
+    unit_selected: str
+    oda_sup_pa: str
+    eta_eha_pa: str
+    addnl_pa: str
+    ext_location: str
+    subsoil_hr: str
+    frost_protection_type: str
+    temperature_below_defrost_used: str
+
+
+class ColAddnlVentDucts(BaseModel):
+    quantity: str
+    diameter: str
+    width: str
+    height: str
+    insul_thickness: str
+    insul_conductivity: str
+    insul_reflective: str
+    sup_air_duct_len: str
+    oda_air_duct_len: str
+    exh_air_duct_len: str
+    duct_assign_1: str
+    duct_assign_2: str
+    duct_assign_3: str
+    duct_assign_4: str
+    duct_assign_5: str
+    duct_assign_6: str
+    duct_assign_7: str
+    duct_assign_8: str
+    duct_assign_9: str
+    duct_assign_10: str
+
+
 class ColAddnlVent(BaseModel):
-    ...
+    rooms: ColAddnlVentRooms
+    units: ColAddnlVentUnits
+    ducts: ColAddnlVentDucts
 
 
 class AddnlVent(BaseModel):

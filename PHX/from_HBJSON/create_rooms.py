@@ -49,7 +49,7 @@ def create_room_from_space(_space: space.Space) -> ventilation.PhxRoomVentilatio
     """
     new_room = ventilation.PhxRoomVentilation()
 
-    new_room.name = _space.full_name
+    new_room.display_name = _space.full_name
     new_room.wufi_type = _space.wufi_type
     new_room.quantity = _space.quantity
     new_room.floor_area = _space.floor_area

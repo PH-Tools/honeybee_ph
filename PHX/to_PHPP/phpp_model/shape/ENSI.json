@@ -97,6 +97,21 @@
                 "psi_i_right": "IZ",
                 "psi_i_bottom": "JA",
                 "psi_i_top": "JB"
+            },
+            "ventilators": {
+                "display_name": "JH",
+                "sensible_heat_recovery": "JI",
+                "latent_heat_recovery": "JJ",
+                "electric_efficiency": "JK",
+                "min_m3h": "JL",
+                "max_m3h": "JM",
+                "pa_per_section": "JN",
+                "pa_per_fittings": "JO",
+                "frost_protection_reqd": "JP",
+                "noise_35DBA": "JQ",
+                "noise_supply_air": "JR",
+                "noise_extract_air": "JS",
+                "additional_info": "JT"
             }
         }
     },
@@ -128,7 +143,55 @@
     },
     "ADDNL_VENT": {
         "name": "Additional Vent",
-        "columns": {}
+        "columns": {
+            "rooms": {
+                "quantity": "D",
+                "display_name": "E",
+                "vent_unit_assigned": "F",
+                "weighted_floor_area": "G",
+                "clear_height": "H",
+                "V_sup": "J",
+                "V_eta": "K",
+                "V_trans": "L",
+                "util_hrs_day": "N",
+                "util_days_wk": "O",
+                "holiday_duration": "P"
+            },
+            "units": {
+                "quantity": "D",
+                "display_name": "E",
+                "unit_selected": "F",
+                "oda_sup_pa": "K",
+                "eta_eha_pa": "L",
+                "addnl_pa": "M",
+                "ext_location": "Q",
+                "subsoil_hr": "V",
+                "frost_protection_type": "X",
+                "temperature_below_defrost_used": "Y"
+            },
+            "ducts": {
+                "quantity": "D",
+                "diameter": "E",
+                "width": "F",
+                "height": "G",
+                "insul_thickness": "H",
+                "insul_conductivity": "I",
+                "insul_reflective": "J",
+                "sup_air_duct_len": "L",
+                "oda_air_duct_len": "M",
+                "exh_air_duct_len": "N",
+                "duct_assign_1": "Q",
+                "duct_assign_2": "R",
+                "duct_assign_3": "S",
+                "duct_assign_4": "T",
+                "duct_assign_5": "U",
+                "duct_assign_6": "V",
+                "duct_assign_7": "W",
+                "duct_assign_8": "X",
+                "duct_assign_9": "Y",
+                "duct_assign_10": "Z"
+            }
+        }
     },
     "SUMM_VENT": {
         "name": "SummVent",

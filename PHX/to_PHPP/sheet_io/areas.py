@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""Controller Class for the PHPP Areas worksheet."""
+"""Controller Class for the PHPP "Areas" worksheet."""
 
 from __future__ import annotations
 from typing import List, Optional

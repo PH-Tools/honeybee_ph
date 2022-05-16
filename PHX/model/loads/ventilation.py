@@ -19,7 +19,7 @@ class PhxVentilationFlowrates:
 class PhxRoomVentilation:
     _count: ClassVar[int] = 0
     id_num: int = field(init=False, default=0)
-    name: str = 'Unnamed_Space'
+    display_name: str = 'Unnamed_Space'
     wufi_type: int = 99  # User Determined
     quantity: int = 1
     floor_area: float = 0.0

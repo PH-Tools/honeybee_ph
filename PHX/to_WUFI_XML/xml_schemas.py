@@ -507,7 +507,7 @@ def _PhxConstructionWindow(_wt: constructions.PhxConstructionWindow) -> List[xml
 
 def _PhxRoomVentilation(_r: loads.PhxRoomVentilation) -> List[xml_writable]:
     return [
-        XML_Node('Name', _r.name),
+        XML_Node('Name', _r.display_name),
         XML_Node('Type', _r.wufi_type),
         XML_Node('IdentNrUtilizationPatternVent', _r.vent_pattern_id_num),
         XML_Node('IdentNrVentilationUnit', _r.vent_unit_id_num),

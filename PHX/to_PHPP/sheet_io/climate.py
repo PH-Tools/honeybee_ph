@@ -33,6 +33,7 @@ class Climate:
             self.weather_data_start_rows = self.get_start_rows()
 
         # Just use the first one for now....
+        # TODO: Write all variants to different slots
         start_row = self.weather_data_start_rows[0]
 
         for item in _climate_entry.create_xl_items(self.sheet_name, start_row):
