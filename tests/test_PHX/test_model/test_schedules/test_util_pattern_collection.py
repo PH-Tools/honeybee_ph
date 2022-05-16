@@ -2,21 +2,21 @@ from PHX.model import schedules
 
 
 def test_empty_util_collection(reset_class_counters):
-    coll = schedules.UtilPat_Vent_Collection()
+    coll = schedules.UtilizationPatternVentCollection()
 
     assert not coll
     assert not coll.patterns
 
 
 def test_add_no_pattern_to_collection(reset_class_counters):
-    coll = schedules.UtilPat_Vent_Collection()
+    coll = schedules.UtilizationPatternVentCollection()
     coll.add_new_util_pattern(None)
     assert not coll
     assert not coll.patterns
 
 
 def test_add_single_pattern_in_collection(reset_class_counters):
-    coll = schedules.UtilPat_Vent_Collection()
+    coll = schedules.UtilizationPatternVentCollection()
     pat_1 = schedules.UtilizationPatternVent(
         operating_periods=schedules.Vent_UtilPeriods(
             high=schedules.Vent_OperatingPeriod(24, 0.0),
@@ -36,7 +36,7 @@ def test_add_single_pattern_in_collection(reset_class_counters):
 
 
 def test_add_multiple_pattern_in_collection(reset_class_counters):
-    coll = schedules.UtilPat_Vent_Collection()
+    coll = schedules.UtilizationPatternVentCollection()
     pat_1 = schedules.UtilizationPatternVent(
         operating_periods=schedules.Vent_UtilPeriods(
             high=schedules.Vent_OperatingPeriod(24, 0.0),

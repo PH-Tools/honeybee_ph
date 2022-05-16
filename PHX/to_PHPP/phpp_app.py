@@ -184,11 +184,15 @@ class PHPPConnection:
                     phpp_row_ventilator = self.addnl_vent.vent_units.get_vent_unit_num_by_phpp_id(
                         phpp_id_ventilator, columns_units['unit_selected']
                     )
+                    phx_vent_pattern = phx_project.utilization_patterns_ventilation.get_pattern_by_id_num(
+                        room.vent_pattern_id_num
+                    )
 
                     phpp_rm = vent_space.VentSpaceRow(
                         columns=columns_rooms,
                         phx_room_vent=room,
-                        phpp_row_ventilator=phpp_row_ventilator
+                        phpp_row_ventilator=phpp_row_ventilator,
+                        phx_vent_pattern=phx_vent_pattern,
                     )
                     phpp_vent_rooms.append(phpp_rm)
 

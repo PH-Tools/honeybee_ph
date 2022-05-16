@@ -198,9 +198,15 @@ class ColAddnlVentRooms(BaseModel):
     V_sup: str
     V_eta: str
     V_trans: str
-    util_hrs_day: str
-    util_days_wk: str
-    holiday_duration: str
+    operating_days: str
+    operating_weeks: str
+    holiday_days: str
+    period_high_speed: str
+    period_high_time: str
+    period_standard_speed: str
+    period_standard_time: str
+    period_minimum_speed: str
+    period_minimum_time: str
 
 
 class ColAddnlVentUnits(BaseModel):

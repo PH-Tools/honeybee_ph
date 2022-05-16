@@ -5,46 +5,10 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import ClassVar, Union
+from typing import ClassVar, Union, Dict
 import uuid
 
 # TODO: Refactor names: these are not only for Vent...
-
-
-@dataclass
-class UtilPat_Vent_Collection:
-    patterns: dict = field(init=False, default_factory=dict)
-
-    def add_new_util_pattern(self, _util_pattern: UtilizationPatternVent | None) -> None:
-        """Add a new Utilization Pattern to the Collection.
-
-        Arguments:
-        ----------
-            * _util_pattern (UtilizationPatternVent): The UtilizationPatternVent pattern to add
-                to the collection.
-
-        Returns:
-        --------
-            * None
-        """
-        if _util_pattern is None:
-            return
-
-        self.patterns[_util_pattern.identifier] = _util_pattern
-
-    def key_is_in_collection(self, _id) -> bool:
-        """Check if the id is in the collection."""
-        return _id in self.patterns.keys()
-
-    def __len__(self):
-        return len(self.patterns.keys())
-
-    def __iter__(self):
-        for v in self.patterns.values():
-            yield v
-
-    def __bool__(self):
-        return bool(self.patterns)
 
 
 @dataclass
@@ -70,6 +34,7 @@ class UtilizationPatternVent:
     operating_days: int = 7
     operating_weeks: int = 52
     operating_periods: Vent_UtilPeriods = field(default_factory=Vent_UtilPeriods)
+    holiday_days: int = 0
 
     def __post_init__(self) -> None:
         self.__class__._count += 1
@@ -89,3 +54,47 @@ class UtilizationPatternVent:
 
     def __hash__(self):
         return hash(self.identifier)
+
+
+@dataclass
+class UtilizationPatternVentCollection:
+    patterns: Dict[str, UtilizationPatternVent] = field(init=False, default_factory=dict)
+
+    def add_new_util_pattern(self, _util_pattern: UtilizationPatternVent) -> None:
+        """Add a new Utilization Pattern to the Collection.
+
+        Arguments:
+        ----------
+            * _util_pattern (UtilizationPatternVent): The UtilizationPatternVent pattern to add
+                to the collection.
+
+        Returns:
+        --------
+            * None
+        """
+        if _util_pattern is None:
+            return
+
+        self.patterns[str(_util_pattern.identifier)] = _util_pattern
+
+    def key_is_in_collection(self, _id) -> bool:
+        """Check if the id is in the collection."""
+        return _id in self.patterns.keys()
+
+    def get_pattern_by_id_num(self, _id_num: int) -> UtilizationPatternVent:
+        """Return a UtilizationPattern from the collection with an id-num matching the target."""
+        for pattern in self.patterns.values():
+            if pattern.id_num == _id_num:
+                return pattern
+        msg = f"Error: Cannot locate the UtilizationPattern with id-number: {_id_num}"
+        raise Exception(msg)
+
+    def __len__(self):
+        return len(self.patterns.keys())
+
+    def __iter__(self):
+        for v in self.patterns.values():
+            yield v
+
+    def __bool__(self):
+        return bool(self.patterns)

@@ -72,8 +72,8 @@ class PhxProject:
         default_factory=dict)
     window_types: Dict[str, constructions.PhxConstructionWindow] = field(
         default_factory=dict)
-    utilization_patterns_ventilation: schedules.UtilPat_Vent_Collection = field(
-        default_factory=schedules.UtilPat_Vent_Collection)
+    utilization_patterns_ventilation: schedules.UtilizationPatternVentCollection = field(
+        default_factory=schedules.UtilizationPatternVentCollection)
     utilization_patterns_ph: List = field(default_factory=list)
     variants: List[PhxVariant] = field(default_factory=list)
 

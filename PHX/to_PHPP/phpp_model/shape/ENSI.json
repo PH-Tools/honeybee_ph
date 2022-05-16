@@ -153,9 +153,15 @@
                 "V_sup": "J",
                 "V_eta": "K",
                 "V_trans": "L",
-                "util_hrs_day": "N",
-                "util_days_wk": "O",
-                "holiday_duration": "P"
+                "operating_days": "N",
+                "operating_weeks": "O",
+                "holiday_days": "P",
+                "period_high_speed": "Q",
+                "period_high_time": "R",
+                "period_standard_speed": "S",
+                "period_standard_time": "T",
+                "period_minimum_speed": "U",
+                "period_minimum_time": "V"
             },
             "units": {
                 "quantity": "D",
