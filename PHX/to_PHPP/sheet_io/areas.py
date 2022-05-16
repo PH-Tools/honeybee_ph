@@ -6,9 +6,9 @@
 from __future__ import annotations
 from typing import List, Optional
 
-from PHX.to_PHPP.phpp import xl_app
-from PHX.to_PHPP.phpp.xl_data import col_offset
-from PHX.to_PHPP.phpp.model import areas_surface
+from PHX.to_PHPP import xl_app
+from PHX.to_PHPP.xl_data import col_offset
+from PHX.to_PHPP.phpp_model import areas_surface
 
 
 class AreasHeaderRowError(Exception):

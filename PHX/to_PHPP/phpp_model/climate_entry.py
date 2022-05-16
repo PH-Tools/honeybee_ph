@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union, ClassVar
 from functools import partial
 
-from PHX.to_PHPP.phpp import xl_data
+from PHX.to_PHPP import xl_data
 from PHX.model import climate
 
 

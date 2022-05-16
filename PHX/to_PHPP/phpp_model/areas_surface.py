@@ -10,7 +10,7 @@ from functools import partial
 from PHX.model import components, geometry
 from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType
 
-from PHX.to_PHPP.phpp import xl_data
+from PHX.to_PHPP import xl_data
 
 
 @dataclass

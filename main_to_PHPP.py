@@ -7,8 +7,8 @@ from rich import print
 import pathlib
 
 from PHX.from_HBJSON import read_HBJSON_file, create_project
-from PHX.to_PHPP.phpp import phpp_app
-from PHX.to_PHPP.phpp.model.locations.shape_model import PhppShape
+from PHX.to_PHPP import phpp_app
+from PHX.to_PHPP.phpp_model.shape.shape_model import PhppShape
 
 if __name__ == '__main__':
     # --- Input file Path
@@ -32,9 +32,8 @@ if __name__ == '__main__':
     # --- Connect to open instance of XL
     # -------------------------------------------------------------------------
     phpp_shape_file = pathlib.Path(
-        "PHX", "to_PHPP", "phpp", "model", "locations", "ENSI.json")
+        "PHX", "to_PHPP", "phpp_model", "shape", "ENSI.json")
     phpp_shape = PhppShape.parse_file(phpp_shape_file)
-
     phpp_conn = phpp_app.PHPPConnection(phpp_shape)
 
     if phpp_conn.xl.connection_is_open():

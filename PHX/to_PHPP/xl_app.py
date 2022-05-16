@@ -9,7 +9,7 @@ from contextlib import contextmanager
 import xlwings as xw
 from rich import print
 
-from PHX.to_PHPP.phpp import xl_data
+from PHX.to_PHPP import xl_data
 
 
 # -----------------------------------------------------------------------------

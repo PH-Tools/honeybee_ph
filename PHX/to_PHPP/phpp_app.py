@@ -6,10 +6,11 @@
 from typing import List
 
 from PHX.model import project
+from PHX.to_PHPP import xl_app
 
-from PHX.to_PHPP.phpp import xl_app, io
-from PHX.to_PHPP.phpp.model.locations.shape_model import PhppShape
-from PHX.to_PHPP.phpp.model import (areas_surface, climate_entry, uvalues_constructor, component_glazing,
+from PHX.to_PHPP import sheet_io
+from PHX.to_PHPP.phpp_model.shape.shape_model import PhppShape
+from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor, component_glazing,
                                     component_frame, windows_rows)
 
 
@@ -22,11 +23,12 @@ class PHPPConnection:
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
-        self.climate = io.Climate(self.xl, self.worksheet_shape.CLIMATE.name)
-        self.u_values = io.UValues(self.xl, self.worksheet_shape.UVALUES.name)
-        self.components = io.Components(self.xl, self.worksheet_shape.COMPONENTS.name)
-        self.areas = io.Areas(self.xl, self.worksheet_shape.AREAS.name)
-        self.windows = io.Windows(self.xl, self.worksheet_shape.WINDOWS.name)
+        self.climate = sheet_io.Climate(self.xl, self.worksheet_shape.CLIMATE.name)
+        self.u_values = sheet_io.UValues(self.xl, self.worksheet_shape.UVALUES.name)
+        self.components = sheet_io.Components(
+            self.xl, self.worksheet_shape.COMPONENTS.name)
+        self.areas = sheet_io.Areas(self.xl, self.worksheet_shape.AREAS.name)
+        self.windows = sheet_io.Windows(self.xl, self.worksheet_shape.WINDOWS.name)
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
         """Write the varaint's weather-station data to the PHPP 'Climate' worksheet."""

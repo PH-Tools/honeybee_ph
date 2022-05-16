@@ -1,24 +1,29 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""Model class for a PHPP Components/Window-Frame row."""
+"""Model class for a PHPP Windows/Window-Entry row"""
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple, Optional
 from functools import partial
 
-from PHX.model import constructions
+from PHX.model import constructions, geometry
 
-from PHX.to_PHPP.phpp import xl_data
+from PHX.to_PHPP import xl_data
 
 
 @dataclass
-class FrameRow:
-    """A single Areas/Surface entry row."""
+class WindowRow:
+    """A single Window entry row."""
 
-    __slots__ = ('columns', 'phx_construction',)
+    __slots__ = ('columns', 'phx_polygon', 'phx_construction', 'phpp_host_surface_id_name',
+                 'phpp_id_frame', 'phpp_id_glazing')
     columns: Dict[str, str]
+    phx_polygon: geometry.PhxPolygonRectangular
     phx_construction: constructions.PhxConstructionWindow
+    phpp_host_surface_id_name: Optional[str]
+    phpp_id_frame: Optional[str]
+    phpp_id_glazing: Optional[str]
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
@@ -37,22 +42,17 @@ class FrameRow:
         """
         create_range = partial(self._create_range, _row_num=_row_num)
         items: List[Tuple[str, xl_data.xl_writable]] = [
-            (create_range('description'), self.phx_construction.display_name),
-            (create_range('u_value_left'), self.phx_construction.frame_left.u_value),
-            (create_range('u_value_right'), self.phx_construction.frame_right.u_value),
-            (create_range('u_value_bottom'), self.phx_construction.frame_bottom.u_value),
-            (create_range('u_value_top'), self.phx_construction.frame_top.u_value),
+            (create_range('quantity'), 1),
+            (create_range('description'), self.phx_polygon.display_name),
+            (create_range('host'), self.phpp_host_surface_id_name),
+            (create_range('glazing_id'), self.phpp_id_frame),
+            (create_range('frame_id'), self.phpp_id_glazing),
 
-            (create_range('width_left'), self.phx_construction.frame_left.width),
-            (create_range('width_right'), self.phx_construction.frame_right.width),
-            (create_range('width_bottom'), self.phx_construction.frame_bottom.width),
-            (create_range('width_top'), self.phx_construction.frame_top.width),
+            # -- TODO: Make these real values
+            (create_range('width'), self.phx_polygon.width),
+            (create_range('height'), self.phx_polygon.height),
 
-            (create_range('psi_g_left'), self.phx_construction.frame_left.psi_glazing),
-            (create_range('psi_g_right'), self.phx_construction.frame_right.psi_glazing),
-            (create_range('psi_g_bottom'), self.phx_construction.frame_bottom.psi_glazing),
-            (create_range('psi_g_top'), self.phx_construction.frame_top.psi_glazing),
-
+            # -- TODO: Install condition, not Psi-Install
             (create_range('psi_i_left'), self.phx_construction.frame_left.psi_install),
             (create_range('psi_i_right'), self.phx_construction.frame_right.psi_install),
             (create_range('psi_i_bottom'), self.phx_construction.frame_bottom.psi_install),

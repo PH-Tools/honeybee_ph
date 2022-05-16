@@ -6,8 +6,8 @@
 from __future__ import annotations
 from typing import List, Optional
 
-from PHX.to_PHPP.phpp import xl_app
-from PHX.to_PHPP.phpp.model import windows_rows
+from PHX.to_PHPP import xl_app
+from PHX.to_PHPP.phpp_model import windows_rows
 
 
 class Windows:

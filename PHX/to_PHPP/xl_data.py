@@ -1,7 +1,10 @@
-from typing import Union, Optional
-import string
+# -*- coding: utf-8 -*-
+# -*- Python Version: 3.7 -*-
 
 """Basic datatypes / structures relevant for Excel"""
+
+from typing import Union, Optional
+import string
 
 xl_writable = Optional[Union[str, float, int, list, tuple]]
 xl_range_value = Optional[Union[str, float, int]]
