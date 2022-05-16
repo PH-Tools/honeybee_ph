@@ -1,27 +1,27 @@
 {
     "VERIFICATION": {
-        "NAME": "Verification",
-        "COLUMNS": {}
+        "name": "Verification",
+        "columns": {}
     },
     "CLIMATE": {
-        "NAME": "Climate",
-        "COLUMNS": {
+        "name": "Climate",
+        "columns": {
             "country": "D",
             "region": "D",
             "dataset": "D",
             "elevation_override": "D",
-            "1": "E",
-            "2": "F",
-            "3": "G",
-            "4": "H",
-            "5": "I",
-            "6": "J",
-            "7": "K",
-            "8": "L",
-            "9": "M",
-            "10": "N",
-            "11": "O",
-            "12": "P",
+            "jan": "E",
+            "feb": "F",
+            "mar": "G",
+            "apr": "H",
+            "may": "I",
+            "jun": "J",
+            "jul": "K",
+            "aug": "L",
+            "sep": "M",
+            "oct": "N",
+            "nov": "O",
+            "dec": "P",
             "peak_heating_1": "Q",
             "peak_heating_2": "R",
             "peak_cooling_1": "S",
@@ -36,8 +36,8 @@
         }
     },
     "UVALUES": {
-        "NAME": "U-Values",
-        "COLUMNS": {
+        "name": "U-Values",
+        "columns": {
             "display_name": "M",
             "r_si": "M",
             "r_se": "M",
@@ -53,8 +53,8 @@
         }
     },
     "AREAS": {
-        "NAME": "Areas",
-        "COLUMNS": {
+        "name": "Areas",
+        "columns": {
             "description": "L",
             "group_number": "M",
             "quantity": "P",
@@ -68,18 +68,18 @@
         }
     },
     "GROUND": {
-        "NAME": "Ground",
-        "COLUMNS": {}
+        "name": "Ground",
+        "columns": {}
     },
     "COMPONENTS": {
-        "NAME": "Components",
-        "COLUMNS": {
-            "GLAZINGS": {
+        "name": "Components",
+        "columns": {
+            "glazings": {
                 "description": "IE",
                 "g_value": "IF",
                 "u_value": "IG"
             },
-            "FRAMES": {
+            "frames": {
                 "description": "IL",
                 "u_value_left": "IM",
                 "u_value_right": "IN",
@@ -101,8 +101,8 @@
         }
     },
     "WINDOWS": {
-        "NAME": "Windows",
-        "COLUMNS": {
+        "name": "Windows",
+        "columns": {
             "quantity": "L",
             "description": "M",
             "width": "Q",
@@ -119,67 +119,67 @@
         }
     },
     "SHADING": {
-        "NAME": "Shading",
-        "COLUMNS": {}
+        "name": "Shading",
+        "columns": {}
     },
     "VENTILATION": {
-        "NAME": "Ventilation",
-        "COLUMNS": {}
+        "name": "Ventilation",
+        "columns": {}
     },
     "ADDNL_VENT": {
-        "NAME": "Additional Vent",
-        "COLUMNS": {}
+        "name": "Additional Vent",
+        "columns": {}
     },
     "SUMM_VENT": {
-        "NAME": "SummVent",
-        "COLUMNS": {}
+        "name": "SummVent",
+        "columns": {}
     },
     "COOLING_UNITS": {
-        "NAME": "Cooling units",
-        "COLUMNS": {}
+        "name": "Cooling units",
+        "columns": {}
     },
     "DHW": {
-        "NAME": "DHW+Distribution",
-        "COLUMNS": {}
+        "name": "DHW+Distribution",
+        "columns": {}
     },
     "SOLAR_DHW": {
-        "NAME": "SolarDHW",
-        "COLUMNS": {}
+        "name": "SolarDHW",
+        "columns": {}
     },
     "PV": {
-        "NAME": "PV",
-        "COLUMNS": {}
+        "name": "PV",
+        "columns": {}
     },
     "ELECTRICITY": {
-        "NAME": "Electricity",
-        "COLUMNS": {}
+        "name": "Electricity",
+        "columns": {}
     },
     "USE_NON_RES": {
-        "NAME": "Use non-res",
-        "COLUMNS": {}
+        "name": "Use non-res",
+        "columns": {}
     },
     "ELEC_NON_RES": {
-        "NAME": "Electricity non-res",
-        "COLUMNS": {}
+        "name": "Electricity non-res",
+        "columns": {}
     },
     "AUX_ELEC": {
-        "NAME": "Aux Electricity",
-        "COLUMNS": {}
+        "name": "Aux Electricity",
+        "columns": {}
     },
     "IHG_NON_RES": {
-        "NAME": "IHG non-res",
-        "COLUMNS": {}
+        "name": "IHG non-res",
+        "columns": {}
     },
     "PER": {
-        "NAME": "PER",
-        "COLUMNS": {}
+        "name": "PER",
+        "columns": {}
     },
     "HP": {
-        "NAME": "HP",
-        "COLUMNS": {}
+        "name": "HP",
+        "columns": {}
     },
     "BOILER": {
-        "NAME": "Boiler",
-        "COLUMNS": {}
+        "name": "Boiler",
+        "columns": {}
     }
 }

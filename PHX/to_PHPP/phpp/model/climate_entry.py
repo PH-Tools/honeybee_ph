@@ -4,7 +4,7 @@
 """Data-entry constructor for the Climate Worksheet."""
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Union, ClassVar
 from functools import partial
 
 from PHX.to_PHPP.phpp import xl_data
@@ -44,6 +44,9 @@ class ClimateDataBlock:
     __slots__ = ("columns", "phx_location")
     columns: Dict[str, Union[str, Dict]]
     phx_location: climate.PhxLocation
+    month_order: ClassVar[List[str]] = ['jan', 'feb', 'mar', 'apr',
+                                        'may', 'jun', 'jul', 'aug',
+                                        'sep', 'oct', 'nov', 'dec']
 
     def _create_range(self, _field_name: str, _row_offset: int, _start_row: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
@@ -66,16 +69,16 @@ class ClimateDataBlock:
         ]
 
         # -- Add in the monthly data
-        for i in range(1, 13):
+        for i, month in enumerate(self.month_order, start=0):
             layer_items: List[Tuple[str, xl_data.xl_writable]] = [
-                (create_range(str(i), 1), phx_climate.monthly_temperature_air[i-1]),
-                (create_range(str(i), 2), phx_climate.monthly_radiation_north[i-1]),
-                (create_range(str(i), 3), phx_climate.monthly_radiation_east[i-1]),
-                (create_range(str(i), 4), phx_climate.monthly_radiation_south[i-1]),
-                (create_range(str(i), 5), phx_climate.monthly_radiation_west[i-1]),
-                (create_range(str(i), 6), phx_climate.monthly_radiation_global[i-1]),
-                (create_range(str(i), 7), phx_climate.monthly_temperature_dewpoint[i-1]),
-                (create_range(str(i), 8), phx_climate.monthly_temperature_sky[i-1]),
+                (create_range(month, 1), phx_climate.monthly_temperature_air[i]),
+                (create_range(month, 2), phx_climate.monthly_radiation_north[i]),
+                (create_range(month, 3), phx_climate.monthly_radiation_east[i]),
+                (create_range(month, 4), phx_climate.monthly_radiation_south[i]),
+                (create_range(month, 5), phx_climate.monthly_radiation_west[i]),
+                (create_range(month, 6), phx_climate.monthly_radiation_global[i]),
+                (create_range(month, 7), phx_climate.monthly_temperature_dewpoint[i]),
+                (create_range(month, 8), phx_climate.monthly_temperature_sky[i]),
             ]
             items.extend(layer_items)
 

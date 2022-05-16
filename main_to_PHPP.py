@@ -5,11 +5,10 @@
 
 from rich import print
 import pathlib
-import json
-from typing import Dict
 
 from PHX.from_HBJSON import read_HBJSON_file, create_project
 from PHX.to_PHPP.phpp import phpp_app
+from PHX.to_PHPP.phpp.model.locations.shape_model import PhppShape
 
 if __name__ == '__main__':
     # --- Input file Path
@@ -33,11 +32,10 @@ if __name__ == '__main__':
     # --- Connect to open instance of XL
     # -------------------------------------------------------------------------
     phpp_shape_file = pathlib.Path(
-        "PHX", "to_PHPP", "phpp", "model", "shapes", "ENSI.json")
-    with open(phpp_shape_file) as f:
-        phpp_constants: Dict[str, Dict] = json.load(f)
+        "PHX", "to_PHPP", "phpp", "model", "locations", "ENSI.json")
+    phpp_shape = PhppShape.parse_file(phpp_shape_file)
 
-    phpp_conn = phpp_app.PHPPConnection(phpp_constants)
+    phpp_conn = phpp_app.PHPPConnection(phpp_shape)
 
     if phpp_conn.xl.connection_is_open():
         file = phpp_conn.xl.wb.name

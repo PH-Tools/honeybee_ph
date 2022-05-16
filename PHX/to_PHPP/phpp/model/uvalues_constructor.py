@@ -45,6 +45,7 @@ class ConstructorBlock:
 
         return [xl_data.XlItem(_sheet_name, *item) for item in items]
 
+    # YAGNI
     # def clear_constructor(self, _sheet_name: str, _start_row: int) -> List[xl_data.XlItem]:
     #     create_range = partial(self._create_range, _start_row=_start_row)
 
