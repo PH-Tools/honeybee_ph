@@ -58,7 +58,8 @@ class UtilizationPatternVent:
 
 @dataclass
 class UtilizationPatternVentCollection:
-    patterns: Dict[str, UtilizationPatternVent] = field(init=False, default_factory=dict)
+    patterns: Dict[Union[str, uuid.UUID], UtilizationPatternVent] = field(
+        init=False, default_factory=dict)
 
     def add_new_util_pattern(self, _util_pattern: UtilizationPatternVent) -> None:
         """Add a new Utilization Pattern to the Collection.
@@ -75,7 +76,7 @@ class UtilizationPatternVentCollection:
         if _util_pattern is None:
             return
 
-        self.patterns[str(_util_pattern.identifier)] = _util_pattern
+        self.patterns[_util_pattern.identifier] = _util_pattern
 
     def key_is_in_collection(self, _id) -> bool:
         """Check if the id is in the collection."""
