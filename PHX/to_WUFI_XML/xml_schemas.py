@@ -170,7 +170,7 @@ def _PhxComponentAperture(_c: building.PhxComponentAperture) -> List[xml_writabl
 # -- CERTIFICATION ------------------------------------------------------------
 
 
-def _PhxPHBuilding(_ph_bldg: certification.PhxPHBuilding) -> List[xml_writable]:
+def _PhxPhBuildingData(_ph_bldg: certification.PhxPhBuildingData) -> List[xml_writable]:
     return [
         XML_Node("IdentNr", _ph_bldg._count),
         XML_Node("BuildingCategory", _ph_bldg.building_category),
@@ -187,6 +187,9 @@ def _PhxPHBuilding(_ph_bldg: certification.PhxPHBuilding) -> List[xml_writable]:
 
 
 def _PhxPHCertification(_ph_data: certification.PhxPHCertification) -> List[xml_writable]:
+    # No idea why this is a list in Wufi? When would there ever be more than 1? whatever...
+    ph_building_data_as_list = [
+        _ph_data.ph_building_data] if _ph_data.ph_building_data else []
     return [
         XML_Node("PH_CertificateCriteria",
                  _ph_data.certification_criteria.ph_certificate_criteria),
@@ -201,7 +204,7 @@ def _PhxPHCertification(_ph_data: certification.PhxPHCertification) -> List[xml_
         XML_Node("PeakCoolingLoad",
                  _ph_data.certification_criteria.peak_cooling_load),
         XML_List("PH_Buildings", [XML_Object("PH_Building", obj, "index", i)
-                 for i, obj in enumerate(_ph_data.building_data)]),
+                 for i, obj in enumerate(ph_building_data_as_list)]),
     ]
 
 

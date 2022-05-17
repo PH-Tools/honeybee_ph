@@ -139,7 +139,14 @@
     },
     "VENTILATION": {
         "name": "Ventilation",
-        "columns": {}
+        "columns": {
+            "vent_type": "L",
+            "wind_coeff_e": "N",
+            "wind_coeff_f": "N",
+            "airtightness_n50": "N",
+            "airtightness_q50": "P",
+            "multi_unit_on": "H"
+        }
     },
     "ADDNL_VENT": {
         "name": "Additional Vent",

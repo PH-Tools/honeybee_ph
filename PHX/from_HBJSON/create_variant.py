@@ -80,23 +80,22 @@ def add_PH_Building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Ro
     --------
         * None
     """
-    ph_building = certification.PhxPHBuilding()
+    ph_bldg_data = certification.PhxPhBuildingData()
 
-    ph_building.building_category = _hb_room.properties.ph.ph_bldg_segment.usage_type.number
-    ph_building.occupancy_type = _hb_room.properties.ph.ph_bldg_segment.occupancy_type.number
-    ph_building.building_status = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_status.number
-    ph_building.building_type = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_type.number
-    ph_building.num_of_units = _hb_room.properties.ph.ph_bldg_segment.num_dwelling_units
-    ph_building.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
+    ph_bldg_data.building_category = _hb_room.properties.ph.ph_bldg_segment.usage_type.number
+    ph_bldg_data.occupancy_type = _hb_room.properties.ph.ph_bldg_segment.occupancy_type.number
+    ph_bldg_data.building_status = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_status.number
+    ph_bldg_data.building_type = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_type.number
+    ph_bldg_data.num_of_units = _hb_room.properties.ph.ph_bldg_segment.num_dwelling_units
+    ph_bldg_data.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
 
     # TODO: Foundations. For now: set to None
-    ph_building.add_foundation(ground.PhxFoundation())
+    ph_bldg_data.add_foundation(ground.PhxFoundation())
 
     # Set the airtightness for Building
-    ph_building.airtightness_q50 = _hb_room.properties.energy.infiltration.flow_per_exterior_area * 3600
+    ph_bldg_data.airtightness_q50 = _hb_room.properties.energy.infiltration.flow_per_exterior_area * 3600
 
-    # Not clear why this is a list in the WUFI file? When would there be more than one?
-    _variant.ph_certification.add_ph_building(ph_building)
+    _variant.ph_certification.ph_building_data = ph_bldg_data
 
     return None
 

@@ -181,7 +181,12 @@ class Shading(BaseModel):
 
 
 class ColVentilation(BaseModel):
-    ...
+    vent_type: str
+    wind_coeff_e: str
+    wind_coeff_f: str
+    airtightness_n50: str
+    airtightness_q50: str
+    multi_unit_on: str
 
 
 class Ventilation(BaseModel):

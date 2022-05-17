@@ -2,9 +2,9 @@ from PHX.model import certification, ground
 
 
 def test_default_PH_Building(reset_class_counters):
-    obj_1 = certification.PhxPHBuilding()
+    obj_1 = certification.PhxPhBuildingData()
     assert obj_1.id_num == 1
-    obj_2 = certification.PhxPHBuilding()
+    obj_2 = certification.PhxPhBuildingData()
     assert obj_2.id_num == 2
 
     assert obj_1 != obj_2
@@ -13,7 +13,7 @@ def test_default_PH_Building(reset_class_counters):
 
 
 def test_add_single_foundation(reset_class_counters):
-    obj_1 = certification.PhxPHBuilding()
+    obj_1 = certification.PhxPhBuildingData()
     f_1 = ground.PhxFoundation()
     obj_1.add_foundation(f_1)
 

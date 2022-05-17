@@ -12,7 +12,8 @@ from PHX.to_PHPP import sheet_io
 from PHX.to_PHPP.phpp_model.shape.shape_model import PhppShape
 from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor,
                                     component_glazing, component_frame, component_vent,
-                                    windows_rows, vent_space, vent_units, vent_ducts)
+                                    windows_rows, vent_space, vent_units, vent_ducts,
+                                    ventilation_inputs)
 
 
 class PHPPConnection:
@@ -33,6 +34,8 @@ class PHPPConnection:
         self.windows = sheet_io.Windows(self.xl, self.worksheet_shape.WINDOWS.name)
         self.addnl_vent = sheet_io.AddnlVent(
             self.xl, self.worksheet_shape.ADDNL_VENT.name)
+        self.ventilation = sheet_io.Ventilation(
+            self.xl, self.worksheet_shape.VENTILATION.name)
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
         """Write the varaint's weather-station data to the PHPP 'Climate' worksheet."""
@@ -197,3 +200,50 @@ class PHPPConnection:
                     phpp_vent_rooms.append(phpp_rm)
 
         self.addnl_vent.write_spaces(phpp_vent_rooms)
+
+    def write_project_ventilation_type(self, phx_project: project.PhxProject) -> None:
+        """Write the Ventilation-Type to the PHPP 'Ventilation' worksheet."""
+        columns = self.worksheet_shape.VENTILATION.columns.dict()
+        for variant in phx_project.variants:
+            self.ventilation.write_ventilation_type(
+                # TODO: Get the actual type from the model someplace?
+                ventilation_inputs.VentTypeInput(
+                    columns=columns,
+                    vent_type="1-Balanced PH ventilation with HR"
+                )
+            )
+            self.ventilation.write_multi_vent_wrksheet_on(
+                ventilation_inputs.VentMultiUnitOn(
+                    columns=columns,
+                    multi_unit_on='x'
+                )
+            )
+
+    def write_project_airtightness(self, phx_project: project.PhxProject) -> None:
+        """Write the Airtightness data to the PHPP 'Ventilation' worksheet."""
+        columns = self.worksheet_shape.VENTILATION.columns.dict()
+        for variant in phx_project.variants:
+            self.ventilation.write_wind_coeff_e(
+                ventilation_inputs.VentWindCoeffE(
+                    columns,
+                    variant.ph_certification.ph_building_data.wind_coefficient_e
+                )
+            )
+            self.ventilation.write_wind_coeff_f(
+                ventilation_inputs.VentWindCoeffF(
+                    columns,
+                    variant.ph_certification.ph_building_data.wind_coefficient_f
+                )
+            )
+            self.ventilation.write_airtightness_n50(
+                ventilation_inputs.VentAirChangeRateN50(
+                    columns,
+                    variant.ph_certification.ph_building_data.airtightness_n50
+                )
+            )
+            self.ventilation.write_airtightness_q50(
+                ventilation_inputs.VentAirChangeRateQ50(
+                    columns,
+                    variant.ph_certification.ph_building_data.airtightness_q50
+                )
+            )

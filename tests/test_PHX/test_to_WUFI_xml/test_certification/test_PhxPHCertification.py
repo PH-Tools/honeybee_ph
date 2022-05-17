@@ -19,8 +19,8 @@ def test_default_PhxPHCertification(reset_class_counters):
 
 def test_default_PhxPHCertification_with_Building(reset_class_counters):
     c1 = certification.PhxPHCertification()
-    b1 = certification.PhxPHBuilding()
-    c1.add_ph_building(b1)
+    b1 = certification.PhxPhBuildingData()
+    c1.ph_building_data = b1
     result = generate_WUFI_XML_from_object(c1, _header="")
     assert xml_string_to_list(result) == [
         '<PH_CertificateCriteria>3</PH_CertificateCriteria>',
@@ -53,8 +53,8 @@ def test_customized_PhxPHCertification_with_Building(reset_class_counters):
     c1.certification_criteria.peak_heating_load = 345.67
     c1.certification_criteria.peak_cooling_load = 456.78
 
-    b1 = certification.PhxPHBuilding()
-    c1.add_ph_building(b1)
+    b1 = certification.PhxPhBuildingData()
+    c1.ph_building_data = b1
     result = generate_WUFI_XML_from_object(c1, _header="")
     assert xml_string_to_list(result) == [
         '<PH_CertificateCriteria>3</PH_CertificateCriteria>',
