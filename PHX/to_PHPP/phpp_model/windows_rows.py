@@ -4,21 +4,22 @@
 """Model class for a PHPP Windows/Window-Entry row"""
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Optional
+from typing import List, Tuple, Optional
 from functools import partial
 
 from PHX.model import constructions, geometry
 
 from PHX.to_PHPP import xl_data
+from PHX.to_PHPP.phpp_localization import shape_model
 
 
 @dataclass
 class WindowRow:
-    """A single Window entry row."""
+    """Model class for a single Window entry row."""
 
-    __slots__ = ('columns', 'phx_polygon', 'phx_construction', 'phpp_host_surface_id_name',
-                 'phpp_id_frame', 'phpp_id_glazing')
-    columns: Dict[str, str]
+    __slots__ = ('shape', 'phx_polygon', 'phx_construction',
+                 'phpp_host_surface_id_name', 'phpp_id_frame', 'phpp_id_glazing')
+    shape: shape_model.Windows
     phx_polygon: geometry.PhxPolygonRectangular
     phx_construction: constructions.PhxConstructionWindow
     phpp_host_surface_id_name: Optional[str]
@@ -27,7 +28,8 @@ class WindowRow:
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_row_num}'
+        col = getattr(self.shape.window_rows.input_columns, _field_name)
+        return f'{col}{_row_num}'
 
     def create_xl_items(self, _sheet_name: str, _row_num: int) -> List[xl_data.XlItem]:
         """Returns a list of the XL Items to write for this Surface Entry
@@ -47,8 +49,6 @@ class WindowRow:
             (create_range('host'), self.phpp_host_surface_id_name),
             (create_range('glazing_id'), self.phpp_id_frame),
             (create_range('frame_id'), self.phpp_id_glazing),
-
-            # -- TODO: Make these real values
             (create_range('width'), self.phx_polygon.width),
             (create_range('height'), self.phx_polygon.height),
 

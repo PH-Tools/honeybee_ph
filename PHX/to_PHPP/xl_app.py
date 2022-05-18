@@ -180,7 +180,7 @@ class XLConnection:
             * _xl_item: (XLItem) The XLItem with a sheet_name, range and value to write.
          """
         self.get_sheet_by_name(_xl_item.sheet_name).range(
-            _xl_item.range).value = _xl_item.value
+            _xl_item.xl_range).value = _xl_item.write_value
 
     def write_data(self, _sheet_name: str, _range: str, _val: xl_data.xl_writable) -> None:
         """Writes a value to a specific cell range in the excel sheet 

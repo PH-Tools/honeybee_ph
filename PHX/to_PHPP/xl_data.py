@@ -11,18 +11,18 @@ xl_range_value = Optional[Union[str, float, int]]
 
 
 class XlItem:
-    __slots__ = ('sheet_name', 'range', 'value')
+    __slots__ = ('sheet_name', 'xl_range', 'write_value')
 
-    def __init__(self, sheet_name: str, range: str, value: xl_writable):
+    def __init__(self, sheet_name: str, xl_range: str, write_value: xl_writable):
         self.sheet_name = sheet_name
-        self.range = range
-        self.value = value
+        self.xl_range = xl_range
+        self.write_value = write_value
 
     def __str__(self):
-        return f'{self.__class__.__name__}({self.sheet_name}, {self.range}, {self.value})'
+        return f'{self.__class__.__name__}({self.sheet_name}, {self.xl_range}, {self.write_value})'
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(sheet_name={self.sheet_name}, range={self.range}, value={self.value})'
+        return f'{self.__class__.__name__}(sheet_name={self.sheet_name}, range={self.xl_range}, value={self.write_value})'
 
 
 def xl_ord(_col: str) -> int:

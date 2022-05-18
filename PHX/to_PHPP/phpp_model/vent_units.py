@@ -4,25 +4,27 @@
 """Model class for a single PHPP Addition Vent / Unit-Entry row."""
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 from functools import partial
 
 from PHX.model import hvac
 from PHX.to_PHPP import xl_data
+from PHX.to_PHPP.phpp_localization import shape_model
 
 
 @dataclass
 class VentUnitRow:
-    """A single Ventilation Unit entry row."""
+    """Model class for a single Ventilation Unit entry row."""
 
-    __slots__ = ('columns', 'phx_vent_sys', 'phpp_id_ventilator')
-    columns: Dict[str, str]
+    __slots__ = ('shape', 'phx_vent_sys', 'phpp_id_ventilator')
+    shape: shape_model.AddnlVent
     phx_vent_sys: hvac.PhxDeviceVentilator
     phpp_id_ventilator: str
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_row_num}'
+        col = getattr(self.shape.input_blocks.units.input_columns, _field_name)
+        return f'{col}{_row_num}'
 
     def create_xl_items(self, _sheet_name: str, _row_num: int) -> List[xl_data.XlItem]:
         """Returns a list of the XL Items to write for this Surface Entry

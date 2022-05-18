@@ -97,13 +97,15 @@ class Ground(BaseModel):
     columns: ColGround
 
 
-class ColComponentsGlazings(BaseModel):
+# -----------------------------------------------------------------------------
+
+class ComponentsGlazingsCol(BaseModel):
     description: str
     g_value: str
     u_value: str
 
 
-class ColComponentsFrames(BaseModel):
+class ComponentsFramesCol(BaseModel):
     description: str
     u_value_left: str
     u_value_right: str
@@ -123,7 +125,7 @@ class ColComponentsFrames(BaseModel):
     psi_i_top: str
 
 
-class ColComponentsVentilators(BaseModel):
+class ComponentsVentilatorsCol(BaseModel):
     display_name: str
     sensible_heat_recovery: str
     latent_heat_recovery: str
@@ -139,18 +141,40 @@ class ColComponentsVentilators(BaseModel):
     additional_info: str
 
 
-class ColComponents(BaseModel):
-    glazings: ColComponentsGlazings
-    frames: ColComponentsFrames
-    ventilators: ColComponentsVentilators
+class ComponentsGlazings(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
+    input_columns: ComponentsGlazingsCol
+
+
+class ComponentsFrames(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
+    input_columns: ComponentsFramesCol
+
+
+class ComponentsVentilators(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
+    input_columns: ComponentsVentilatorsCol
 
 
 class Components(BaseModel):
     name: str
-    columns: ColComponents
+    glazings: ComponentsGlazings
+    frames: ComponentsFrames
+    ventilators: ComponentsVentilators
 
 
-class ColWindows(BaseModel):
+# -----------------------------------------------------------------------------
+
+class WindowWindowRowsColumns(BaseModel):
     quantity: str
     description: str
     width: str
@@ -166,9 +190,20 @@ class ColWindows(BaseModel):
     comfort_temp: str
 
 
+class WindowWindowRows(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
+    input_columns: WindowWindowRowsColumns
+
+
 class Windows(BaseModel):
     name: str
-    columns: ColWindows
+    window_rows: WindowWindowRows
+
+
+# -----------------------------------------------------------------------------
 
 
 class ColShading(BaseModel):
@@ -180,21 +215,33 @@ class Shading(BaseModel):
     columns: ColShading
 
 
-class ColVentilation(BaseModel):
-    vent_type: str
-    wind_coeff_e: str
-    wind_coeff_f: str
-    airtightness_n50: str
-    airtightness_q50: str
-    multi_unit_on: str
+# -----------------------------------------------------------------------------
+
+
+class VentilationInputItem(BaseModel):
+    locator_col: str
+    locator_string: str
+    input_column: str
+
+
+class VentilationInputBlocks(BaseModel):
+    vent_type: VentilationInputItem
+    wind_coeff_e: VentilationInputItem
+    wind_coeff_f: VentilationInputItem
+    airtightness_n50: VentilationInputItem
+    airtightness_q50: VentilationInputItem
+    multi_unit_on: VentilationInputItem
 
 
 class Ventilation(BaseModel):
     name: str
-    columns: ColVentilation
+    input_blocks: VentilationInputBlocks
 
 
-class ColAddnlVentRooms(BaseModel):
+# -----------------------------------------------------------------------------
+
+
+class AddnlVentColumnsRooms(BaseModel):
     quantity: str
     display_name: str
     vent_unit_assigned: str
@@ -214,7 +261,7 @@ class ColAddnlVentRooms(BaseModel):
     period_minimum_time: str
 
 
-class ColAddnlVentUnits(BaseModel):
+class AddnlVentColumnsUnits(BaseModel):
     quantity: str
     display_name: str
     unit_selected: str
@@ -227,7 +274,7 @@ class ColAddnlVentUnits(BaseModel):
     temperature_below_defrost_used: str
 
 
-class ColAddnlVentDucts(BaseModel):
+class AddnlVentColumnsDucts(BaseModel):
     quantity: str
     diameter: str
     width: str
@@ -250,15 +297,36 @@ class ColAddnlVentDucts(BaseModel):
     duct_assign_10: str
 
 
-class ColAddnlVent(BaseModel):
-    rooms: ColAddnlVentRooms
-    units: ColAddnlVentUnits
-    ducts: ColAddnlVentDucts
+class AddnlVentRoomsInputBlockRooms(BaseModel):
+    locator_col: str
+    locator_string: str
+    input_columns: AddnlVentColumnsRooms
+
+
+class AddnlVentRoomsInputBlockUnits(BaseModel):
+    locator_col: str
+    locator_string: str
+    input_columns: AddnlVentColumnsUnits
+
+
+class AddnlVentRoomsInputBlockDucts(BaseModel):
+    locator_col: str
+    locator_string: str
+    input_columns: AddnlVentColumnsDucts
+
+
+class AddnlVentInputBlocks(BaseModel):
+    rooms: AddnlVentRoomsInputBlockRooms
+    units: AddnlVentRoomsInputBlockUnits
+    ducts: AddnlVentRoomsInputBlockDucts
 
 
 class AddnlVent(BaseModel):
     name: str
-    columns: ColAddnlVent
+    input_blocks: AddnlVentInputBlocks
+
+
+# -----------------------------------------------------------------------------
 
 
 class ColSummVent(BaseModel):
@@ -288,13 +356,13 @@ class Dhw(BaseModel):
     columns: ColDhw
 
 
-class ColSoalrDhw(BaseModel):
+class ColSolarDhw(BaseModel):
     ...
 
 
-class SoalrDhw(BaseModel):
+class SolarDhw(BaseModel):
     name: str
-    columns: ColSoalrDhw
+    columns: ColSolarDhw
 
 
 class ColPv(BaseModel):
@@ -395,7 +463,7 @@ class PhppShape(BaseModel):
     SUMM_VENT: SummVent
     COOLING_UNITS: CoolingUnits
     DHW: Dhw
-    SOLAR_DHW: SoalrDhw
+    SOLAR_DHW: SolarDhw
     PV: Pv
     ELECTRICITY: Electricity
     USE_NON_RES: UseNonRes

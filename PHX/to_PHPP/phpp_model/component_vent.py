@@ -4,11 +4,12 @@
 """Model class for a PHPP Components/Window-Frame row."""
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 from functools import partial
 
 from PHX.model import hvac
 
+from PHX.to_PHPP.phpp_localization import shape_model
 from PHX.to_PHPP import xl_data
 
 
@@ -16,13 +17,14 @@ from PHX.to_PHPP import xl_data
 class VentilatorRow:
     """A single Ventilator Component entry row."""
 
-    __slots__ = ('columns', 'phx_vent_sys',)
-    columns: Dict[str, str]
+    __slots__ = ('shape', 'phx_vent_sys',)
+    shape: shape_model.Components
     phx_vent_sys: hvac.PhxDeviceVentilator
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_row_num}'
+        col = getattr(self.shape.ventilators.input_columns, _field_name)
+        return f'{col}{_row_num}'
 
     def create_xl_items(self, _sheet_name: str, _row_num: int) -> List[xl_data.XlItem]:
         """Returns a list of the XL Items to write for this Surface Entry
@@ -35,7 +37,7 @@ class VentilatorRow:
         --------
             * (List[XlItem]): The XlItems to write to the sheet.
         """
-        def frost(_reqd: bool) -> str:
+        def _frost(_reqd: bool) -> str:
             if _reqd:
                 return 'yes'
             return 'no'
@@ -47,7 +49,7 @@ class VentilatorRow:
             (create_range('sensible_heat_recovery'), params.sensible_heat_recovery),
             (create_range('latent_heat_recovery'), params.latent_heat_recovery),
             (create_range('electric_efficiency'), params.electric_efficiency),
-            (create_range('frost_protection_reqd'), frost(params.frost_protection_reqd)),
+            (create_range('frost_protection_reqd'), _frost(params.frost_protection_reqd)),
         ]
 
         return [xl_data.XlItem(_sheet_name, *item) for item in items]

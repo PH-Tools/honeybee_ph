@@ -8,40 +8,51 @@ from typing import List, Optional
 
 from PHX.to_PHPP import xl_app
 from PHX.to_PHPP.phpp_model import windows_rows
+from PHX.to_PHPP.phpp_localization import shape_model
 
 
 class Windows:
+    """IO Controller Class for PHPP "Windows" worksheet."""
+
     header_row: Optional[int] = None
     first_entry_row: Optional[int] = None
 
-    def __init__(self, _xl: xl_app.XLConnection, sheet_name: str):
+    def __init__(self, _xl: xl_app.XLConnection, shape: shape_model.Windows):
         self.xl = _xl
-        self.sheet_name = sheet_name
+        self.shape = shape
 
-    def find_header_row(self) -> int:
-        xl_data = self.xl.get_single_column_data(self.sheet_name, 'L', 1, 100,)
+    def find_header_row(self, _row_start: int = 1, _row_end: int = 100) -> int:
+        xl_data = self.xl.get_single_column_data(
+            _sheet_name=self.shape.name,
+            _col=self.shape.window_rows.locator_col_header,
+            _row_start=_row_start,
+            _row_end=_row_end
+        )
 
         for i,  val in enumerate(xl_data):
-            if 'Windows' == val:
+            if self.shape.window_rows.locator_string_header == val:
                 return i
-        else:
-            raise Exception(
-                "Error: Cannot find the 'Windows' header on the 'Windows' sheet, column L?")
+        raise Exception(
+            f"Error: Cannot find the '{self.shape.window_rows.locator_string_header}' "
+            f"header on the '{self.shape.name}' sheet, column {self.shape.window_rows.locator_string_header}?")
 
     def find_first_entry_row(self) -> int:
         if not self.header_row:
             self.header_row = self.find_header_row()
 
         xl_data = self.xl.get_single_column_data(
-            self.sheet_name, 'L', self.header_row, self.header_row+50,
+            _sheet_name=self.shape.name,
+            _col=self.shape.window_rows.locator_col_entry,
+            _row_start=self.header_row,
+            _row_end=self.header_row+50
         )
 
         for i, val in enumerate(xl_data, start=self.header_row):
-            if 'Quan' in str(val):
+            if self.shape.window_rows.locator_string_entry in str(val):
                 return i + 2
-        else:
-            raise Exception(
-                "Error: Cannot find the 'Quantity' marker on the 'Windows' sheet, column L?")
+        raise Exception(
+            f"Error: Cannot find the '{self.shape.window_rows.locator_string_entry}' "
+            f"marker on the '{self.shape.name}' sheet, column {self.shape.window_rows.locator_col_entry}?")
 
     def find_section_shape(self) -> None:
         self.header_row = self.find_header_row()
@@ -52,5 +63,5 @@ class Windows:
             self.first_entry_row = self.find_first_entry_row()
 
         for i, window_row in enumerate(_window_rows, start=self.first_entry_row):
-            for item in window_row.create_xl_items(self.sheet_name, _row_num=i):
+            for item in window_row.create_xl_items(self.shape.name, _row_num=i):
                 self.xl.write_xl_item(item)

@@ -5,41 +5,37 @@
 
 from typing import List
 
-from PHX.model import project
+from PHX.model import project, certification
 
 from PHX.to_PHPP import xl_app
 from PHX.to_PHPP import sheet_io
-from PHX.to_PHPP.phpp_model.shape.shape_model import PhppShape
+from PHX.to_PHPP.phpp_localization import shape_model
 from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor,
-                                    component_glazing, component_frame, component_vent,
-                                    windows_rows, vent_space, vent_units, vent_ducts,
-                                    ventilation_inputs)
+                                    component_glazing, component_frame, component_vent, ventilation_data,
+                                    windows_rows, vent_space, vent_units, vent_ducts)
 
 
 class PHPPConnection:
 
-    def __init__(self, _worksheet_shapes: PhppShape):
+    def __init__(self, _phpp_shape: shape_model.PhppShape):
         # -- Get the localized (units, language) PHPP Shape with worksheet names and column locations
-        self.worksheet_shape = _worksheet_shapes
+        self.shape = _phpp_shape
 
         # -- Setup the Excel connection and facade object.
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
-        self.climate = sheet_io.Climate(self.xl, self.worksheet_shape.CLIMATE.name)
-        self.u_values = sheet_io.UValues(self.xl, self.worksheet_shape.UVALUES.name)
-        self.components = sheet_io.Components(
-            self.xl, self.worksheet_shape.COMPONENTS.name)
-        self.areas = sheet_io.Areas(self.xl, self.worksheet_shape.AREAS.name)
-        self.windows = sheet_io.Windows(self.xl, self.worksheet_shape.WINDOWS.name)
-        self.addnl_vent = sheet_io.AddnlVent(
-            self.xl, self.worksheet_shape.ADDNL_VENT.name)
-        self.ventilation = sheet_io.Ventilation(
-            self.xl, self.worksheet_shape.VENTILATION.name)
+        self.climate = sheet_io.Climate(self.xl, self.shape.CLIMATE.name)
+        self.u_values = sheet_io.UValues(self.xl, self.shape.UVALUES.name)
+        self.components = sheet_io.Components(self.xl, self.shape.COMPONENTS)
+        self.areas = sheet_io.Areas(self.xl, self.shape.AREAS.name)
+        self.windows = sheet_io.Windows(self.xl, self.shape.WINDOWS)
+        self.addnl_vent = sheet_io.AddnlVent(self.xl, self.shape.ADDNL_VENT)
+        self.ventilation = sheet_io.Ventilation(self.xl, self.shape.VENTILATION)
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
-        """Write the varaint's weather-station data to the PHPP 'Climate' worksheet."""
-        columns = self.worksheet_shape.CLIMATE.columns.dict()
+        """Write the variant's weather-station data to the PHPP 'Climate' worksheet."""
+        columns = self.shape.CLIMATE.columns.dict()
         for phx_variant in phx_project.variants:
             # -- Write the actual weather station data
             weather_station_data = climate_entry.ClimateDataBlock(
@@ -57,41 +53,44 @@ class PHPPConnection:
 
     def write_project_constructions(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque constructions to the PHPP 'U-Values' worksheet."""
-        columns = self.worksheet_shape.UVALUES.columns.dict()
+        columns = self.shape.UVALUES.columns.dict()
 
         construction_blocks: List[uvalues_constructor.ConstructorBlock] = []
         for phx_construction in phx_project.assembly_types.values():
             construction_blocks.append(
-                uvalues_constructor.ConstructorBlock(columns, phx_construction)
+                uvalues_constructor.ConstructorBlock(
+                    columns,
+                    phx_construction)
             )
         self.u_values.write_construction_blocks(construction_blocks)
 
     def write_project_window_components(self, phx_project: project.PhxProject) -> None:
         """Write all of the frame and glass constructions from a PhxProject to the PHPP 'Components' worksheet."""
-        columns_glazings = self.worksheet_shape.COMPONENTS.columns.glazings.dict()
-        columns_frames = self.worksheet_shape.COMPONENTS.columns.frames.dict()
 
         glazing_component_rows: List[component_glazing.GlazingRow] = []
         frame_component_rows: List[component_frame.FrameRow] = []
         for phx_construction in phx_project.window_types.values():
             glazing_component_rows.append(
-                component_glazing.GlazingRow(columns_glazings, phx_construction)
+                component_glazing.GlazingRow(
+                    shape=self.shape.COMPONENTS,
+                    phx_construction=phx_construction)
             )
             frame_component_rows.append(
-                component_frame.FrameRow(columns_frames, phx_construction)
+                component_frame.FrameRow(
+                    shape=self.shape.COMPONENTS,
+                    phx_construction=phx_construction)
             )
         self.components.write_glazings(glazing_component_rows)
         self.components.write_frames(frame_component_rows)
 
     def write_project_ventilation_components(self, phx_project: project.PhxProject) -> None:
         """Write all of the ventilators from a PhxProject to the PHPP 'Components' worksheet."""
-        columns = self.worksheet_shape.COMPONENTS.columns.ventilators.dict()
 
         phpp_ventilator_rows: List[component_vent.VentilatorRow] = []
         for phx_variant in phx_project.variants:
             for phx_vent_sys in phx_variant.mech_systems.ventilation_subsystems:
                 new_vent_row = component_vent.VentilatorRow(
-                    columns=columns,
+                    shape=self.shape.COMPONENTS,
                     phx_vent_sys=phx_vent_sys.device,
                 )
                 phpp_ventilator_rows.append(new_vent_row)
@@ -99,7 +98,7 @@ class PHPPConnection:
 
     def write_project_opaque_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque surfaces from a PhxProject to the PHPP 'Areas' worksheet."""
-        columns = self.worksheet_shape.AREAS.columns.dict()
+        columns = self.shape.AREAS.columns.dict()
 
         surfaces: List[areas_surface.SurfaceRow] = []
         for phx_variant in phx_project.variants:
@@ -118,7 +117,6 @@ class PHPPConnection:
 
     def write_project_window_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the window surfaces from a PhxProject to the PHPP 'Windows' worksheet."""
-        columns = self.worksheet_shape.WINDOWS.columns.dict()
 
         phpp_windows: List[windows_rows.WindowRow] = []
         for phx_variant in phx_project.variants:
@@ -140,7 +138,7 @@ class PHPPConnection:
 
                         phpp_windows.append(
                             windows_rows.WindowRow(
-                                columns=columns,
+                                shape=self.shape.WINDOWS,
                                 phx_polygon=ap_polygon,
                                 phx_construction=phx_aperture.window_type,
                                 phpp_host_surface_id_name=phpp_host_surface_id_name,
@@ -152,7 +150,6 @@ class PHPPConnection:
 
     def write_project_ventilators(self, phx_project: project.PhxProject) -> None:
         """Write all of the used Ventilator Units from a PhxProject to the PHPP 'Additional Vent' worksheet."""
-        columns = self.worksheet_shape.ADDNL_VENT.columns.units.dict()
 
         phpp_vent_unit_rows: List[vent_units.VentUnitRow] = []
         for phx_variant in phx_project.variants:
@@ -161,7 +158,7 @@ class PHPPConnection:
                     phx_vent_sys.device.display_name
                 )
                 new_vent_row = vent_units.VentUnitRow(
-                    columns=columns,
+                    shape=self.shape.ADDNL_VENT,
                     phx_vent_sys=phx_vent_sys.device,
                     phpp_id_ventilator=phpp_id_ventilator,
                 )
@@ -171,8 +168,6 @@ class PHPPConnection:
 
     def write_project_spaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the PH-Spaces from a PhxProject to the PHPP 'Additional Vent' worksheet."""
-        columns_rooms = self.worksheet_shape.ADDNL_VENT.columns.rooms.dict()
-        columns_units = self.worksheet_shape.ADDNL_VENT.columns.units.dict()
 
         phpp_vent_rooms: List[vent_space.VentSpaceRow] = []
         for phx_variant in phx_project.variants:
@@ -185,14 +180,14 @@ class PHPPConnection:
                         phx_mech_vent_system.device.display_name
                     )
                     phpp_row_ventilator = self.addnl_vent.vent_units.get_vent_unit_num_by_phpp_id(
-                        phpp_id_ventilator, columns_units['unit_selected']
+                        phpp_id_ventilator
                     )
                     phx_vent_pattern = phx_project.utilization_patterns_ventilation.get_pattern_by_id_num(
                         room.vent_pattern_id_num
                     )
 
                     phpp_rm = vent_space.VentSpaceRow(
-                        columns=columns_rooms,
+                        shape=self.shape.ADDNL_VENT,
                         phx_room_vent=room,
                         phpp_row_ventilator=phpp_row_ventilator,
                         phx_vent_pattern=phx_vent_pattern,
@@ -203,47 +198,51 @@ class PHPPConnection:
 
     def write_project_ventilation_type(self, phx_project: project.PhxProject) -> None:
         """Write the Ventilation-Type to the PHPP 'Ventilation' worksheet."""
-        columns = self.worksheet_shape.VENTILATION.columns.dict()
+
         for variant in phx_project.variants:
             self.ventilation.write_ventilation_type(
                 # TODO: Get the actual type from the model someplace?
-                ventilation_inputs.VentTypeInput(
-                    columns=columns,
-                    vent_type="1-Balanced PH ventilation with HR"
+                ventilation_data.VentilationInputItem.vent_type(
+                    self.shape.VENTILATION,
+                    "1-Balanced PH ventilation with HR"
                 )
             )
-            self.ventilation.write_multi_vent_wrksheet_on(
-                ventilation_inputs.VentMultiUnitOn(
-                    columns=columns,
-                    multi_unit_on='x'
+            self.ventilation.write_multi_vent_worksheet_on(
+                ventilation_data.VentilationInputItem.multi_unit_on(
+                    self.shape.VENTILATION,
+                    "x"
                 )
             )
 
     def write_project_airtightness(self, phx_project: project.PhxProject) -> None:
         """Write the Airtightness data to the PHPP 'Ventilation' worksheet."""
-        columns = self.worksheet_shape.VENTILATION.columns.dict()
+
         for variant in phx_project.variants:
+            if not variant.ph_certification.ph_building_data:
+                continue
+            ph_bldg: certification.PhxPhBuildingData = variant.ph_certification.ph_building_data
+
             self.ventilation.write_wind_coeff_e(
-                ventilation_inputs.VentWindCoeffE(
-                    columns,
-                    variant.ph_certification.ph_building_data.wind_coefficient_e
+                ventilation_data.VentilationInputItem.wind_coeff_e(
+                    self.shape.VENTILATION,
+                    ph_bldg.wind_coefficient_e
                 )
             )
             self.ventilation.write_wind_coeff_f(
-                ventilation_inputs.VentWindCoeffF(
-                    columns,
-                    variant.ph_certification.ph_building_data.wind_coefficient_f
+                ventilation_data.VentilationInputItem.wind_coeff_f(
+                    self.shape.VENTILATION,
+                    ph_bldg.wind_coefficient_f
                 )
             )
             self.ventilation.write_airtightness_n50(
-                ventilation_inputs.VentAirChangeRateN50(
-                    columns,
-                    variant.ph_certification.ph_building_data.airtightness_n50
+                ventilation_data.VentilationInputItem.airtightness_n50(
+                    self.shape.VENTILATION,
+                    ph_bldg.airtightness_n50
                 )
             )
             self.ventilation.write_airtightness_q50(
-                ventilation_inputs.VentAirChangeRateQ50(
-                    columns,
-                    variant.ph_certification.ph_building_data.airtightness_q50
+                ventilation_data.VentilationInputItem.airtightness_q50(
+                    self.shape.VENTILATION,
+                    ph_bldg.airtightness_q50
                 )
             )

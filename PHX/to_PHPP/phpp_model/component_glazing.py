@@ -4,11 +4,12 @@
 """Model class for a PHPP Components/Glazing row."""
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 from functools import partial
 
 from PHX.model import constructions
 
+from PHX.to_PHPP.phpp_localization import shape_model
 from PHX.to_PHPP import xl_data
 
 
@@ -16,13 +17,14 @@ from PHX.to_PHPP import xl_data
 class GlazingRow:
     """A single Areas/Surface entry row."""
 
-    __slots__ = ('columns', 'phx_construction',)
-    columns: Dict[str, str]
+    __slots__ = ('shape', 'phx_construction',)
+    shape: shape_model.Components
     phx_construction: constructions.PhxConstructionWindow
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_row_num}'
+        col = getattr(self.shape.glazings.input_columns, _field_name)
+        return f'{col}{_row_num}'
 
     def create_xl_items(self, _sheet_name: str, _row_num: int) -> List[xl_data.XlItem]:
         """Returns a list of the XL Items to write for this Surface Entry
