@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 3.7 -*-
 
-"""PHX Passive House Mechanical Colletion Classes"""
+"""PHX  Mechanical Collection Classes."""
 
 from dataclasses import dataclass, field
 from typing import ClassVar, Dict, Optional, List
 from PHX.model import hvac
+
+
+class NoVentUnitFoundError(Exception):
+    def __init__(self, _id_num):
+        self.msg = f"Error: Cannot locate the Mechanical Device with id num: {_id_num}"
+        super().__init__(self.msg)
 
 
 @dataclass
@@ -75,8 +81,7 @@ class PhxMechanicalEquipmentCollection:
             if sys.id_num == _id_num:
                 return sys
 
-        msg = f"Error: Cannot locate the Mechanical Device with id num: {_id_num}"
-        raise Exception(msg)
+        raise NoVentUnitFoundError(_id_num)
 
     def add_new_mech_subsystem(self, _key: str, _subsystem: hvac.PhxMechanicalSubSystem) -> None:
         """Adds a new PHX Mechanical SubSystem device to the collection.

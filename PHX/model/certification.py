@@ -8,6 +8,7 @@ from typing import ClassVar, Optional
 from dataclasses import dataclass, field
 
 from PHX.model import ground
+from PHX.model.enums import phi_certification
 
 
 @dataclass
@@ -38,6 +39,15 @@ class PhxPhBuildingData:
 
 
 @dataclass
+class PhxPhCertificationSettings:
+    phi_certification_type = phi_certification.PhiCertificationType(1)
+    phi_certification_class = phi_certification.PhiCertificationClass(1)
+    phi_pe_type = phi_certification.PhiCertificationPEType(2)
+    phi_enerphit_type = phi_certification.PhiCertificationEnerPHitType(2)
+    phi_retrofit_type = phi_certification.PhiCertificationRetrofitType(1)
+
+
+@dataclass
 class PhxPHCertificationCriteria:
     ph_certificate_criteria: int = 3
     ph_selection_target_data: int = 2
@@ -51,4 +61,6 @@ class PhxPHCertificationCriteria:
 class PhxPHCertification:
     certification_criteria: PhxPHCertificationCriteria = field(
         default_factory=PhxPHCertificationCriteria)
+    certification_settings: PhxPhCertificationSettings = field(
+        default_factory=PhxPhCertificationSettings)
     ph_building_data: Optional[PhxPhBuildingData] = None

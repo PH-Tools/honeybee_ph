@@ -295,7 +295,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "304cb5ff-b9dc-4204-aa2b-e4081b242a47", 
+          "identifier": "868fecda-861e-4d30-9bea-52fb02017e55", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -419,7 +419,23 @@
             "ph": {
               "id_num": 0, 
               "heating_systems": [], 
-              "ventilation_system": null, 
+              "ventilation_system": {
+                "ventilation_unit": {
+                  "latent_heat_recovery": 0.0, 
+                  "electric_efficiency": 0.55000000000000004, 
+                  "temperature_below_defrost_used": -5, 
+                  "frost_protection_reqd": true, 
+                  "in_conditioned_space": true, 
+                  "quantity": 1, 
+                  "display_name": "_unnamed_ph_vent_system_", 
+                  "sensible_heat_recovery": 0.0
+                }, 
+                "sys_type": "1", 
+                "duct_02": null, 
+                "duct_01": null, 
+                "name": "_unnamed_ph_vent_system_", 
+                "identifier": "901a448a-7cc8-435b-bb77-b1e129538ff5"
+              }, 
               "cooling_systems": [], 
               "type": "IdealAirSystemPhProperties"
             }, 
@@ -427,7 +443,7 @@
           }, 
           "identifier": "Room_13_7467d8fa Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
-          "demand_controlled_ventilation": false, 
+          "demand_controlled_ventilation": true, 
           "cooling_limit": {
             "type": "Autosize"
           }, 
@@ -445,7 +461,23 @@
             "ph": {
               "id_num": 0, 
               "heating_systems": [], 
-              "ventilation_system": null, 
+              "ventilation_system": {
+                "ventilation_unit": {
+                  "latent_heat_recovery": 0.0, 
+                  "electric_efficiency": 0.55000000000000004, 
+                  "temperature_below_defrost_used": -5, 
+                  "frost_protection_reqd": true, 
+                  "in_conditioned_space": true, 
+                  "quantity": 1, 
+                  "display_name": "_unnamed_ph_vent_system_", 
+                  "sensible_heat_recovery": 0.0
+                }, 
+                "sys_type": "1", 
+                "duct_02": null, 
+                "duct_01": null, 
+                "name": "_unnamed_ph_vent_system_", 
+                "identifier": "901a448a-7cc8-435b-bb77-b1e129538ff5"
+              }, 
               "cooling_systems": [], 
               "type": "IdealAirSystemPhProperties"
             }, 
@@ -453,7 +485,7 @@
           }, 
           "identifier": "Room_14_d2410f5a Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
-          "demand_controlled_ventilation": false, 
+          "demand_controlled_ventilation": true, 
           "cooling_limit": {
             "type": "Autosize"
           }, 
@@ -2332,14 +2364,14 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_6ff4e6da", 
+  "identifier": "unnamed_f0eb5758", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "304cb5ff-b9dc-4204-aa2b-e4081b242a47", 
+          "ph_bldg_segment_id": "868fecda-861e-4d30-9bea-52fb02017e55", 
           "spaces": [
             {
               "volumes": [
@@ -3749,7 +3781,7 @@
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "304cb5ff-b9dc-4204-aa2b-e4081b242a47", 
+          "ph_bldg_segment_id": "868fecda-861e-4d30-9bea-52fb02017e55", 
           "spaces": []
         }, 
         "energy": {

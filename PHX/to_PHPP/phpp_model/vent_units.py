@@ -23,7 +23,7 @@ class VentUnitRow:
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        col = getattr(self.shape.input_blocks.units.input_columns, _field_name)
+        col = getattr(self.shape.units.input_columns, _field_name)
         return f'{col}{_row_num}'
 
     def create_xl_items(self, _sheet_name: str, _row_num: int) -> List[xl_data.XlItem]:

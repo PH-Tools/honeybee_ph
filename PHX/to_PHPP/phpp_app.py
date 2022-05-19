@@ -6,13 +6,14 @@
 from typing import List
 
 from PHX.model import project, certification
+from PHX.model.hvac.collection import NoVentUnitFoundError
 
 from PHX.to_PHPP import xl_app
 from PHX.to_PHPP import sheet_io
 from PHX.to_PHPP.phpp_localization import shape_model
 from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor,
                                     component_glazing, component_frame, component_vent, ventilation_data,
-                                    windows_rows, vent_space, vent_units, vent_ducts)
+                                    windows_rows, vent_space, vent_units, vent_ducts, verification_data)
 
 
 class PHPPConnection:
@@ -35,7 +36,40 @@ class PHPPConnection:
         self.ventilation = sheet_io.Ventilation(self.xl, self.shape.VENTILATION)
 
     def write_certification_config(self, phx_project: project.PhxProject) -> None:
-        print('writing verification...')
+        for variant in phx_project.variants:
+            # TODO: multiple variants?
+
+            self.verification.write_certification_type(
+                verification_data.VerificationInputItem.certification_type(
+                    self.shape.VERIFICATION,
+                    variant.ph_certification.certification_settings.phi_certification_type
+                )
+            )
+            self.verification.write_certification_class(
+                verification_data.VerificationInputItem.certification_class(
+                    self.shape.VERIFICATION,
+                    variant.ph_certification.certification_settings.phi_certification_class
+                )
+            )
+            self.verification.write_pe_type(
+                verification_data.VerificationInputItem.pe_type(
+                    self.shape.VERIFICATION,
+                    variant.ph_certification.certification_settings.phi_pe_type
+                )
+            )
+            self.verification.write_enerphit_type(
+                verification_data.VerificationInputItem.enerphit_type(
+                    self.shape.VERIFICATION,
+                    variant.ph_certification.certification_settings.phi_enerphit_type
+                )
+            )
+            self.verification.write_retrofit_type(
+                verification_data.VerificationInputItem.retrofit_type(
+                    self.shape.VERIFICATION,
+                    variant.ph_certification.certification_settings.phi_retrofit_type
+                )
+            )
+
         return
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
@@ -177,15 +211,20 @@ class PHPPConnection:
         for phx_variant in phx_project.variants:
             for zone in phx_variant.building.zones:
                 for room in zone.wufi_rooms:
-                    phx_mech_vent_system = phx_variant.mech_systems.get_mech_subsystem_by_id(
-                        room.vent_unit_id_num
-                    )
-                    phpp_id_ventilator = self.components.ventilators.get_ventilator_phpp_id_by_name(
-                        phx_mech_vent_system.device.display_name
-                    )
-                    phpp_row_ventilator = self.addnl_vent.vent_units.get_vent_unit_num_by_phpp_id(
-                        phpp_id_ventilator
-                    )
+                    try:
+                        phx_mech_vent_system = phx_variant.mech_systems.get_mech_subsystem_by_id(
+                            room.vent_unit_id_num
+                        )
+                        phpp_id_ventilator = self.components.ventilators.get_ventilator_phpp_id_by_name(
+                            phx_mech_vent_system.device.display_name
+                        )
+                        phpp_row_ventilator = self.addnl_vent.vent_units.get_vent_unit_num_by_phpp_id(
+                            phpp_id_ventilator
+                        )
+                    except NoVentUnitFoundError:
+                        # If no ventilation system / unit has been applied yet
+                        phpp_row_ventilator = None
+
                     phx_vent_pattern = phx_project.utilization_patterns_ventilation.get_pattern_by_id_num(
                         room.vent_pattern_id_num
                     )

@@ -3,6 +3,7 @@
 
 """Datamodel of the PHPP 'Shape' (worksheet names and input column names)."""
 
+from typing import Dict
 from pydantic import BaseModel
 
 
@@ -13,6 +14,7 @@ class VerificationInputItem(BaseModel):
     locator_col: str
     locator_string: str
     input_column: str
+    options: Dict
 
 
 class Verification(BaseModel):

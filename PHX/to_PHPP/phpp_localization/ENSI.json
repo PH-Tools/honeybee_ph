@@ -4,27 +4,51 @@
         "cert_type": {
             "locator_col": "Q",
             "locator_string": "Building energy standard",
-            "input_column": "R"
+            "input_column": "R",
+            "options": {
+                "1": "1-Passive House",
+                "2": "2-EnerPHit",
+                "3": "3-PHI Low Energy Building",
+                "4": "4-Other"
+            }
         },
         "cert_class": {
             "locator_col": "Q",
             "locator_string": "Class",
-            "input_column": "R"
+            "input_column": "R",
+            "options": {
+                "1": "1-Classic",
+                "2": "2-Plus",
+                "3": "3-Premium"
+            }
         },
         "pe_type": {
             "locator_col": "Q",
             "locator_string": "Verification of primary energy",
-            "input_column": "R"
+            "input_column": "R",
+            "options": {
+                "1": "1-PE (non-renewable)",
+                "2": "2-PER (renewable)"
+            }
         },
         "enerphit_type": {
             "locator_col": "Q",
             "locator_string": "EnerPHit verification method",
-            "input_column": "R"
+            "input_column": "R",
+            "options": {
+                "1": "1-Component method",
+                "2": "2-Energy demand method"
+            }
         },
         "retrofit_type": {
             "locator_col": "Q",
             "locator_string": "New building / Retrofit",
-            "input_column": "R"
+            "input_column": "R",
+            "options": {
+                "1": "1-New building",
+                "2": "2-Retrofit",
+                "3": "3-Step-by-step retrofit"
+            }
         }
     },
     "CLIMATE": {
