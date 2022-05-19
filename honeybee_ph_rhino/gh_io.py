@@ -502,6 +502,9 @@ def input_to_int(_input_value, _default=None):
         return int(result.group(0))
     except ValueError:
         raise SelectionInputError(_input_value)
+    except AttributeError as e:
+        # If no 'group', ie: no int part supplied in the string
+        raise SelectionInputError(_input_value)
 
 
 def clean_get(_list, _i, _default=None):

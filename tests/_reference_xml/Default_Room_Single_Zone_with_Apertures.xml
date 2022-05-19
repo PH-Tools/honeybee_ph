@@ -347,7 +347,7 @@
 				<Components count="4">
 					<Component index="0">
 						<IdentNr>9</IdentNr>
-						<Name>Room_13_36cfe1b5..Face4</Name>
+						<Name>Room_5_be1785c8..Face4</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>12</IdentNrColorI>
@@ -363,7 +363,7 @@
 					</Component>
 					<Component index="1">
 						<IdentNr>10</IdentNr>
-						<Name>Room_13_36cfe1b5..Face5</Name>
+						<Name>Room_5_be1785c8..Face5</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>7</IdentNrColorI>

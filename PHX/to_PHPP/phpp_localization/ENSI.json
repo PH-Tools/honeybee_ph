@@ -1,7 +1,31 @@
 {
     "VERIFICATION": {
         "name": "Verification",
-        "columns": {}
+        "cert_type": {
+            "locator_col": "Q",
+            "locator_string": "Building energy standard",
+            "input_column": "R"
+        },
+        "cert_class": {
+            "locator_col": "Q",
+            "locator_string": "Class",
+            "input_column": "R"
+        },
+        "pe_type": {
+            "locator_col": "Q",
+            "locator_string": "Verification of primary energy",
+            "input_column": "R"
+        },
+        "enerphit_type": {
+            "locator_col": "Q",
+            "locator_string": "EnerPHit verification method",
+            "input_column": "R"
+        },
+        "retrofit_type": {
+            "locator_col": "Q",
+            "locator_string": "New building / Retrofit",
+            "input_column": "R"
+        }
     },
     "CLIMATE": {
         "name": "Climate",

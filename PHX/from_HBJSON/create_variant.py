@@ -44,11 +44,11 @@ def add_building_from_hb_room(_variant: project.PhxVariant,
 
 
 def add_phius_certification_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Room) -> None:
-    """Copy PHX-Phius Certification from a Honeybee-Room over to a PHX-Variant.
+    """Apply PhxPHCertificationCriteria from a Honeybee-Room's Building Segement to a PhxVariant.
 
     Arguments:
     ----------
-        * _variant (project.Variant): The PHX-Variant to add the PHX-Phius Certification to.
+        * _variant (project.Variant): The PhxVariant to add the PhxPhiusCertification to.
         * _hb_room (room.Room): The Honeybee-Room to use as the source.
 
     Returns:
@@ -56,14 +56,14 @@ def add_phius_certification_from_hb_room(_variant: project.PhxVariant, _hb_room:
         * None
     """
 
-    hbph_cert = _hb_room.properties.ph.ph_bldg_segment.ph_certification  # alias
+    hbph_phius_cert = _hb_room.properties.ph.ph_bldg_segment.phius_certification  # alias
 
-    _variant.ph_certification.certification_criteria.ph_certificate_criteria = hbph_cert.certification_criteria
-    _variant.ph_certification.certification_criteria.ph_selection_target_data = hbph_cert.localization_selection_type
-    _variant.ph_certification.certification_criteria.annual_heating_demand = hbph_cert.PHIUS2021_heating_demand
-    _variant.ph_certification.certification_criteria.annual_cooling_demand = hbph_cert.PHIUS2021_cooling_demand
-    _variant.ph_certification.certification_criteria.peak_heating_load = hbph_cert.PHIUS2021_heating_load
-    _variant.ph_certification.certification_criteria.peak_cooling_load = hbph_cert.PHIUS2021_cooling_load
+    _variant.ph_certification.certification_criteria.ph_certificate_criteria = hbph_phius_cert.certification_criteria
+    _variant.ph_certification.certification_criteria.ph_selection_target_data = hbph_phius_cert.localization_selection_type
+    _variant.ph_certification.certification_criteria.annual_heating_demand = hbph_phius_cert.PHIUS2021_heating_demand
+    _variant.ph_certification.certification_criteria.annual_cooling_demand = hbph_phius_cert.PHIUS2021_cooling_demand
+    _variant.ph_certification.certification_criteria.peak_heating_load = hbph_phius_cert.PHIUS2021_heating_load
+    _variant.ph_certification.certification_criteria.peak_cooling_load = hbph_phius_cert.PHIUS2021_cooling_load
 
     return None
 
@@ -84,8 +84,8 @@ def add_PH_Building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Ro
 
     ph_bldg_data.building_category = _hb_room.properties.ph.ph_bldg_segment.usage_type.number
     ph_bldg_data.occupancy_type = _hb_room.properties.ph.ph_bldg_segment.occupancy_type.number
-    ph_bldg_data.building_status = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_status.number
-    ph_bldg_data.building_type = _hb_room.properties.ph.ph_bldg_segment.ph_certification.building_type.number
+    ph_bldg_data.building_status = _hb_room.properties.ph.ph_bldg_segment.phius_certification.building_status.number
+    ph_bldg_data.building_type = _hb_room.properties.ph.ph_bldg_segment.phius_certification.building_type.number
     ph_bldg_data.num_of_units = _hb_room.properties.ph.ph_bldg_segment.num_dwelling_units
     ph_bldg_data.num_of_floors = _hb_room.properties.ph.ph_bldg_segment.num_floor_levels
 

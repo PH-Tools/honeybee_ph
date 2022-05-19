@@ -195,7 +195,12 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-
+    "HBPH - PHI Certification": {
+        "NickName": "PHI Cert.",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 
 }
 

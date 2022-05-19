@@ -25,6 +25,7 @@ class PHPPConnection:
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
+        self.verification = sheet_io.Verification(self.xl, self.shape.VERIFICATION)
         self.climate = sheet_io.Climate(self.xl, self.shape.CLIMATE)
         self.u_values = sheet_io.UValues(self.xl, self.shape.UVALUES)
         self.components = sheet_io.Components(self.xl, self.shape.COMPONENTS)
@@ -32,6 +33,10 @@ class PHPPConnection:
         self.windows = sheet_io.Windows(self.xl, self.shape.WINDOWS)
         self.addnl_vent = sheet_io.AddnlVent(self.xl, self.shape.ADDNL_VENT)
         self.ventilation = sheet_io.Ventilation(self.xl, self.shape.VENTILATION)
+
+    def write_certification_config(self, phx_project: project.PhxProject) -> None:
+        print('writing verification...')
+        return
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
         """Write the variant's weather-station data to the PHPP 'Climate' worksheet."""
@@ -201,6 +206,7 @@ class PHPPConnection:
         for variant in phx_project.variants:
             self.ventilation.write_ventilation_type(
                 # TODO: Get the actual type from the model someplace?
+                # TODO: How to combine Variants?
                 ventilation_data.VentilationInputItem.vent_type(
                     self.shape.VENTILATION,
                     "1-Balanced PH ventilation with HR"
@@ -217,10 +223,12 @@ class PHPPConnection:
         """Write the Airtightness data to the PHPP 'Ventilation' worksheet."""
 
         for variant in phx_project.variants:
+            # TODO: How to handle multiple variants?
             if not variant.ph_certification.ph_building_data:
                 continue
             ph_bldg: certification.PhxPhBuildingData = variant.ph_certification.ph_building_data
 
+            # TODO: Get the actual values from the Model somehow
             self.ventilation.write_wind_coeff_e(
                 ventilation_data.VentilationInputItem.wind_coeff_e(
                     self.shape.VENTILATION,

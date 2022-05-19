@@ -8,7 +8,7 @@ try:
 except ImportError:
     pass  # Python2.7
 
-from honeybee_ph import _base, location, phius
+from honeybee_ph import _base, location, phius, phi
 from honeybee_ph_standards.sourcefactors import factors
 from honeybee_ph_utils import enumerables
 
@@ -78,7 +78,8 @@ class BldgSegment(_base._Base):
         self.climate = location.Climate()
         self.source_energy_factors = factors.FactorCollection('Source_Energy')
         self.co2e_factors = factors.FactorCollection('CO2')
-        self.ph_certification = phius.PhiusCertification()
+        self.phius_certification = phius.PhiusCertification()
+        self.phi_certification = phi.PhiCertification()
         self.set_points = SetPoints()
 
     def to_dict(self):
@@ -94,7 +95,8 @@ class BldgSegment(_base._Base):
         d['climate'] = self.climate.to_dict()
         d['source_energy_factors'] = self.source_energy_factors.to_dict()
         d['co2e_factors'] = self.co2e_factors.to_dict()
-        d['ph_certification'] = self.ph_certification.to_dict()
+        d['phius_certification'] = self.phius_certification.to_dict()
+        d['phi_certification'] = self.phi_certification.to_dict()
         d['set_points'] = self.set_points.to_dict()
 
         return d
@@ -116,8 +118,9 @@ class BldgSegment(_base._Base):
             _dict.get('source_energy_factors', {}))
         obj.co2e_factors = factors.FactorCollection.from_dict(
             _dict.get('co2e_factors', {}))
-        obj.ph_certification = phius.PhiusCertification.from_dict(
-            _dict.get('ph_certification', {}))
+        obj.phius_certification = phius.PhiusCertification.from_dict(
+            _dict.get('phius_certification', {}))
+        obj.phi_certification = phi.PhiCertification.from_dict(
+            _dict.get('phi_certification', {}))
         obj.set_points = SetPoints.from_dict(_dict.get('set_points', {}))
-
         return obj

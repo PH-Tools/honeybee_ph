@@ -228,7 +228,7 @@
 				<Components count="4">
 					<Component index="0">
 						<IdentNr>5</IdentNr>
-						<Name>Room_14_11587078..Face4</Name>
+						<Name>Room_6_77a966e3..Face4</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>12</IdentNrColorI>
@@ -244,7 +244,7 @@
 					</Component>
 					<Component index="1">
 						<IdentNr>6</IdentNr>
-						<Name>Room_14_11587078..Face5</Name>
+						<Name>Room_6_77a966e3..Face5</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>7</IdentNrColorI>
@@ -279,7 +279,7 @@
 					</Component>
 					<Component index="3">
 						<IdentNr>10</IdentNr>
-						<Name>Shade_4e4c7190</Name>
+						<Name>Shade_400aae4d</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>1</IdentNrColorI>

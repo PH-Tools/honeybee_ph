@@ -60,8 +60,8 @@
           "type": "ShadeRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Shade_4e4c7190", 
-      "display_name": "Shade_4e4c7190", 
+      "identifier": "Shade_400aae4d", 
+      "display_name": "Shade_400aae4d", 
       "type": "Shade"
     }
   ], 
@@ -254,15 +254,7 @@
             "winter": 20.0, 
             "summer": 25.0
           }, 
-          "name": "Unnamed_Bldg_Segment", 
-          "occupancy_type": {
-            "_value": "RESIDENTIAL"
-          }, 
-          "identifier": "e0b21547-e65c-4c32-af04-52c41692802d", 
-          "usage_type": {
-            "_value": "RESIDENTIAL"
-          }, 
-          "ph_certification": {
+          "phius_certification": {
             "localization_selection_type": 2, 
             "building_status": {
               "_value": "IN_PLANNING"
@@ -281,6 +273,31 @@
             "int_gains_evap_per_person": 15, 
             "int_gains_dhw_marginal_perf_ratio": null, 
             "PHIUS2021_cooling_load": 10.0
+          }, 
+          "name": "Unnamed_Bldg_Segment", 
+          "occupancy_type": {
+            "_value": "RESIDENTIAL"
+          }, 
+          "identifier": "b4c86fb1-bba3-4c0e-b120-c126aebb7d5b", 
+          "usage_type": {
+            "_value": "RESIDENTIAL"
+          }, 
+          "phi_certification": {
+            "_certification_class": {
+              "_value": "1-Classic"
+            }, 
+            "_enerphit_type": {
+              "_value": "1-Component method"
+            }, 
+            "_primary_energy_type": {
+              "_value": "1-PE (non-renewable)"
+            }, 
+            "_certification_type": {
+              "_value": "1-Passive House"
+            }, 
+            "_retrofit_type": {
+              "_value": "1-New building"
+            }
           }, 
           "source_energy_factors": {
             "factors": []
@@ -310,7 +327,7 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_14_11587078 Ideal Loads Air System", 
+          "identifier": "Room_6_77a966e3 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -2203,18 +2220,18 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_d96606b2", 
+  "identifier": "unnamed_c2e71106", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "e0b21547-e65c-4c32-af04-52c41692802d", 
+          "ph_bldg_segment_id": "b4c86fb1-bba3-4c0e-b120-c126aebb7d5b", 
           "spaces": []
         }, 
         "energy": {
-          "hvac": "Room_14_11587078 Ideal Loads Air System", 
+          "hvac": "Room_6_77a966e3 Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2223,8 +2240,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_14_11587078", 
-      "display_name": "Room_14", 
+      "identifier": "Room_6_77a966e3", 
+      "display_name": "Room_6", 
       "faces": [
         {
           "boundary_condition": {
@@ -2292,8 +2309,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_11587078..Face0", 
-          "display_name": "Room_14_11587078..Face0", 
+          "identifier": "Room_6_77a966e3..Face0", 
+          "display_name": "Room_6_77a966e3..Face0", 
           "type": "Face"
         }, 
         {
@@ -2362,8 +2379,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_11587078..Face1", 
-          "display_name": "Room_14_11587078..Face1", 
+          "identifier": "Room_6_77a966e3..Face1", 
+          "display_name": "Room_6_77a966e3..Face1", 
           "type": "Face"
         }, 
         {
@@ -2432,8 +2449,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_11587078..Face2", 
-          "display_name": "Room_14_11587078..Face2", 
+          "identifier": "Room_6_77a966e3..Face2", 
+          "display_name": "Room_6_77a966e3..Face2", 
           "type": "Face"
         }, 
         {
@@ -2502,8 +2519,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_11587078..Face3", 
-          "display_name": "Room_14_11587078..Face3", 
+          "identifier": "Room_6_77a966e3..Face3", 
+          "display_name": "Room_6_77a966e3..Face3", 
           "type": "Face"
         }, 
         {
@@ -2567,8 +2584,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_11587078..Face4", 
-          "display_name": "Room_14_11587078..Face4", 
+          "identifier": "Room_6_77a966e3..Face4", 
+          "display_name": "Room_6_77a966e3..Face4", 
           "type": "Face"
         }, 
         {
@@ -2637,8 +2654,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_11587078..Face5", 
-          "display_name": "Room_14_11587078..Face5", 
+          "identifier": "Room_6_77a966e3..Face5", 
+          "display_name": "Room_6_77a966e3..Face5", 
           "type": "Face"
         }
       ], 

@@ -6,13 +6,22 @@
 from pydantic import BaseModel
 
 
-class ColVerification(BaseModel):
-    ...
+# -----------------------------------------------------------------------------
+
+
+class VerificationInputItem(BaseModel):
+    locator_col: str
+    locator_string: str
+    input_column: str
 
 
 class Verification(BaseModel):
     name: str
-    columns: ColVerification
+    cert_type: VerificationInputItem
+    cert_class: VerificationInputItem
+    pe_type: VerificationInputItem
+    enerphit_type: VerificationInputItem
+    retrofit_type: VerificationInputItem
 
 
 # -----------------------------------------------------------------------------
