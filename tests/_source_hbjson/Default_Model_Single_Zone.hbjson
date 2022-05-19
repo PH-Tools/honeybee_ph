@@ -1,6 +1,6 @@
 {
-  "tolerance": 0.01, 
-  "units": "Meters", 
+  "tolerance": 0.001, 
+  "units": "Millimeters", 
   "properties": {
     "ph": {
       "bldg_segments": [
@@ -214,7 +214,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "f153bbb3-636d-41cf-836f-558f034f4356", 
+          "identifier": "050174ff-2214-41aa-bf45-209574d65a65", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -263,7 +263,7 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_3_3ff56272 Ideal Loads Air System", 
+          "identifier": "Room_1_fe198ab7 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -2144,18 +2144,18 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_1126591f", 
+  "identifier": "unnamed_55b62ef3", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "f153bbb3-636d-41cf-836f-558f034f4356", 
+          "ph_bldg_segment_id": "050174ff-2214-41aa-bf45-209574d65a65", 
           "spaces": []
         }, 
         "energy": {
-          "hvac": "Room_3_3ff56272 Ideal Loads Air System", 
+          "hvac": "Room_1_fe198ab7 Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2164,8 +2164,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_3_3ff56272", 
-      "display_name": "Room_3", 
+      "identifier": "Room_1_fe198ab7", 
+      "display_name": "Room_1", 
       "faces": [
         {
           "boundary_condition": {
@@ -2233,8 +2233,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_3_3ff56272..Face0", 
-          "display_name": "Room_3_3ff56272..Face0", 
+          "identifier": "Room_1_fe198ab7..Face0", 
+          "display_name": "Room_1_fe198ab7..Face0", 
           "type": "Face"
         }, 
         {
@@ -2303,8 +2303,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_3_3ff56272..Face1", 
-          "display_name": "Room_3_3ff56272..Face1", 
+          "identifier": "Room_1_fe198ab7..Face1", 
+          "display_name": "Room_1_fe198ab7..Face1", 
           "type": "Face"
         }, 
         {
@@ -2373,8 +2373,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_3_3ff56272..Face2", 
-          "display_name": "Room_3_3ff56272..Face2", 
+          "identifier": "Room_1_fe198ab7..Face2", 
+          "display_name": "Room_1_fe198ab7..Face2", 
           "type": "Face"
         }, 
         {
@@ -2443,8 +2443,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_3_3ff56272..Face3", 
-          "display_name": "Room_3_3ff56272..Face3", 
+          "identifier": "Room_1_fe198ab7..Face3", 
+          "display_name": "Room_1_fe198ab7..Face3", 
           "type": "Face"
         }, 
         {
@@ -2508,8 +2508,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_3_3ff56272..Face4", 
-          "display_name": "Room_3_3ff56272..Face4", 
+          "identifier": "Room_1_fe198ab7..Face4", 
+          "display_name": "Room_1_fe198ab7..Face4", 
           "type": "Face"
         }, 
         {
@@ -2578,8 +2578,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_3_3ff56272..Face5", 
-          "display_name": "Room_3_3ff56272..Face5", 
+          "identifier": "Room_1_fe198ab7..Face5", 
+          "display_name": "Room_1_fe198ab7..Face5", 
           "type": "Face"
         }
       ], 

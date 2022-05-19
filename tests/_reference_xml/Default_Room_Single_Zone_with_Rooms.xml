@@ -58,50 +58,50 @@
 			<Graphics_3D>
 				<Vertices count="8">
 					<Vertix index="0">
-						<IdentNr>27</IdentNr>
-						<X>5.0</X>
-						<Y>4.0</Y>
-						<Z>0.0</Z>
+						<IdentNr>3</IdentNr>
+						<X>0.0</X>
+						<Y>0.0</Y>
+						<Z>3.0</Z>
 					</Vertix>
 					<Vertix index="1">
-						<IdentNr>28</IdentNr>
-						<X>5.0</X>
+						<IdentNr>4</IdentNr>
+						<X>0.0</X>
 						<Y>0.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
 					<Vertix index="2">
-						<IdentNr>29</IdentNr>
-						<X>0.0</X>
+						<IdentNr>5</IdentNr>
+						<X>5.0</X>
 						<Y>0.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
 					<Vertix index="3">
-						<IdentNr>30</IdentNr>
+						<IdentNr>6</IdentNr>
+						<X>5.0</X>
+						<Y>0.0</Y>
+						<Z>3.0</Z>
+					</Vertix>
+					<Vertix index="4">
+						<IdentNr>11</IdentNr>
+						<X>5.0</X>
+						<Y>4.0</Y>
+						<Z>0.0</Z>
+					</Vertix>
+					<Vertix index="5">
+						<IdentNr>12</IdentNr>
+						<X>5.0</X>
+						<Y>4.0</Y>
+						<Z>3.0</Z>
+					</Vertix>
+					<Vertix index="6">
+						<IdentNr>17</IdentNr>
 						<X>0.0</X>
 						<Y>4.0</Y>
 						<Z>0.0</Z>
 					</Vertix>
-					<Vertix index="4">
-						<IdentNr>33</IdentNr>
-						<X>0.0</X>
-						<Y>4.0</Y>
-						<Z>3.0</Z>
-					</Vertix>
-					<Vertix index="5">
-						<IdentNr>34</IdentNr>
-						<X>0.0</X>
-						<Y>0.0</Y>
-						<Z>3.0</Z>
-					</Vertix>
-					<Vertix index="6">
-						<IdentNr>35</IdentNr>
-						<X>5.0</X>
-						<Y>0.0</Y>
-						<Z>3.0</Z>
-					</Vertix>
 					<Vertix index="7">
-						<IdentNr>36</IdentNr>
-						<X>5.0</X>
+						<IdentNr>18</IdentNr>
+						<X>0.0</X>
 						<Y>4.0</Y>
 						<Z>3.0</Z>
 					</Vertix>
@@ -113,10 +113,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>-1.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">27</IdentNr>
-							<IdentNr index="1">28</IdentNr>
-							<IdentNr index="2">29</IdentNr>
-							<IdentNr index="3">30</IdentNr>
+							<IdentNr index="0">11</IdentNr>
+							<IdentNr index="1">5</IdentNr>
+							<IdentNr index="2">4</IdentNr>
+							<IdentNr index="3">17</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -126,10 +126,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>1.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">33</IdentNr>
-							<IdentNr index="1">34</IdentNr>
-							<IdentNr index="2">35</IdentNr>
-							<IdentNr index="3">36</IdentNr>
+							<IdentNr index="0">18</IdentNr>
+							<IdentNr index="1">3</IdentNr>
+							<IdentNr index="2">6</IdentNr>
+							<IdentNr index="3">12</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -139,10 +139,10 @@
 						<NormalVectorY>-1.0</NormalVectorY>
 						<NormalVectorZ>0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">28</IdentNr>
-							<IdentNr index="1">29</IdentNr>
-							<IdentNr index="2">34</IdentNr>
-							<IdentNr index="3">35</IdentNr>
+							<IdentNr index="0">3</IdentNr>
+							<IdentNr index="1">4</IdentNr>
+							<IdentNr index="2">5</IdentNr>
+							<IdentNr index="3">6</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -152,10 +152,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">27</IdentNr>
-							<IdentNr index="1">28</IdentNr>
-							<IdentNr index="2">35</IdentNr>
-							<IdentNr index="3">36</IdentNr>
+							<IdentNr index="0">6</IdentNr>
+							<IdentNr index="1">5</IdentNr>
+							<IdentNr index="2">11</IdentNr>
+							<IdentNr index="3">12</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -165,10 +165,10 @@
 						<NormalVectorY>1.0</NormalVectorY>
 						<NormalVectorZ>-0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">27</IdentNr>
-							<IdentNr index="1">30</IdentNr>
-							<IdentNr index="2">33</IdentNr>
-							<IdentNr index="3">36</IdentNr>
+							<IdentNr index="0">12</IdentNr>
+							<IdentNr index="1">11</IdentNr>
+							<IdentNr index="2">17</IdentNr>
+							<IdentNr index="3">18</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -178,10 +178,10 @@
 						<NormalVectorY>0.0</NormalVectorY>
 						<NormalVectorZ>0.0</NormalVectorZ>
 						<IdentNrPoints count="4">
-							<IdentNr index="0">29</IdentNr>
-							<IdentNr index="1">30</IdentNr>
-							<IdentNr index="2">33</IdentNr>
-							<IdentNr index="3">34</IdentNr>
+							<IdentNr index="0">18</IdentNr>
+							<IdentNr index="1">17</IdentNr>
+							<IdentNr index="2">4</IdentNr>
+							<IdentNr index="3">3</IdentNr>
 						</IdentNrPoints>
 						<IdentNrPolygonsInside count="0"/>
 					</Polygon>
@@ -191,7 +191,7 @@
 				<Components count="3">
 					<Component index="0">
 						<IdentNr>5</IdentNr>
-						<Name>Room_13_e9800671..Face4</Name>
+						<Name>Room_11_3af211a6..Face4</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>12</IdentNrColorI>
@@ -207,7 +207,7 @@
 					</Component>
 					<Component index="1">
 						<IdentNr>6</IdentNr>
-						<Name>Room_13_e9800671..Face5</Name>
+						<Name>Room_11_3af211a6..Face5</Name>
 						<Visual>true</Visual>
 						<Type>1</Type>
 						<IdentNrColorI>7</IdentNrColorI>

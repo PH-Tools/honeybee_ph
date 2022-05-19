@@ -1,6 +1,6 @@
 {
-  "tolerance": 0.01, 
-  "units": "Meters", 
+  "tolerance": 0.001, 
+  "units": "Millimeters", 
   "properties": {
     "ph": {
       "bldg_segments": [
@@ -214,7 +214,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "5028a190-ead9-4a9d-9185-a849d2369c78", 
+          "identifier": "82305b23-b5cf-42a2-8824-8fdf896d57ac", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -272,14 +272,14 @@
                 "duct_02": null, 
                 "duct_01": null, 
                 "name": "_unnamed_ph_vent_system_", 
-                "identifier": "9042fa76-9be9-4ac2-9d9a-502a819f6534"
+                "identifier": "bc1fb034-b405-4ec6-86e2-f717f21c310a"
               }, 
               "cooling_systems": [], 
               "type": "IdealAirSystemPhProperties"
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_14_27713549 Ideal Loads Air System", 
+          "identifier": "Room_12_d32855a8 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": true, 
           "cooling_limit": {
@@ -2160,393 +2160,15 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_cf0a7a86", 
+  "identifier": "unnamed_cb39fcba", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "5028a190-ead9-4a9d-9185-a849d2369c78", 
+          "ph_bldg_segment_id": "82305b23-b5cf-42a2-8824-8fdf896d57ac", 
           "spaces": [
-            {
-              "volumes": [
-                {
-                  "geometry": [
-                    {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          0.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        "n": [
-                          -0.0, 
-                          -0.0, 
-                          -1.0
-                        ], 
-                        "o": [
-                          1.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          1.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          1.0, 
-                          1.0, 
-                          0.0
-                        ]
-                      ]
-                    }, 
-                    {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          0.0, 
-                          -1.0, 
-                          0.0
-                        ], 
-                        "n": [
-                          -1.0, 
-                          -0.0, 
-                          0.0
-                        ], 
-                        "o": [
-                          1.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          1.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          1.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          1.0, 
-                          1.0, 
-                          2.5
-                        ], 
-                        [
-                          1.0, 
-                          2.0, 
-                          2.5
-                        ]
-                      ]
-                    }, 
-                    {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          1.0, 
-                          0.0, 
-                          0.0
-                        ], 
-                        "n": [
-                          -0.0, 
-                          -1.0, 
-                          -0.0
-                        ], 
-                        "o": [
-                          1.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          1.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          1.0, 
-                          2.5
-                        ], 
-                        [
-                          1.0, 
-                          1.0, 
-                          2.5
-                        ]
-                      ]
-                    }, 
-                    {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          0.0, 
-                          1.0, 
-                          -0.0
-                        ], 
-                        "n": [
-                          1.0, 
-                          -0.0, 
-                          -0.0
-                        ], 
-                        "o": [
-                          2.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          2.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          2.0, 
-                          2.5
-                        ], 
-                        [
-                          2.0, 
-                          1.0, 
-                          2.5
-                        ]
-                      ]
-                    }, 
-                    {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          -1.0, 
-                          0.0, 
-                          0.0
-                        ], 
-                        "n": [
-                          -0.0, 
-                          1.0, 
-                          -0.0
-                        ], 
-                        "o": [
-                          2.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          2.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          1.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          1.0, 
-                          2.0, 
-                          2.5
-                        ], 
-                        [
-                          2.0, 
-                          2.0, 
-                          2.5
-                        ]
-                      ]
-                    }, 
-                    {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          1.0, 
-                          0.0, 
-                          0.0
-                        ], 
-                        "n": [
-                          0.0, 
-                          0.0, 
-                          1.0
-                        ], 
-                        "o": [
-                          1.0, 
-                          2.0, 
-                          2.5
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          1.0, 
-                          2.0, 
-                          2.5
-                        ], 
-                        [
-                          1.0, 
-                          1.0, 
-                          2.5
-                        ], 
-                        [
-                          2.0, 
-                          1.0, 
-                          2.5
-                        ], 
-                        [
-                          2.0, 
-                          2.0, 
-                          2.5
-                        ]
-                      ]
-                    }
-                  ], 
-                  "avg_ceiling_height": 2.5, 
-                  "floor": {
-                    "geometry": {
-                      "type": "Face3D", 
-                      "plane": {
-                        "x": [
-                          1.0, 
-                          0.0, 
-                          0.0
-                        ], 
-                        "n": [
-                          0.0, 
-                          0.0, 
-                          1.0
-                        ], 
-                        "o": [
-                          1.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        "type": "Plane"
-                      }, 
-                      "boundary": [
-                        [
-                          1.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          1.0, 
-                          0.0
-                        ], 
-                        [
-                          2.0, 
-                          2.0, 
-                          0.0
-                        ], 
-                        [
-                          1.0, 
-                          2.0, 
-                          0.0
-                        ]
-                      ]
-                    }, 
-                    "floor_segments": [
-                      {
-                        "geometry": {
-                          "type": "Face3D", 
-                          "plane": {
-                            "x": [
-                              1.0, 
-                              0.0, 
-                              0.0
-                            ], 
-                            "n": [
-                              0.0, 
-                              0.0, 
-                              1.0
-                            ], 
-                            "o": [
-                              1.0, 
-                              1.0, 
-                              0.0
-                            ], 
-                            "type": "Plane"
-                          }, 
-                          "boundary": [
-                            [
-                              1.0, 
-                              1.0, 
-                              0.0
-                            ], 
-                            [
-                              2.0, 
-                              1.0, 
-                              0.0
-                            ], 
-                            [
-                              2.0, 
-                              2.0, 
-                              0.0
-                            ], 
-                            [
-                              1.0, 
-                              2.0, 
-                              0.0
-                            ]
-                          ]
-                        }, 
-                        "weighting_factor": 1.0, 
-                        "reference_point": {
-                          "x": 1.5, 
-                          "y": 1.5, 
-                          "z": 0.10000000000000001, 
-                          "type": "Point3D"
-                        }
-                      }
-                    ]
-                  }
-                }
-              ], 
-              "number": "101", 
-              "wufi_type": 99, 
-              "properties": {
-                "ph": {
-                  "type": "SpacePhProperties", 
-                  "id_num": 0
-                }, 
-                "type": "SpaceEnergyProperties", 
-                "id_num": 0
-              }, 
-              "name": "Room_1", 
-              "quantity": 1
-            }, 
             {
               "volumes": [
                 {
@@ -2924,11 +2546,389 @@
               }, 
               "name": "Room_2", 
               "quantity": 1
+            }, 
+            {
+              "volumes": [
+                {
+                  "geometry": [
+                    {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          0.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        "n": [
+                          -0.0, 
+                          -0.0, 
+                          -1.0
+                        ], 
+                        "o": [
+                          1.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          1.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          1.0, 
+                          1.0, 
+                          0.0
+                        ]
+                      ]
+                    }, 
+                    {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          0.0, 
+                          -1.0, 
+                          0.0
+                        ], 
+                        "n": [
+                          -1.0, 
+                          -0.0, 
+                          0.0
+                        ], 
+                        "o": [
+                          1.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          1.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          1.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          1.0, 
+                          1.0, 
+                          2.5
+                        ], 
+                        [
+                          1.0, 
+                          2.0, 
+                          2.5
+                        ]
+                      ]
+                    }, 
+                    {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          1.0, 
+                          0.0, 
+                          0.0
+                        ], 
+                        "n": [
+                          -0.0, 
+                          -1.0, 
+                          -0.0
+                        ], 
+                        "o": [
+                          1.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          1.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          1.0, 
+                          2.5
+                        ], 
+                        [
+                          1.0, 
+                          1.0, 
+                          2.5
+                        ]
+                      ]
+                    }, 
+                    {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          0.0, 
+                          1.0, 
+                          -0.0
+                        ], 
+                        "n": [
+                          1.0, 
+                          -0.0, 
+                          -0.0
+                        ], 
+                        "o": [
+                          2.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          2.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          2.0, 
+                          2.5
+                        ], 
+                        [
+                          2.0, 
+                          1.0, 
+                          2.5
+                        ]
+                      ]
+                    }, 
+                    {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          -1.0, 
+                          0.0, 
+                          0.0
+                        ], 
+                        "n": [
+                          -0.0, 
+                          1.0, 
+                          -0.0
+                        ], 
+                        "o": [
+                          2.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          2.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          1.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          1.0, 
+                          2.0, 
+                          2.5
+                        ], 
+                        [
+                          2.0, 
+                          2.0, 
+                          2.5
+                        ]
+                      ]
+                    }, 
+                    {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          1.0, 
+                          0.0, 
+                          0.0
+                        ], 
+                        "n": [
+                          0.0, 
+                          0.0, 
+                          1.0
+                        ], 
+                        "o": [
+                          1.0, 
+                          2.0, 
+                          2.5
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          1.0, 
+                          2.0, 
+                          2.5
+                        ], 
+                        [
+                          1.0, 
+                          1.0, 
+                          2.5
+                        ], 
+                        [
+                          2.0, 
+                          1.0, 
+                          2.5
+                        ], 
+                        [
+                          2.0, 
+                          2.0, 
+                          2.5
+                        ]
+                      ]
+                    }
+                  ], 
+                  "avg_ceiling_height": 2.5, 
+                  "floor": {
+                    "geometry": {
+                      "type": "Face3D", 
+                      "plane": {
+                        "x": [
+                          1.0, 
+                          0.0, 
+                          0.0
+                        ], 
+                        "n": [
+                          0.0, 
+                          0.0, 
+                          1.0
+                        ], 
+                        "o": [
+                          1.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        "type": "Plane"
+                      }, 
+                      "boundary": [
+                        [
+                          1.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          1.0, 
+                          0.0
+                        ], 
+                        [
+                          2.0, 
+                          2.0, 
+                          0.0
+                        ], 
+                        [
+                          1.0, 
+                          2.0, 
+                          0.0
+                        ]
+                      ]
+                    }, 
+                    "floor_segments": [
+                      {
+                        "geometry": {
+                          "type": "Face3D", 
+                          "plane": {
+                            "x": [
+                              1.0, 
+                              0.0, 
+                              0.0
+                            ], 
+                            "n": [
+                              0.0, 
+                              0.0, 
+                              1.0
+                            ], 
+                            "o": [
+                              1.0, 
+                              1.0, 
+                              0.0
+                            ], 
+                            "type": "Plane"
+                          }, 
+                          "boundary": [
+                            [
+                              1.0, 
+                              1.0, 
+                              0.0
+                            ], 
+                            [
+                              2.0, 
+                              1.0, 
+                              0.0
+                            ], 
+                            [
+                              2.0, 
+                              2.0, 
+                              0.0
+                            ], 
+                            [
+                              1.0, 
+                              2.0, 
+                              0.0
+                            ]
+                          ]
+                        }, 
+                        "weighting_factor": 1.0, 
+                        "reference_point": {
+                          "x": 1.5, 
+                          "y": 1.5, 
+                          "z": 0.10000000000000001, 
+                          "type": "Point3D"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ], 
+              "number": "101", 
+              "wufi_type": 99, 
+              "properties": {
+                "ph": {
+                  "type": "SpacePhProperties", 
+                  "id_num": 0
+                }, 
+                "type": "SpaceEnergyProperties", 
+                "id_num": 0
+              }, 
+              "name": "Room_1", 
+              "quantity": 1
             }
           ]
         }, 
         "energy": {
-          "hvac": "Room_14_27713549 Ideal Loads Air System", 
+          "hvac": "Room_12_d32855a8 Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2937,8 +2937,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_14_27713549", 
-      "display_name": "Room_14", 
+      "identifier": "Room_12_d32855a8", 
+      "display_name": "Room_12", 
       "faces": [
         {
           "boundary_condition": {
@@ -3006,8 +3006,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_27713549..Face0", 
-          "display_name": "Room_14_27713549..Face0", 
+          "identifier": "Room_12_d32855a8..Face0", 
+          "display_name": "Room_12_d32855a8..Face0", 
           "type": "Face"
         }, 
         {
@@ -3076,8 +3076,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_27713549..Face1", 
-          "display_name": "Room_14_27713549..Face1", 
+          "identifier": "Room_12_d32855a8..Face1", 
+          "display_name": "Room_12_d32855a8..Face1", 
           "type": "Face"
         }, 
         {
@@ -3146,8 +3146,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_27713549..Face2", 
-          "display_name": "Room_14_27713549..Face2", 
+          "identifier": "Room_12_d32855a8..Face2", 
+          "display_name": "Room_12_d32855a8..Face2", 
           "type": "Face"
         }, 
         {
@@ -3216,8 +3216,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_27713549..Face3", 
-          "display_name": "Room_14_27713549..Face3", 
+          "identifier": "Room_12_d32855a8..Face3", 
+          "display_name": "Room_12_d32855a8..Face3", 
           "type": "Face"
         }, 
         {
@@ -3281,8 +3281,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_27713549..Face4", 
-          "display_name": "Room_14_27713549..Face4", 
+          "identifier": "Room_12_d32855a8..Face4", 
+          "display_name": "Room_12_d32855a8..Face4", 
           "type": "Face"
         }, 
         {
@@ -3351,8 +3351,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_14_27713549..Face5", 
-          "display_name": "Room_14_27713549..Face5", 
+          "identifier": "Room_12_d32855a8..Face5", 
+          "display_name": "Room_12_d32855a8..Face5", 
           "type": "Face"
         }
       ], 

@@ -1,6 +1,6 @@
 {
-  "tolerance": 0.01, 
-  "units": "Meters", 
+  "tolerance": 0.001, 
+  "units": "Millimeters", 
   "properties": {
     "ph": {
       "bldg_segments": [
@@ -214,7 +214,7 @@
           "occupancy_type": {
             "_value": "RESIDENTIAL"
           }, 
-          "identifier": "2f5b0d41-4589-4e99-9870-1bc1210b89ff", 
+          "identifier": "7ac6e743-0b8d-44a5-85fd-10e234347851", 
           "usage_type": {
             "_value": "RESIDENTIAL"
           }, 
@@ -263,7 +263,7 @@
             }, 
             "type": "IdealAirSystemProperties"
           }, 
-          "identifier": "Room_13_e9800671 Ideal Loads Air System", 
+          "identifier": "Room_11_3af211a6 Ideal Loads Air System", 
           "cooling_air_temperature": 13.0, 
           "demand_controlled_ventilation": false, 
           "cooling_limit": {
@@ -2144,14 +2144,14 @@
     }
   }, 
   "version": "1.49.1", 
-  "identifier": "unnamed_2b80c1b6", 
+  "identifier": "unnamed_733e90a2", 
   "display_name": "unnamed", 
   "rooms": [
     {
       "properties": {
         "ph": {
           "type": "RoomPhPropertiesAbridged", 
-          "ph_bldg_segment_id": "2f5b0d41-4589-4e99-9870-1bc1210b89ff", 
+          "ph_bldg_segment_id": "7ac6e743-0b8d-44a5-85fd-10e234347851", 
           "spaces": [
             {
               "volumes": [
@@ -2912,7 +2912,7 @@
           ]
         }, 
         "energy": {
-          "hvac": "Room_13_e9800671 Ideal Loads Air System", 
+          "hvac": "Room_11_3af211a6 Ideal Loads Air System", 
           "type": "RoomEnergyPropertiesAbridged", 
           "program_type": "Generic Office Program"
         }, 
@@ -2921,8 +2921,8 @@
           "type": "RoomRadiancePropertiesAbridged"
         }
       }, 
-      "identifier": "Room_13_e9800671", 
-      "display_name": "Room_13", 
+      "identifier": "Room_11_3af211a6", 
+      "display_name": "Room_11", 
       "faces": [
         {
           "boundary_condition": {
@@ -2990,8 +2990,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_13_e9800671..Face0", 
-          "display_name": "Room_13_e9800671..Face0", 
+          "identifier": "Room_11_3af211a6..Face0", 
+          "display_name": "Room_11_3af211a6..Face0", 
           "type": "Face"
         }, 
         {
@@ -3060,8 +3060,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_13_e9800671..Face1", 
-          "display_name": "Room_13_e9800671..Face1", 
+          "identifier": "Room_11_3af211a6..Face1", 
+          "display_name": "Room_11_3af211a6..Face1", 
           "type": "Face"
         }, 
         {
@@ -3130,8 +3130,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_13_e9800671..Face2", 
-          "display_name": "Room_13_e9800671..Face2", 
+          "identifier": "Room_11_3af211a6..Face2", 
+          "display_name": "Room_11_3af211a6..Face2", 
           "type": "Face"
         }, 
         {
@@ -3200,8 +3200,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_13_e9800671..Face3", 
-          "display_name": "Room_13_e9800671..Face3", 
+          "identifier": "Room_11_3af211a6..Face3", 
+          "display_name": "Room_11_3af211a6..Face3", 
           "type": "Face"
         }, 
         {
@@ -3265,8 +3265,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_13_e9800671..Face4", 
-          "display_name": "Room_13_e9800671..Face4", 
+          "identifier": "Room_11_3af211a6..Face4", 
+          "display_name": "Room_11_3af211a6..Face4", 
           "type": "Face"
         }, 
         {
@@ -3335,8 +3335,8 @@
               "type": "FaceRadiancePropertiesAbridged"
             }
           }, 
-          "identifier": "Room_13_e9800671..Face5", 
-          "display_name": "Room_13_e9800671..Face5", 
+          "identifier": "Room_11_3af211a6..Face5", 
+          "display_name": "Room_11_3af211a6..Face5", 
           "type": "Face"
         }
       ], 
