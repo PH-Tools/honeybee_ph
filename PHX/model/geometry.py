@@ -128,7 +128,7 @@ class PhxPolygon:
 
     @property
     def vertices_id_numbers(self) -> List[int]:
-        return sorted(v.id_num for v in self.vertices)
+        return [v.id_num for v in self.vertices]
 
     @property
     def angle_from_horizontal(self) -> float:
