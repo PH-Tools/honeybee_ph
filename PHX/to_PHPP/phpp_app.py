@@ -25,42 +25,41 @@ class PHPPConnection:
         self.xl: xl_app.XLConnection = xl_app.XLConnection()
 
         # -- Setup all the individual worksheet Classes.
-        self.climate = sheet_io.Climate(self.xl, self.shape.CLIMATE.name)
-        self.u_values = sheet_io.UValues(self.xl, self.shape.UVALUES.name)
+        self.climate = sheet_io.Climate(self.xl, self.shape.CLIMATE)
+        self.u_values = sheet_io.UValues(self.xl, self.shape.UVALUES)
         self.components = sheet_io.Components(self.xl, self.shape.COMPONENTS)
-        self.areas = sheet_io.Areas(self.xl, self.shape.AREAS.name)
+        self.areas = sheet_io.Areas(self.xl, self.shape.AREAS)
         self.windows = sheet_io.Windows(self.xl, self.shape.WINDOWS)
         self.addnl_vent = sheet_io.AddnlVent(self.xl, self.shape.ADDNL_VENT)
         self.ventilation = sheet_io.Ventilation(self.xl, self.shape.VENTILATION)
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
         """Write the variant's weather-station data to the PHPP 'Climate' worksheet."""
-        columns = self.shape.CLIMATE.columns.dict()
+
         for phx_variant in phx_project.variants:
             # -- Write the actual weather station data
             weather_station_data = climate_entry.ClimateDataBlock(
-                columns,
-                phx_variant.location
+                shape=self.shape.CLIMATE,
+                phx_location=phx_variant.location
             )
             self.climate.write_climate_block(weather_station_data)
 
             # -- Set the active weather station
             active_climate_data = climate_entry.ClimateSettings(
-                columns,
-                phx_variant.location
+                shape=self.shape.CLIMATE,
+                phx_location=phx_variant.location
             )
             self.climate.write_active_climate(active_climate_data)
 
     def write_project_constructions(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque constructions to the PHPP 'U-Values' worksheet."""
-        columns = self.shape.UVALUES.columns.dict()
 
         construction_blocks: List[uvalues_constructor.ConstructorBlock] = []
         for phx_construction in phx_project.assembly_types.values():
             construction_blocks.append(
                 uvalues_constructor.ConstructorBlock(
-                    columns,
-                    phx_construction)
+                    shape=self.shape.UVALUES,
+                    phx_construction=phx_construction)
             )
         self.u_values.write_construction_blocks(construction_blocks)
 
@@ -98,7 +97,7 @@ class PHPPConnection:
 
     def write_project_opaque_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque surfaces from a PhxProject to the PHPP 'Areas' worksheet."""
-        columns = self.shape.AREAS.columns.dict()
+        shape = self.shape.AREAS
 
         surfaces: List[areas_surface.SurfaceRow] = []
         for phx_variant in phx_project.variants:
@@ -106,7 +105,7 @@ class PHPPConnection:
                 for phx_polygon in opaque_component.polygons:
                     surfaces.append(
                         areas_surface.SurfaceRow(
-                            columns,
+                            shape,
                             phx_polygon,
                             opaque_component,
                             self.u_values.get_constructor_phpp_id_by_name(

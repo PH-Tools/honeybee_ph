@@ -32,9 +32,11 @@ class Windows:
         for i,  val in enumerate(xl_data):
             if self.shape.window_rows.locator_string_header == val:
                 return i
+
         raise Exception(
             f"Error: Cannot find the '{self.shape.window_rows.locator_string_header}' "
-            f"header on the '{self.shape.name}' sheet, column {self.shape.window_rows.locator_string_header}?")
+            f"header on the '{self.shape.name}' sheet, column {self.shape.window_rows.locator_string_header}?"
+        )
 
     def find_first_entry_row(self) -> int:
         if not self.header_row:
@@ -50,9 +52,11 @@ class Windows:
         for i, val in enumerate(xl_data, start=self.header_row):
             if self.shape.window_rows.locator_string_entry in str(val):
                 return i + 2
+
         raise Exception(
             f"Error: Cannot find the '{self.shape.window_rows.locator_string_entry}' "
-            f"marker on the '{self.shape.name}' sheet, column {self.shape.window_rows.locator_col_entry}?")
+            f"marker on the '{self.shape.name}' sheet, column {self.shape.window_rows.locator_col_entry}?"
+        )
 
     def find_section_shape(self) -> None:
         self.header_row = self.find_header_row()

@@ -5,66 +5,86 @@
     },
     "CLIMATE": {
         "name": "Climate",
-        "columns": {
-            "country": "D",
-            "region": "D",
-            "dataset": "D",
-            "elevation_override": "D",
-            "jan": "E",
-            "feb": "F",
-            "mar": "G",
-            "apr": "H",
-            "may": "I",
-            "jun": "J",
-            "jul": "K",
-            "aug": "L",
-            "sep": "M",
-            "oct": "N",
-            "nov": "O",
-            "dec": "P",
-            "peak_heating_1": "Q",
-            "peak_heating_2": "R",
-            "peak_cooling_1": "S",
-            "peak_cooling_2": "T",
-            "PER": "U",
-            "latitude": "F",
-            "longitude": "H",
-            "elevation": "J",
-            "display_name": "L",
-            "summer_delta_t": "N",
-            "source": "P"
+        "active_dataset": {
+            "locator_col_header": "",
+            "locator_string_header": "",
+            "input_columns": {
+                "country": "D",
+                "region": "D",
+                "dataset": "D",
+                "elevation_override": "D"
+            }
+        },
+        "ud_block": {
+            "locator_col_header": "",
+            "locator_string_header": "",
+            "input_columns": {
+                "jan": "E",
+                "feb": "F",
+                "mar": "G",
+                "apr": "H",
+                "may": "I",
+                "jun": "J",
+                "jul": "K",
+                "aug": "L",
+                "sep": "M",
+                "oct": "N",
+                "nov": "O",
+                "dec": "P",
+                "peak_heating_1": "Q",
+                "peak_heating_2": "R",
+                "peak_cooling_1": "S",
+                "peak_cooling_2": "T",
+                "PER": "U",
+                "latitude": "F",
+                "longitude": "H",
+                "elevation": "J",
+                "display_name": "L",
+                "summer_delta_t": "N",
+                "source": "P"
+            }
         }
     },
     "UVALUES": {
         "name": "U-Values",
-        "columns": {
-            "display_name": "M",
-            "r_si": "M",
-            "r_se": "M",
-            "interior_insulation": "S",
-            "sec_1_description": "L",
-            "sec_1_conductivity": "M",
-            "sec_2_description": "N",
-            "sec_2_conductivity": "O",
-            "sec_3_description": "P",
-            "sec_3_conductivity": "Q",
-            "thickness": "S",
-            "u_val_supplement": "M"
+        "constructor": {
+            "locator_col_header": "L",
+            "locator_string_header": "Assembly no.",
+            "input_columns": {
+                "display_name": "M",
+                "r_si": "M",
+                "r_se": "M",
+                "interior_insulation": "S",
+                "sec_1_description": "L",
+                "sec_1_conductivity": "M",
+                "sec_2_description": "N",
+                "sec_2_conductivity": "O",
+                "sec_3_description": "P",
+                "sec_3_conductivity": "Q",
+                "thickness": "S",
+                "u_val_supplement": "M"
+            }
         }
     },
     "AREAS": {
         "name": "Areas",
-        "columns": {
-            "description": "L",
-            "group_number": "M",
-            "quantity": "P",
-            "area": "V",
-            "assembly_id": "AC",
-            "orientation": "AG",
-            "angle": "AH",
-            "shading": "AJ",
-            "absorptivity": "AK",
-            "emissivity": "AL"
+        "surface_rows": {
+            "locator_col_header": "K",
+            "locator_string_header": "Area input",
+            "locator_col_entry": "K",
+            "locator_string_entry": "1",
+            "input_columns": {
+                "description": "L",
+                "group_number": "M",
+                "quantity": "P",
+                "area": "V",
+                "assembly_id": "AC",
+                "orientation": "AG",
+                "angle": "AH",
+                "shading": "AJ",
+                "absorptivity": "AK",
+                "emissivity": "AL"
+            }
         }
     },
     "GROUND": {
@@ -161,106 +181,108 @@
     },
     "VENTILATION": {
         "name": "Ventilation",
-        "input_blocks": {
-            "vent_type": {
-                "locator_col": "I",
-                "locator_string": "Please select",
-                "input_column": "L"
-            },
-            "wind_coeff_e": {
-                "locator_col": "I",
-                "locator_string": "Wind protection coefficient, e",
-                "input_column": "N"
-            },
-            "wind_coeff_f": {
-                "locator_col": "I",
-                "locator_string": "Wind protection coefficient, f",
-                "input_column": "N"
-            },
-            "airtightness_n50": {
-                "locator_col": "I",
-                "locator_string": "Air change rate at press. test",
-                "input_column": "N"
-            },
-            "airtightness_q50": {
-                "locator_col": "I",
-                "locator_string": "Air change rate at press. test",
-                "input_column": "P"
-            },
-            "multi_unit_on": {
-                "locator_col": "I",
-                "locator_string": "Multiple ventilation units, non-res",
-                "input_column": "H"
-            }
+        "vent_type": {
+            "locator_col": "I",
+            "locator_string": "Please select",
+            "input_column": "L"
+        },
+        "wind_coeff_e": {
+            "locator_col": "I",
+            "locator_string": "Wind protection coefficient, e",
+            "input_column": "N"
+        },
+        "wind_coeff_f": {
+            "locator_col": "I",
+            "locator_string": "Wind protection coefficient, f",
+            "input_column": "N"
+        },
+        "airtightness_n50": {
+            "locator_col": "I",
+            "locator_string": "Air change rate at press. test",
+            "input_column": "N"
+        },
+        "airtightness_q50": {
+            "locator_col": "I",
+            "locator_string": "Air change rate at press. test",
+            "input_column": "P"
+        },
+        "multi_unit_on": {
+            "locator_col": "I",
+            "locator_string": "Multiple ventilation units, non-res",
+            "input_column": "H"
         }
     },
     "ADDNL_VENT": {
         "name": "Additional Vent",
-        "input_blocks": {
-            "rooms": {
-                "locator_col": "C",
-                "locator_string": "Room",
-                "input_columns": {
-                    "quantity": "D",
-                    "display_name": "E",
-                    "vent_unit_assigned": "F",
-                    "weighted_floor_area": "G",
-                    "clear_height": "H",
-                    "V_sup": "J",
-                    "V_eta": "K",
-                    "V_trans": "L",
-                    "operating_days": "N",
-                    "operating_weeks": "O",
-                    "holiday_days": "P",
-                    "period_high_speed": "Q",
-                    "period_high_time": "R",
-                    "period_standard_speed": "S",
-                    "period_standard_time": "T",
-                    "period_minimum_speed": "U",
-                    "period_minimum_time": "V"
-                }
-            },
-            "units": {
-                "locator_col": "C",
-                "locator_string": "Venti-",
-                "input_columns": {
-                    "quantity": "D",
-                    "display_name": "E",
-                    "unit_selected": "F",
-                    "oda_sup_pa": "K",
-                    "eta_eha_pa": "L",
-                    "addnl_pa": "M",
-                    "ext_location": "Q",
-                    "subsoil_hr": "V",
-                    "frost_protection_type": "X",
-                    "temperature_below_defrost_used": "Y"
-                }
-            },
-            "ducts": {
-                "locator_col": "",
-                "locator_string": "Round",
-                "input_columns": {
-                    "quantity": "D",
-                    "diameter": "E",
-                    "width": "F",
-                    "height": "G",
-                    "insul_thickness": "H",
-                    "insul_conductivity": "I",
-                    "insul_reflective": "J",
-                    "sup_air_duct_len": "L",
-                    "oda_air_duct_len": "M",
-                    "exh_air_duct_len": "N",
-                    "duct_assign_1": "Q",
-                    "duct_assign_2": "R",
-                    "duct_assign_3": "S",
-                    "duct_assign_4": "T",
-                    "duct_assign_5": "U",
-                    "duct_assign_6": "V",
-                    "duct_assign_7": "W",
-                    "duct_assign_8": "X",
-                    "duct_assign_9": "Y",
-                    "duct_assign_10": "Z"
-                }
+        "rooms": {
+            "locator_col_header": "C",
+            "locator_string_header": "Room",
+            "locator_col_entry": "C",
+            "locator_string_entry": "1",
+            "input_columns": {
+                "quantity": "D",
+                "display_name": "E",
+                "vent_unit_assigned": "F",
+                "weighted_floor_area": "G",
+                "clear_height": "H",
+                "V_sup": "J",
+                "V_eta": "K",
+                "V_trans": "L",
+                "operating_days": "N",
+                "operating_weeks": "O",
+                "holiday_days": "P",
+                "period_high_speed": "Q",
+                "period_high_time": "R",
+                "period_standard_speed": "S",
+                "period_standard_time": "T",
+                "period_minimum_speed": "U",
+                "period_minimum_time": "V"
+            }
+        },
+        "units": {
+            "locator_col_header": "C",
+            "locator_string_header": "Venti-",
+            "locator_col_entry": "C",
+            "locator_string_entry": "1",
+            "input_columns": {
+                "quantity": "D",
+                "display_name": "E",
+                "unit_selected": "F",
+                "oda_sup_pa": "K",
+                "eta_eha_pa": "L",
+                "addnl_pa": "M",
+                "ext_location": "Q",
+                "subsoil_hr": "V",
+                "frost_protection_type": "X",
+                "temperature_below_defrost_used": "Y"
+            }
+        },
+        "ducts": {
+            "locator_col_header": "",
+            "locator_string_header": "Round",
+            "locator_col_entry": "C",
+            "locator_string_entry": "1",
+            "input_columns": {
+                "quantity": "D",
+                "diameter": "E",
+                "width": "F",
+                "height": "G",
+                "insul_thickness": "H",
+                "insul_conductivity": "I",
+                "insul_reflective": "J",
+                "sup_air_duct_len": "L",
+                "oda_air_duct_len": "M",
+                "exh_air_duct_len": "N",
+                "duct_assign_1": "Q",
+                "duct_assign_2": "R",
+                "duct_assign_3": "S",
+                "duct_assign_4": "T",
+                "duct_assign_5": "U",
+                "duct_assign_6": "V",
+                "duct_assign_7": "W",
+                "duct_assign_8": "X",
+                "duct_assign_9": "Y",
+                "duct_assign_10": "Z"
             }
         }
     },

@@ -33,7 +33,7 @@ class VentilationInputItem:
         """
         return xl_data.XlItem(
             sheet_name=_sheet_name,
-            xl_range=f'{getattr(self.shape.input_blocks, self.input_type).input_column}{_row_num}',
+            xl_range=f'{getattr(self.shape, self.input_type).input_column}{_row_num}',
             write_value=self.input_data
         )
 

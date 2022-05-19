@@ -20,12 +20,12 @@ class Glazings:
         self.section_header_row: Optional[int] = None
         self.section_first_entry_row: Optional[int] = None
 
-    def find_section_header_row(self) -> int:
+    def find_section_header_row(self, _row_start: int = 1, _row_end: int = 100) -> int:
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
             _col=self.shape.glazings.locator_col_header,
-            _row_start=1,
-            _row_end=100
+            _row_start=_row_start,
+            _row_end=_row_end
         )
 
         for i,  val in enumerate(xl_data):
@@ -34,7 +34,8 @@ class Glazings:
 
         raise Exception(
             f"Error: Cannot find the '{self.shape.glazings.locator_string_header}'"
-            f"header on the '{self.shape.name}' sheet, column {self.shape.glazings.locator_col_header}?")
+            f"header on the '{self.shape.name}' sheet, column {self.shape.glazings.locator_col_header}?"
+        )
 
     def find_section_first_entry_row(self) -> int:
         if not self.section_header_row:
@@ -53,7 +54,8 @@ class Glazings:
 
         raise Exception(
             f"Error: Cannot find the '{self.shape.glazings.locator_string_entry}' "
-            f" entry start on the '{self.shape.name}' sheet, column {self.shape.glazings.locator_col_entry}?")
+            f" entry start on the '{self.shape.name}' sheet, column {self.shape.glazings.locator_col_entry}?"
+        )
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
@@ -85,12 +87,12 @@ class Frames:
         self.section_header_row: Optional[int] = None
         self.section_first_entry_row: Optional[int] = None
 
-    def find_section_header_row(self) -> int:
+    def find_section_header_row(self, _row_start: int = 1, _row_end: int = 100) -> int:
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
             _col=self.shape.frames.locator_col_header,
-            _row_start=1,
-            _row_end=100
+            _row_start=_row_start,
+            _row_end=_row_end
         )
 
         for i,  val in enumerate(xl_data):
@@ -99,7 +101,8 @@ class Frames:
 
         raise Exception(
             f"Error: Cannot find the '{self.shape.frames.locator_string_header}' "
-            f"header on the '{self.shape.name}' sheet, column {self.shape.frames.locator_col_header}?")
+            f"header on the '{self.shape.name}' sheet, column {self.shape.frames.locator_col_header}?"
+        )
 
     def find_section_first_entry_row(self) -> int:
         if not self.section_header_row:
@@ -118,17 +121,18 @@ class Frames:
 
         raise Exception(
             f"Error: Cannot find the '{self.shape.frames.locator_string_entry}'"
-            f"entry start on the 'Components' sheet, column {self.shape.frames.locator_col_entry}?")
+            f"entry start on the 'Components' sheet, column {self.shape.frames.locator_col_entry}?"
+        )
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
         self.section_first_entry_row = self.find_section_first_entry_row()
 
-    def get_frame_phpp_id_by_name(self, _name: str) -> str:
+    def get_frame_phpp_id_by_name(self, _name: str, _row_start: int = 1, _row_end: int = 500) -> str:
         row = self.xl.get_row_num_of_value_in_column(
             sheet_name=self.shape.name,
-            row_start=1,
-            row_end=500,
+            row_start=_row_start,
+            row_end=_row_end,
             col=self.shape.frames.input_columns.description,
             find=_name
         )
@@ -154,12 +158,12 @@ class Ventilators:
         self.section_header_row: Optional[int] = None
         self.section_first_entry_row: Optional[int] = None
 
-    def find_section_header_row(self) -> int:
+    def find_section_header_row(self, _row_start: int = 1, _row_end: int = 100) -> int:
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
             _col=self.shape.ventilators.locator_col_header,
-            _row_start=1,
-            _row_end=100
+            _row_start=_row_start,
+            _row_end=_row_end
         )
 
         for i,  val in enumerate(xl_data):
@@ -188,25 +192,27 @@ class Ventilators:
 
         raise Exception(
             f"Error: Cannot find the '{self.shape.ventilators.locator_string_entry}' entry start on "
-            f"the '{self.shape.name}' sheet, column {self.shape.ventilators.locator_col_entry}?")
+            f"the '{self.shape.name}' sheet, column {self.shape.ventilators.locator_col_entry}?"
+        )
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
         self.section_first_entry_row = self.find_section_first_entry_row()
 
-    def get_ventilator_phpp_id_by_name(self, _name: str) -> str:
+    def get_ventilator_phpp_id_by_name(self, _name: str, _row_start: int = 1, _row_end: int = 500) -> str:
         row = self.xl.get_row_num_of_value_in_column(
             sheet_name=self.shape.name,
-            row_start=1,
-            row_end=500,
+            row_start=_row_start,
+            row_end=_row_end,
             col=self.shape.ventilators.input_columns.display_name,
             find=_name
         )
 
         if not row:
-            msg = f'Error: Cannot find a Ventilator component named: "{_name}"]'\
+            raise Exception(
+                f'Error: Cannot find a Ventilator component named: "{_name}"]'
                 f'in column {self.shape.ventilators.input_columns.display_name}?'
-            raise Exception(msg)
+            )
 
         prefix = self.xl.get_data(
             self.shape.name,

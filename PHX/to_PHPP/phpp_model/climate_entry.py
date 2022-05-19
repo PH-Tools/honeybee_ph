@@ -4,24 +4,26 @@
 """Data-entry constructor for the Climate Worksheet."""
 
 from dataclasses import dataclass
-from typing import Dict, List, Tuple, Union, ClassVar
+from typing import Dict, List, Tuple, ClassVar
 from functools import partial
 
 from PHX.to_PHPP import xl_data
 from PHX.model import climate
+from PHX.to_PHPP.phpp_localization import shape_model
 
 
 @dataclass
 class ClimateSettings:
     """The active climate data selections."""
 
-    __slots__ = ("columns", "phx_location")
-    columns: Dict[str, str]
+    __slots__ = ("shape", "phx_location")
+    shape: shape_model.Climate
     phx_location: climate.PhxLocation
 
     def _create_range(self, _field_name: str, _row_offset: int, _start_row: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_start_row + _row_offset}'
+        col = getattr(self.shape.active_dataset.input_columns, _field_name)
+        return f'{col}{_start_row + _row_offset}'
 
     def create_xl_items(self, _sheet_name: str, _start_row: int) -> List[xl_data.XlItem]:
         """Return a list of the XL items to write to the worksheet."""
@@ -41,16 +43,17 @@ class ClimateSettings:
 class ClimateDataBlock:
     """A single Climate / Weather-Station entry block."""
 
-    __slots__ = ("columns", "phx_location")
-    columns: Dict[str, Union[str, Dict]]
-    phx_location: climate.PhxLocation
     month_order: ClassVar[List[str]] = ['jan', 'feb', 'mar', 'apr',
                                         'may', 'jun', 'jul', 'aug',
                                         'sep', 'oct', 'nov', 'dec']
+    __slots__ = ("shape", "phx_location")
+    shape: shape_model.Climate
+    phx_location: climate.PhxLocation
 
     def _create_range(self, _field_name: str, _row_offset: int, _start_row: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_start_row + _row_offset}'
+        col = getattr(self.shape.ud_block.input_columns, _field_name)
+        return f'{col}{_start_row + _row_offset}'
 
     def create_xl_items(self, _sheet_name: str, _start_row: int) -> List[xl_data.XlItem]:
         """Return a list of the XL items to write to the worksheet."""

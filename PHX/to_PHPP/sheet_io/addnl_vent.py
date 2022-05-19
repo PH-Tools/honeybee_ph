@@ -25,20 +25,21 @@ class Spaces:
 
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
-            _col=self.shape.input_blocks.rooms.locator_col,
+            _col=self.shape.rooms.locator_col_header,
             _row_start=_row_start,
             _row_end=_row_end
         )
 
         for i,  val in enumerate(xl_data):
-            if self.shape.input_blocks.rooms.locator_string in str(val):
+            if self.shape.rooms.locator_string_header in str(val):
                 return i
-        else:
-            msg = f'\nError: Not able to find the "Rooms" input section of '\
-                f'the "{self.shape.name}" worksheet? Please be sure the section '\
-                f'begins with the "{self.shape.input_blocks.rooms.locator_string}" '\
-                f'flag in column "{self.shape.input_blocks.rooms.locator_col}"?'
-            raise Exception(msg)
+
+        raise Exception(
+            f'\nError: Not able to find the "Rooms" input section of '
+            f'the "{self.shape.name}" worksheet? Please be sure the section '
+            f'begins with the "{self.shape.rooms.locator_string_header}" '
+            f'flag in column "{self.shape.rooms.locator_col_header}"?'
+        )
 
     def find_section_first_entry_row(self) -> int:
         """Return the row number of the very first user-input entry row in the 'Rooms' section."""
@@ -48,18 +49,24 @@ class Spaces:
 
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
-            _col=self.shape.input_blocks.rooms.locator_col,
+            _col=self.shape.rooms.locator_col_entry,
             _row_start=self.section_header_row,
             _row_end=self.section_header_row+25,
         )
 
         for i, val in enumerate(xl_data, start=self.section_header_row):
-            if val == 1:
+            try:
+                val = str(int(val))  # Value comes in as  "1.0" from Excel?
+            except:
+                continue
+
+            if val == self.shape.rooms.locator_string_entry:
                 return i
-        else:
-            msg = f'\n\tError: Not able to find the first room entry row in the'\
-                f'"Rooms" section of the "{self.shape.name}" worksheet?'
-            raise Exception(msg)
+
+        raise Exception(
+            f'\n\tError: Not able to find the first room entry row in the'
+            f'"Rooms" section of the "{self.shape.name}" worksheet?'
+        )
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
@@ -79,20 +86,21 @@ class VentUnits:
 
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
-            _col=self.shape.input_blocks.units.locator_col,
+            _col=self.shape.units.locator_col_header,
             _row_start=_row_start,
             _row_end=_row_end
         )
 
         for i,  val in enumerate(xl_data, start=_row_start):
-            if self.shape.input_blocks.units.locator_string in str(val):
+            if self.shape.units.locator_string_header in str(val):
                 return i
-        else:
-            msg = f'\nError: Not able to find the "Ventilation-Units" input section '\
-                f'of the "{self.shape.name}" worksheet? Please be sure the section '\
-                f'begins with the "{self.shape.input_blocks.units.locator_string}" '\
-                f'flag in column "{self.shape.input_blocks.units.locator_col}?" '
-            raise Exception(msg)
+
+        raise Exception(
+            f'\nError: Not able to find the "Ventilation-Units" input section '
+            f'of the "{self.shape.name}" worksheet? Please be sure the section '
+            f'begins with the "{self.shape.units.locator_string_header}" '
+            f'flag in column "{self.shape.units.locator_col_header}?" '
+        )
 
     def find_section_first_entry_row(self) -> int:
         """Return the row number of the very first user-input entry row in the 'Rooms' section."""
@@ -102,18 +110,24 @@ class VentUnits:
 
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
-            _col=self.shape.input_blocks.units.locator_col,
+            _col=self.shape.units.locator_col_entry,
             _row_start=self.section_header_row,
             _row_end=self.section_header_row+25,
         )
 
         for i, val in enumerate(xl_data, start=self.section_header_row):
-            if val == 1:
+            try:
+                val = str(int(val))  # Value comes in as  "1.0" from Excel?
+            except:
+                continue
+
+            if val == self.shape.units.locator_string_entry:
                 return i
-        else:
-            msg = f'\nError: Not able to find the first vent-unit entry row on the '\
-                f'"{self.shape.name}" worksheet?'
-            raise Exception(msg)
+
+        raise Exception(
+            f'\nError: Not able to find the first vent-unit entry row on the '
+            f'"{self.shape.name}" worksheet?'
+        )
 
     def find_section_shape(self) -> None:
         self.section_start_row = self.find_section_header_row()
@@ -136,7 +150,7 @@ class VentUnits:
         if not self.section_first_entry_row:
             self.section_first_entry_row = self.find_section_first_entry_row()
 
-        search_column = self.shape.input_blocks.units.input_columns.unit_selected
+        search_column = self.shape.units.input_columns.unit_selected
 
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
@@ -149,10 +163,11 @@ class VentUnits:
             if val == _phpp_id:
                 num_col = col_offset(search_column, -3)
                 return self.xl.get_data(self.shape.name, f"{num_col}{i}")
-        else:
-            msg = f"Error: Cannot locate the Ventilation Unit: {_phpp_id} in"\
-                " the Additional Ventilation worksheet Units section?"
-            raise Exception(msg)
+
+        raise Exception(
+            f"Error: Cannot locate the Ventilation Unit: {_phpp_id} in"
+            " the Additional Ventilation worksheet Units section?"
+        )
 
 
 class VentDucts:
@@ -167,20 +182,21 @@ class VentDucts:
         """Return the row number of the 'Rooms' section header."""
         xl_data = self.xl.get_single_column_data(
             _sheet_name=self.shape.name,
-            _col=self.shape.input_blocks.ducts.locator_col,
+            _col=self.shape.ducts.locator_col_header,
             _row_start=_row_start,
             _row_end=_row_end
         )
 
         for i,  val in enumerate(xl_data, start=_row_start):
-            if self.shape.input_blocks.ducts.locator_string in str(val):
+            if self.shape.ducts.locator_string_header in str(val):
                 return i
-        else:
-            msg = f'\n\tError: Not able to find the "Vent-Ducts" input section'\
-                f'of the "{self.shape.name}" worksheet? Please be sure the section'\
-                f'begins with the "{self.shape.input_blocks.ducts.locator_string}" '\
-                f'flag in column {self.shape.input_blocks.ducts.locator_col}?'
-            raise Exception(msg)
+
+        raise Exception(
+            f'\n\tError: Not able to find the "Vent-Ducts" input section'
+            f'of the "{self.shape.name}" worksheet? Please be sure the section'
+            f'begins with the "{self.shape.ducts.locator_string_header}" '
+            f'flag in column {self.shape.ducts.locator_col_header}?'
+        )
 
     def find_section_first_entry_row(self) -> int:
         """Return the row number of the very first user-input entry row in the 'Rooms' section."""
@@ -197,12 +213,11 @@ class VentDucts:
 
 
 class AddnlVent:
-    """The PHPP Additional Vent worksheet."""
+    """IO Controller for the PHPP Additional Vent worksheet."""
 
     def __init__(self, _xl: xl_app.XLConnection, _shape: shape_model.AddnlVent):
         self.xl = _xl
         self.shape = _shape
-
         self.spaces = Spaces(self.xl, self.shape)
         self.vent_units = VentUnits(self.xl, self.shape)
         self.vent_ducts = VentDucts(self.xl, self.shape)

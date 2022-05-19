@@ -19,24 +19,29 @@ class VentilationInputLocation:
         self.search_col = _search_col
         self.search_item = _search_item
 
-    def find_input_row(self) -> int:
+    def find_input_row(self, _row_start: int = 1, _row_end: int = 200) -> int:
         """Return the row number where the search-item is found input."""
 
         xl_data = self.xl.get_single_column_data(
-            self.sheet_name, self.search_col, 1, 100,)
+            _sheet_name=self.sheet_name,
+            _col=self.search_col,
+            _row_start=_row_start,
+            _row_end=_row_end
+        )
 
-        for i,  val in enumerate(xl_data, start=1):
+        for i,  val in enumerate(xl_data, start=_row_start):
             if self.search_item in str(val):
                 return i
-        else:
-            msg = f'\n\tError: Not able to find the "{self.search_item}" input '\
-                f'section of the "{self.sheet_name}" worksheet? Please be sure '\
-                f'the section begins with the "{self.search_item}" flag in column {self.search_col}?'
-            raise Exception(msg)
+
+        raise Exception(
+            f'\n\tError: Not able to find the "{self.search_item}" input '
+            f'section of the "{self.sheet_name}" worksheet? Please be sure '
+            f'the section begins with the "{self.search_item}" flag in column {self.search_col}?'
+        )
 
 
 class Ventilation:
-    """The PHPP Ventilation worksheet."""
+    """IO Controller for the PHPP Ventilation worksheet."""
 
     def __init__(self, _xl: xl_app.XLConnection, _shape: shape_model.Ventilation):
         self.xl = _xl
@@ -45,32 +50,32 @@ class Ventilation:
         self.io_vent_type = VentilationInputLocation(
             self.xl,
             self.shape.name,
-            self.shape.input_blocks.vent_type.locator_col,
-            self.shape.input_blocks.vent_type.locator_string
+            self.shape.vent_type.locator_col,
+            self.shape.vent_type.locator_string
         )
         self.io_wind_coeff_e = VentilationInputLocation(
             self.xl,
             self.shape.name,
-            self.shape.input_blocks.wind_coeff_e.locator_col,
-            self.shape.input_blocks.wind_coeff_e.locator_string
+            self.shape.wind_coeff_e.locator_col,
+            self.shape.wind_coeff_e.locator_string
         )
         self.io_wind_coeff_f = VentilationInputLocation(
             self.xl,
             self.shape.name,
-            self.shape.input_blocks.wind_coeff_f.locator_col,
-            self.shape.input_blocks.wind_coeff_f.locator_string
+            self.shape.wind_coeff_f.locator_col,
+            self.shape.wind_coeff_f.locator_string
         )
         self.io_air_change_rate = VentilationInputLocation(
             self.xl,
             self.shape.name,
-            self.shape.input_blocks.airtightness_n50.locator_col,
-            self.shape.input_blocks.airtightness_n50.locator_string
+            self.shape.airtightness_n50.locator_col,
+            self.shape.airtightness_n50.locator_string
         )
         self.io_multi_vent_worksheet_on = VentilationInputLocation(
             self.xl,
             self.shape.name,
-            self.shape.input_blocks.multi_unit_on.locator_col,
-            self.shape.input_blocks.multi_unit_on.locator_string
+            self.shape.multi_unit_on.locator_col,
+            self.shape.multi_unit_on.locator_string
         )
 
     def _write_input(self,

@@ -15,11 +15,23 @@ class Verification(BaseModel):
     columns: ColVerification
 
 
-class ColClimate(BaseModel):
+# -----------------------------------------------------------------------------
+
+
+class ClimateActiveDatasetCol(BaseModel):
     country: str
     region: str
     dataset: str
     elevation_override: str
+
+
+class ClimateActiveDataset(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    input_columns: ClimateActiveDatasetCol
+
+
+class ClimateUDBlockCol(BaseModel):
     jan: str
     feb: str
     mar: str
@@ -45,12 +57,22 @@ class ColClimate(BaseModel):
     source: str
 
 
+class ClimateUDBlock(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    input_columns: ClimateUDBlockCol
+
+
 class Climate(BaseModel):
     name: str
-    columns: ColClimate
+    active_dataset: ClimateActiveDataset
+    ud_block: ClimateUDBlock
 
 
-class ColUValues(BaseModel):
+# -----------------------------------------------------------------------------
+
+
+class UValuesConstructorCol(BaseModel):
     display_name: str
     r_si: str
     r_se: str
@@ -65,12 +87,21 @@ class ColUValues(BaseModel):
     u_val_supplement: str
 
 
+class UValuesConstructor(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    input_columns: UValuesConstructorCol
+
+
 class UValues(BaseModel):
     name: str
-    columns: ColUValues
+    constructor: UValuesConstructor
 
 
-class ColAreas(BaseModel):
+# -----------------------------------------------------------------------------
+
+
+class AreasSurfaceRowsCol(BaseModel):
     description: str
     group_number: str
     quantity: str
@@ -83,9 +114,20 @@ class ColAreas(BaseModel):
     emissivity: str
 
 
+class AreasSurfaceRows(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
+    input_columns: AreasSurfaceRowsCol
+
+
 class Areas(BaseModel):
     name: str
-    columns: ColAreas
+    surface_rows: AreasSurfaceRows
+
+
+# -----------------------------------------------------------------------------
 
 
 class ColGround(BaseModel):
@@ -98,6 +140,7 @@ class Ground(BaseModel):
 
 
 # -----------------------------------------------------------------------------
+
 
 class ComponentsGlazingsCol(BaseModel):
     description: str
@@ -174,6 +217,7 @@ class Components(BaseModel):
 
 # -----------------------------------------------------------------------------
 
+
 class WindowWindowRowsColumns(BaseModel):
     quantity: str
     description: str
@@ -224,18 +268,14 @@ class VentilationInputItem(BaseModel):
     input_column: str
 
 
-class VentilationInputBlocks(BaseModel):
+class Ventilation(BaseModel):
+    name: str
     vent_type: VentilationInputItem
     wind_coeff_e: VentilationInputItem
     wind_coeff_f: VentilationInputItem
     airtightness_n50: VentilationInputItem
     airtightness_q50: VentilationInputItem
     multi_unit_on: VentilationInputItem
-
-
-class Ventilation(BaseModel):
-    name: str
-    input_blocks: VentilationInputBlocks
 
 
 # -----------------------------------------------------------------------------
@@ -298,32 +338,34 @@ class AddnlVentColumnsDucts(BaseModel):
 
 
 class AddnlVentRoomsInputBlockRooms(BaseModel):
-    locator_col: str
-    locator_string: str
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
     input_columns: AddnlVentColumnsRooms
 
 
 class AddnlVentRoomsInputBlockUnits(BaseModel):
-    locator_col: str
-    locator_string: str
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
     input_columns: AddnlVentColumnsUnits
 
 
 class AddnlVentRoomsInputBlockDucts(BaseModel):
-    locator_col: str
-    locator_string: str
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
     input_columns: AddnlVentColumnsDucts
-
-
-class AddnlVentInputBlocks(BaseModel):
-    rooms: AddnlVentRoomsInputBlockRooms
-    units: AddnlVentRoomsInputBlockUnits
-    ducts: AddnlVentRoomsInputBlockDucts
 
 
 class AddnlVent(BaseModel):
     name: str
-    input_blocks: AddnlVentInputBlocks
+    rooms: AddnlVentRoomsInputBlockRooms
+    units: AddnlVentRoomsInputBlockUnits
+    ducts: AddnlVentRoomsInputBlockDucts
 
 
 # -----------------------------------------------------------------------------

@@ -11,14 +11,15 @@ from PHX.model import components, geometry
 from PHX.model.enums.building import ComponentExposureExterior, ComponentFaceType
 
 from PHX.to_PHPP import xl_data
+from PHX.to_PHPP.phpp_localization import shape_model
 
 
 @dataclass
 class SurfaceRow:
     """A single Areas/Surface entry row."""
 
-    __slots__ = ('columns', 'phx_polygon', 'phx_component', 'phpp_assembly_id_name')
-    columns: Dict[str, str]
+    __slots__ = ('shape', 'phx_polygon', 'phx_component', 'phpp_assembly_id_name')
+    shape: shape_model.Areas
     phx_polygon: geometry.PhxPolygon
     phx_component: components.PhxComponentOpaque
     phpp_assembly_id_name: Optional[str]
@@ -39,7 +40,8 @@ class SurfaceRow:
 
     def _create_range(self, _field_name: str, _row_num: int) -> str:
         """Return the XL Range ("P12",...) for the specific field name."""
-        return f'{self.columns[_field_name]}{_row_num}'
+        col = getattr(self.shape.surface_rows.input_columns, _field_name)
+        return f'{col}{_row_num}'
 
     def create_xl_items(self, _sheet_name: str, _row_num: int) -> List[xl_data.XlItem]:
         """Returns a list of the XL Items to write for this Surface Entry
