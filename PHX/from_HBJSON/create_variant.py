@@ -95,6 +95,10 @@ def add_PH_Building_from_hb_room(_variant: project.PhxVariant, _hb_room: room.Ro
     # Set the airtightness for Building
     ph_bldg_data.airtightness_q50 = _hb_room.properties.energy.infiltration.flow_per_exterior_area * 3600
 
+    # Air temp Setpoints
+    ph_bldg_data.setpoints.winter = _hb_room.properties.ph.ph_bldg_segment.set_points.winter
+    ph_bldg_data.setpoints.summer = _hb_room.properties.ph.ph_bldg_segment.set_points.summer
+
     _variant.ph_certification.ph_building_data = ph_bldg_data
 
     return None

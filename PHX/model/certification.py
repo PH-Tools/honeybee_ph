@@ -12,6 +12,12 @@ from PHX.model.enums import phi_certification
 
 
 @dataclass
+class PhxSetpoints:
+    winter: float = 20  # deg. C
+    summer: float = 25  # deg. C
+
+
+@dataclass
 class PhxPhBuildingData:
     _count: ClassVar[int] = 0
 
@@ -28,6 +34,7 @@ class PhxPhBuildingData:
     airtightness_n50: float = 1.0  # ach
     wind_coefficient_e: float = 0.07
     wind_coefficient_f: float = 15
+    setpoints: PhxSetpoints = field(default_factory=PhxSetpoints)
     foundations: list[ground.PhxFoundation] = field(default_factory=list)
 
     def __post_init__(self) -> None:

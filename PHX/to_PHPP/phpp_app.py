@@ -37,40 +37,69 @@ class PHPPConnection:
 
     def write_certification_config(self, phx_project: project.PhxProject) -> None:
         for variant in phx_project.variants:
-            # TODO: multiple variants?
+            # # TODO: multiple variants?
+            # --- Certification Config
+            self.verification.write_item(
+                verification_data.VerificationInput.enum(
+                    shape=self.shape.VERIFICATION,
+                    input_type='phi_certification_type',
+                    input_enum_value=variant.ph_certification.certification_settings.phi_certification_type
+                )
+            )
+            self.verification.write_item(
+                verification_data.VerificationInput.enum(
+                    shape=self.shape.VERIFICATION,
+                    input_type='phi_certification_class',
+                    input_enum_value=variant.ph_certification.certification_settings.phi_certification_class
+                )
+            )
+            self.verification.write_item(
+                verification_data.VerificationInput.enum(
+                    shape=self.shape.VERIFICATION,
+                    input_type='phi_pe_type',
+                    input_enum_value=variant.ph_certification.certification_settings.phi_pe_type
+                )
+            )
+            self.verification.write_item(
+                verification_data.VerificationInput.enum(
+                    shape=self.shape.VERIFICATION,
+                    input_type='phi_enerphit_type',
+                    input_enum_value=variant.ph_certification.certification_settings.phi_enerphit_type
+                )
+            )
+            self.verification.write_item(
+                verification_data.VerificationInput.enum(
+                    shape=self.shape.VERIFICATION,
+                    input_type='phi_retrofit_type',
+                    input_enum_value=variant.ph_certification.certification_settings.phi_retrofit_type
+                )
+            )
 
-            self.verification.write_certification_type(
-                verification_data.VerificationInputItem.certification_type(
-                    self.shape.VERIFICATION,
-                    variant.ph_certification.certification_settings.phi_certification_type
+            # ---- Model Parameters
+            if not variant.ph_certification.ph_building_data:
+                continue
+            self.verification.write_item(
+                verification_data.VerificationInput.item(
+                    shape=self.shape.VERIFICATION,
+                    input_type='num_of_units',
+                    input_data=variant.ph_certification.ph_building_data.num_of_units
                 )
             )
-            self.verification.write_certification_class(
-                verification_data.VerificationInputItem.certification_class(
-                    self.shape.VERIFICATION,
-                    variant.ph_certification.certification_settings.phi_certification_class
+            self.verification.write_item(
+                verification_data.VerificationInput.item(
+                    shape=self.shape.VERIFICATION,
+                    input_type='setpoint_winter',
+                    input_data=variant.ph_certification.ph_building_data.setpoints.winter
                 )
             )
-            self.verification.write_pe_type(
-                verification_data.VerificationInputItem.pe_type(
-                    self.shape.VERIFICATION,
-                    variant.ph_certification.certification_settings.phi_pe_type
+            self.verification.write_item(
+                verification_data.VerificationInput.item(
+                    shape=self.shape.VERIFICATION,
+                    input_type='setpoint_summer',
+                    input_data=variant.ph_certification.ph_building_data.setpoints.summer
                 )
             )
-            self.verification.write_enerphit_type(
-                verification_data.VerificationInputItem.enerphit_type(
-                    self.shape.VERIFICATION,
-                    variant.ph_certification.certification_settings.phi_enerphit_type
-                )
-            )
-            self.verification.write_retrofit_type(
-                verification_data.VerificationInputItem.retrofit_type(
-                    self.shape.VERIFICATION,
-                    variant.ph_certification.certification_settings.phi_retrofit_type
-                )
-            )
-
-        return
+        return None
 
     def write_climate_data(self, phx_project: project.PhxProject) -> None:
         """Write the variant's weather-station data to the PHPP 'Climate' worksheet."""
@@ -89,6 +118,7 @@ class PHPPConnection:
                 phx_location=phx_variant.location
             )
             self.climate.write_active_climate(active_climate_data)
+        return None
 
     def write_project_constructions(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque constructions to the PHPP 'U-Values' worksheet."""
@@ -101,6 +131,7 @@ class PHPPConnection:
                     phx_construction=phx_construction)
             )
         self.u_values.write_construction_blocks(construction_blocks)
+        return None
 
     def write_project_window_components(self, phx_project: project.PhxProject) -> None:
         """Write all of the frame and glass constructions from a PhxProject to the PHPP 'Components' worksheet."""
@@ -120,6 +151,7 @@ class PHPPConnection:
             )
         self.components.write_glazings(glazing_component_rows)
         self.components.write_frames(frame_component_rows)
+        return None
 
     def write_project_ventilation_components(self, phx_project: project.PhxProject) -> None:
         """Write all of the ventilators from a PhxProject to the PHPP 'Components' worksheet."""
@@ -133,6 +165,7 @@ class PHPPConnection:
                 )
                 phpp_ventilator_rows.append(new_vent_row)
         self.components.write_ventilators(phpp_ventilator_rows)
+        return None
 
     def write_project_opaque_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque surfaces from a PhxProject to the PHPP 'Areas' worksheet."""
@@ -152,6 +185,7 @@ class PHPPConnection:
                         )
                     )
         self.areas.write_surfaces(surfaces)
+        return None
 
     def write_project_window_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the window surfaces from a PhxProject to the PHPP 'Windows' worksheet."""
@@ -185,6 +219,7 @@ class PHPPConnection:
                             )
                         )
         self.windows.write_windows(phpp_windows)
+        return None
 
     def write_project_ventilators(self, phx_project: project.PhxProject) -> None:
         """Write all of the used Ventilator Units from a PhxProject to the PHPP 'Additional Vent' worksheet."""
@@ -203,6 +238,7 @@ class PHPPConnection:
                 phpp_vent_unit_rows.append(new_vent_row)
 
         self.addnl_vent.write_vent_units(phpp_vent_unit_rows)
+        return None
 
     def write_project_spaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the PH-Spaces from a PhxProject to the PHPP 'Additional Vent' worksheet."""
@@ -238,6 +274,7 @@ class PHPPConnection:
                     phpp_vent_rooms.append(phpp_rm)
 
         self.addnl_vent.write_spaces(phpp_vent_rooms)
+        return None
 
     def write_project_ventilation_type(self, phx_project: project.PhxProject) -> None:
         """Write the Ventilation-Type to the PHPP 'Ventilation' worksheet."""
@@ -257,6 +294,7 @@ class PHPPConnection:
                     "x"
                 )
             )
+        return None
 
     def write_project_airtightness(self, phx_project: project.PhxProject) -> None:
         """Write the Airtightness data to the PHPP 'Ventilation' worksheet."""
@@ -292,3 +330,4 @@ class PHPPConnection:
                     ph_bldg.airtightness_q50
                 )
             )
+        return None

@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
-
 from enum import Enum
 
 from PHX.to_PHPP import xl_data
@@ -14,15 +13,32 @@ from PHX.to_PHPP.phpp_localization import shape_model
 
 
 @dataclass
-class VerificationInputItem:
-    """Ventilation Worksheet input item."""
+class VerificationInput:
+    """Ventilation Worksheet input data item."""
 
     shape: shape_model.Verification
-    input_data: xl_writable
     input_type: str
+    input_data: xl_writable
+
+    @classmethod
+    def item(cls, shape: shape_model.Verification, input_type: str, input_data: xl_writable) -> VerificationInput:
+        return cls(
+            shape,
+            input_type,
+            input_data
+        )
+
+    @classmethod
+    def enum(cls, shape: shape_model.Verification, input_type: str, input_enum_value: Enum) -> VerificationInput:
+        shape_data = getattr(shape, input_type).options
+        return cls(
+            shape,
+            input_type,
+            shape_data[str(input_enum_value.value)]
+        )
 
     def create_xl_item(self, _sheet_name: str, _row_num: int) -> xl_data.XlItem:
-        """Returns a list of the XL Items to write for this Surface Entry
+        """Returns a list of the XL Items to write for this Data item
 
         Arguments:
         ----------
@@ -37,44 +53,4 @@ class VerificationInputItem:
             sheet_name=_sheet_name,
             xl_range=f'{getattr(self.shape, self.input_type).input_column}{_row_num}',
             write_value=self.input_data
-        )
-
-    @classmethod
-    def certification_type(cls, shape: shape_model.Verification, input_data: Enum) -> VerificationInputItem:
-        return cls(
-            shape=shape,
-            input_data=shape.cert_type.options[str(input_data.value)],
-            input_type='cert_type'
-        )
-
-    @classmethod
-    def certification_class(cls, shape: shape_model.Verification, input_data: Enum) -> VerificationInputItem:
-        return cls(
-            shape=shape,
-            input_data=shape.cert_class.options[str(input_data.value)],
-            input_type='cert_class'
-        )
-
-    @classmethod
-    def pe_type(cls, shape: shape_model.Verification, input_data: Enum) -> VerificationInputItem:
-        return cls(
-            shape=shape,
-            input_data=shape.pe_type.options[str(input_data.value)],
-            input_type='pe_type'
-        )
-
-    @classmethod
-    def enerphit_type(cls, shape: shape_model.Verification, input_data: Enum) -> VerificationInputItem:
-        return cls(
-            shape=shape,
-            input_data=shape.enerphit_type.options[str(input_data.value)],
-            input_type='enerphit_type'
-        )
-
-    @classmethod
-    def retrofit_type(cls, shape: shape_model.Verification, input_data: Enum) -> VerificationInputItem:
-        return cls(
-            shape=shape,
-            input_data=shape.retrofit_type.options[str(input_data.value)],
-            input_type='retrofit_type'
         )
