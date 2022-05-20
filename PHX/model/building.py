@@ -41,6 +41,11 @@ class PhxBuilding:
     _components: List[PhxComponentOpaque] = field(default_factory=list)
     zones: List[PhxZone] = field(default_factory=list)
 
+    @property
+    def weighted_net_floor_area(self) -> float:
+        """Returns the total weighted net floor area of all zones in the PhxBuilding."""
+        return sum(z.weighted_net_floor_area for z in self.zones)
+
     def add_components(self, _components: Union[PhxComponentOpaque, Collection[PhxComponentOpaque]]) -> None:
         """Add a new PHXComponentOPAQUE to the PHX-Building"""
         if not isinstance(_components, Collection):

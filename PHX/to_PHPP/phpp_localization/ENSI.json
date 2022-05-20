@@ -156,6 +156,12 @@
                 "absorptivity": "AK",
                 "emissivity": "AL"
             }
+        },
+        "tfa_input": {
+            "locator_col": "N",
+            "locator_string": "Treated floor area",
+            "input_column": "V",
+            "input_row_offset": 0
         }
     },
     "GROUND": {

@@ -115,6 +115,13 @@ class UValues(BaseModel):
 
 # -----------------------------------------------------------------------------
 
+class AreasInputItem(BaseModel):
+    locator_col: str
+    locator_string: str
+    input_column: str
+    input_row_offset: int
+    options: Optional[Dict]
+
 
 class AreasSurfaceRowsCol(BaseModel):
     description: str
@@ -140,6 +147,7 @@ class AreasSurfaceRows(BaseModel):
 class Areas(BaseModel):
     name: str
     surface_rows: AreasSurfaceRows
+    tfa_input: AreasInputItem
 
 
 # -----------------------------------------------------------------------------

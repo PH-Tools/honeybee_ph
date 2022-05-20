@@ -11,7 +11,7 @@ from PHX.model.hvac.collection import NoVentUnitFoundError
 from PHX.to_PHPP import xl_app
 from PHX.to_PHPP import sheet_io
 from PHX.to_PHPP.phpp_localization import shape_model
-from PHX.to_PHPP.phpp_model import (areas_surface, climate_entry, uvalues_constructor,
+from PHX.to_PHPP.phpp_model import (areas_surface, areas_data, climate_entry, uvalues_constructor,
                                     component_glazing, component_frame, component_vent, ventilation_data,
                                     windows_rows, vent_space, vent_units, vent_ducts, verification_data)
 
@@ -36,67 +36,67 @@ class PHPPConnection:
         self.ventilation = sheet_io.Ventilation(self.xl, self.shape.VENTILATION)
 
     def write_certification_config(self, phx_project: project.PhxProject) -> None:
-        for variant in phx_project.variants:
+        for phx_variant in phx_project.variants:
             # # TODO: multiple variants?
             # --- Certification Config
             self.verification.write_item(
                 verification_data.VerificationInput.enum(
                     shape=self.shape.VERIFICATION,
                     input_type='phi_certification_type',
-                    input_enum_value=variant.ph_certification.certification_settings.phi_certification_type
+                    input_enum_value=phx_variant.ph_certification.certification_settings.phi_certification_type
                 )
             )
             self.verification.write_item(
                 verification_data.VerificationInput.enum(
                     shape=self.shape.VERIFICATION,
                     input_type='phi_certification_class',
-                    input_enum_value=variant.ph_certification.certification_settings.phi_certification_class
+                    input_enum_value=phx_variant.ph_certification.certification_settings.phi_certification_class
                 )
             )
             self.verification.write_item(
                 verification_data.VerificationInput.enum(
                     shape=self.shape.VERIFICATION,
                     input_type='phi_pe_type',
-                    input_enum_value=variant.ph_certification.certification_settings.phi_pe_type
+                    input_enum_value=phx_variant.ph_certification.certification_settings.phi_pe_type
                 )
             )
             self.verification.write_item(
                 verification_data.VerificationInput.enum(
                     shape=self.shape.VERIFICATION,
                     input_type='phi_enerphit_type',
-                    input_enum_value=variant.ph_certification.certification_settings.phi_enerphit_type
+                    input_enum_value=phx_variant.ph_certification.certification_settings.phi_enerphit_type
                 )
             )
             self.verification.write_item(
                 verification_data.VerificationInput.enum(
                     shape=self.shape.VERIFICATION,
                     input_type='phi_retrofit_type',
-                    input_enum_value=variant.ph_certification.certification_settings.phi_retrofit_type
+                    input_enum_value=phx_variant.ph_certification.certification_settings.phi_retrofit_type
                 )
             )
 
             # ---- Model Parameters
-            if not variant.ph_certification.ph_building_data:
+            if not phx_variant.ph_certification.ph_building_data:
                 continue
             self.verification.write_item(
                 verification_data.VerificationInput.item(
                     shape=self.shape.VERIFICATION,
                     input_type='num_of_units',
-                    input_data=variant.ph_certification.ph_building_data.num_of_units
+                    input_data=phx_variant.ph_certification.ph_building_data.num_of_units
                 )
             )
             self.verification.write_item(
                 verification_data.VerificationInput.item(
                     shape=self.shape.VERIFICATION,
                     input_type='setpoint_winter',
-                    input_data=variant.ph_certification.ph_building_data.setpoints.winter
+                    input_data=phx_variant.ph_certification.ph_building_data.setpoints.winter
                 )
             )
             self.verification.write_item(
                 verification_data.VerificationInput.item(
                     shape=self.shape.VERIFICATION,
                     input_type='setpoint_summer',
-                    input_data=variant.ph_certification.ph_building_data.setpoints.summer
+                    input_data=phx_variant.ph_certification.ph_building_data.setpoints.summer
                 )
             )
         return None
@@ -167,9 +167,19 @@ class PHPPConnection:
         self.components.write_ventilators(phpp_ventilator_rows)
         return None
 
+    def write_project_tfa(self, phx_project: project.PhxProject) -> None:
+        for phx_variant in phx_project.variants:
+            self.areas.write_item(
+                areas_data.AreasInput(
+                    shape=self.shape.AREAS,
+                    input_type='tfa_input',
+                    input_data=phx_variant.building.weighted_net_floor_area
+                )
+            )
+        return None
+
     def write_project_opaque_surfaces(self, phx_project: project.PhxProject) -> None:
         """Write all of the opaque surfaces from a PhxProject to the PHPP 'Areas' worksheet."""
-        shape = self.shape.AREAS
 
         surfaces: List[areas_surface.SurfaceRow] = []
         for phx_variant in phx_project.variants:
@@ -177,7 +187,7 @@ class PHPPConnection:
                 for phx_polygon in opaque_component.polygons:
                     surfaces.append(
                         areas_surface.SurfaceRow(
-                            shape,
+                            self.shape.AREAS,
                             phx_polygon,
                             opaque_component,
                             self.u_values.get_constructor_phpp_id_by_name(
