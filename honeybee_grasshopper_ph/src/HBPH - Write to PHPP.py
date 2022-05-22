@@ -56,7 +56,7 @@ EM May 22, 2022
 
 import os
 import honeybee.config
-import honeybee_ph.run
+import PHX.run
 import Grasshopper.Kernel as ghK
 
 #-------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ ghenv.Component.Name = "HBPH - Write to PHPP"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_2_2022')
 if DEV:
-    reload(honeybee_ph.run)
+    reload(PHX.run)
 
 #-------------------------------------------------------------------------------
 if os.name != 'nt':
@@ -85,7 +85,7 @@ shape_file = os.path.join(
 )
 
 if _write and _hbjson_file:
-    honeybee_ph.run.write_hbjson_to_phpp(_hbjson_file, shape_file)
+    PHX.run.write_hbjson_to_phpp(_hbjson_file, shape_file)
 else:
     msg = "Open a valid PHPP file in Excel, and set _write to True."
     ghenv.Component.AddRuntimeMessage(ghK.GH_RuntimeMessageLevel.Warning, msg)

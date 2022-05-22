@@ -47,7 +47,7 @@ try:  # import the core honeybee dependencies
 except ImportError as e:
     raise ImportError('Failed to import honeybee:\t{}'.format(e))
 
-import honeybee_ph.run
+import PHX.run
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
@@ -56,9 +56,9 @@ ghenv.Component.Name = "HBPH - Write WUFI XML"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_22_2022')
 if DEV:
-    reload(honeybee_ph.run)
+    reload(PHX.run)
 
 # ------------------------------------------------------------------------------
 if _write_xml and _hb_json_file:
-    d, f = honeybee_ph.run.convert_hbjson_to_WUFI_XML(_hb_json_file, _filename, _save_folder)
+    d, f = PHX.run.convert_hbjson_to_WUFI_XML(_hb_json_file, _filename, _save_folder)
     xml_file_ = os.path.join(d, f)
