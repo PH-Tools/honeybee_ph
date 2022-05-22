@@ -27,10 +27,13 @@ def _run_subprocess(commands):
     # type: (List[str]) -> None
     """Run a python subprocess using the supplied commands"""
     use_shell = True if os.name == 'nt' else False
-    process = subprocess.Popen(commands,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               shell=use_shell)
+    process = subprocess.Popen(
+        commands,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=use_shell
+    )
+
     stdout, stderr = process.communicate()
 
     if stderr:
@@ -57,16 +60,9 @@ def convert_hbjson_to_WUFI_XML(_hbjson_file, _save_file_name, _save_folder):
             - [1] (str): The output xml filename.
     """
 
-    # -- Get the LadybugTools Python 3.7 interpreter
-    python_dir = os.path.split(os.path.split(hb_folders.python_exe_path)[0])[0]
-
     # -- Specify the path to the subprocess python script to run
-    if os.name == 'nt':  # we are on Windows
-        run_file_path = os.path.join(python_dir, 'lib', 'python3.7',
-                                     'site-packages', 'PHX', 'hbjson_to_wufi_xml.py')
-    else:  # we are on Mac, Linux, or some other unix-based system
-        run_file_path = os.path.join(python_dir, 'lib', 'python3.7',
-                                     'site-packages', 'PHX', 'hbjson_to_wufi_xml.py')
+    run_file_path = os.path.join(
+        hb_folders.python_package_path,  'PHX', 'hbjson_to_wufi_xml.py')
 
     # -- check the file paths
     assert os.path.isfile(
@@ -91,31 +87,27 @@ def convert_hbjson_to_WUFI_XML(_hbjson_file, _save_file_name, _save_folder):
     return directory, file_name
 
 
-def write_hbjson_to_phpp(_hbjson_file, _xl_file):
+def write_hbjson_to_phpp(_hbjson_file, _shape_file):
     # type: (str, str) -> None
     """Read in an hbjson file and write out to a PHPP file.
 
     Arguments:
     ---------
         * _hbjson (str): File path to an HBJSON file to be read in and converted to a PHX-Model.
+        * _shape_file (str): Full path to the designated PHPP Shape File to use.
     """
 
-    # -- Get the LadybugTools Python 3.7 interpreter
-    python_dir = os.path.split(os.path.split(hb_folders.python_exe_path)[0])[0]
-
     # -- Specify the path to the subprocess python script to run
-    if os.name == 'nt':  # we are on Windows
-        run_file_path = os.path.join(python_dir, 'lib', 'python3.7',
-                                     'site-packages', 'PHX', 'hbjson_to_phpp.py')
-    else:  # we are on Mac, Linux, or some other unix-based system
-        run_file_path = os.path.join(python_dir, 'lib', 'python3.7',
-                                     'site-packages', 'PHX', 'hbjson_to_phpp.py')
+    run_file_path = os.path.join(
+        hb_folders.python_package_path, 'PHX', 'hbjson_to_phpp.py')
 
     # -- check the file paths
-    assert os.path.isfile(
-        _hbjson_file), 'No HBJSON file found at {}.'.format(_hbjson_file)
-    assert os.path.isfile(
-        run_file_path), 'No Python file to run found at: {}'.format(run_file_path)
+    if not os.path.isfile(_hbjson_file):
+        raise Exception('\nNo HBJSON file found at {}?'.format(_hbjson_file))
+    if not os.path.isfile(run_file_path):
+        raise Exception('\nNo Python file to run found at: {}?'.format(run_file_path))
+    if not os.path.isfile(_shape_file):
+        raise Exception('\nNo PHPP-Shapefile to found at: {}?'.format(_shape_file))
 
     # -------------------------------------------------------------------------
     # -- Read in the HBJSON, write our to PHPP
@@ -123,6 +115,6 @@ def write_hbjson_to_phpp(_hbjson_file, _xl_file):
         hb_folders.python_exe_path,
         run_file_path,
         _hbjson_file,
-        _xl_file
+        _shape_file
     ]
     _run_subprocess(commands)

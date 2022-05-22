@@ -414,5 +414,15 @@
     "BOILER": {
         "name": "Boiler",
         "columns": {}
+    },
+    "DATA": {
+        "name": "Data",
+        "version": {
+            "locator_col_header": "A",
+            "locator_string_header": "PHPP Version",
+            "locator_col_entry": "B",
+            "locator_string_entry": "",
+            "input_column": {}
+        }
     }
 }

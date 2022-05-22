@@ -54,7 +54,6 @@ class XLConnection:
             and auto-calc in the Excel App when done or on any error.
         """
         try:
-            print('[bold green]> excel writing in silent mode.[/bold green]')
             self.wb.app.screen_updating = False
             self.wb.app.display_alerts = False
             self.wb.app.calculation = 'manual'

@@ -35,6 +35,31 @@ class PHPPConnection:
         self.addnl_vent = sheet_io.AddnlVent(self.xl, self.shape.ADDNL_VENT)
         self.ventilation = sheet_io.Ventilation(self.xl, self.shape.VENTILATION)
 
+    def valid_phpp_document(self) -> bool:
+        """Return False is if appears the Excel file isn't a PHPP."""
+        # -- Check the file has a 'Data' worksheet
+        try:
+            self.xl.get_sheet_by_name(self.shape.DATA.name)
+        except:
+            return False
+
+        # -- Check that the file's 'Data' worksheet has as 'version'
+        data = self.xl.get_single_column_data(
+            _sheet_name=self.shape.DATA.name,
+            _col=self.shape.DATA.version.locator_col_header,
+            _row_start=1,
+            _row_end=25,
+        )
+        for i, _ in enumerate(data):
+            if self.shape.DATA.version.locator_string_header == _:
+                version = self.xl.get_data(
+                    self.shape.DATA.name,
+                    f'{self.shape.DATA.version.locator_col_entry}{i}'
+                )
+                if len(str(version)) > 0:
+                    return True
+        return False
+
     def write_certification_config(self, phx_project: project.PhxProject) -> None:
         for phx_variant in phx_project.variants:
             # # TODO: multiple variants?

@@ -201,6 +201,12 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Write to PHPP": {
+        "NickName": "Write PHPP",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 
 }
 

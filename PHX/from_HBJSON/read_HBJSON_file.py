@@ -13,6 +13,7 @@ import honeybee_energy
 import honeybee_energy_ph
 # -- Dev Note: Do not remove --
 
+import os
 import json
 import pathlib
 from typing import Dict
@@ -39,6 +40,9 @@ def read_hb_json_from_file(_file_address: pathlib.Path) -> Dict:
     --------
         Dict: The HBJSON dictionary, read in from the HBJSON file.
     """
+
+    if not os.path.isfile(_file_address):
+        raise Exception("Error: {} is not a valid file path?".format(_file_address))
 
     with open(_file_address) as json_file:
         data = json.load(json_file)

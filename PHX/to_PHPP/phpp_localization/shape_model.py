@@ -511,6 +511,19 @@ class Boiler(BaseModel):
     columns: ColBoiler
 
 
+class DataVersion(BaseModel):
+    locator_col_header: str
+    locator_string_header: str
+    locator_col_entry: str
+    locator_string_entry: str
+    input_column: Dict
+
+
+class Data(BaseModel):
+    name: str
+    version: DataVersion
+
+
 # -----------------------------------------------------------------------------
 
 
@@ -538,3 +551,4 @@ class PhppShape(BaseModel):
     PER: Per
     HP: Hp
     BOILER: Boiler
+    DATA: Data
