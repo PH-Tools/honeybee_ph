@@ -1,5 +1,5 @@
 # honeybee_ph
-These modules extend the [Honeybee-Core](https://github.com/ladybug-tools/honeybee-core) classes in order to allow for the modeling of detailed Passive House style attributes. Wherever possible, the classes here seek to align with and add to the existing HB API rather than create entirely new entities.
+These modules extend the [Honeybee-Core](https://github.com/ladybug-tools/honeybee-core) classes in order to allow for the modeling of detailed Passive House style attributes. Wherever possible, the classes here seek to align with and add to the existing HB API rather than create entirely new entities. The primary addition to the Honeybee model is the inclusion of detailed interior 'spaces' which can include data such as name, number, iCFA/TFA weighting factors, volumes (Vn50) and other Passive House specific space-level data.
 
 ![image](https://user-images.githubusercontent.com/69652712/169719258-0da1597e-d203-4f2d-9e28-bbf89f8385fc.png)
 
