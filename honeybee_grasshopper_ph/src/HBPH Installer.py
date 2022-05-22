@@ -55,8 +55,15 @@ import Rhino
 from Grasshopper.Folders import UserObjectFolders
 from Grasshopper.Kernel import GH_RuntimeMessageLevel as Message
 
-import honeybee
-
+try:
+    import honeybee
+    hb_loaded = True
+except ImportError as e:
+    hb_loaded = False
+    msg = 'Failed to import honeybee:> Please be sure you have installed Ladybug Tools before proceeding.'
+    raise ImportError('{}{}'.format(msg, e))
+    
+    
 
 def nukedir(target_dir, rmdir=False):
     # type: (str, bool) -> None
@@ -151,12 +158,16 @@ def check_lbt_version(_min_version_allowed):
     # type: (Tuple[int, int, int]) -> None
     lbt_version_installed = honeybee.config.folders.honeybee_core_version # -> (1, 50, 0)
     
-    for ver_num in zip(lbt_version_installed, _min_version_allowed):
-        assert lbt_version_installed >= _min_version_allowed, "Warning: Honeybee-PH is not "\
-            "compatible with the version of Ladybug Tools installed on this computer. Please "\
-            "update your Ladybug Tools installation to the latest version before proceeding "\
-            "with the installation. You can use the Ladybug 'LB Versioner' component to update "\
-            "your installation, and then restart Rhino before trying again."
+    for inst_num, min_num in zip(lbt_version_installed, _min_version_allowed):
+        if inst_num < min_num:
+            msg = "Honeybee-PH is not "\
+                "compatible with the version of Ladybug Tools installed on this computer: {}. Please "\
+                "update your Ladybug Tools installation to the latest version before proceeding "\
+                "with the installation. You can use the Ladybug 'LB Versioner' component to update "\
+                "your installation, and then restart Rhino before trying again.".format(lbt_version_installed)
+            print msg
+            ghenv.Component.AddRuntimeMessage(Message.Error,msg)
+            break
 
 
 def download_repo_from_github(_download_url, _download_file):
@@ -327,13 +338,14 @@ def copy_from_github_repo(_github_repo_name, _branch, _repo_version):
 rich_version = "12.4.1"
 xlwings_version = "0.27.7"
 
+# versions
+lbt_min_version = (1, 51, 0)
+honeybee_ph_version = '0.1'
+phx_version = '0.1'
 
 if _install:
     # --------------------------------------------------------------------------
     # -- Check version compatibility
-    honeybee_ph_version = '0.1'
-    phx_version = '0.1'
-    lbt_min_version = (1, 50, 0)
     check_lbt_version(lbt_min_version)
     
     
@@ -380,4 +392,8 @@ if _install:
 
     
 else:  # give a message to the user about what to do
-    print 'Make sure you have installed Ladybug Tools (v1.4.1 or newer), are connected to the internet, and set _install to True!'   
+    if hb_loaded:
+        check_lbt_version(lbt_min_version)
+    print 'Make sure you have installed Ladybug Tools (v1.4.1 or newer), are connected to '\
+    'the internet, and set _install to True!'   
+    
