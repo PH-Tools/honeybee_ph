@@ -1,8 +1,7 @@
-![image](https://user-images.githubusercontent.com/69652712/169719164-ef3daeec-e285-4c37-a2be-b1b56c298e6a.png)
-
-
 # honeybee_energy_ph
-These modules extend the [Honeybee-Energy](https://github.com/ladybug-tools/honeybee-energy) classes in order to allow for the modeling of detailed Passive House style attributes. Wherever possible, the classes here seek to align with and add to the existing HB API rather than create entirely new entities.
+These modules extend the [Honeybee-Energy](https://github.com/ladybug-tools/honeybee-energy) classes in order to allow for the modeling of detailed Passive House style attributes. Wherever possible, the classes here seek to align with and add to the existing HB API rather than create entirely new entities. New classes such as Passive House windows follwing ISO 100077-2 and EN-673 protocols are included in this package, as well as new Passive House style HVAC equipment and hot-water systems.
+
+![image](https://user-images.githubusercontent.com/69652712/169719164-ef3daeec-e285-4c37-a2be-b1b56c298e6a.png)
 
 # Usage
 The classes here will automatically extend the existing Honeybee-Energy objects at import time. This is done through the [_extend_honeybee_energy_ph.py](https://github.com/PH-Tools/honeybee_ph/blob/phpp_exporter/honeybee_energy_ph/_extend_honeybee_energy_ph.py) module which will be called by Honeybee-Energy at import time.
