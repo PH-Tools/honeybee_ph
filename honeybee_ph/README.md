@@ -1,6 +1,8 @@
 # honeybee_ph
 These modules extend the [Honeybee-Core](https://github.com/ladybug-tools/honeybee-core) classes in order to allow for the modeling of detailed Passive House style attributes. Wherever possible, the classes here seek to align with and add to the existing HB API rather than create entirely new entities.
 
+![image](https://user-images.githubusercontent.com/69652712/169719258-0da1597e-d203-4f2d-9e28-bbf89f8385fc.png)
+
 # Usage
 The classes here will automatically extend the existing Honeybee-Core objects at import time. This is done through the [_extend_honeybee_ph.py](https://github.com/PH-Tools/honeybee_ph/blob/phpp_exporter/honeybee_ph/_extend_honeybee_ph.py) module which will be called by Honeybee-Core import time.
 
