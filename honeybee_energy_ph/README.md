@@ -1,4 +1,4 @@
-Screen Shot 2022-05-22 at 6.44.26 PM.png![image](https://user-images.githubusercontent.com/69652712/169719164-ef3daeec-e285-4c37-a2be-b1b56c298e6a.png)
+![image](https://user-images.githubusercontent.com/69652712/169719164-ef3daeec-e285-4c37-a2be-b1b56c298e6a.png)
 
 
 # honeybee_energy_ph
