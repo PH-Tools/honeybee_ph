@@ -1,22 +1,22 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-# 
+#
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-# 
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
-# Honeybee-PH is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published 
-# by the Free Software Foundation; either version 3 of the License, 
-# or (at your option) any later version. 
-# 
+#
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
+# Honeybee-PH is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-# 
+#
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
@@ -56,26 +56,26 @@ EM May 22, 2022
 
 import os
 import honeybee.config
-import honeybee_ph.run
+import PHX.run
 import Grasshopper.Kernel as ghK
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Write to PHPP"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_2_2022')
 if DEV:
-    reload(honeybee_ph.run)
+    reload(PHX.run)
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 if os.name != 'nt':
     msg = "Error: This PHPP writer is only supported on Windows OS. It looks like "\
         "you are running '{}'?".format(os.name)
     ghenv.Component.AddRuntimeMessage(ghK.GH_RuntimeMessageLevel.Error, msg)
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 shape_file = os.path.join(
     honeybee.config.folders.python_package_path,
     "PHX",
@@ -85,7 +85,7 @@ shape_file = os.path.join(
 )
 
 if _write and _hbjson_file:
-    honeybee_ph.run.write_hbjson_to_phpp(_hbjson_file, shape_file)
+    PHX.run.write_hbjson_to_phpp(_hbjson_file, shape_file)
 else:
     msg = "Open a valid PHPP file in Excel, and set _write to True."
     ghenv.Component.AddRuntimeMessage(ghK.GH_RuntimeMessageLevel.Warning, msg)
