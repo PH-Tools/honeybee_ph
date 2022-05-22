@@ -28,7 +28,7 @@ order to download the latest version of the plugin libraries and components.
 This tool will download and install several new libraries into the Ladybug Tools
 python interpreter, and will download and install new Grasshopper components.
 -
-EM May 14, 2022
+EM May 20, 2022
     Args:
         _install: (bool) Set to True to install Honeybee-PH on your computer.
         _branch_: (str) Optional branch to download. Default = 'main'
@@ -36,7 +36,7 @@ EM May 14, 2022
 
 ghenv.Component.Name = 'HBPH Installer'
 ghenv.Component.NickName = 'HBPHInstall'
-ghenv.Component.Message = 'DEV | MAY_14_2022'
+ghenv.Component.Message = 'DEV | MAY_20_2022'
 ghenv.Component.Category = 'Honeybee-PH'
 ghenv.Component.SubCategory = '0 | Installer'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -44,6 +44,7 @@ ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 from exceptions import IOError
 from distutils import dir_util
+import subprocess
 import shutil
 import System
 import os
@@ -186,7 +187,7 @@ def unzip_file(source_file):
         * source_file: (str) Full path to a valid compressed file (e.g. c:/ladybug/testPts.zip)
     Returns:
     --------
-        * unzip_folde: (str) The full path to the folder unzipped
+        * unzip_folder: (str) The full path to the folder unzipped
     """
     dest_dir, fname = os.path.split(source_file)
     
@@ -252,12 +253,84 @@ def give_popup_message(message, window_title=''):
     Rhino.UI.Dialogs.ShowMessageBox(message, window_title, buttons, icon)
 
 
+def update_libraries_pip(python_exe, package_name, version=None, target=None):
+    """Update Python libraries using pip.
+
+    Args:
+        python_exe: The path to the Python executable to be used for installation.
+        
+        package_name: The name of the PyPI package to install
+        
+        version: An optional string for the version of the package to install.
+        
+        target: An optional target directory into which the package will be installed.
+        """
+        
+    # build up the command using the inputs
+    if version is not None:
+        package_name = '{}=={}'.format(package_name, version)
+    cmds = [python_exe, '-m', 'pip', 'install', package_name]
+    if target is not None:
+        cmds.extend(['--target', target, '--upgrade'])
+        
+    # execute the command and print any errors
+    print('Installing {} via pip using{}'.format(package_name, python_exe))
+    
+    use_shell = True if os.name == 'nt' else False
+    process = subprocess.Popen(
+        cmds, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = process.communicate()
+    stdout, stderr = output
+    
+    return stderr
+    
+def give_warning(message):
+    """Give a warning message (turning the component orange).
+
+    Args:
+        message: Text string for the warning message.
+    """
+    ghenv.Component.AddRuntimeMessage(Message.Warning, message)
+
+
+# Dependancy versions
+rich_version = "12.4.1"
+xlwings_version = "0.27.7"
+
+
 if _install:
     # --------------------------------------------------------------------------
     # -- Check version compatibility
     honeybee_ph_version = '0.1'
     lbt_min_version = (1, 50, 0)
     check_lbt_version(lbt_min_version)
+    
+    
+    # --------------------------------------------------------------------------
+    # install the Rich dependancy
+    print 'Installing Python package: Rich.'
+    py_exe = honeybee.config.folders.python_exe_path
+    py_lib = honeybee.config.folders.python_package_path
+    stderr = update_libraries_pip(py_exe, 'rich', rich_version)
+
+    if os.path.isdir(os.path.join(py_lib, 'rich-{}.dist-info'.format(rich_version))):
+        print 'Rich Python package successfully installed! '
+    else:
+        give_warning(stderr)
+        print stderr
+    
+    # --------------------------------------------------------------------------
+    # install the XLwings dependancy
+    print 'Installing Python package: XLWings.'
+    py_exe = honeybee.config.folders.python_exe_path
+    py_lib = honeybee.config.folders.python_package_path
+    stderr = update_libraries_pip(py_exe, 'xlwings', xlwings_version)
+
+    if os.path.isdir(os.path.join(py_lib, 'xlwings-{}.dist-info'.format(rich_version))):
+        print 'XLWings Python package successfully installed! '
+    else:
+        give_warning(stderr)
+        print stderr
     
     
     # --------------------------------------------------------------------------
@@ -293,4 +366,4 @@ if _install:
     
     
 else:  # give a message to the user about what to do
-    print 'Make sure you have installed Ladybug Tools (v1.4.1 or newer), are connected to the internet, and set _install to True!'
+    print 'Make sure you have installed Ladybug Tools (v1.4.1 or newer), are connected to the internet, and set _install to True!'   
