@@ -64,7 +64,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Write to PHPP"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_2_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_22_2022')
 if DEV:
     reload(PHX.run)
 
