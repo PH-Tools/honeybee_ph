@@ -17,8 +17,8 @@ from honeybee.typing import clean_and_id_ep_string, clean_ep_string
 from honeybee_energy_ph.load import ph_equipment
 
 # -- NOTE: remember, we have to do it this way since the HBE-Elec-Equip is NOT duplicated
-# -- during normal operation, so changes to object state here would propagate outwards and
-# -- cause unwanted behavior.
+# -- during normal operation, so changes to object state here would propagate outwards (ie:
+# -- backwards upstream in the GH definition) and cause unwanted behavior.
 
 
 class HBElecEquipWithRooms:
