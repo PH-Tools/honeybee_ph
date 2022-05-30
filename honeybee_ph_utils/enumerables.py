@@ -23,6 +23,10 @@ class CustomEnum(object):
         self._value = _value
 
     @property
+    def allowed_upper(self):
+        return [_.upper() for _ in self.allowed]
+
+    @property
     def value(self):
         return self._value
 
@@ -33,7 +37,7 @@ class CustomEnum(object):
             integer is passed in, will attempt to find the corresponding value from the 
             allowed-values list (1-based, ie: user-input '1' -> self.allowed.index(0) ).
         """
-        if str(_in).upper() in self.allowed:
+        if str(_in).upper() in self.allowed_upper:
             self._value = str(_in).upper()
         else:
             try:

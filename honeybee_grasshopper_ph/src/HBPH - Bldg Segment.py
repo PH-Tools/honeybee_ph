@@ -33,7 +33,7 @@ model. Only Honeybee Faces with boundary conditions of "Outdoors", "Ground" and
 -
 Use this before passing the honeybee-rooms on to the 'HB Model' component.
 -
-EM April 8, 2022
+EM May 20, 2022
     Args:
         segment_name_: Name for the building-segment
         
@@ -75,6 +75,8 @@ EM April 8, 2022
         
         phius_certification_: Optional Phius certification thresholds.
         
+        phi_certification_: Optional PHI certification configuration and settings.
+        
         winter_set_temp_: default = 20C [68F]
         
         summer_set_temp_: default = 25C [77F]
@@ -86,6 +88,7 @@ EM April 8, 2022
 from honeybee.typing import clean_and_id_string
 
 import honeybee_ph.phius
+import honeybee_ph.phi
 import honeybee_ph.bldg_segment
 import honeybee_ph.location
 from honeybee_ph_standards.sourcefactors import factors, phius_CO2_factors, phius_source_energy_factors
@@ -96,9 +99,10 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Bldg Segment"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_08_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_20_2022')
 if DEV:
     reload(honeybee_ph.phius)
+    reload(honeybee_ph.phi)
     # reload(honeybee_ph.bldg_segment) # Breaks everyting.... sigh: Python 2
     reload(honeybee_ph.location)
     reload(honeybee_ph_utils.preview)
@@ -128,7 +132,7 @@ segment.num_floor_levels = num_floor_levels_ or 1
 segment.num_dwelling_units = num_dwelling_units_ or 1
 segment.climate = climate_ or honeybee_ph.location.Climate()
 segment.ph_certification = phius_certification_ or honeybee_ph.phius.PhiusCertification()
-
+segment.ph_certification = phi_certification_ or honeybee_ph.phi.PhiCertification()
 
 # -- CO2 and Source Energy Factors
 ALLOWED_FUELS = list(set(

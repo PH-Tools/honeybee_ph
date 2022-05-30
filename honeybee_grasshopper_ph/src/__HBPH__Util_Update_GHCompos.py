@@ -1,12 +1,12 @@
 """
 Updates all the GH-Components in the Source dir (Github)
 -
-EM April 22, 2022
+EM May 14, 2022
 """
 
 ghenv.Component.Name = "__HBPH__Util_Update_GHCompos"
 ghenv.Component.NickName = "HBPH_Update_Source"
-ghenv.Component.Message = 'APR_22_2022'
+ghenv.Component.Message = 'MAY_14_2022'
 ghenv.Component.IconDisplayMode = ghenv.Component.IconDisplayMode.application
 ghenv.Component.Category = "Honeybee-PH"
 ghenv.Component.SubCategory = "00 | Utils"
@@ -108,7 +108,7 @@ def make_dir(_dir_address):
 
 if _runIt:
     #------ Sort out the folders
-    source_dir = str(r"/Users/em/Library/Application Support/McNeel/Rhinoceros/7.0/Plug-ins/Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)/UserObjects/honeybee_ph/user_objects/")
+    source_dir = str(r"/Users/em/Library/Application Support/McNeel/Rhinoceros/7.0/Plug-ins/Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)/UserObjects/honeybee_grasshopper_ph/")
     save_dir_ghuser    = str(r"/Users/em/Dropbox/bldgtyp-00/00_PH_Tools/honeybee_ph/honeybee_grasshopper_ph/user_objects/")
     save_dir_ghuser_py = str(r"/Users/em/Dropbox/bldgtyp-00/00_PH_Tools/honeybee_ph/honeybee_grasshopper_ph/src/")
 

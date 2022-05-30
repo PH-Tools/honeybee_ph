@@ -8,10 +8,11 @@ filterwarnings = [
     'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
 
+
 [tool.coverage.run]
 # --- For testing...
 command_line = "-m pytest tests"
-source = ["PHX"]
+source = ["honeybee_ph"]
 # ---
 branch = true
 cover_pylib = false

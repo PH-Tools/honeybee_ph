@@ -1,7 +1,7 @@
-modules
-=======
+honeybee_ph
+===========
 
 .. toctree::
    :maxdepth: 4
 
-   test
+   honeybee_ph

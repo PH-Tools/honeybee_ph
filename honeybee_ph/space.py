@@ -20,7 +20,7 @@ class SpaceFloorSegment(_base._Base):
         self.weighting_factor = 1.0
 
         # -- Reference Point Note: Usually this is just the center, although for
-        # -- morecomplex shaped like 'L' and 'U' it cannot just be the center.
+        # -- more complex shaped like 'L' and 'U' it cannot just be the center.
         # -- In those cases, it should be a point 'on' the surface, as near to the
         # -- center as possible. This point is used for testing hosting of the
         # -- SpaceFloorSegment 'inside' an HB-Room.
