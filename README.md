@@ -17,11 +17,11 @@ Packages:
 # Install
 for detailed installation instructions,
 * Check out the website for detailed instructions here: http://www.passivehousetools.com/honeybee_ph.html
-* Watch a detailed walkthrough of the download/install process here: https://youtu.be/MlW40a1A9H0
+* Watch a detailed walkthrough of the download/install process here: _______________
 
 # How-To
 For more information on the use of these tools, check out the YouTube playlist here:
-https://youtube.com/playlist?list=PLi6KNBJLE8H8pne3QIdlozwWENIF3VV1f
+____________
 
 and the Passive House Tools website:
 http://www.PassiveHouseTools.com
