@@ -33,21 +33,10 @@ model. Only Honeybee Faces with boundary conditions of "Outdoors", "Ground" and
 -
 Use this before passing the honeybee-rooms on to the 'HB Model' component.
 -
-EM May 20, 2022
+EM June 4, 2022
     Args:
         segment_name_: Name for the building-segment
-        
-        occupancy_type_: Input either -
-            "1-Residential" (default)
-            "2-Non-residential"
-        
-        usage_type_: Input either -
-            "1-Residential" (default)
-            "4-Office/Administrative building"
-            "5-School"
-            "6-Other"
-            "7-Undefined/unfinished"
-        
+               
         num_floor_levels_: (int) Total number of floor levels for the group of 
             Honeybee rooms input. Default=1
         
@@ -99,11 +88,11 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Bldg Segment"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_20_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_04_2022')
 if DEV:
     reload(honeybee_ph.phius)
     reload(honeybee_ph.phi)
-    # reload(honeybee_ph.bldg_segment) # Breaks everyting.... sigh: Python 2
+    #reload(honeybee_ph.bldg_segment) # Breaks everyting.... sigh: Python 2
     reload(honeybee_ph.location)
     reload(honeybee_ph_utils.preview)
     reload(factors)
@@ -125,14 +114,17 @@ def get_new_room_name(_br_count):
 
 # -- Sort our the new BldgSegment data
 segment = honeybee_ph.bldg_segment.BldgSegment()
+
 segment.name = _segment_name_ or 'Unnamed_Bldg_Segment'
-segment.occupancy_type.value = occupancy_type_ or 1 #Residential
-segment.usage_type.value = usage_type_ or 1
 segment.num_floor_levels = num_floor_levels_ or 1
 segment.num_dwelling_units = num_dwelling_units_ or 1
 segment.climate = climate_ or honeybee_ph.location.Climate()
-segment.ph_certification = phius_certification_ or honeybee_ph.phius.PhiusCertification()
-segment.ph_certification = phi_certification_ or honeybee_ph.phi.PhiCertification()
+segment.phius_certification = phius_certification_ or honeybee_ph.phius.PhiusCertification()
+segment.phi_certification = phi_certification_ or honeybee_ph.phi.PhiCertification()
+
+segment.set_points.winter = winter_set_temp_ or 20
+segment.set_points.summer = summer_set_temp_ or 25
+
 
 # -- CO2 and Source Energy Factors
 ALLOWED_FUELS = list(set(
