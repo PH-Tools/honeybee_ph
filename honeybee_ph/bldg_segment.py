@@ -13,30 +13,30 @@ from honeybee_ph_standards.sourcefactors import factors
 from honeybee_ph_utils import enumerables
 
 
-class OccupancyType(enumerables.CustomEnum):
+class BuildingCategoryType(enumerables.CustomEnum):
     allowed = [
         "RESIDENTIAL",
-        "",
-        "",
-        "OFFICE/ADMINISTRATIVE BUILDING",
-        "SCHOOL",
-        "OTHER",
-        "UNDEFINED/UNFINISHED",
+        "NON-RESIDENTIAL"
+    ]
+
+    def __init__(self, _value=1):
+        super(BuildingCategoryType, self).__init__()
+        self.value = _value
+
+
+class OccupancyType(enumerables.CustomEnum):
+    allowed = [
+        "RESIDENTIAL",  # 1
+        "",  # 2
+        "",  # 3
+        "OFFICE/ADMINISTRATIVE BUILDING",  # 4
+        "SCHOOL",  # 5
+        "OTHER",  # 6
+        "UNDEFINED/UNFINISHED",  # 7
     ]
 
     def __init__(self, _value=1):
         super(OccupancyType, self).__init__()
-        self.value = _value
-
-
-class UsageType(enumerables.CustomEnum):
-    allowed = [
-        "RESIDENTIAL",
-        "NON-RESIDENTIAL",
-    ]
-
-    def __init__(self, _value=1):
-        super(UsageType, self).__init__()
         self.value = _value
 
 
@@ -71,8 +71,6 @@ class BldgSegment(_base._Base):
     def __init__(self):
         super(BldgSegment, self).__init__()
         self.name = 'Unnamed_Bldg_Segment'
-        self.occupancy_type = OccupancyType("RESIDENTIAL")
-        self.usage_type = UsageType("RESIDENTIAL")
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
         self.climate = location.Climate()
@@ -88,8 +86,6 @@ class BldgSegment(_base._Base):
 
         d['identifier'] = self.identifier
         d['name'] = self.name
-        d['occupancy_type'] = self.occupancy_type.to_dict()
-        d['usage_type'] = self.usage_type.to_dict()
         d['num_floor_levels'] = self.num_floor_levels
         d['num_dwelling_units'] = self.num_dwelling_units
         d['climate'] = self.climate.to_dict()
@@ -108,9 +104,6 @@ class BldgSegment(_base._Base):
 
         obj.identifier = _dict.get('identifier')
         obj.name = _dict.get('name')
-        obj.occupancy_type = OccupancyType.from_dict(
-            _dict.get('occupancy_type', {}))
-        obj.usage_type = UsageType.from_dict(_dict.get('usage_type', {}))
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
         obj.climate = location.Climate.from_dict(_dict.get('climate', {}))

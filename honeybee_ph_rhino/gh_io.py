@@ -8,6 +8,7 @@ could figure out how to get Rhino dependencies to be recognized by testing frame
 probably would not need something like this? I suppose it does help reduce coupling?
 """
 
+
 try:
     from typing import Any, Sequence, Union
 except ImportError:
@@ -16,8 +17,9 @@ except ImportError:
 try:
     from itertools import izip as zip
 except ImportError:
-    # Python3+
-    pass
+    pass  # Python3+
+
+from GhPython import Component
 
 from contextlib import contextmanager
 from copy import deepcopy
@@ -427,14 +429,15 @@ class IGH:
 class ComponentInput:
     """GH-Component Input Node data class."""
 
-    def __init__(self, _name='-', _description='', _access=0):
-        # type: (str, str, int) -> None
+    def __init__(self, _name='-', _description='', _access=0, _type_hint=Component.NoChangeHint()):
+        # type: (str, str, int, Component.NoChangeHint) -> None
         self.name = _name
         self.description = _description
         self.access = _access  # 0='item, 1='list', 2='tree'
+        self.type_hint = _type_hint
 
     def __str__(self):
-        return '{}(name={})'.format(self.__class__.__name__, self.name, self.input_type)
+        return '{}(name={})'.format(self.__class__.__name__, self.name, self.access, self.type_hint)
 
     def __repr__(self):
         return str(self)
@@ -518,7 +521,7 @@ def clean_get(_list, _i, _default=None):
     ---------
         * _list: Any iterable to get the item from.
         * _i (int): The index position to try and get
-        * _default (Any): The optional deault value to use if _list[0] fails.
+        * _default (Any): The optional default value to use if _list[0] fails.
 
     Returns:
     --------
@@ -553,11 +556,12 @@ def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
         input_item = _input_dict.get(input_num, ComponentInput('-', '-'))
 
         try:
-            IGH.ghenv.Component.Params.Input[input_num].NickName = input_item.name
-            IGH.ghenv.Component.Params.Input[input_num].Name = input_item.name
-            IGH.ghenv.Component.Params.Input[input_num].Description = input_item.description
-            access = IGH.Grasshopper.Kernel.GH_ParamAccess(input_item.access)
-            IGH.ghenv.Component.Params.Input[input_num].Access = access
+            input_node = IGH.ghenv.Component.Params.Input[input_num]
+            input_node.NickName = input_item.name
+            input_node.Name = input_item.name
+            input_node.Description = input_item.description
+            input_node.Access = IGH.Grasshopper.Kernel.GH_ParamAccess(input_item.access)
+            input_node.TypeHint = input_item.type_hint
         except ValueError:
             # -- past end of component inputs
             pass
@@ -567,8 +571,19 @@ def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
 
 def _get_component_input_value(_input):
     # type: (Sequence[Any]) -> Union[float, str]
+    """Try and cast the input value to the appropriate type."""
+
     try:
-        return float(_input[0])
+        input_value = _input[0].Value
+
+        if isinstance(input_value, str):
+            # For some reason, floats come as Str?....
+            try:
+                return float(input_value)
+            except:
+                return input_value
+        else:
+            return input_value
     except:
         return str(_input[0])
 
@@ -600,7 +615,7 @@ def get_component_input_values(ghenv):
                 for v in input_list:
                     val.append(_get_component_input_value([v]))
             elif str(input.Access) == 'tree':
-                raise NotImplementedError
+                raise NotImplementedError("Tree input not allowed yet....")
             else:
                 val = _get_component_input_value(input_list)
 

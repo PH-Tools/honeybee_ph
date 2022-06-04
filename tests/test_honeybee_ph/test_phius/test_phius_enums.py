@@ -4,7 +4,7 @@ from honeybee_ph_utils.enumerables import ValueNotAllowedError
 
 
 def test_building_status_set_by_value():
-    status = honeybee_ph.phius.BuildingStatus()
+    status = honeybee_ph.phius.PhiusBuildingStatus()
     assert status.value == 'IN_PLANNING'
     assert status.number == 1
 
@@ -22,7 +22,7 @@ def test_building_status_set_by_value():
 
 
 def test_building_status_set_by_number():
-    status = honeybee_ph.phius.BuildingStatus()
+    status = honeybee_ph.phius.PhiusBuildingStatus()
     status.value = 1
     assert status.value == 'IN_PLANNING'
     assert status.number == 1
@@ -37,7 +37,7 @@ def test_building_status_set_by_number():
 
 
 def test_building_status_not_allowed():
-    status = honeybee_ph.phius.BuildingStatus()
+    status = honeybee_ph.phius.PhiusBuildingStatus()
     assert status.value == 'IN_PLANNING'
     assert status.number == 1
 
@@ -51,15 +51,15 @@ def test_building_status_not_allowed():
 
 
 def test_building_status_serialization():
-    status = honeybee_ph.phius.BuildingStatus()
+    status = honeybee_ph.phius.PhiusBuildingStatus()
     d = status.to_dict()
-    new_obj = honeybee_ph.phius.BuildingStatus.from_dict(d)
+    new_obj = honeybee_ph.phius.PhiusBuildingStatus.from_dict(d)
 
     assert new_obj.to_dict() == d
 
 
 def test_building_bldg_type_set_by_value():
-    bldg_type = honeybee_ph.phius.BuildingType()
+    bldg_type = honeybee_ph.phius.PhiusBuildingType()
     assert bldg_type.value == 'NEW_CONSTRUCTION'
     assert bldg_type.number == 1
 
@@ -77,7 +77,7 @@ def test_building_bldg_type_set_by_value():
 
 
 def test_building_bldg_type_set_by_number():
-    bldg_type = honeybee_ph.phius.BuildingType()
+    bldg_type = honeybee_ph.phius.PhiusBuildingType()
     bldg_type.value = 1
     assert bldg_type.value == 'NEW_CONSTRUCTION'
     assert bldg_type.number == 1
@@ -92,7 +92,7 @@ def test_building_bldg_type_set_by_number():
 
 
 def test_building_bldg_type_not_allowed():
-    bldg_type = honeybee_ph.phius.BuildingType()
+    bldg_type = honeybee_ph.phius.PhiusBuildingType()
     assert bldg_type.value == 'NEW_CONSTRUCTION'
     assert bldg_type.number == 1
 
@@ -106,8 +106,8 @@ def test_building_bldg_type_not_allowed():
 
 
 def test_bldg_type_serialization():
-    status = honeybee_ph.phius.BuildingType()
+    status = honeybee_ph.phius.PhiusBuildingType()
     d = status.to_dict()
-    new_obj = honeybee_ph.phius.BuildingType.from_dict(d)
+    new_obj = honeybee_ph.phius.PhiusBuildingType.from_dict(d)
 
     assert new_obj.to_dict() == d

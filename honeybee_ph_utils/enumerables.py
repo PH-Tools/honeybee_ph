@@ -11,23 +11,26 @@ except ImportError:
 
 class ValueNotAllowedError(Exception):
     def __init__(self, _in, _enum):
-        self.message = 'Value: {} not allowed for enum {}'.format(
-            str(_in), _enum)
+        self.message = 'Value: {} not allowed for enum {}.\nValid input: {} '.format(
+            str(_in), _enum.__class__.__name__, _enum.allowed)
         super(ValueNotAllowedError, self).__init__(self.message)
 
 
 class CustomEnum(object):
-    allowed = []
+    allowed = []  # type: list[str]
 
     def __init__(self, _value=''):
-        self._value = _value
+        self._value = ''  # type: str
+        self.value = _value
 
     @property
     def allowed_upper(self):
+        # type: () -> list[str]
         return [_.upper() for _ in self.allowed]
 
     @property
     def value(self):
+        # type: () -> str
         return self._value
 
     @value.setter
@@ -42,7 +45,7 @@ class CustomEnum(object):
         else:
             try:
                 input = int(_in) - 1
-                self._value = self.allowed[input]
+                self._value = self.allowed_upper[input]
             except:
                 raise ValueNotAllowedError(_in, self)
 
@@ -50,7 +53,7 @@ class CustomEnum(object):
     def number(self):
         # type: () -> int
         """Returns the index pos of self.value (1-based)"""
-        return self.allowed.index(self._value) + 1
+        return self.allowed_upper.index(self.value) + 1
 
     def __str__(self):
         return "{}(_value={} [number={}])".format(self.__class__.__name__, self.value, self.number)
@@ -64,11 +67,11 @@ class CustomEnum(object):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
-        d['_value'] = self.value
+        d['value'] = self.value
         return d
 
     @classmethod
     def from_dict(cls, _dict):
         # type: (dict[str, Any]) -> CustomEnum
-        obj = cls(_dict.get('_value'))
+        obj = cls(_dict.get('value', 1))
         return obj

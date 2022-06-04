@@ -6,6 +6,8 @@
 from copy import copy
 # Note: Use copy so that specific equipments can overwrite base with their own hints
 
+from GhPython import Component
+
 from honeybee_ph_rhino.gh_io import input_to_int, ComponentInput
 
 
@@ -18,8 +20,12 @@ class InputTypeNotFoundError(Exception):
 # -----------------------------------------------------------------------------
 # Setup the component input node groups
 inputs_base = {
-    1: ComponentInput(_name='display_name', _description='(str) Optional display name for the heating system.'),
-    2: ComponentInput(_name='percent_coverage', _description='(float) default=1.0 The fraction of total heating supplied by this system (0-1)'),
+    1: ComponentInput(_name='display_name',
+                      _description='(str) Optional display name for the heating system.',
+                      _type_hint=Component.NewStrHint()),
+    2: ComponentInput(_name='percent_coverage',
+                      _description='(float) default=1.0 The fraction of total heating supplied by this system (0-1)',
+                      _type_hint=Component.NewFloatHint()),
 }
 
 inputs_direct_electric = copy(inputs_base)
@@ -42,13 +48,13 @@ inputs_district_heat.update({
 
 inputs_heat_pump_annual = copy(inputs_base)
 inputs_heat_pump_annual.update({
-    3: ComponentInput(_name='annual_COP', _description='COP: watts-out/watts-in'),
+    3: ComponentInput(_name='annual_COP', _description='COP: watts-out/watts-in', _type_hint=Component.NewFloatHint()),
 })
 
 inputs_heat_pump_monthly = copy(inputs_base)
 inputs_heat_pump_monthly.update({
-    3: ComponentInput(_name='monthly_COPS', _description='(list[float]): A List of COP values.', _access=1),
-    4: ComponentInput(_name='monthly_temps', _description='(list[float]): A List of temp [deg C] values.', _access=1),
+    3: ComponentInput(_name='monthly_COPS', _description='(list[float]): A List of COP values.', _access=1, _type_hint=Component.NewFloatHint()),
+    4: ComponentInput(_name='monthly_temps', _description='(list[float]): A List of temp [deg C] values.', _access=1, _type_hint=Component.NewFloatHint()),
 })
 
 # -----------------------------------------------------------------------------
