@@ -12,7 +12,7 @@ GH-IO-stubs>=7.7.21140
 GH-Util-stubs>=7.7.21140
 Grasshopper-stubs>=7.7.21140
 honeybee-core>=1.47.26
-honeybee-energy>=1.83.4
+honeybee-energy>=1.91.24
 honeybee-schema>=1.47.0
 honeybee-standards>=2.0.5
 idna==3.3
