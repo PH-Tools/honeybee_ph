@@ -1,0 +1,7 @@
+__pycache__/
+.env
+*.html
+*.rst
+*.doctree
+*.pickle
+/docs/_build/docs/
