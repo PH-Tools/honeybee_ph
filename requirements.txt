@@ -30,7 +30,7 @@ pkginfo==1.7.1
 pluggy==0.13.1
 py==1.11.0
 pydantic==1.8.2
-pydantic-openapi-helper==0.2.7
+pydantic-openapi-helper==0.2.9
 Pygments==2.10.0
 pyparsing==2.4.7
 pytz==2021.3
