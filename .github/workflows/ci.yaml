@@ -24,5 +24,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
+      - name: install honeybee-openstudio-gem
+        run: |
+          mkdir -p ~/ladybug_tools/resources/measures/honeybee_openstudio_gem
+          curl -SL -o honeybee-openstudio-gem.tar.gz https://github.com/ladybug-tools/honeybee-openstudio-gem/archive/v$HONEYBEE_OPENSTUDIO_GEM_VERSION.tar.gz
+          tar -zxvf honeybee-openstudio-gem.tar.gz
+          mv honeybee-openstudio-gem-$HONEYBEE_OPENSTUDIO_GEM_VERSION/lib ~/ladybug_tools/resources/measures/honeybee_openstudio_gem
+          rm -r honeybee-openstudio-gem-$HONEYBEE_OPENSTUDIO_GEM_VERSION
+          rm honeybee-openstudio-gem.tar.gz
+        env:
+          HONEYBEE_OPENSTUDIO_GEM_VERSION: "2.31.10"
+
       - name: run tests
         run: python -m pytest tests/
