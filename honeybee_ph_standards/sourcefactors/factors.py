@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""Energy conversion factor (CO2, Source) functions"""
+
 try:
     from typing import List, Any, Generator
 except ImportError:
@@ -20,6 +25,8 @@ def clean_input(input):
 
 def build_factors_from_library(_factor_dict):
     # type: (dict[str, dict[str, Any]]) -> List[Factor]
+    """Returns a list of factors based on an input data dict. from the library."""
+
     factor_list = []
     for item, item_dict in _factor_dict.items():
         new_factor = Factor()
@@ -84,6 +91,17 @@ class FactorCollection(_base._Base):
             self.factors = _factors
         else:
             self.factors = []
+
+    def add_factor(self, _new_factor):
+        # type: (Factor) -> None
+        """Add a new factor to the collection. If the factor already exists, update it."""
+
+        for i, exg_factor in enumerate(self.factors):
+            if exg_factor.fuel_name == _new_factor.fuel_name:
+                self.factors[i] = _new_factor
+                return None
+        self.factors.append(_new_factor)
+        return None
 
     def validate_fuel_types(self, _allowed_fuels):
         for factor in self.factors:

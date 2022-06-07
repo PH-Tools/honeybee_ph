@@ -6,7 +6,7 @@ def test_phius_cert():
     assert phius_cert
 
 
-def test_phius_cert_serialiation_default():
+def test_phius_cert_serialization_default():
     phius_cert = honeybee_ph.phius.PhiusCertification()
     d = phius_cert.to_dict()
     new_obj = honeybee_ph.phius.PhiusCertification.from_dict(d)
@@ -14,7 +14,7 @@ def test_phius_cert_serialiation_default():
     assert new_obj.to_dict() == d
 
 
-def test_phius_cert_serialiation_customized():
+def test_phius_cert_serialization_customized():
     phius_cert = honeybee_ph.phius.PhiusCertification()
 
     # -- Customize / reset the attrs

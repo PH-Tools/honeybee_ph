@@ -70,7 +70,7 @@ class BldgSegment(_base._Base):
 
     def __init__(self):
         super(BldgSegment, self).__init__()
-        self.name = 'Unnamed_Bldg_Segment'
+        self.display_name = 'Unnamed_Bldg_Segment'
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
         self.climate = location.Climate()
@@ -85,7 +85,7 @@ class BldgSegment(_base._Base):
         d = {}
 
         d['identifier'] = self.identifier
-        d['name'] = self.name
+        d['name'] = self.display_name
         d['num_floor_levels'] = self.num_floor_levels
         d['num_dwelling_units'] = self.num_dwelling_units
         d['climate'] = self.climate.to_dict()
@@ -103,7 +103,7 @@ class BldgSegment(_base._Base):
         obj = cls()
 
         obj.identifier = _dict.get('identifier')
-        obj.name = _dict.get('name')
+        obj.display_name = _dict.get('name')
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
         obj.climate = location.Climate.from_dict(_dict.get('climate', {}))
