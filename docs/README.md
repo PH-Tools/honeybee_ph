@@ -10,6 +10,7 @@ sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_energy_ph
 sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_ph
 sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_ph_standards
 sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_ph_utils
-# build the documentation under _build/docs folder
 sphinx-build -b html ./docs ./docs/_build/docs
+
+# build the documentation under _build/docs folder
 ```
