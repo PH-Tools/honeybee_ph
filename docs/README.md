@@ -1,4 +1,3 @@
-test
 ## Usage
 For generating the documents locally use commands below from the root folder. 
 
