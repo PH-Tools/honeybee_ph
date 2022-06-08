@@ -20,55 +20,70 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
-Assign Honeybee Rooms to a specific 'Buildiing Segment' within the PHX Model. In WUFI, this is used
-as the 'Case', while in C3RRO this will be considered the 'Variant'. For PHIUS
-projects, use this component to break mixed-use projects into separate residential-case
-and non-residential-case variants.
+Set the Climate and Location data for the project. For PHI / PHPP, you can also set the optional
+Country / Region / Data-Set codes to use one of the climates pre-loaded into the PHPP. Note that 
+the default climate, if no infomation is entered, is NYC USA.
 -
-EM April 8, 2022
+EM June 8, 2022
     Args:
-        name_:
+        name_: The name of the Climate Data set.
+        
         latitude_: (deg) default = 40.6 (NYC)
+        
         longitude_: (deg) default = -73.8 (NYC)
+        
         altitude_: (m) default = 5.0
+        
         daily_temp_variation_: (deg K) default = 8.0K
+        
         avg_wind_speed_: (m/s) default = 4.0 m/s
-        copy_from_excel_: Copy/Paste from a PHPP-Style Climate data. Copy the 
-            yellow cells (not the top line with ID / long / lat and not the left
-            column with headings.) default = NYC Climate.
-    
+        
+        -
+        
+        _phpp_country_code_: See the PHPP "Climate" worksheet for allowable options. The input
+            value will input directly into the Climate worksheet "Country" cell, so be sure that it matches 
+            the PHPP text exactly.
+            
+        _phpp_region_code_: See the PHPP "Climate" worksheet for allowable options. The input
+            value will input directly into the Climate "Region" worksheet cell, so be sure that it matches 
+            the PHPP text exactly.
+            
+        _phpp_dataset_name_: See the PHPP "Climate" worksheet for allowable options. The input
+            value will input directly into the Climate worksheet "Climate data set" cell, so be sure that  
+            it matches the PHPP text exactly.
+
     Returns:
-        ph_climate_: A new PHX Climate Object. Apply this to a WUFI Config PyPH Component.
+        ph_climate_: A new Passive House Climate object. This can be added to a Building-Segment.
 """
 
-import honeybee_ph.location
-import honeybee_ph_utils.preview
-import honeybee_ph_rhino.climate
+from honeybee_ph import location
+from honeybee_ph_utils import preview
 
 # --
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
-ghenv.Component.Name = "HBPH - Phius Climate"
+ghenv.Component.Name = "HBPH - PH Climate"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_08_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_08_2022')
 
 if DEV:
-    reload(honeybee_ph.location)
-    reload(honeybee_ph_utils.preview)
-    reload(honeybee_ph_rhino.climate)
+    reload(location)
+    reload(preview)
 
 # -- Climate
-ph_climate_ = honeybee_ph.location.Climate()
-ph_climate_.name = name_ or '__unnamed_location__'
-ph_climate_.summer_daily_temperature_swing = daily_temp_variation_ or 8.0
-ph_climate_.average_wind_speed = avg_wind_speed_ or 4
+ph_climate_ = location.Climate()
+ph_climate_.name = name_ or ph_climate_.name 
+ph_climate_.summer_daily_temperature_swing = daily_temp_variation_ or ph_climate_.summer_daily_temperature_swing
+ph_climate_.average_wind_speed = avg_wind_speed_ or ph_climate_.average_wind_speed
+
+ph_climate_.phpp_country_code = _phpp_country_code_ or ph_climate_.phpp_country_code
+ph_climate_.phpp_region_code = _phpp_region_code_ or ph_climate_.phpp_region_code
+ph_climate_.phpp_dataset_name = _phpp_dataset_name_ or ph_climate_.phpp_dataset_name
 
 # -- Location
-ph_climate_.location.latitude = latitude_ or 40.6
-ph_climate_.location.longitude = longitude_ or -73.8
-ph_climate_.location.weather_station_elevation = altitude_ or 5.0
-ph_climate_.location.climate_zone = 1
-ph_climate_.location.hours_from_UTC = -4
+ph_climate_.location.latitude = latitude_ or ph_climate_.location.latitude
+ph_climate_.location.longitude = longitude_ or ph_climate_.location.longitude
+ph_climate_.location.weather_station_elevation = altitude_ or ph_climate_.location.weather_station_elevation
 
 # -- Monthly
 ph_climate_.monthly_temperature_air.values = [1.2,-0.2,5.6,10.9,16.1,21.7,25.0,24.8,19.9,14.0,7.3,3.3]
@@ -110,8 +125,5 @@ ph_climate_.peak_cooling_2.rad_south = 132
 ph_climate_.peak_cooling_2.rad_west = 159
 ph_climate_.peak_cooling_2.rad_global = 230
 
-if copy_from_excel_:
-    ph_climate_ = honeybee_ph_rhino.climate.parse_copy_from_excel(ph_climate_, copy_from_excel_)
-
 # -- Preview
-honeybee_ph_utils.preview.object_preview(ph_climate_)
+preview.object_preview(ph_climate_)

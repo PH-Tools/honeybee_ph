@@ -32,7 +32,7 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - Phius Climate": {
+    "HBPH - PH Climate": {
         "NickName": "PH Climate",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
