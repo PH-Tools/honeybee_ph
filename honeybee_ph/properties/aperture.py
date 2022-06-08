@@ -4,7 +4,7 @@
 """HB-Aperture Passive House (PH) Properties."""
 
 try:
-    from typing import Any
+    from typing import Any, Dict
 except ImportError:
     # IronPython
     pass
@@ -59,8 +59,28 @@ class AperturePhProperties(object):
 
         new_prop = cls(host)
         new_prop.id_num = data["id_num"]
-        new_prop.id_num = data["inset_dist"]
+        new_prop.inset_dist = data["inset_dist"]
         new_prop.winter_shading_factor = data["winter_shading_factor"]
         new_prop.summer_shading_factor = data["summer_shading_factor"]
 
         return new_prop
+
+    def apply_properties_from_dict(self, _aperture_prop_dict):
+        # type: (Dict[str, Any]) -> None
+        """Apply properties from an AperturePhPropertiesAbridged dictionary.
+
+        Arguments:
+        ----------
+            * _aperture_prop_dict (dict): An AperturePhPropertiesAbridged dictionary loaded from 
+                the Aperture object itself. Unabridged.
+
+        Returns:
+        --------
+            * None
+        """
+
+        self.inset_dist = _aperture_prop_dict['inset_dist']
+        self.winter_shading_factor = _aperture_prop_dict["winter_shading_factor"]
+        self.summer_shading_factor = _aperture_prop_dict["summer_shading_factor"]
+
+        return None

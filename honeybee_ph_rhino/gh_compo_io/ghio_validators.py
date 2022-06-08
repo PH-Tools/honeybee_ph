@@ -77,3 +77,24 @@ class IntegerNonZero(Validated):
                 "Error: input for '{}' cannot be zero or negative.".format(name))
 
         return new_value
+
+
+class FloatNonZero(Validated):
+    """A Floating Point value which is not allowed to be zero."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        try:
+            new_value = float(new_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply positive integer only.".format(
+                                 new_value, type(new_value)))
+
+        if new_value <= 0.0:
+            raise ValueError(
+                "Error: input for '{}' cannot be zero or negative.".format(name))
+
+        return new_value

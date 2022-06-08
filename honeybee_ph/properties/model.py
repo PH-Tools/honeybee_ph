@@ -167,4 +167,16 @@ class ModelPhProperties(object):
                 continue
             room.properties.ph.apply_properties_from_dict(room_dict, bldg_segments)
 
-        # TODO: all the rest (apertures, faces, etc...)
+        apertures = []
+        faces = []
+        for hb_room in self.host.rooms:
+            for face in hb_room.faces:
+                faces.append(face)
+                for aperture in face.apertures:
+                    apertures.append(aperture)
+
+        for face, face_dict in zip(faces, face_ph_dicts):
+            face.properties.ph.apply_properties_from_dict(face_dict)
+
+        for aperture, ap_dict in zip(apertures, ap_ph_dicts):
+            aperture.properties.ph.apply_properties_from_dict(ap_dict)

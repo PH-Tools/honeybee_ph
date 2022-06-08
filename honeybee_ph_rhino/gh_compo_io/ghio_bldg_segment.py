@@ -16,8 +16,8 @@ from honeybee_ph_rhino.gh_compo_io import ghio_validators
 class ISetPoints(object):
     """Interface to collect and clean SetPoint user-inputs"""
 
-    winter = ghio_validators.IntegerNonZero("winter")
-    summer = ghio_validators.IntegerNonZero("summer")
+    winter = ghio_validators.FloatNonZero("winter")
+    summer = ghio_validators.FloatNonZero("summer")
 
     def __init__(self):
         self.winter = 20
@@ -78,6 +78,14 @@ class IBldgSegment(object):
         # type: () -> List[factors.Factor]
         return factors.build_factors_from_library(phius_CO2_factors.factors_2021)
 
+    def create_hbph_set_points(self):
+        # type: () -> bldg_segment.SetPoints
+        """Return a new HBPH SetPoints object with attributes fro user input."""
+        obj = bldg_segment.SetPoints()
+        obj.winter = self.set_points.winter
+        obj.summer = self.set_points.summer
+        return obj
+
     def create_hbph_bldg_segment(self):
         # type: () -> bldg_segment.BldgSegment
         """Returns a new HBPH BldgSegment object with attribute value set."""
@@ -87,6 +95,10 @@ class IBldgSegment(object):
             if attr_name.startswith('_'):
                 continue
             setattr(obj, attr_name, getattr(self, attr_name))
+
+        # override...
+        obj.set_points = self.create_hbph_set_points()
+
         return obj
 
     def __str__(self):
