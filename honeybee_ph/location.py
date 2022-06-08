@@ -206,9 +206,14 @@ class Climate_Ground(_base._Base):
 class Climate(_base._Base):
     def __init__(self):
         super(Climate, self).__init__()
-        self.name = None
+        self.name = "New York"
         self.summer_daily_temperature_swing = 8  # Deg K
-        self.average_wind_speed = 4
+        self.average_wind_speed = 4  # m/s
+
+        # PHPP Specific settings
+        self.phpp_country_code = "US-United States of America"
+        self.phpp_region_code = "New York"
+        self._phpp_dataset_name = "US0055b-New York"
 
         self.location = Climate_Location()
         self.ground = Climate_Ground()
@@ -229,6 +234,23 @@ class Climate(_base._Base):
         self.peak_cooling_1 = Climate_PeakLoadCollection()
         self.peak_cooling_2 = Climate_PeakLoadCollection()
 
+    @property
+    def phpp_dataset_name(self):
+        return self._phpp_dataset_name
+
+    @phpp_dataset_name.setter
+    def phpp_dataset_name(self, _in):
+        if _in is None:
+            return
+
+        vals = _in.split("-")
+        if len(vals) != 2:
+            raise Exception(
+                "Error: PHPP Dataset name format should be "
+                "'xx01234-xxxx'. Got: {}".format(self._phpp_dataset_name))
+        self._phpp_dataset_name = _in
+        self.name = vals[1]
+
     def to_dict(self):
         # type: () -> dict
         d = {}
@@ -236,6 +258,10 @@ class Climate(_base._Base):
         d["name"] = self.name
         d["summer_daily_temperature_swing"] = self.summer_daily_temperature_swing
         d["average_wind_speed"] = self.average_wind_speed
+
+        d["phpp_country_code"] = self.phpp_country_code
+        d["phpp_region_code"] = self.phpp_region_code
+        d["phpp_dataset_name"] = self.phpp_dataset_name
 
         d["location"] = self.location.to_dict()
         d["ground"] = self.ground.to_dict()
@@ -266,6 +292,10 @@ class Climate(_base._Base):
         new_obj.summer_daily_temperature_swing = _input_dict.get(
             "summer_daily_temperature_swing")
         new_obj.average_wind_speed = _input_dict.get("average_wind_speed")
+
+        new_obj.phpp_country_code = _input_dict["phpp_country_code"]
+        new_obj.phpp_region_code = _input_dict["phpp_region_code"]
+        new_obj.phpp_dataset_name = _input_dict["phpp_dataset_name"]
 
         new_obj.location = Climate_Location.from_dict(
             _input_dict.get("location", {}))
