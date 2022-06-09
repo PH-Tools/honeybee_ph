@@ -47,7 +47,6 @@ EM June 9, 2022
 """
 
 from honeybee_ph_utils import preview
-from honeybee_ph_utils import enumerables
 from honeybee_energy_ph.hvac import hot_water
 
 #-------------------------------------------------------------------------------
@@ -58,7 +57,6 @@ DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_09_2022')
 if DEV:
     reload(preview)
-    reload(enumerables)
     reload(hot_water)
 
 
@@ -67,24 +65,20 @@ if DEV:
 storage_tank_ = hot_water.PhSHWTank()
 
 storage_tank_.tank_type = _tank_type or storage_tank_.tank_type
-storage_tank_.name = _name_ or storage_tank_.name
+storage_tank_.display_name = _display_name_ or storage_tank_.display_name
 storage_tank_.quantity = quantity_ or storage_tank_.quantity
 
 if for_solar_ is not None:
-    storage_tank_.for_solar = for_solar_
-else:
-    storage_tank_.for_solar = False
+    storage_tank_.solar_connection = for_solar_
 
-storage_tank_.heat_loss_rate = heat_loss_rate_ or storage_tank_.heat_loss_rate
-storage_tank_.volume = volume_ or storage_tank_.volume
+storage_tank_.standby_losses = heat_loss_rate_ or storage_tank_.standby_losses
+storage_tank_.storage_capacity = volume_ or storage_tank_.storage_capacity
 storage_tank_.standby_fraction = standby_frac_ or storage_tank_.standby_fraction
 
 if in_conditioned_space_ is not None:
     storage_tank_.in_conditioned_space = in_conditioned_space_
-else:
-    storage_tank_.in_conditioned_space = True
 
-storage_tank_.location_temp = location_temp_ or 20
+storage_tank_.room_temp = location_temp_ or 20
 storage_tank_.water_temp = water_temp_ or 55
 
 
