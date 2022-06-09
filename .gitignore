@@ -5,3 +5,4 @@ __pycache__/
 *.doctree
 *.pickle
 /docs/_build/docs/
+pytest-coverage.txt
