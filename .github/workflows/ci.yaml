@@ -1,6 +1,8 @@
 name: CI
 
 on: [push, pull_request]
+permissions:
+      pull-requests: write
 
 jobs:
 
@@ -29,8 +31,6 @@ jobs:
 
   cov:
     name: run coverage
-    permissions:
-      pull-requests: write
     runs-on: ubuntu-latest
     needs: test
 
