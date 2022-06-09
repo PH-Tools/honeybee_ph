@@ -44,6 +44,6 @@ snowballstemmer==2.2.0
 toml==0.10.2
 tqdm==4.62.3
 typing-extensions==4.2.0
-urllib3==1.26.7
+urllib3==1.26.9
 webencodings==0.5.1
 zipp==3.6.0
