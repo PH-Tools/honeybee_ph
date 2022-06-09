@@ -46,7 +46,7 @@ jobs:
 
     - name: build coverage file
       run: |
-        pytest --cache-clear --cov=tests/
+        pytest --cache-clear --cov-config=tests/.coveragerc --cov=tests/
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2
   
