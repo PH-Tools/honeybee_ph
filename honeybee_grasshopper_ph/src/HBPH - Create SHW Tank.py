@@ -40,7 +40,9 @@ EM June 9, 2022
         
         in_conditioned_space_: (bool) Default=True.
         
-        location_temp_: (Deg C) The avg air-temp of the tank location, if the tank is outside the building. 
+        location_temp_: (Deg C) The avg. air-temp of the tank location, if the tank is outside the building. 
+        
+        water_temp_: (Deg C) The avg. water temp in the tank. Default=60-C
     
     Returns:
         storage_tank_: A new HW Tank Object. You can add this tank to a Service Hot Water system.
@@ -79,7 +81,7 @@ if in_conditioned_space_ is not None:
     storage_tank_.in_conditioned_space = in_conditioned_space_
 
 storage_tank_.room_temp = location_temp_ or 20
-storage_tank_.water_temp = water_temp_ or 55
+storage_tank_.water_temp = water_temp_ or 60
 
 
 # ------------------------------------------------------------------------------
