@@ -26,7 +26,7 @@ ladybug-geometry-polyskel>=1.3.55
 ladybug-rhino>=1.32.0
 MarkupSafe==2.0.1
 packaging==21.2
-pkginfo==1.7.1
+pkginfo==1.8.3
 pluggy==0.13.1
 py==1.11.0
 pydantic==1.8.2
