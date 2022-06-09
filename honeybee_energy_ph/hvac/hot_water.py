@@ -9,6 +9,7 @@ except ImportError:
     pass  # IronPython
 
 from honeybee_energy_ph.hvac import _base
+from honeybee_ph_utils import enumerables
 
 
 class UnknownPhHeaterTypeError(Exception):
@@ -18,26 +19,45 @@ class UnknownPhHeaterTypeError(Exception):
         super(UnknownPhHeaterTypeError, self).__init__(self.msg)
 
 
+class PhSHWTankType(enumerables.CustomEnum):
+    allowed = [
+        "0-No storage tank",
+        "1-DHW and heating",
+        "2-DHW only"
+    ]
+
+    def __init__(self, _value=1, _index_offset=0):
+        super(PhSHWTankType, self).__init__(_value, _index_offset)
+
+
 class PhSHWTank(object):
     def __init__(self):
         self.name = '_unnamed_hw_tank_'
         self.quantity = 1
-        self.tank_type = None  # type: Optional[str]
+        self._tank_type = PhSHWTankType("2-DHW only")
 
-        self.for_solar = False  # type: Optional[bool]
-        self.heat_loss_rate = None  # type: Optional[float]
-        self.volume = None  # type: Optional[float]
-        self.standby_fraction = None  # type: Optional[float]
+        self.for_solar = False  # type: bool
+        self.heat_loss_rate = 4  # type: float
+        self.volume = 300  # type: float
+        self.standby_fraction = 0.30  # type: float
 
         self.in_conditioned_space = True
         self.location_temp = 20
         self.water_temp = 55
 
+    @property
+    def tank_type(self):
+        return self._tank_type.value
+
+    @tank_type.setter
+    def tank_type(self, _in):
+        self._tank_type = PhSHWTankType(_in)
+
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
 
-        d['tank_type'] = self.tank_type
+        d['_tank_type'] = self._tank_type.to_dict()
         d['quantity'] = self.quantity
         d['name'] = self.name
         d['for_solar'] = self.for_solar
@@ -55,7 +75,7 @@ class PhSHWTank(object):
         # type: (dict[str, Any]) -> PhSHWTank
         obj = cls()
 
-        obj.tank_type = _input_dict['tank_type']
+        obj._tank_type = PhSHWTankType.from_dict(_input_dict['_tank_type'])
         obj.quantity = _input_dict['quantity']
         obj.name = _input_dict['name']
         obj.for_solar = _input_dict['for_solar']
@@ -69,7 +89,7 @@ class PhSHWTank(object):
         return obj
 
     def __str__(self):
-        return "{}: {} {}".format(self.__class__.__name__, self.tank_type, self.name)
+        return "{}: {} {}".format(self.__class__.__name__, self.tank_type.value, self.name)
 
     def __repr__(self):
         return "{}: {}".format(self.__class__.__name__, self.name)
