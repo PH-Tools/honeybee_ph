@@ -27,12 +27,19 @@ jobs:
       - name: run tests
         run: python -m pytest tests/
 
-      - name: build coverage file
-        run: |
-          pytest --cache-clear --cov=app test/ pytest-coverage.txt
-      - name: Comment coverage
-        uses: coroo/pytest-coverage-commentator@v1.0.3
-    
+  # cov:
+  #   name: run coverage
+
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Set up python 3.7
+  #   - name: build coverage file
+  #     run: |
+  #       pytest --cache-clear --cov=app test/ pytest-coverage.txt
+  #   - name: Comment coverage
+  #     uses: coroo/pytest-coverage-commentator@v1.0.2
+  
 
 
   
