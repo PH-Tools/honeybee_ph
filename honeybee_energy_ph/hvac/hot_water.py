@@ -43,7 +43,7 @@ class PhSHWTank(object):
         self.standby_losses = 4.0  # type: float
         self.standby_fraction = 0.30  # type: float
         self.room_temp = 20.0  # type: float
-        self.water_temp = 55.0  # type: float
+        self.water_temp = 60.0  # type: float
 
     @property
     def tank_type(self):
