@@ -1,22 +1,22 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-#
+# 
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-#
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
-# Honeybee-PH is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published
-# by the Free Software Foundation; either version 3 of the License,
-# or (at your option) any later version.
-#
+# 
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
+# Honeybee-PH is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published 
+# by the Free Software Foundation; either version 3 of the License, 
+# or (at your option) any later version. 
+# 
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
 # GNU General Public License for more details.
-#
+# 
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-#
+# 
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
@@ -34,7 +34,7 @@ a wall.
 Each Volume is made of one or more floor-segments. Each floor-segment can have a
 'weighting factor' applied for calculating the TFA/iCFA for Passive House certification.
 -
-EM April 28, 2022
+EM June 10, 2022
     Args:
         _flr_seg_geom: (Tree[Geometry]) The Rhino geometry that you would like to use 
             to create the Floor-Segments of the various Spaces. Each branch should be a list 
@@ -68,43 +68,38 @@ import Rhino as rh
 import rhinoscriptsyntax as rs
 import ghpythonlib.components as ghc
 import Grasshopper as gh
-
 from Grasshopper import DataTree
 from System import Object, Double, String
 from Grasshopper.Kernel.Data import GH_Path
 
 from ladybug_rhino.fromgeometry import from_face3d
-import honeybee_ph_rhino.gh_io
-import honeybee_ph.space
-import honeybee_ph_rhino.make_spaces.make_floor
-import honeybee_ph_rhino.make_spaces.make_volume
-import honeybee_ph_rhino.make_spaces.make_space
+
+from honeybee_ph import space
+from honeybee_ph_rhino import gh_io
+from honeybee_ph_rhino.make_spaces import make_floor, make_volume
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create Spaces"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_28_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
-    reload(honeybee_ph_rhino.gh_io)
-    # reload(honeybee_ph.space)
-    reload(honeybee_ph_rhino.make_spaces.make_floor)
-    reload(honeybee_ph_rhino.make_spaces.make_volume)
-    reload(honeybee_ph_rhino.make_spaces.make_space)
+    pass
+    #reload(space)
+    #reload(gh_io)
+    #reload(make_spaces)
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
-IGH = honeybee_ph_rhino.gh_io.IGH(ghdoc, ghenv, sc, rh, rs, ghc, gh)
+IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 # ------------------------------------------------------------------------------
 # -- Organize the input trees, lists, lengths, defaults
-
-
 def clean_input_tree(_input_tree, branch_count, default, type=Object):
     # type (DataTree, int, Any, Any) -> DataTree[<type>]
     """Align the input Datatrees so they are all the same length. Apply defaults."""
-
+    
     new_tree = DataTree[type]()
     for i in range(branch_count):
         try:
@@ -112,7 +107,6 @@ def clean_input_tree(_input_tree, branch_count, default, type=Object):
         except ValueError:
             new_tree.Add(default, GH_Path(i))
     return new_tree
-
 
 # ------------------------------------------------------------------------------
 input_len = len(_flr_seg_geom.Branches)
@@ -127,27 +121,24 @@ floor_breps_ = DataTree[Object]()
 volume_breps_ = DataTree[Object]()
 # -- Build one Space for each branch on the _flr_seg_geom input tree
 for i, flr_srfc_list in enumerate(_flr_seg_geom.Branches):
-    new_space = honeybee_ph.space.Space()
+    new_space = space.Space()
     new_space.name = space_names.Branch(i)[0]
     new_space.number = space_numbers.Branch(i)[0]
-
-    space_floors, e = honeybee_ph_rhino.make_spaces.make_floor.space_floor_from_rh_geom(
-        IGH, list(flr_srfc_list))
+    
+    space_floors, e = make_floor.space_floor_from_rh_geom(IGH, list(flr_srfc_list))
     if e:
         error_ = [from_face3d(s) for s in e]
-        msg = 'Error: There was a problem joining together one or more group of floor surfaces?'\
+        msg='Error: There was a problem joining together one or more group of floor surfaces?'\
             'Check the "error_" output for a preview of the surfaces causing the problem'\
             'Check the names and numbers of the surfaces, and make sure they can be properly merged?'
         IGH.error(msg)
-    space_volumes = honeybee_ph_rhino.make_spaces.make_volume.volumes_from_floors(
-        IGH, space_floors, volume_heights.Branch(i))
+    space_volumes = make_volume.volumes_from_floors(IGH, space_floors, volume_heights.Branch(i))
     new_space.add_new_volumes(space_volumes)
-
+    
     spaces_.append(new_space)
-
+    
     # -- Output Preview
-    floor_breps_.AddRange([from_face3d(flr.geometry)
-                          for flr in space_floors], GH_Path(i))
+    floor_breps_.AddRange([from_face3d(flr.geometry) for flr in space_floors], GH_Path(i))
     for srfc_list in [IGH.convert_to_rhino_geom(vol.geometry) for vol in space_volumes]:
         vol_brep = ghc.BrepJoin(srfc_list).breps
         volume_breps_.Add(vol_brep, GH_Path(i))

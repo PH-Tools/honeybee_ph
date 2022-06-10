@@ -1,22 +1,22 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-#
+# 
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-#
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
-# Honeybee-PH is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published
-# by the Free Software Foundation; either version 3 of the License,
-# or (at your option) any later version.
-#
+# 
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
+# Honeybee-PH is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published 
+# by the Free Software Foundation; either version 3 of the License, 
+# or (at your option) any later version. 
+# 
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
 # GNU General Public License for more details.
-#
+# 
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-#
+# 
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
@@ -25,7 +25,7 @@ can be made up of one or more individual volumes. This is useful if you are calc
 interior net-floor-area or volume as in the Passive House models. Each Space will map to 
 a single entry in the WUFI 'Ventilation Rooms' or a PHPP 'Additional Ventilation'.
 -
-EM April 1, 2022
+EM June 10, 2022
     Args:
         _spaces: (list[Space]) A list of the new PH-Spaces to add to the Honeybee-Rooms.
         
@@ -57,7 +57,6 @@ import ghpythonlib.components as ghc
 import Grasshopper as gh
 
 from ladybug_rhino.fromgeometry import from_point3d
-import honeybee_ph_rhino
 from honeybee_ph_rhino.make_spaces import make_space
 
 # ------------------------------------------------------------------------------
@@ -65,31 +64,25 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add Spaces"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
-    reload(honeybee_ph_rhino.gh_io)
-    reload(honeybee_ph_rhino.make_spaces)
-    from honeybee_ph_rhino.make_spaces import make_space
-    reload(make_space)
+    #reload(make_space)
+    pass
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
-IGH = honeybee_ph_rhino.gh_io.IGH(ghdoc, ghenv, sc, rh, rs, ghc, gh)
+IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 # ------------------------------------------------------------------------------
 # -- Clean up the inpt spaces, host in the HB-Rooms
 offset_dist = _offset_dist_ or 0.1
-spaces = [make_space.offset_space_reference_points(
-    IGH, sp, offset_dist) for sp in _spaces]
-hb_rooms_, un_hosted_spaces = make_space.add_spaces_to_honeybee_rooms(
-    spaces, _hb_rooms, inherit_room_names_)
+spaces = [make_space.offset_space_reference_points(IGH, sp, offset_dist) for sp in _spaces]
+hb_rooms_, un_hosted_spaces = make_space.add_spaces_to_honeybee_rooms(spaces, _hb_rooms, inherit_room_names_)
 
 # ------------------------------------------------------------------------------
 # -- if any un_hosted_spaces, pull out their center points for troubelshooting
 # -- and raise a user-warning
-check_pts_ = [from_point3d(
-    lbt_pt) for space_data in un_hosted_spaces for lbt_pt in space_data.reference_points]
+check_pts_ = [from_point3d(lbt_pt) for space_data in  un_hosted_spaces for lbt_pt in space_data.reference_points]
 if un_hosted_spaces:
-    msg = 'Error: Host Honeybee-Rooms not found for the Spaces: {}'.format(
-        ''.join([spd.space.full_name for spd in un_hosted_spaces]))
+    msg = 'Error: Host Honeybee-Rooms not found for the Spaces: {}'.format(''.join([ spd.space.full_name for spd in un_hosted_spaces]))
     IGH.error(msg)
