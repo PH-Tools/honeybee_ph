@@ -11,12 +11,11 @@ from honeybee.properties import (
     ShadeProperties
 )
 
-from .properties.space import SpaceProperties
+from .properties.space import SpaceProperties, SpacePhProperties
 from .properties.model import ModelPhProperties
 from .properties.room import RoomPhProperties
 from .properties.face import FacePhProperties
 from .properties.aperture import AperturePhProperties
-from .properties.space import SpacePhProperties
 from .properties.shade import ShadePhProperties
 
 # Step 1)

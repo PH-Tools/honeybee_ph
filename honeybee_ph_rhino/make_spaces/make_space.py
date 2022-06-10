@@ -35,7 +35,6 @@ def offset_space_reference_points(IGH, _space, _dist=0):
 
     if _dist == 0:
         return _space
-
     new_space = _space.duplicate()
     for volume in new_space.volumes:
         for seg in volume.floor._floor_segments:

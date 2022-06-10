@@ -40,7 +40,7 @@ class SpaceEnergyProperties(properties._Properties):
 
         d['id_num'] = self.id_num
 
-        return d
+        return {'energy': d}
 
     @classmethod
     def from_dict(cls, _input_dict, _host):

@@ -9,7 +9,7 @@ except:
     pass  # IronPython
 
 from honeybee_ph import _base
-from honeybee_ph.properties import space
+from honeybee_ph.properties.space import SpaceProperties
 from ladybug_geometry import geometry3d
 
 
@@ -272,7 +272,7 @@ class Space(_base._Base):
         self.host = _host
 
         self._volumes = list()
-        self.properties = space.SpaceProperties(self)
+        self.properties = SpaceProperties(self)
 
     @property
     def display_name(self):
@@ -358,7 +358,7 @@ class Space(_base._Base):
         new_space.name = self.name
         new_space.number = self.number
         new_space.add_new_volumes([vol.duplicate() for vol in self.volumes])
-        new_space.properties = self.properties
+        new_space.properties._duplicate_extension_attr(self.properties)
 
         return new_space
 
@@ -380,15 +380,20 @@ class Space(_base._Base):
         # type: (dict, Any) -> Space
         new_obj = cls(_host)
 
-        new_obj.quantity = _input_dict.get("quantity")
-        new_obj.wufi_type = _input_dict.get("wufi_type")
-        new_obj.name = _input_dict.get("name")
-        new_obj.number = _input_dict.get("number")
-        new_obj.add_new_volumes([SpaceVolume.from_dict(d)
-                                for d in _input_dict.get("volumes", [])])
-        new_obj.properties = space.SpaceProperties.from_dict(
-            _input_dict.get("properties", {}), _host=new_obj)
-
+        new_obj.quantity = _input_dict["quantity"]
+        new_obj.wufi_type = _input_dict["wufi_type"]
+        new_obj.name = _input_dict["name"]
+        new_obj.number = _input_dict["number"]
+        new_obj.add_new_volumes(
+            [SpaceVolume.from_dict(d) for d in _input_dict["volumes"]]
+        )
+        new_obj.properties = SpaceProperties.from_dict(
+            _input_dict["properties"],
+            _host=new_obj
+        )
+        new_obj.properties._load_extension_attr_from_dict(
+            _input_dict["properties"]
+        )
         return new_obj
 
     def __str__(self):

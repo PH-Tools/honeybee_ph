@@ -1,5 +1,5 @@
 try:
-    from typing import Any
+    from typing import Any, Dict
 except ImportError:
     pass  # Python 2.7
 
@@ -36,15 +36,18 @@ class SpaceProperties(properties._Properties):
             d['type'] = 'SpaceProperties'
         else:
             d['type'] = 'SpacePropertiesAbridged'
-
         d = self._add_extension_attr_to_dict(d, abridged, include)
         return d
 
     @classmethod
-    def from_dict(cls, _input_dict, _host):
-        new_obj = cls(_host)
+    def from_dict(cls, _dict={}, _host=None):
+        # type: (Dict, Any) -> SpaceProperties
+        assert _dict['type'] == 'SpaceProperties', \
+            'Expected SpaceProperties. Got {}.'.format(_dict['type'])
 
-        return new_obj
+        obj = cls(_host)
+
+        return obj
 
     def add_prefix(self, prefix):
         """Change the identifier extension attributes unique to this object by adding a prefix.
@@ -68,7 +71,7 @@ class SpaceProperties(properties._Properties):
 
     def __repr__(self):
         """Properties representation."""
-        return 'SpaceProperties: {}'.format(self.host.display_name)
+        return '{}: {}'.format(self.__class__.__name__, self.host.display_name)
 
 
 class SpacePhProperties(object):
@@ -77,9 +80,9 @@ class SpacePhProperties(object):
         self._host = _host
         self.id_num = 0
 
-        # Temporary override until I figure out right right way
-        self._v_sup = 0
-        self._v_eta = 0
+        # TODO: Temporary override until I figure out right right way
+        self._v_sup = None
+        self._v_eta = None
 
     @property
     def host(self):
@@ -87,17 +90,22 @@ class SpacePhProperties(object):
 
     def duplicate(self, new_host=None):
         # type: (Any) -> SpacePhProperties
+        print('in here')
         _host = new_host or self._host
-        new_properties_obj = self.__class__(_host)
-        new_properties_obj.id_num = self.id_num
+        new_properties_obj = SpacePhProperties(_host)
 
+        new_properties_obj.id_num = self.id_num
+        new_properties_obj._v_sup = self._v_sup
+        new_properties_obj._v_eta = self._v_eta
+
+        print("new_properties_obj= ", new_properties_obj)
         return new_properties_obj
 
     def ToString(self):
         return self.__repr__()
 
     def __repr__(self):
-        return "Space Passive House Properties: [host: {}]".format(self.host.display_name)
+        return "{}: [host: {}], v_eta={}, v_sup={}".format(self.__class__.__name__, self.host.display_name, self._v_eta, self._v_sup)
 
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
@@ -119,10 +127,10 @@ class SpacePhProperties(object):
         # type: (dict, Any) -> SpacePhProperties
         assert 'SpacePhProperties' in data['type'], \
             'Expected SpacePhProperties. Got {}.'.format(data['type'])
-
         new_prop = cls(host)
+
         new_prop.id_num = data['id_num']
-        new_prop.id_num = data['_v_sup']
-        new_prop.id_num = data['_v_eta']
+        new_prop._v_sup = data['_v_sup']
+        new_prop._v_eta = data['_v_eta']
 
         return new_prop
