@@ -1,22 +1,22 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-# 
+#
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-# 
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
-# Honeybee-PH is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published 
-# by the Free Software Foundation; either version 3 of the License, 
-# or (at your option) any later version. 
-# 
+#
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
+# Honeybee-PH is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-# 
+#
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
@@ -52,7 +52,7 @@ import rhinoscriptsyntax as rs
 import ghpythonlib.components as ghc
 import Grasshopper as gh
 
-import honeybee_ph_rhino.make_spaces.floor_segment
+import honeybee_ph_rhino.make_spaces.make_floor_segment
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
@@ -64,16 +64,17 @@ if DEV:
     reload(honeybee_ph_rhino.gh_io)
 DEV = True
 if DEV:
-    reload(honeybee_ph_rhino.make_spaces.floor_segment)
+    reload(honeybee_ph_rhino.make_spaces.make_floor_segment)
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
-IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
+IGH = honeybee_ph_rhino.gh_io.IGH(ghdoc, ghenv, sc, rh, rs, ghc, gh)
 
 # ------------------------------------------------------------------------------
 # -- Try and get any data from the Rhino side
 flr_seg_srfcs_ = DataTree[Object]()
-flr_seg_data = honeybee_ph_rhino.make_spaces.floor_segment.handle_floor_seg_user_input(IGH, _floor_seg_geom, '_floor_seg_geom')
+flr_seg_data = honeybee_ph_rhino.make_spaces.make_floor_segment.handle_floor_seg_user_input(
+    IGH, _floor_seg_geom, '_floor_seg_geom')
 
 # ------------------------------------------------------------------------------
 # -- Organize outputs
@@ -83,9 +84,10 @@ NameGroupItem = namedtuple('NameGroupItem', ['breps', 'name', 'number'])
 if _group_by_name:
     name_groups = defaultdict(list)
     for k, flr_seg in enumerate(flr_seg_data):
-        new_entry = NameGroupItem(flr_seg.geometry, str(flr_seg.name).upper(), str(flr_seg.number).upper())
+        new_entry = NameGroupItem(flr_seg.geometry, str(
+            flr_seg.name).upper(), str(flr_seg.number).upper())
         name_groups[flr_seg.full_name].append(new_entry)
-    
+
     for i, name_group in enumerate(name_groups.values()):
         for item in name_group:
             flr_seg_srfcs_.Add(item.breps, GH_Path(i))

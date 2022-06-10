@@ -77,6 +77,10 @@ class SpacePhProperties(object):
         self._host = _host
         self.id_num = 0
 
+        # Temporary override until I figure out right right way
+        self._v_sup = 0
+        self._v_eta = 0
+
     @property
     def host(self):
         return self._host
@@ -105,6 +109,8 @@ class SpacePhProperties(object):
             d['type'] = 'SpacePhProperties'
 
         d['id_num'] = self.id_num
+        d['_v_sup'] = self._v_sup
+        d['_v_eta'] = self._v_eta
 
         return {'ph': d}
 
@@ -115,6 +121,8 @@ class SpacePhProperties(object):
             'Expected SpacePhProperties. Got {}.'.format(data['type'])
 
         new_prop = cls(host)
-        new_prop.id_num = data.get('id_num', 0)
+        new_prop.id_num = data['id_num']
+        new_prop.id_num = data['_v_sup']
+        new_prop.id_num = data['_v_eta']
 
         return new_prop

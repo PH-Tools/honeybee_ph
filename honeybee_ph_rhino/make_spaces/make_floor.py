@@ -11,7 +11,7 @@ except ImportError:
 from collections import defaultdict
 
 from honeybee_ph_rhino import gh_io
-from honeybee_ph_rhino.make_spaces import floor_segment
+from honeybee_ph_rhino.make_spaces import make_floor_segment
 from honeybee_ph import space
 
 
@@ -156,7 +156,7 @@ def space_floor_from_rh_geom(IGH, _flr_segment_geom):
     """
 
     # -- Build the new SpaceFloorSegments from the Rhino Geometry
-    flr_segments = floor_segment.create_floor_segment_from_rhino_geom(
+    flr_segments = make_floor_segment.create_floor_segment_from_rhino_geom(
         IGH, _flr_segment_geom)
 
     # -- Build the new SpaceFloors from the new SpaceFloorSegments

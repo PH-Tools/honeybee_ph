@@ -23,7 +23,7 @@ def offset_space_reference_points(IGH, _space, _dist=0):
 
     Arguments:
     ----------
-        * IGH (gh_io.IGH): The Grasshopper ingerface object.
+        * IGH (gh_io.IGH): The Grasshopper interface object.
         * _space (space.Space): A Space to operate on.
         * _dist (float): A distance to offset the reference point.
 
@@ -64,7 +64,7 @@ def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms, _inherit_names=False):
     """
 
     # -- Organize the spaces into a dict and pull out the reference points
-    # -- This is done to avoide re-collecting the points at each is_point_inside
+    # -- This is done to avoid re-collecting the points at each is_point_inside
     # -- check and so that 'del' can be used to speed up the hosting checks.
     spaces_dict = {}
     for space in _spaces:

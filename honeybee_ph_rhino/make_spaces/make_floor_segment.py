@@ -27,9 +27,9 @@ FloorSegmentData = namedtuple(
 
 def handle_floor_seg_user_input(IGH, _flr_segments, _input_name):
     # type: (gh_io.IGH, list[Any], str) -> list[FloorSegmentData]
-    """Try and read in all the user-supplied input data for the GH-Component input ndoe and organize the data.
+    """Try and read in all the user-supplied input data for the GH-Component input node and organize the data.
 
-    Will try and read in all the inputs of whatever type and get as much data as possibe. If the input objects
+    Will try and read in all the inputs of whatever type and get as much data as possible. If the input objects
     are Rhino objects, will try and read in any UserText attribute data from the Rhino scene. All data is organized
     into FloorSegmentData objects before output.
 

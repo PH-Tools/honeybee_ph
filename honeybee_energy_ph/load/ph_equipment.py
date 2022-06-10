@@ -1,7 +1,7 @@
 # -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
 
-"""HB-PH Electric Equipment"""
+"""HB-PH Electric Equipment and Appliances."""
 
 try:
     from typing import Any
@@ -142,6 +142,8 @@ class PhEquipment(_base._Base):
     def __str__(self):
         return "{}(name={}, quantity={})".format(self.__class__.__name__, self.display_name, self.quantity)
 
+    def __repr__(self):
+        return str(self)
 
 # -----------------------------------------------------------------------------
 # - Appliances
@@ -736,6 +738,10 @@ class PhEquipmentBuilder(object):
 
 
 class PhEquipmentCollection(object):
+    """A Collection of PH-Equipment / Appliances.
+
+    This is stored on the Honeybee-Room's properties.energy.electric_equipment.properties.ph
+    """
 
     def __init__(self, _host):
         self._equipment_set = {}
