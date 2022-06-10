@@ -19,7 +19,7 @@ class ValueNotAllowedError(Exception):
 class CustomEnum(object):
     allowed = []  # type: list[str]
 
-    def __init__(self, _value='', _index_offset=1):
+    def __init__(self, _value='', _index_offset=-1):
         """Standard offset is 1 since most listings start at 1 (but not all)"""
         self.index_offset = _index_offset  # type: int
         self._value = ""  # type: str
@@ -45,6 +45,7 @@ class CustomEnum(object):
         if str(_in).upper() in self.allowed_upper:
             self._value = str(_in).upper()
         else:
+            print('got here with :', _in, type(_in), self.index_offset)
             try:
                 input = int(_in) + self.index_offset
                 self._value = self.allowed_upper[input]

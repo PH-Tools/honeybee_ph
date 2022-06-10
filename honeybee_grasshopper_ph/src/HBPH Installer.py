@@ -28,7 +28,7 @@ order to download the latest version of the plugin libraries and components.
 This tool will download and install several new libraries into the Ladybug Tools
 python interpreter, and will download and install new Grasshopper components.
 -
-EM June 04, 2022
+EM June 10, 2022
     Args:
         _install: (bool) Set to True to install Honeybee-PH on your computer.
         _branch_: (str) Optional branch to download. Default = 'main'
@@ -36,7 +36,7 @@ EM June 04, 2022
 
 ghenv.Component.Name = 'HBPH Installer'
 ghenv.Component.NickName = 'HBPHInstall'
-ghenv.Component.Message = 'DEV | JUN_04_2022'
+ghenv.Component.Message = 'DEV | JUN_10_2022'
 ghenv.Component.Category = 'Honeybee-PH'
 ghenv.Component.SubCategory = '0 | Installer'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -404,8 +404,8 @@ if _install:
     
     
     # --------------------------------------------------------------------------
-    copy_from_github_repo('honeybee_ph', 'main', honeybee_ph_version)
-    copy_from_github_repo('PHX', 'main', phx_version)
+    copy_from_github_repo('honeybee_ph', _hbph_branch or 'main', honeybee_ph_version)
+    copy_from_github_repo('PHX', _phx_branch or 'main', phx_version)
     
 
     # ------------------------------------------------------------------------------------------
