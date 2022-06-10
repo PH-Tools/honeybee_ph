@@ -311,6 +311,12 @@ class Space(_base._Base):
         return sum((vol.floor_area for vol in self.volumes))
 
     @property
+    def average_floor_weighting_factor(self):
+        # type: () -> float
+        """Returns the average weighting factor (TFA/iCFA) for the Space's floor-segments."""
+        return self.weighted_floor_area / self.floor_area
+
+    @property
     def reference_points(self):
         # type: () -> list[geometry3d.Point3D]
         """Returns a list of the Space's Volume reference Points (center)."""

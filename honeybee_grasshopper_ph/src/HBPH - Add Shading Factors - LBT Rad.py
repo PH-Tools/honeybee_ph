@@ -34,7 +34,7 @@ but does not scale well for complex geometries or many test points. For such
 complex cases and situations where relfection of solar energy are important,
 honeybee-radiance should be used."
 -
-EM June 08, 2022
+EM June 10, 2022
     Args:
         _setttings: The Settings to use for the shading calculations. Connect a 
             'HBPH - Shading Factor Settings - LBT Rad'
@@ -77,7 +77,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add Shading Factors - LBT Rad"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_08_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
     reload(ghio_lbt_shading)
     reload(ghio_win_shade_surfaces)
