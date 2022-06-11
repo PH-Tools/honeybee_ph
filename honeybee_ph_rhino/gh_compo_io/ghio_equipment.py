@@ -64,11 +64,10 @@ inputs_clothes_washer.update({
     11: ComponentInput(_name='modified_energy_factor',
                        _description='',
                        _type_hint=Component.NewFloatHint()),
-    12: ComponentInput(_name='connection',
+    12: ComponentInput(_name='water_connection',
                        _description=''),
     13: ComponentInput(_name='utilization_factor',
-                       _description='',
-                       _type_hint=Component.NewFloatHint()),
+                       _description='Input "1-DHW Connection" or "2-Cold Water Connection"'),
 })
 
 inputs_clothes_dryer = copy(inputs_base)

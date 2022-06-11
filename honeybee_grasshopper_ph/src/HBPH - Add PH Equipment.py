@@ -23,10 +23,10 @@
 Add one or more detailed Passive House style electric-equipment objects to the 
 honeybee Rooms.
 -
-EM April 28, 2022
+EM June 11, 2022
 
     Args:
-        phius_defaults_: (int) Input either:
+        phius_defaults_: (int) Optional. Input either:
         > "1" for Single Family Residential appliance set.
         > "2" for Multifamily Residential appliance set.
             Note - for Multifamily, be sure to add in the Int. / Ext. Lighting and MEL from
@@ -34,6 +34,9 @@ EM April 28, 2022
         > "3" for Multifamily NonResidential appliance set (none).
             Note - for Multifamily, be sure to add in the Int. / Ext. Lighting and MEL from
             the Phius MF Calculator using a 'Create PH Appliance' HBPH Component.
+        
+        phi_defaults_: (bool) default=False. Set True to add the default PHI equipment
+            set to the model.
         
         equipment_: (List[PhEquipment]) A List of Passive-House style electric
             equipment to add onto the Honeybee-Room.
@@ -45,7 +48,7 @@ EM April 28, 2022
 
 import Grasshopper.Kernel as ghK
 
-import honeybee_ph_utils.preview
+from honeybee_ph_utils import preview
 from honeybee_ph_rhino.gh_compo_io import ghio_add_ph_equipment
 
 #-------------------------------------------------------------------------------
@@ -53,15 +56,19 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add PH Equipment"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_28_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_11_2022')
 if DEV:
-    reload(honeybee_ph_utils.preview)
+    reload(preview)
     reload(ghio_add_ph_equipment)
 
 #-------------------------------------------------------------------------------
 # -- Create the HBPH-Equipment set
-ph_equipment = ghio_add_ph_equipment.add_Phius_default_equipment_to_list(equipment_, phius_defaults_)
-
+if phius_defaults_:
+    ph_equipment = ghio_add_ph_equipment.add_Phius_default_equipment_to_list(equipment_, phius_defaults_)
+elif phi_defaults_:
+    ph_equipment = ghio_add_ph_equipment.add_Phi_default_equipment_to_list(equipment_, phi_defaults_)
+else:
+    ph_equipment = equipment_
 
 #-------------------------------------------------------------------------------
 # -- Find and collect all the unique HBE-ElectricEquipment objects on the HB-Rooms
@@ -96,5 +103,5 @@ for obj in hb_ee_collection.values():
 
 #-------------------------------------------------------------------------------
 # -- Preview
-#for device in ph_equipment:
-#    honeybee_ph_utils.preview.object_preview(device)
+for device in ph_equipment:
+    preview.object_preview(device)
