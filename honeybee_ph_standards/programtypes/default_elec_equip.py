@@ -12,11 +12,11 @@ ph_default_equip = {
             'in_conditioned_space': True,
             'reference_energy_norm': 2,  # Year
             'energy_demand': 0,  # kWh
-            'energy_demand_per_use': 2.2,
+            'energy_demand_per_use': 1.1,
             'combined_energy_factor': 0,
             'capacity_type': 1,  # Standard
             'capacity': 12,
-            'water_connection': 1,  # DHW connection
+            'water_connection': 2,  # Cold Water connection
         },
         "PHIUS": {
             'comment': 'default',
@@ -39,12 +39,12 @@ ph_default_equip = {
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 2,  # Year
-            'energy_demand': 120,
-            'energy_demand_per_use': 0,
+            'energy_demand': 0,
+            'energy_demand_per_use': 1.1,
             'combined_energy_factor': 0,
             'capacity': 0.1274,
             'modified_energy_factor': 2.7,
-            'water_connection': 1,  # DHW connection
+            'water_connection': 2,  # Cold Water connection
             'utilization_factor': 1.0,
         },
         "PHIUS": {
@@ -70,7 +70,7 @@ ph_default_equip = {
             'in_conditioned_space': True,
             'reference_energy_norm': 2,  # CEF - Combined Energy Factor
             'energy_demand': 0,
-            'energy_demand_per_use': 0,
+            'energy_demand_per_use': 3.5,
             'combined_energy_factor': 3.93,
             'dryer_type': 4,  # Condensation dryer
             'gas_consumption': 0,
@@ -101,8 +101,8 @@ ph_default_equip = {
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Day
-            'energy_demand': 1.0,
-            'energy_demand_per_use': 0,
+            'energy_demand': 0,
+            'energy_demand_per_use': 0.78,
             'combined_energy_factor': 0,
         },
         "PHIUS": {
@@ -123,8 +123,8 @@ ph_default_equip = {
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Day
-            'energy_demand': 2.07,
-            'energy_demand_per_use': 0,
+            'energy_demand': 0,
+            'energy_demand_per_use': 0.88,
             'combined_energy_factor': 0,
         },
         "PHIUS": {
@@ -133,8 +133,8 @@ ph_default_equip = {
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Day
-            'energy_demand': 2.07,
-            'energy_demand_per_use': 0,
+            'energy_demand': 0,
+            'energy_demand_per_use': 0.88,
             'combined_energy_factor': 0,
         }
     },
@@ -145,8 +145,8 @@ ph_default_equip = {
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Day
-            'energy_demand': 1.22,
-            'energy_demand_per_use': 0,
+            'energy_demand': 0,
+            'energy_demand_per_use': 1.0,
             'combined_energy_factor': 0,
         },
         "PHIUS": {
@@ -167,8 +167,8 @@ ph_default_equip = {
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Use
-            'energy_demand': 0.2,  # kWh/use
-            'energy_demand_per_use': 0,
+            'energy_demand': 0.0,  # kWh/use
+            'energy_demand_per_use': 0.25,  # kWh/use
             'combined_energy_factor': 0,
             'cooktop_type': 1,  # Cooking with electricity
         },
