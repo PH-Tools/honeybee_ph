@@ -56,7 +56,7 @@ class CustomEnum(object):
     def number(self):
         # type: () -> int
         """Returns the index pos of self.value (usually 1-based)"""
-        return self.allowed_upper.index(self.value) + self.index_offset
+        return self.allowed_upper.index(self.value) - self.index_offset
 
     def __str__(self):
         return "{}(_value={} [number={}])".format(self.__class__.__name__, self.value, self.number)
