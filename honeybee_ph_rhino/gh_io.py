@@ -23,7 +23,6 @@ from GhPython import Component
 
 from contextlib import contextmanager
 from copy import deepcopy
-import re
 
 import honeybee.face
 from ladybug_geometry.geometry3d.face import Face3D
@@ -42,13 +41,7 @@ from ladybug_rhino.fromgeometry import (
     from_polyline3d,
 )
 
-
-class SelectionInputError(Exception):
-    def __init__(self, _in):
-        self.message = 'Input Error: Cannot use input "{}" [{}].\n' "Please check the allowable input options.".format(
-            _in, type(_in)
-        )
-        super(SelectionInputError, self).__init__(self.message)
+from honeybee_ph_utils.input_tools import input_to_int, clean_get
 
 
 class LBTGeometryConversionError(Exception):
@@ -484,56 +477,6 @@ def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
             output_list.append(item)
 
     return output_list
-
-
-def input_to_int(_input_value, _default=None):
-    # type: (Any, Any) -> int | None
-    """For 'selection' type inputs, clean and convert input to int.
-
-    ie: if the Grasshopper input allows:
-        "1-A First Type"
-        "2-A Second Type"
-
-    will strip the string part and return just the integer value, or raise SelectionInputError.
-    """
-
-    if not _input_value:
-        return _default
-
-    result = re.search(r"\d+", str(_input_value))
-    try:
-        return int(result.group(0))
-    except ValueError:
-        raise SelectionInputError(_input_value)
-    except AttributeError as e:
-        # If no 'group', ie: no int part supplied in the string
-        raise SelectionInputError(_input_value)
-
-
-def clean_get(_list, _i, _default=None):
-    # type: (list[Any], int, Any) -> Any
-    """Get list item cleanly based on index pos. If IndexError, try getting list[0]
-
-    This is useful for gh-components with multiple list inputs which are sometimes
-    the same length, and sometimes not the same length.
-
-    Arguments:
-    ---------
-        * _list: Any iterable to get the item from.
-        * _i (int): The index position to try and get
-        * _default (Any): The optional default value to use if _list[0] fails.
-
-    Returns:
-    --------
-        * Any
-    """
-    try:
-        return _list[_i]
-    except ValueError:
-        try:
-            return _list[0]
-        except ValueError:
-            return _default
 
 
 def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):

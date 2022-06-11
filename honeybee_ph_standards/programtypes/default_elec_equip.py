@@ -3,6 +3,9 @@
 
 """Default data for Residential PH Electrical Appliances (PHI and Phius)."""
 
+from honeybee_energy_ph.load.ph_equipment import (
+    PhDishwasherType, PhClothesWasherType, PhClothesDryerType, PhCookingType)
+
 ph_default_equip = {
     'PhDishwasher': {
         'PHI': {
@@ -16,7 +19,7 @@ ph_default_equip = {
             'combined_energy_factor': 0,
             'capacity_type': 1,  # Standard
             'capacity': 12,
-            'water_connection': 2,  # Cold Water connection
+            'water_connection': PhDishwasherType("2-COLD WATER CONNECTION"),
         },
         "PHIUS": {
             'comment': 'default',
@@ -29,7 +32,7 @@ ph_default_equip = {
             'combined_energy_factor': 0,
             'capacity_type': 1,  # Standard
             'capacity': 12,
-            'water_connection': 1,  # DHW connection
+            'water_connection': PhDishwasherType("2-COLD WATER CONNECTION"),
         }
     },
     'PhClothesWasher': {
@@ -44,7 +47,7 @@ ph_default_equip = {
             'combined_energy_factor': 0,
             'capacity': 0.1274,
             'modified_energy_factor': 2.7,
-            'water_connection': 2,  # Cold Water connection
+            'water_connection': PhClothesWasherType("2-COLD WATER CONNECTION"),
             'utilization_factor': 1.0,
         },
         "PHIUS": {
@@ -58,7 +61,7 @@ ph_default_equip = {
             'combined_energy_factor': 0,
             'capacity': 0.1274,
             'modified_energy_factor': 2.7,
-            'water_connection': 1,  # DHW connection
+            'water_connection': PhClothesWasherType("2-COLD WATER CONNECTION"),
             'utilization_factor': 1.0,
         }
     },
@@ -72,7 +75,7 @@ ph_default_equip = {
             'energy_demand': 0,
             'energy_demand_per_use': 3.5,
             'combined_energy_factor': 3.93,
-            'dryer_type': 4,  # Condensation dryer
+            'dryer_type': PhClothesDryerType("4-CONDENSATION DRYER"),
             'gas_consumption': 0,
             'gas_efficiency_factor': 2.67,
             'field_utilization_factor_type': 1,  # Timer controls
@@ -87,7 +90,7 @@ ph_default_equip = {
             'energy_demand': 0,
             'energy_demand_per_use': 0,
             'combined_energy_factor': 3.93,
-            'dryer_type': 4,  # Condensation dryer
+            'dryer_type': PhClothesDryerType("4-CONDENSATION DRYER"),
             'gas_consumption': 0,
             'gas_efficiency_factor': 2.67,
             'field_utilization_factor_type': 1,  # Timer controls
@@ -170,7 +173,7 @@ ph_default_equip = {
             'energy_demand': 0.0,  # kWh/use
             'energy_demand_per_use': 0.25,  # kWh/use
             'combined_energy_factor': 0,
-            'cooktop_type': 1,  # Cooking with electricity
+            'cooktop_type': PhCookingType("1-ELECTRICITY"),
         },
         "PHIUS": {
             'comment': 'default',
@@ -181,7 +184,7 @@ ph_default_equip = {
             'energy_demand': 0.2,  # kWh/use
             'energy_demand_per_use': 0,
             'combined_energy_factor': 0,
-            'cooktop_type': 1,  # Cooking with electricity
+            'cooktop_type': PhCookingType("1-ELECTRICITY"),
         }
     },
     'PhPhiusMEL': {

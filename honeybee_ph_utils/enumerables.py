@@ -45,7 +45,6 @@ class CustomEnum(object):
         if str(_in).upper() in self.allowed_upper:
             self._value = str(_in).upper()
         else:
-            print('got here with :', _in, type(_in), self.index_offset)
             try:
                 input = int(_in) + self.index_offset
                 self._value = self.allowed_upper[input]
