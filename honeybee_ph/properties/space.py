@@ -90,7 +90,6 @@ class SpacePhProperties(object):
 
     def duplicate(self, new_host=None):
         # type: (Any) -> SpacePhProperties
-        print('in here')
         _host = new_host or self._host
         new_properties_obj = SpacePhProperties(_host)
 
@@ -98,7 +97,6 @@ class SpacePhProperties(object):
         new_properties_obj._v_sup = self._v_sup
         new_properties_obj._v_eta = self._v_eta
 
-        print("new_properties_obj= ", new_properties_obj)
         return new_properties_obj
 
     def ToString(self):
