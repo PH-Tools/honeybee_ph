@@ -41,7 +41,7 @@ EM April 8, 2022
         ph_climate_: A new PHX Climate Object. Apply this to a WUFI Config PyPH Component.
 """
 
-import honeybee_ph.location
+import honeybee_ph.site
 import honeybee_ph_utils.preview
 import honeybee_ph_rhino.climate
 
@@ -53,13 +53,13 @@ DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_08_2022')
 
 if DEV:
-    reload(honeybee_ph.location)
+    reload(honeybee_ph.site)
     reload(honeybee_ph_utils.preview)
     reload(honeybee_ph_rhino.climate)
 
 # -- Climate
-ph_climate_ = honeybee_ph.location.Climate()
-ph_climate_.name = name_ or '__unnamed_location__'
+ph_climate_ = honeybee_ph.site.Climate()
+ph_climate_.display_name = name_ or '__unnamed_location__'
 ph_climate_.summer_daily_temperature_swing = daily_temp_variation_ or 8.0
 ph_climate_.average_wind_speed = avg_wind_speed_ or 4
 

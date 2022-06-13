@@ -32,8 +32,26 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
-    "HBPH - PH Climate": {
-        "NickName": "PH Climate",
+    "HBPH - PH Site": {
+        "NickName": "PH Site",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - PH Location": {
+        "NickName": "PH Location",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - PH Climate Data": {
+        "NickName": "PH Climate Data",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - PH PHPP Climate": {
+        "NickName": "PH PHPP Climate",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 4,

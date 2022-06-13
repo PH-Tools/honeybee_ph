@@ -8,7 +8,7 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
-from honeybee_ph import bldg_segment, location, phi, phius
+from honeybee_ph import bldg_segment, phi, phius, site
 from honeybee_ph_standards.sourcefactors import factors, phius_CO2_factors, phius_source_energy_factors
 from honeybee_ph_rhino.gh_compo_io import ghio_validators
 
@@ -38,7 +38,7 @@ class IBldgSegment(object):
         self.display_name = '_unnamed_bldg_segment_'
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
-        self.climate = location.Climate()
+        self.climate = site.Climate()
         self.phius_certification = phius.PhiusCertification()
         self.phi_certification = phi.PhiCertification()
         self.set_points = ISetPoints()

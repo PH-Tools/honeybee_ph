@@ -56,7 +56,7 @@ EM June 8, 2022
         ph_climate_: A new Passive House Climate object. This can be added to a Building-Segment.
 """
 
-from honeybee_ph import location
+from honeybee_ph import site
 from honeybee_ph_utils import preview
 
 # --
@@ -67,12 +67,12 @@ DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_08_2022')
 
 if DEV:
-    reload(location)
+    reload(site)
     reload(preview)
 
 # -- Climate
-ph_climate_ = location.Climate()
-ph_climate_.name = name_ or ph_climate_.name 
+ph_climate_ = site.Climate()
+ph_climate_.display_name = name_ or ph_climate_.display_name 
 ph_climate_.summer_daily_temperature_swing = daily_temp_variation_ or ph_climate_.summer_daily_temperature_swing
 ph_climate_.average_wind_speed = avg_wind_speed_ or ph_climate_.average_wind_speed
 

@@ -8,7 +8,7 @@ try:
 except ImportError:
     pass  # Python2.7
 
-from honeybee_ph import _base, location, phius, phi
+from honeybee_ph import _base, phius, phi, site
 from honeybee_ph_standards.sourcefactors import factors
 from honeybee_ph_utils import enumerables
 
@@ -73,7 +73,7 @@ class BldgSegment(_base._Base):
         self.display_name = 'Unnamed_Bldg_Segment'
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
-        self.climate = location.Climate()
+        self.site = site.Site()
         self.source_energy_factors = factors.FactorCollection('Source_Energy')
         self.co2e_factors = factors.FactorCollection('CO2')
         self.phius_certification = phius.PhiusCertification()
@@ -88,7 +88,7 @@ class BldgSegment(_base._Base):
         d['name'] = self.display_name
         d['num_floor_levels'] = self.num_floor_levels
         d['num_dwelling_units'] = self.num_dwelling_units
-        d['climate'] = self.climate.to_dict()
+        d['site'] = self.site.to_dict()
         d['source_energy_factors'] = self.source_energy_factors.to_dict()
         d['co2e_factors'] = self.co2e_factors.to_dict()
         d['phius_certification'] = self.phius_certification.to_dict()
@@ -106,7 +106,7 @@ class BldgSegment(_base._Base):
         obj.display_name = _dict.get('name')
         obj.num_floor_levels = _dict.get('num_floor_levels')
         obj.num_dwelling_units = _dict.get('num_dwelling_units')
-        obj.climate = location.Climate.from_dict(_dict.get('climate', {}))
+        obj.site = site.Site.from_dict(_dict.get('site', {}))
         obj.source_energy_factors = factors.FactorCollection.from_dict(
             _dict.get('source_energy_factors', {}))
         obj.co2e_factors = factors.FactorCollection.from_dict(
