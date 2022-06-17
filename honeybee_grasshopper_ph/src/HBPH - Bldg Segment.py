@@ -33,7 +33,7 @@ model. Only Honeybee Faces with boundary conditions of "Outdoors", "Ground" and
 -
 Use this before passing the honeybee-rooms on to the 'HB Model' component.
 -
-EM June 7, 2022
+EM June 13, 2022
     Args:
         segment_name_: Name for the building-segment
                
@@ -74,63 +74,80 @@ EM June 7, 2022
         hb_rooms_: The honeyee-Rooms with building-segment information added.
 """
 
-from honeybee_ph_standards.sourcefactors import phius_CO2_factors, phius_source_energy_factors
-from honeybee_ph_utils import preview
-from honeybee_ph_rhino.gh_compo_io import ghio_bldg_segment
+from honeybee.typing import clean_and_id_string
+
+import honeybee_ph.phius
+import honeybee_ph.phi
+import honeybee_ph.bldg_segment
+import honeybee_ph.location
+from honeybee_ph_standards.sourcefactors import factors, phius_CO2_factors, phius_source_energy_factors
+import honeybee_ph_utils.preview
 
 
-# ------------------------------------------------------------------------------------
+# --- 
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Bldg Segment"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_07_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_13_2022')
 if DEV:
+    reload(honeybee_ph.phius)
+    reload(honeybee_ph.phi)
     #reload(honeybee_ph.bldg_segment) # Breaks everyting.... sigh: Python 2
+    reload(honeybee_ph.location)
+    reload(honeybee_ph_utils.preview)
+    reload(factors)
     reload(phius_CO2_factors)
     reload(phius_source_energy_factors)
-    reload(ghio_bldg_segment)
-    reload(preview)
+
+def get_new_room_name(_br_count):
+    # type: (int) -> str
+    try:
+        display_name = clean_and_id_string(_segment_name_.Branch(_br_count)[0])
+    except:
+        try:
+            display_name = clean_and_id_string(_segment_name_.Branch(0)[0])
+        except ValueError:
+            display_name = 'Segment'
+    
+    return  clean_and_id_string(display_name)
+
+# -- Sort our the new BldgSegment data
+segment = honeybee_ph.bldg_segment.BldgSegment()
+
+segment.name = _segment_name_ or 'Unnamed_Bldg_Segment'
+segment.num_floor_levels = num_floor_levels_ or 1
+segment.num_dwelling_units = num_dwelling_units_ or 1
+segment.site = site_ or segment.site
+segment.phius_certification = phius_certification_ or honeybee_ph.phius.PhiusCertification()
+segment.phi_certification = phi_certification_ or honeybee_ph.phi.PhiCertification()
+
+segment.set_points.winter = winter_set_temp_ or 20
+segment.set_points.summer = summer_set_temp_ or 25
 
 
-# ------------------------------------------------------------------------------------
-# Clean and collect the user inputs, build the new Building Segment
-compo_input = ghio_bldg_segment.IBldgSegment()
-
-compo_input.display_name = _segment_name_
-compo_input.num_floor_levels = num_floor_levels_
-compo_input.num_dwelling_units = num_dwelling_units_
-compo_input.climate = climate_
-compo_input.phius_certification = phius_certification_
-compo_input.phi_certification = phi_certification_
-compo_input.set_points.winter = winter_set_temp_
-compo_input.set_points.summer = summer_set_temp_
-compo_input.source_energy_factors = source_energy_factors_
-compo_input.co2e_factors = co2e_factors_
-
-segment = compo_input.create_hbph_bldg_segment()
-
-
-# ------------------------------------------------------------------------------------
-# -- Validate the CO2 and Source Energy Factors input
+# -- CO2 and Source Energy Factors
 ALLOWED_FUELS = list(set(
     list(phius_source_energy_factors.factors_2021.keys()) +
     list(phius_CO2_factors.factors_2021.keys())
 ))
 
+src_factors = source_energy_factors_ or factors.build_factors_from_library(
+                                phius_source_energy_factors.factors_2021)
+co2_factors = co2e_factors_ or factors.build_factors_from_library(
+                                phius_CO2_factors.factors_2021)
+
+segment.source_energy_factors = factors.FactorCollection('Source_Energy', src_factors)
+segment.co2e_factors = factors.FactorCollection('CO2', co2_factors)
 segment.source_energy_factors.validate_fuel_types(ALLOWED_FUELS)
 segment.co2e_factors.validate_fuel_types(ALLOWED_FUELS)
 
+# -- Preview
+honeybee_ph_utils.preview.object_preview(segment)
 
-# ------------------------------------------------------------------------------------
-# -- Adcd the new segment to the Honeybee rooms
+# -- Apply the segment to the rooms
 hb_rooms_ = []
 for i, hb_room in enumerate(_hb_rooms):
     new_room = hb_room.duplicate()
     new_room.properties.ph.ph_bldg_segment = segment
     hb_rooms_.append(new_room)
-    
-    
-# ------------------------------------------------------------------------------------
-# -- Preview
-preview.object_preview(segment)

@@ -1,17 +1,47 @@
 # -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
 
-"""Descriptors for validating and cleaning user-input in Grasshopper Components."""
+"""Descriptors for validating and cleaning user-input into Grasshopper Components.
+
+Basic Usage:
+------------
+
+class ZeroNotAllowedValidator(Validated): # Subclass from Validated
+    def validate(self, name,  new_value, old_value):
+        if new_value == 0:
+            raise ValueError("Input for for '{}' may not be 0!".format(name))
+        else:
+            return new_value
+
+class MyClassWithValidation(object):
+    example = ZeroNotAllowedValidator(storage_name="example") # Class Attribute
+
+>>> obj = MyClassWithValidation()
+>>> obj.example = 0
+>>> ValueError: Input for 'example' may not be 0!
+"""
 
 
 class Validated(object):
-    """Base class for all Validator objects. Ensure all children have a 'validate' method."""
+    """Base class for all Validator objects. Ensure all children have a 'validate' method.
+    
+    During __set__ the subclass's .validate() method will be run using the input value. Cleaning
+    and type-checking or any other type of validation should take place within this method.
+    The .validate() method should raise a ValueError if the input does not meet the specification.
+    """
 
     def __init__(self, storage_name):
-        self.storage_name = storage_name
+        self.storage_name = storage_name # normally the same as the Class Attribute
 
     def __set__(self, instance, value):
-        """Set the value on the instance. Not, the 'instance' is the class-attribute."""
+        """Set the value on the instance. Runs a .validate() method on self to 
+        allow for subclasses to implement custom input validation.
+
+        Arguments:
+        ----------
+            * instance: The descriptor class variable.
+            * value: The value to validate and set.
+        """
         value = self.validate(
             name=self.storage_name,
             new_value=value,
@@ -20,11 +50,25 @@ class Validated(object):
         instance.__dict__[self.storage_name] = value
 
     def __get__(self, instance, owner):
+        """
+        Arguments:
+        ---------
+            * instance: The descriptor class variable.
+            * owner: The Class which has the descriptor as a class variable.
+        """
         return instance.__dict__[self.storage_name]
 
     def validate(self, name,  new_value, old_value):
-        """return validated input value, or raise an error."""
-        raise NotImplementedError("Error: Must implement Validated method on subclass.")
+        """Return validated input value, or raise an error.
+        
+        Arguments:
+        ---------
+            * name: The Class-Attribute's name. Mostly used for Error messages.
+            * new_value: The new value to validate.
+            * old_value: The original value of the descriptor, sometimes useful 
+                for returning if 'new_value' is None, or similar.
+        """
+        raise NotImplementedError("Error: Must implement the .validated() method on subclass of Validated.")
 
     def __str__(self):
         return "Validated[{}](storage_name={})".format(self.__class__.__name__, self.storage_name)
@@ -50,6 +94,7 @@ class HBName(Validated):
         if new_value is None:
             return old_value
 
+        # No spaces, no leading or trailing whitespace
         new_value = str(new_value).strip().replace(" ", "_")
 
         if not new_value:
