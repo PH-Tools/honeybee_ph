@@ -249,6 +249,18 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 4,
     },
+    "HBPH - Create Thermal Bridges": {
+        "NickName": "Create Thermal Bridges",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Add Thermal Bridges to Rooms": {
+        "NickName": "Add Thermal Bridges",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 
 }
 
