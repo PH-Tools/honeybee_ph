@@ -41,6 +41,12 @@ class _Base(object):
     def identifier_short(self):
         return str(self.identifier).split("-")[0]
 
+    def set_base_attrs_from_source(self, _source):
+        self._identifier = _source._identifier
+        self.user_data = _source.user_data
+        self._display_name = _source._display_name
+        return self
+
     def __str__(self):
         return "HBPH_{}: ID-{}".format(self.__class__.__name__, self.identifier_short)
 

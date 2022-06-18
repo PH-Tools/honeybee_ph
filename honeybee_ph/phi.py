@@ -301,3 +301,24 @@ class PhiCertification(_base._Base):
         new_obj._retrofit_type = PhiRetrofitType.from_dict(
             _input_dict['_retrofit_type'])
         return new_obj
+
+    def __copy__(self):
+        # type: () -> PhiCertification
+        obj = PhiCertification()
+
+        obj.set_base_attrs_from_source(self)
+        obj._building_category_type = self._building_category_type
+        obj._building_use_type = self._building_use_type
+        obj._ihg_type = self._ihg_type
+        obj._occupancy_type = self._occupancy_type
+        obj._certification_type = self._certification_type
+        obj._certification_class = self._certification_class
+        obj._primary_energy_type = self._primary_energy_type
+        obj._enerphit_type = self._enerphit_type
+        obj._retrofit_type = self._retrofit_type
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> PhiCertification
+        return self.__copy__()

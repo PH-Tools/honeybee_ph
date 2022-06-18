@@ -76,7 +76,7 @@ class Climate_MonthlyValueCollection(_base._Base):
 
 
 class Climate_PeakLoadCollection(_base._Base):
-    """Collection class to orgaize peak load weather data"""
+    """Collection class to organize peak load weather data"""
 
     def __init__(self):
         super(Climate_PeakLoadCollection, self).__init__()
@@ -262,6 +262,18 @@ class Climate(_base._Base):
 
         return new_obj
 
+    def __copy__(self):
+        # type: () -> Climate
+        obj = Climate()
+        obj.set_base_attrs_from_source(self)
+        for attr_nm, attr_val in vars(self).items():
+            setattr(obj, attr_nm, attr_val)
+        return obj
+
+    def duplicate(self):
+        # type: () -> Climate
+        return self.__copy__()
+
 
 class Location(_base._Base):
     """Geographic Location Information."""
@@ -299,6 +311,23 @@ class Location(_base._Base):
         new_obj.hours_from_UTC = _input_dict["hours_from_UTC"]
 
         return new_obj
+
+    def __copy__(self):
+        # type: () -> Location
+        obj = Location()
+
+        obj.set_base_attrs_from_source(self)
+        obj.latitude = self.latitude
+        obj.longitude = self.longitude
+        obj.site_elevation = self.site_elevation
+        obj.climate_zone = self.climate_zone
+        obj.hours_from_UTC = self.hours_from_UTC
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> Location
+        return self.__copy__()
 
 
 class PHPPCodes(_base._Base):
@@ -349,6 +378,21 @@ class PHPPCodes(_base._Base):
 
         return obj
 
+    def __copy__(self):
+        # type: () -> PHPPCodes
+        obj = PHPPCodes()
+
+        obj.set_base_attrs_from_source(self)
+        obj.country_code = self.country_code
+        obj.region_code = self.region_code
+        obj._dataset_name = self._dataset_name
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> PHPPCodes
+        return self.__copy__()
+
 
 class Site(_base._Base):
     """Location and Climate data for the building site."""
@@ -379,3 +423,18 @@ class Site(_base._Base):
         obj.phpp_library_codes = PHPPCodes.from_dict(_input_dict['phpp_library_codes'])
 
         return obj
+
+    def __copy__(self):
+        # type: () -> Site
+        obj = Site()
+
+        obj.set_base_attrs_from_source(self)
+        obj.location = self.location.duplicate()
+        obj.climate = self.climate.duplicate()
+        obj.phpp_library_codes = self.phpp_library_codes.duplicate()
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> Site
+        return self.__copy__()

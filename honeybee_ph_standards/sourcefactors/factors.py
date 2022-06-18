@@ -128,6 +128,20 @@ class FactorCollection(_base._Base):
 
         return new_obj
 
+    def __copy__(self):
+        # type: () -> FactorCollection
+        obj = FactorCollection()
+
+        obj.set_base_attrs_from_source(self)
+        obj.name = self.name
+        obj.factors = [f for f in self.factors]
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> FactorCollection
+        return self.__copy__()
+
     def __iter__(self):
         # type: () -> Generator[Factor, None, None]
         for factor in self.factors:

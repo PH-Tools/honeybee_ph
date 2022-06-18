@@ -59,8 +59,8 @@ def clean_get(_list, _i, _default=None):
     """
     try:
         return _list[_i]
-    except ValueError:
+    except IndexError:
         try:
             return _list[0]
-        except ValueError:
+        except IndexError:
             return _default

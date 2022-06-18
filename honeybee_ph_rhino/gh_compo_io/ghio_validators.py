@@ -24,14 +24,14 @@ class MyClassWithValidation(object):
 
 class Validated(object):
     """Base class for all Validator objects. Ensure all children have a 'validate' method.
-    
+
     During __set__ the subclass's .validate() method will be run using the input value. Cleaning
     and type-checking or any other type of validation should take place within this method.
     The .validate() method should raise a ValueError if the input does not meet the specification.
     """
 
     def __init__(self, storage_name):
-        self.storage_name = storage_name # normally the same as the Class Attribute
+        self.storage_name = storage_name  # normally the same as the Class Attribute
 
     def __set__(self, instance, value):
         """Set the value on the instance. Runs a .validate() method on self to 
@@ -60,7 +60,7 @@ class Validated(object):
 
     def validate(self, name,  new_value, old_value):
         """Return validated input value, or raise an error.
-        
+
         Arguments:
         ---------
             * name: The Class-Attribute's name. Mostly used for Error messages.
@@ -68,7 +68,8 @@ class Validated(object):
             * old_value: The original value of the descriptor, sometimes useful 
                 for returning if 'new_value' is None, or similar.
         """
-        raise NotImplementedError("Error: Must implement the .validated() method on subclass of Validated.")
+        raise NotImplementedError(
+            "Error: Must implement the .validated() method on subclass of Validated.")
 
     def __str__(self):
         return "Validated[{}](storage_name={})".format(self.__class__.__name__, self.storage_name)
@@ -124,8 +125,8 @@ class IntegerNonZero(Validated):
         return new_value
 
 
-class FloatNonZero(Validated):
-    """A Floating Point value which is not allowed to be zero."""
+class Float(Validated):
+    """A Floating Point value of any value (positive or negative)"""
 
     def validate(self, name, new_value, old_value):
         if new_value is None:
@@ -135,11 +136,50 @@ class FloatNonZero(Validated):
             new_value = float(new_value)
         except:
             raise ValueError("Error: input {} of type: {} is not allowed."
-                             "Supply positive integer only.".format(
+                             "Supply float only.".format(
                                  new_value, type(new_value)))
 
-        if new_value <= 0.0:
+        return new_value
+
+
+class FloatNonZero(Validated):
+    """A Floating Point value which is not allowed to be zero."""
+    tolerance = 0.0001
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        try:
+            new_value = float(new_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float values only.".format(
+                                 new_value, type(new_value)))
+
+        if new_value - 0.0 < self.tolerance:
             raise ValueError(
-                "Error: input for '{}' cannot be zero or negative.".format(name))
+                "Error: input for '{}' cannot be zero.".format(name))
+
+        return new_value
+
+
+class FloatPositiveValue(Validated):
+    """A Floating Point value which is not allowed to be negative"""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        try:
+            new_value = float(new_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float values only.".format(
+                                 new_value, type(new_value)))
+
+        if new_value < 0:
+            raise ValueError(
+                "Error: input for '{}' cannot be negative.".format(name))
 
         return new_value

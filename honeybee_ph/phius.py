@@ -202,3 +202,34 @@ class PhiusCertification(_base._Base):
             'int_gains_dhw_marginal_perf_ratio')
 
         return obj
+
+    def __copy__(self):
+        # type: () -> PhiusCertification
+        obj = PhiusCertification()
+
+        obj.set_base_attrs_from_source(self)
+        obj.certification_criteria = self.certification_criteria
+        obj.localization_selection_type = self.localization_selection_type
+
+        obj._building_category_type = self._building_category_type
+        obj._building_use_type = self._building_use_type
+        obj._building_status = self._building_status
+        obj._building_type = self._building_type
+
+        obj.PHIUS2021_heating_demand = self.PHIUS2021_heating_demand
+        obj.PHIUS2021_cooling_demand = self.PHIUS2021_cooling_demand
+        obj.PHIUS2021_heating_load = self.PHIUS2021_heating_load
+        obj.PHIUS2021_cooling_load = self.PHIUS2021_cooling_load
+
+        obj.int_gains_evap_per_person = self.int_gains_evap_per_person
+        obj.int_gains_flush_heat_loss = self.int_gains_flush_heat_loss
+        obj.int_gains_num_toilets = self.int_gains_num_toilets
+        obj.int_gains_toilet_room_util_pat = self.int_gains_toilet_room_util_pat
+        obj.int_gains_use_school_defaults = self.int_gains_use_school_defaults
+        obj.int_gains_dhw_marginal_perf_ratio = self.int_gains_dhw_marginal_perf_ratio
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> PhiusCertification
+        return self.__copy__()
