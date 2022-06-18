@@ -97,7 +97,7 @@ def calc_reference_point(IGH, _face3D):
     # -- Find the normal centerpoint of the surface
     face_cent_rh_pt = from_point3d(_face3D.center)
     face_rh = from_face3d(_face3D)
-    new_cp = IGH.grasshopper_components.PullPoint(face_cent_rh_pt, face_rh).closest_point
+    new_cp = IGH.ghpythonlib_components.PullPoint(face_cent_rh_pt, face_rh).closest_point
 
     return pointvector.Point3D(new_cp.X, new_cp.Y, new_cp.Z)
 

@@ -63,6 +63,8 @@ class IGH:
         * _sc: (scriptcontext)
         * _rh: (Rhino)
         * _rs (rhinoscriptsyntax)
+        * _ghc (ghpythonlib.components)
+        * _gh (Grasshopper)
     """
 
     def __init__(self, _ghdoc, _ghenv, _sc, _rh, _rs, _ghc, _gh):
@@ -71,7 +73,7 @@ class IGH:
         self.scriptcontext = _sc
         self.Rhino = _rh
         self.rhinoscriptsyntax = _rs
-        self.grasshopper_components = _ghc
+        self.ghpythonlib_components = _ghc
         self.Grasshopper = _gh
 
     def gh_compo_find_input_index_by_name(self, _input_name):
@@ -312,41 +314,41 @@ class IGH:
             return rh_floor_surface
 
         # -----------------------------------------------------------------------
-        srfcPerim = self.grasshopper_components.JoinCurves(
-            self.grasshopper_components.BrepEdges(rh_floor_surface)[0], preserve=False
+        srfcPerim = self.ghpythonlib_components.JoinCurves(
+            self.ghpythonlib_components.BrepEdges(rh_floor_surface)[0], preserve=False
         )
 
         # Get the inset Curve
         # -----------------------------------------------------------------------
         srfcCentroid = self.Rhino.Geometry.AreaMassProperties.Compute(
             rh_floor_surface).Centroid
-        plane = self.grasshopper_components.XYPlane(srfcCentroid)
-        plane = self.grasshopper_components.IsPlanar(rh_floor_surface, True).plane
-        srfcPerim_Inset_Pos = self.grasshopper_components.OffsetCurve(
+        plane = self.ghpythonlib_components.XYPlane(srfcCentroid)
+        plane = self.ghpythonlib_components.IsPlanar(rh_floor_surface, True).plane
+        srfcPerim_Inset_Pos = self.ghpythonlib_components.OffsetCurve(
             srfcPerim, _inset_distance, plane, 1)
-        srfcPerim_Inset_Neg = self.grasshopper_components.OffsetCurve(
+        srfcPerim_Inset_Neg = self.ghpythonlib_components.OffsetCurve(
             srfcPerim, _inset_distance * -1, plane, 1)
 
         # Choose the right Offset Curve. The one with the smaller area
         # Check IsPlanar first to avoid self.grasshopper_components.BoundarySurfaces error
         # -----------------------------------------------------------------------
         if srfcPerim_Inset_Pos.IsPlanar:
-            srfcInset_Pos = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Pos = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim_Inset_Pos)
         else:
-            srfcInset_Pos = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Pos = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim)  # Use the normal perim
 
         if srfcPerim_Inset_Neg.IsPlanar():
-            srfcInset_Neg = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Neg = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim_Inset_Neg)
         else:
-            srfcInset_Neg = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Neg = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim)  # Use the normal perim
 
         # -----------------------------------------------------------------------
-        area_Pos = self.grasshopper_components.Area(srfcInset_Pos).area
-        area_neg = self.grasshopper_components.Area(srfcInset_Neg).area
+        area_Pos = self.ghpythonlib_components.Area(srfcInset_Pos).area
+        area_neg = self.ghpythonlib_components.Area(srfcInset_Neg).area
 
         if area_Pos < area_neg:
             return self.convert_to_LBT_geom(srfcInset_Pos)
@@ -374,10 +376,10 @@ class IGH:
         perims = []
         for face3D in _face3Ds:
             rh_brep = self.convert_to_rhino_geom(face3D)
-            faces, edges, vertices = self.grasshopper_components.DeconstructBrep(rh_brep)
-            perims.append(self.grasshopper_components.JoinCurves(edges, True))
+            faces, edges, vertices = self.ghpythonlib_components.DeconstructBrep(rh_brep)
+            perims.append(self.ghpythonlib_components.JoinCurves(edges, True))
 
-        joined_curves = self.grasshopper_components.RegionUnion(perims)
+        joined_curves = self.ghpythonlib_components.RegionUnion(perims)
 
         if not isinstance(joined_curves, list):
             joined_curves = [joined_curves]
@@ -396,9 +398,9 @@ class IGH:
     def extrude_Face3D_WorldZ(self, _face3D, _dist=2.5):
         # type: (list[Face3D], float) -> list[Face3D]
         """Returns a list of Face3D surfaces representing a closed brep extrusion of the base Face3D"""
-        extrusion_vector = self.grasshopper_components.UnitZ(_dist)
+        extrusion_vector = self.ghpythonlib_components.UnitZ(_dist)
         rh_brep = from_face3d(_face3D)
-        volume_geom = self.grasshopper_components.Extrude(rh_brep, extrusion_vector)
+        volume_geom = self.ghpythonlib_components.Extrude(rh_brep, extrusion_vector)
 
         return self.convert_to_LBT_geom(volume_geom)[0]
 
