@@ -39,9 +39,9 @@ def offset_space_reference_points(IGH, _space, _dist=0):
     for volume in new_space.volumes:
         for seg in volume.floor._floor_segments:
             seg.reference_point = to_point3d(
-                IGH.grasshopper_components.Move(
+                IGH.ghpythonlib_components.Move(
                     from_point3d(seg.reference_point),
-                    IGH.grasshopper_components.UnitZ(_dist)).geometry
+                    IGH.ghpythonlib_components.UnitZ(_dist)).geometry
             )
     return new_space
 
