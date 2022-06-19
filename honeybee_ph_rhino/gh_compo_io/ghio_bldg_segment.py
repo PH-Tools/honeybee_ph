@@ -30,7 +30,7 @@ class IBldgSegment(object):
     display_name = ghio_validators.HBName("display_name")
     num_floor_levels = ghio_validators.IntegerNonZero("num_floor_levels")
     num_dwelling_units = ghio_validators.IntegerNonZero("num_dwelling_units")
-    climate = ghio_validators.NotNone("climate")
+    site = ghio_validators.NotNone("site")
     phius_certification = ghio_validators.NotNone("phius_certification")
     phi_certification = ghio_validators.NotNone("phi_certification")
 
@@ -38,7 +38,7 @@ class IBldgSegment(object):
         self.display_name = '_unnamed_bldg_segment_'
         self.num_floor_levels = 1
         self.num_dwelling_units = 1
-        self.climate = site.Climate()
+        self.site = site.Site()
         self.phius_certification = phius.PhiusCertification()
         self.phi_certification = phi.PhiCertification()
         self.set_points = ISetPoints()
@@ -46,6 +46,7 @@ class IBldgSegment(object):
             'Source_Energy', self._default_phius_source_energy_factors)
         self._co2e_factors = factors.FactorCollection(
             'CO2', self._default_phius_CO2_factors)
+        self.thermal_bridges = {}
 
     @property
     def source_energy_factors(self):
@@ -78,7 +79,7 @@ class IBldgSegment(object):
         # type: () -> List[factors.Factor]
         return factors.build_factors_from_library(phius_CO2_factors.factors_2021)
 
-    def create_hbph_set_points(self):
+    def _create_hbph_set_points(self):
         # type: () -> bldg_segment.SetPoints
         """Return a new HBPH SetPoints object with attributes fro user input."""
         obj = bldg_segment.SetPoints()
@@ -86,7 +87,7 @@ class IBldgSegment(object):
         obj.summer = self.set_points.summer
         return obj
 
-    def create_hbph_bldg_segment(self):
+    def _create_hbph_bldg_segment(self):
         # type: () -> bldg_segment.BldgSegment
         """Returns a new HBPH BldgSegment object with attribute value set."""
 
@@ -97,7 +98,7 @@ class IBldgSegment(object):
             setattr(obj, attr_name, getattr(self, attr_name))
 
         # override...
-        obj.set_points = self.create_hbph_set_points()
+        obj.set_points = self._create_hbph_set_points()
 
         return obj
 

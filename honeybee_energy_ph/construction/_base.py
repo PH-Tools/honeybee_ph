@@ -69,7 +69,7 @@ class _Base(object):
         """Return all the base attribute values as a dict."""
         d = {}
         d['id_num'] = self.id_num
-        d['identifier'] = self.identifier
+        d['identifier'] = str(self.identifier)
         d['display_name'] = self.display_name
         d['user_data'] = self.user_data
         return d
