@@ -24,7 +24,7 @@ Create a new HBPH Thermal Bridge object which can be added to an HB Model. Note 
 these thermal bridges will have no effect on the EnergyPlus/OpenStudio simualtion and 
 will only be considered when the model is exported to the PHPP/WUFI-Passive.
 -
-EM June 18, 2022
+EM June 20, 2022
 
     Args:
         _names: (List[str]) A list of the HBPH Thermal Bridge names.
@@ -55,7 +55,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create Thermal Bridges"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_18_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_20_2022')
 if DEV:
     #reload(thermal_bridge)
     #reload(ghio_create_tb)
@@ -70,6 +70,8 @@ for i in range(len(_names)):
     ITb.psi_value = input_tools.clean_get(_psi_values, i)
     ITb.fRsi_value = input_tools.clean_get(_fRsi_values, i, 0.75)
     ITb.length = input_tools.clean_get(_lengths, i, 0)
+    ITb.group_type = input_tools.clean_get(_types, i, 15)
+    ITb.quantity = input_tools.clean_get(_quantities, i, 1)
 
     thermal_bridges_.append(ITb.create_hbph_thermal_bridge())
     

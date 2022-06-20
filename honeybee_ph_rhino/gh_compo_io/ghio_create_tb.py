@@ -21,6 +21,16 @@ class IThermalBridge(object):
         self.psi_value = 0.1
         self.fRsi_value = 0.75
         self.length = 0.0
+        self.quantity = 1.0
+        self._group_type = thermal_bridge.PhThermalBridgeType(15)
+
+    @property
+    def group_type(self):
+        return self._group_type
+
+    @group_type.setter
+    def group_type(self, _in):
+        self._group_type = thermal_bridge.PhThermalBridgeType(_in)
 
     def create_hbph_thermal_bridge(self):
         # type () -> thermal_bridge.PhThermalBridge
@@ -31,4 +41,7 @@ class IThermalBridge(object):
         new_obj.psi_value = self.psi_value
         new_obj.fRsi_value = self.fRsi_value
         new_obj.length = self.length
+        new_obj.quantity = self.quantity
+        new_obj.group_type = self.group_type.number
+
         return new_obj
