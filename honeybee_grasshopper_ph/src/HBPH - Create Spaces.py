@@ -34,7 +34,7 @@ a wall.
 Each Volume is made of one or more floor-segments. Each floor-segment can have a
 'weighting factor' applied for calculating the TFA/iCFA for Passive House certification.
 -
-EM June 18, 2022
+EM July 2, 2022
     Args:
         _flr_seg_geom: (Tree[Geometry]) The Rhino geometry that you would like to use 
             to create the Floor-Segments of the various Spaces. Each branch should be a list 
@@ -83,12 +83,13 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create Spaces"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_18_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_02_2022')
 if DEV:
     pass
     #reload(space)
     #reload(gh_io)
     reload(make_volume)
+    reload(make_floor)
 
 if _volume_geometry.BranchCount != 0:
     msg = " Sorry - Detailed input using '_volume_geometry' is not implemented just yet. Coming soon."
@@ -100,7 +101,7 @@ IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 # ------------------------------------------------------------------------------
 # -- Organize the input trees, lists, lengths, defaults
-def clean_input_tree(_input_tree, branch_count, default, type=Object):
+def _clean_input_tree(_input_tree, branch_count, default, type=Object):
     # type (DataTree, int, Any, Any) -> DataTree[<type>]
     """Align the input Datatrees so they are all the same length. Apply defaults."""
     
@@ -112,12 +113,11 @@ def clean_input_tree(_input_tree, branch_count, default, type=Object):
             new_tree.Add(default, GH_Path(i))
     return new_tree
 
-# ------------------------------------------------------------------------------
 input_len = len(_flr_seg_geom.Branches)
-weighting_factors = clean_input_tree(_weighting_factors, input_len, 1.0, Double)
-volume_heights = clean_input_tree(_volume_heights, input_len, 2.5, Double)
-space_names = clean_input_tree(_space_names, input_len, '_Unnamed_', String)
-space_numbers = clean_input_tree(_space_numbers, input_len, '000', String)
+weighting_factors = _clean_input_tree(_weighting_factors, input_len, 1.0, Double)
+volume_heights = _clean_input_tree(_volume_heights, input_len, 2.5, Double)
+space_names = _clean_input_tree(_space_names, input_len, '_Unnamed_', String)
+space_numbers = _clean_input_tree(_space_numbers, input_len, '000', String)
 
 # ------------------------------------------------------------------------------
 spaces_ = []
@@ -129,14 +129,15 @@ for i, flr_srfc_list in enumerate(_flr_seg_geom.Branches):
     new_space.name = space_names.Branch(i)[0]
     new_space.number = space_numbers.Branch(i)[0]
     
-    space_floors, e = make_floor.space_floor_from_rh_geom(IGH, list(flr_srfc_list))
+    space_floors, e = make_floor.space_floor_from_rh_geom(
+        IGH, list(flr_srfc_list), list(weighting_factors.Branch(i)))
     if e:
         error_ = [from_face3d(s) for s in e]
         msg='Error: There was a problem joining together one or more group of floor surfaces?'\
             'Check the "error_" output for a preview of the surfaces causing the problem'\
             'Check the names and numbers of the surfaces, and make sure they can be properly merged?'
         IGH.error(msg)
-    print 'volume_heights.Branch(i)', volume_heights.Branch(i)
+    
     space_volumes = make_volume.volumes_from_floors(IGH, space_floors, list(volume_heights.Branch(i)))
     new_space.add_new_volumes(space_volumes)
     
