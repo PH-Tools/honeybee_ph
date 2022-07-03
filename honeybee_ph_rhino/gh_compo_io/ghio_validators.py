@@ -21,6 +21,11 @@ class MyClassWithValidation(object):
 >>> ValueError: Input for 'example' may not be 0!
 """
 
+try:  # import the core honeybee dependencies
+    from honeybee.typing import clean_ep_string
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
+
 
 class Validated(object):
     """Base class for all Validator objects. Ensure all children have a 'validate' method.
@@ -30,8 +35,13 @@ class Validated(object):
     The .validate() method should raise a ValueError if the input does not meet the specification.
     """
 
-    def __init__(self, storage_name):
+    def __init__(self, storage_name, **kwargs):
         self.storage_name = storage_name  # normally the same as the Class Attribute
+
+        # -- Also accept arbitrary additional args which can be used
+        # -- by child classes during validation.
+        for _k, _v in kwargs.items():
+            setattr(self, _k, _v)
 
     def __set__(self, instance, value):
         """Set the value on the instance. Runs a .validate() method on self to 
@@ -97,6 +107,7 @@ class HBName(Validated):
 
         # No spaces, no leading or trailing whitespace
         new_value = str(new_value).strip().replace(" ", "_")
+        new_value = clean_ep_string(new_value)
 
         if not new_value:
             raise ValueError("Error: input for {} cannot be blank.".format(name))
@@ -181,5 +192,26 @@ class FloatPositiveValue(Validated):
         if new_value < 0:
             raise ValueError(
                 "Error: input for '{}' cannot be negative.".format(name))
+
+        return new_value
+
+
+class FloatPercentage(Validated):
+    """A Floating Point value which is between 0.0 and 1.0"""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        try:
+            new_value = float(new_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float values only.".format(
+                                 new_value, type(new_value)))
+
+        if not 0 <= new_value <= 1:
+            raise ValueError(
+                "Error: input for '{}' must be between 0.0 and 1.0".format(name))
 
         return new_value
