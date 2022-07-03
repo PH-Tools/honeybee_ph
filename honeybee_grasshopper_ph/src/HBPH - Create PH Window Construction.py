@@ -31,7 +31,7 @@ will be used for all EnergyPlus simulatiuons, while the ISO values will be used 
 models and outputs.
 
 -
-EM April 23, 2022
+EM July 2, 2022
     Args:
         _name_: (str)
         
@@ -57,69 +57,41 @@ EM April 23, 2022
             part of an HB Construction Set.
 """
 
-
-try:  # import the core honeybee dependencies
-    from honeybee.typing import clean_and_id_ep_string, clean_ep_string
-except ImportError as e:
-    raise ImportError('Failed to import honeybee:\t{}'.format(e))
-
-try:  # import the honeybee-energy dependencies
-    from honeybee_energy.material.glazing import EnergyWindowMaterialSimpleGlazSys
-    from honeybee_energy.construction.window import WindowConstruction
-    from honeybee_energy.lib.materials import window_material_by_identifier
-except ImportError as e:
-    raise ImportError('Failed to import honeybee_energy:\t{}'.format(e))
-
 try:
-    from honeybee_energy_ph.construction import window
-except ImportError as e:
-    raise ImportError('Failed to import honeybee_energy_ph:\t{}'.format(e))
-    
-try:
-    from honeybee_ph_utils import preview, iso_10077_1
+    from honeybee_ph_utils import preview
 except ImportError as e:
     raise ImportError('Failed to import honeybee_ph_utils:\t{}'.format(e))
 
+try:
+    from honeybee_ph_rhino.gh_compo_io import ghio_ph_win_constr
+except ImportError as e:
+    raise ImportError('Failed to import honeybee_ph_rhino:\t{}'.format(e))
 
 
-# --
+# -------------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create PH Window Construction"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_23_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_02_2022')
 
 if DEV:
-    #reload(window)
+    reload(ghio_ph_win_constr)
     reload(preview)
-    reload(iso_10077_1)
 
 
-# --
+# -------------------------------------------------------------------------------------
 if _glazing and _frame:
 
-    # -- Create a new HB Simple Window Material
-    mat_name = clean_and_id_ep_string('WindowMaterial') if _name_ is None else \
-        clean_ep_string(_name_)
-
-    # -- Set the NFRC/HBmaterial properties
-    nfrc_u_factor = nfrc_u_factor_ or iso_10077_1.calculate_window_uw(_frame, _glazing)
-    nfrc_shgc = nfrc_shgc_ or _glazing.g_value
-    t_vis = t_vis_ or 0.6
-    window_mat = EnergyWindowMaterialSimpleGlazSys(mat_name, nfrc_u_factor, nfrc_shgc, t_vis)
-    if _name_ is not None:
-        window_mat.display_name = _name_
-
-    # -- Create a new HB Window Construction
-    const_name = clean_and_id_ep_string('WindowConstruction') if _name_ is None else \
-        clean_ep_string(_name_)
-    construction_ = WindowConstruction(const_name, [window_mat])
+    ghio_win_const = ghio_ph_win_constr.IPhWindowConstruction()
+    ghio_win_const.display_name = _name_
+    ghio_win_const.frame = _frame
+    ghio_win_const.glazing = _glazing
+    ghio_win_const.nfrc_u_factor = nfrc_u_factor_
+    ghio_win_const.nfrc_shgc = nfrc_shgc_
+    ghio_win_const.t_vis = t_vis_
     
+    construction_ = ghio_win_const.create_HBPH_Object()
     
-    # -- Set the PH Properties on the WindowConstructionProperties
-    construction_.properties.ph.ph_frame = _frame
-    construction_.properties.ph.ph_glazing = _glazing
-
-
-    # -- 
+    # ---------------------------------------------------------------------------------
     preview.object_preview(construction_.properties.ph)

@@ -24,7 +24,7 @@ Create a new HBPH Window Frame. If only a single HBPH Frame Element is input (to
 frame element will be used for all sides. Otherwise, input the various frame elements as needed.
 
 -
-EM April 23, 2022
+EM July 2, 2022
     Args:
         _name_: (str)
         
@@ -44,42 +44,38 @@ EM April 23, 2022
         frame_: A new HBPH WindowFrame which can be used to build an HBPH Window Constrution.
 """
 
-try:  # import the core honeybee dependencies
-    from honeybee.typing import clean_and_id_ep_string, clean_ep_string
-except ImportError as e:
-    raise ImportError('Failed to import honeybee:\t{}'.format(e))
-
-try:
-    from honeybee_energy_ph.construction import window
-except ImportError as e:
-    raise ImportError('Failed to import honeybee_energy_ph:\t{}'.format(e))
-    
 try:
     from honeybee_ph_utils import preview
 except ImportError as e:
     raise ImportError('Failed to import honeybee_ph_utils:\t{}'.format(e))
 
+try:
+    from honeybee_ph_rhino.gh_compo_io import ghio_ph_frame
+except ImportError as e:
+    raise ImportError('Failed to import honeybee_ph_rhino:\t{}'.format(e))
 
-# --
+
+# -------------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create PH Window Frame"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_23_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_02_2022')
 
 if DEV:
-    #reload(window)
     reload(preview)
+    #reload(ghio_ph_frame)
 
-# --
-if _top:
-    ident = clean_and_id_ep_string('PhWindowFrame')
-    frame_ = window.PhWindowFrame(ident)
-    frame_.display_name = ident if _name_ is None else clean_ep_string(_name_)
-    frame_.top = _top
-    frame_.right = _right or frame_.top
-    frame_.bottom = _bottom or frame_.top
-    frame_.left = _left or frame_.top
 
-# -- 
+# -------------------------------------------------------------------------------------
+ghio_frame = ghio_ph_frame.IPhWindowFrame()
+ghio_frame.display_name = _name_
+ghio_frame.top = _top
+ghio_frame.right = _right
+ghio_frame.bottom = _bottom
+ghio_frame.left = _left
+
+frame_ = ghio_frame.create_HBPH_Object()
+
+# -------------------------------------------------------------------------------------
 preview.object_preview(frame_)
