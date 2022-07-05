@@ -159,12 +159,22 @@ def space_floor_from_rh_geom(IGH, _flr_segment_geom, _weighting_factors):
     """
 
     # -- Check inputs
-    assert len(_flr_segment_geom) == len(_weighting_factors), "Error: input lists of floor"\
-        "segments and weighting factor lengths do not match?"
+    weighting_factors = []
+    for i in range(len(_flr_segment_geom)):
+        try:
+            weighting_factors.append(_weighting_factors[i])
+        except IndexError:
+            try:
+                weighting_factors.append(_weighting_factors[0])
+            except IndexError:
+                raise Exception(
+                    "Error: Weighting Factors input {} cannot be used?".format(
+                        _weighting_factors)
+                )
 
     # -- Build the new SpaceFloorSegments from the Rhino Geometry
     flr_segments = make_floor_segment.create_floor_segment_from_rhino_geom(
-        IGH, _flr_segment_geom, _weighting_factors)
+        IGH, _flr_segment_geom, weighting_factors)
 
     # -- Build the new SpaceFloors from the new SpaceFloorSegments
     new_floors, error_surfaces = build_floors_from_segments(IGH, flr_segments)
