@@ -4,7 +4,7 @@
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except:
     pass  # IronPython
 
@@ -16,7 +16,7 @@ from ladybug_geometry import geometry3d
 class SpaceFloorSegment(_base._Base):
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
-        self.geometry = None
+        self.geometry = None  # type: Optional[geometry3d.face.Face3D]
         self.weighting_factor = 1.0
 
         # -- Reference Point Note: Usually this is just the center, although for
@@ -24,7 +24,7 @@ class SpaceFloorSegment(_base._Base):
         # -- In those cases, it should be a point 'on' the surface, as near to the
         # -- center as possible. This point is used for testing hosting of the
         # -- SpaceFloorSegment 'inside' an HB-Room.
-        self.reference_point = None
+        self.reference_point = None  # type: Optional[geometry3d.pointvector.Point3D]
 
     @property
     def weighted_floor_area(self):

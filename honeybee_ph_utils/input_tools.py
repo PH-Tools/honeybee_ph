@@ -40,6 +40,16 @@ def input_to_int(_input_value, _default=None):
         raise Exception(msg)
 
 
+def clean_tree_get(_tree, _i, _default=None):
+    try:
+        return _tree.Branch(_i)
+    except:
+        try:
+            return _tree.Branch(0)
+        except:
+            return _default
+
+
 def clean_get(_list, _i, _default=None):
     # type: (list[Any], int, Any) -> Any
     """Get list item cleanly based on index pos. If IndexError, try getting list[0]

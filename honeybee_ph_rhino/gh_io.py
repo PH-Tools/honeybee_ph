@@ -10,7 +10,7 @@ probably would not need something like this? I suppose it does help reduce coupl
 
 
 try:
-    from typing import Any, Sequence, Union
+    from typing import Any, Sequence, Union, List, Dict
 except ImportError:
     pass  # Python 3
 
@@ -114,7 +114,7 @@ class IGH:
         return self.ghenv.Component.Params.Input[_node_number].VolatileData
 
     def gh_compo_get_input_guids(self, _input_index_number, _branch_num=0):
-        # type: (int, int) -> list[System.Guid]
+        # type: (int, int) -> List[System.Guid]
         """
         Returns a list of all the GUIDs of the objects being passed to the
         component's specified input node.
@@ -168,7 +168,7 @@ class IGH:
             self.scriptcontext.doc = self.ghdoc
 
     def get_rh_obj_UserText_dict(self, _rh_obj_guids):
-        # type: (System.guid) -> list[dict]
+        # type: (System.guid) -> List[Dict]
         """
         Get any Rhino-side UserText attribute data for the Object/Elements.
         Note: this only works in Rhino v6.0+ I believe...
@@ -214,7 +214,7 @@ class IGH:
         return output_list
 
     def convert_to_LBT_geom(self, _inputs):
-        # type: (list[Any]) -> list[list]
+        # type: (List[Any]) -> List[List]
         """Converts a list of RH- or GH-Geometry into a list of LBT-Geometry. If
             input is a string, boolean or number, will just return that without converting.
 
@@ -263,7 +263,7 @@ class IGH:
         return lbt_geometry
 
     def convert_to_rhino_geom(self, _inputs):
-        # type: (list) -> list
+        # type: (List) -> List
         """Converts a list of LBT-Geometry into RH-Geometry.
 
         Arguments:
@@ -295,7 +295,7 @@ class IGH:
         return rh_geom
 
     def inset_LBT_face(self, _lbt_face, _inset_distance):
-        # type: (honeybee.face.Face, float) -> list
+        # type: (honeybee.face.Face, float) -> List
         """Converts an LBT face to Rhino Geom and performs an 'inset' operation on it. Returns the newly inset Face3D
 
         Arguments:
@@ -356,7 +356,7 @@ class IGH:
             return self.convert_to_LBT_geom(srfcInset_Neg)
 
     def merge_Face3D(self, _face3Ds):
-        # type: (honeybee.face.Face3D) -> list[ list[honeybee.face.Face3D] ]
+        # type: (honeybee.face.Face3D) -> List[ List[honeybee.face.Face3D] ]
         """Combine a set of Face3D surfaces together into 'merged' Face3Ds
 
         This *should* work on surfaces that are touching, AND ones that overlap. Using
@@ -396,7 +396,7 @@ class IGH:
         return new_LBT_face3ds
 
     def extrude_Face3D_WorldZ(self, _face3D, _dist=2.5):
-        # type: (list[Face3D], float) -> list[Face3D]
+        # type: (List[Face3D], float) -> List[Face3D]
         """Returns a list of Face3D surfaces representing a closed brep extrusion of the base Face3D"""
         extrusion_vector = self.ghpythonlib_components.UnitZ(_dist)
         rh_brep = from_face3d(_face3D)
@@ -442,7 +442,7 @@ class ComponentInput:
 
 
 def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
-    # type: (IGH, list, str, int) -> list[dict]
+    # type: (IGH, list, str, int) -> List[dict]
     """
     Generic Rhino / GH Geometry input handler
 
@@ -482,7 +482,7 @@ def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
 
 
 def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
-    # type: (IGH, dict[int, ComponentInput], int, int) -> None
+    # type: (IGH, Dict[int, ComponentInput], int, int) -> None
     """Dynamic GH component input node configuration.
 
     Arguments:
@@ -534,7 +534,7 @@ def _get_component_input_value(_input):
 
 
 def get_component_input_values(ghenv):
-    # type: (Any) -> dict[str, Any]
+    # type: (Any) -> Dict[str, Any]
     """ Dynamic Component Input 'get' - pulls all the component input names/values into a dictionary.
 
     Arguments:
