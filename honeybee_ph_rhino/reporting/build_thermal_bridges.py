@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-""""""
+"""Functions for getting / sorting all the Honeybee-Model Thermal Bridges."""
 
 try:
     from typing import List, Dict, Tuple
@@ -43,6 +43,7 @@ def _build_tb_attributes(IGH, _outline_color, _outline_weight):
     --------
         * (ObjectAttributes)
     """
+
     new_attr_obj = IGH.Rhino.DocObjects.ObjectAttributes()
 
     new_attr_obj.ObjectColor = _outline_color

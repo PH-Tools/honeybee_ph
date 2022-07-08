@@ -489,9 +489,11 @@ def bake_geometry_object(_IGH, _geom_obj, _attr_obj, _layer_name):
             for count, hatch in enumerate(hatches):
                 attr = _IGH.Rhino.DocObjects.ObjectAttributes()
                 attr.LayerIndex = parentLayerIndex
-                attr.ColorSource = _IGH.Rhino.DocObjects.ObjectColorSource.ColorFromObject
                 attr.ObjectColor = colors[count]
-                attr.DisplayOrder = -1  # 1 = Front, -1 = Back
+                attr.PlotColor = colors[count]
+                attr.ColorSource = _IGH.Rhino.DocObjects.ObjectColorSource.ColorFromObject
+                attr.PlotColorSource = _IGH.Rhino.DocObjects.ObjectPlotColorSource.PlotColorFromObject
+                # attr.DisplayOrder = 0  # 1 = Front, -1 = Back
 
                 guids.append(_IGH.Rhino.RhinoDoc.ActiveDoc.Objects.AddHatch(hatch, attr))
 
@@ -647,6 +649,7 @@ def export_single_pdf(_IGH, _file_path):
     size = Size(page_width*dpi, page_height*dpi)
     settings = _IGH.Rhino.Display.ViewCaptureSettings(
         _IGH.scriptcontext.doc.Views.ActiveView, size, dpi)
+    settings.RasterMode = True
     settings.OutputColor = _IGH.Rhino.Display.ViewCaptureSettings.ColorMode.DisplayColor
     pdf.AddPage(settings)
 
