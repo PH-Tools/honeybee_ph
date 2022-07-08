@@ -25,7 +25,7 @@ This is only useful if you  have assigned detailed space numbers and names to th
 floor-segment geometry back in the Rhino scene. This component will help gather and 
 organize this data so that it can be passed along to the 'Create Spaces' component.
 -
-EM January 29, 2022
+EM June 10, 2022
     Args:
         _group_by_name: (bool): If True, will attempt to group the Floor Segments 
             found based on their number/name
@@ -41,9 +41,6 @@ EM January 29, 2022
         flr_seg_numbers_: (Tree[str]) Any space numbers found on the geometry.
 """
 
-from Grasshopper import DataTree
-from System import Object
-from Grasshopper.Kernel.Data import GH_Path
 from collections import defaultdict, namedtuple
 
 import scriptcontext as sc
@@ -51,20 +48,22 @@ import Rhino as rh
 import rhinoscriptsyntax as rs
 import ghpythonlib.components as ghc
 import Grasshopper as gh
+from Grasshopper import DataTree
+from System import Object
+from Grasshopper.Kernel.Data import GH_Path
 
-import honeybee_ph_rhino.make_spaces.floor_segment
+from honeybee_ph_rhino.make_spaces import make_floor_segment
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Get FloorSegment Data"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JAN_29_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
-    reload(honeybee_ph_rhino.gh_io)
-DEV = True
-if DEV:
-    reload(honeybee_ph_rhino.make_spaces.floor_segment)
+    pass
+    #reload(honeybee_ph_rhino.gh_io)
+    #reload(make_spaces)
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
@@ -73,7 +72,7 @@ IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 # ------------------------------------------------------------------------------
 # -- Try and get any data from the Rhino side
 flr_seg_srfcs_ = DataTree[Object]()
-flr_seg_data = honeybee_ph_rhino.make_spaces.floor_segment.handle_floor_seg_user_input(IGH, _floor_seg_geom, '_floor_seg_geom')
+flr_seg_data = make_floor_segment.handle_floor_seg_user_input(IGH, _floor_seg_geom, '_floor_seg_geom')
 
 # ------------------------------------------------------------------------------
 # -- Organize outputs

@@ -4,11 +4,12 @@
 """Passive House Service Hot Water Objects"""
 
 try:
-    from typing import Any, Optional
+    from typing import Any, Union
 except ImportError:
     pass  # IronPython
 
 from honeybee_energy_ph.hvac import _base
+from honeybee_ph_utils import enumerables
 
 
 class UnknownPhHeaterTypeError(Exception):
@@ -18,34 +19,57 @@ class UnknownPhHeaterTypeError(Exception):
         super(UnknownPhHeaterTypeError, self).__init__(self.msg)
 
 
+class PhSHWTankType(enumerables.CustomEnum):
+    allowed = [
+        "0-No storage tank",
+        "1-DHW and heating",
+        "2-DHW only"
+    ]
+
+    def __init__(self, _value=1, _index_offset=0):
+        super(PhSHWTankType, self).__init__(_value, _index_offset)
+
+
 class PhSHWTank(object):
     def __init__(self):
-        self.name = '_unnamed_hw_tank_'
-        self.quantity = 1
-        self.tank_type = None  # type: Optional[str]
+        self.display_name = '_unnamed_hw_tank_'  # type: str
+        self.quantity = 1  # type: int
+        self._tank_type = PhSHWTankType("2-DHW only")  # type: enumerables.CustomEnum
+        self.in_conditioned_space = True  # type: bool
+        self.solar_connection = False  # type: bool
+        self.solar_losses = 0.0  # type: float
+        self.storage_loss_rate = 0.0  # type: float
+        self.storage_capacity = 300  # type: float
+        self.standby_losses = 4.0  # type: float
+        self.standby_fraction = 0.30  # type: float
+        self.room_temp = 20.0  # type: float
+        self.water_temp = 60.0  # type: float
 
-        self.for_solar = False  # type: Optional[bool]
-        self.heat_loss_rate = None  # type: Optional[float]
-        self.volume = None  # type: Optional[float]
-        self.standby_fraction = None  # type: Optional[float]
+    @property
+    def tank_type(self):
+        # type () -> str
+        return self._tank_type.value
 
-        self.in_conditioned_space = True
-        self.location_temp = 20
-        self.water_temp = 55
+    @tank_type.setter
+    def tank_type(self, _in):
+        # type: (Union[str, int]) -> None
+        self._tank_type = PhSHWTankType(_in)
 
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
 
-        d['tank_type'] = self.tank_type
+        d['display_name'] = self.display_name
         d['quantity'] = self.quantity
-        d['name'] = self.name
-        d['for_solar'] = self.for_solar
-        d['heat_loss_rate'] = self.heat_loss_rate
-        d['volume'] = self.volume
-        d['standby_fraction'] = self.standby_fraction
+        d['_tank_type'] = self._tank_type.to_dict()
         d['in_conditioned_space'] = self.in_conditioned_space
-        d['location_temp'] = self.location_temp
+        d['solar_connection'] = self.solar_connection
+        d['solar_losses'] = self.solar_losses
+        d['storage_loss_rate'] = self.storage_loss_rate
+        d['storage_capacity'] = self.storage_capacity
+        d['standby_losses'] = self.standby_losses
+        d['standby_fraction'] = self.standby_fraction
+        d['room_temp'] = self.room_temp
         d['water_temp'] = self.water_temp
 
         return d
@@ -55,24 +79,26 @@ class PhSHWTank(object):
         # type: (dict[str, Any]) -> PhSHWTank
         obj = cls()
 
-        obj.tank_type = _input_dict['tank_type']
+        obj.display_name = _input_dict['display_name']
         obj.quantity = _input_dict['quantity']
-        obj.name = _input_dict['name']
-        obj.for_solar = _input_dict['for_solar']
-        obj.heat_loss_rate = _input_dict['heat_loss_rate']
-        obj.volume = _input_dict['volume']
-        obj.standby_fraction = _input_dict['standby_fraction']
+        obj._tank_type = PhSHWTankType.from_dict(_input_dict['_tank_type'])
         obj.in_conditioned_space = _input_dict['in_conditioned_space']
-        obj.location_temp = _input_dict['location_temp']
+        obj.solar_connection = _input_dict['solar_connection']
+        obj.solar_losses = _input_dict['solar_losses']
+        obj.storage_loss_rate = _input_dict['storage_loss_rate']
+        obj.storage_capacity = _input_dict['storage_capacity']
+        obj.standby_losses = _input_dict['standby_losses']
+        obj.standby_fraction = _input_dict['standby_fraction']
+        obj.room_temp = _input_dict['room_temp']
         obj.water_temp = _input_dict['water_temp']
 
         return obj
 
     def __str__(self):
-        return "{}: {} {}".format(self.__class__.__name__, self.tank_type, self.name)
+        return "{}: {} {}".format(self.__class__.__name__, self.tank_type, self.display_name)
 
     def __repr__(self):
-        return "{}: {}".format(self.__class__.__name__, self.name)
+        return "{}: {}".format(self.__class__.__name__, self.display_name)
 
     def ToString(self):
         return self.__repr__()

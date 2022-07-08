@@ -3,7 +3,7 @@
 
 """HB-Face Passive House (PH) Properties."""
 try:
-    from typing import Any
+    from typing import Any, Dict
 except ImportError:
     pass  # Python 2.7
 
@@ -52,3 +52,18 @@ class FacePhProperties(object):
         new_prop.id_num = data.get('id_num', 0)
 
         return new_prop
+
+    def apply_properties_from_dict(self, _face_prop_dict):
+        # type: (Dict[str, Any]) -> None
+        """Apply properties from an FacePhPropertiesAbridged dictionary.
+
+        Arguments:
+        ----------
+            * _face_prop_dict (dict): A FacePhPropertiesAbridged dictionary loaded from 
+                the Face object itself. Unabridged.
+
+        Returns:
+        --------
+            * None
+        """
+        return None

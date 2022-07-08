@@ -22,7 +22,7 @@
 """
 Creates Passive House Service Hot Water Tank which can be added to the a SHW System.
 -
-EM April 1, 2022
+EM June 9, 2022
     Args:
         _tank_type: ("0-No storage tank", "1-DHW and heating", "2-DHW only") The type of use for this tank.
         
@@ -40,42 +40,49 @@ EM April 1, 2022
         
         in_conditioned_space_: (bool) Default=True.
         
-        location_temp_: (Deg C) The avg air-temp of the tank location, if the tank is outside the building. 
+        location_temp_: (Deg C) The avg. air-temp of the tank location, if the tank is outside the building. 
+        
+        water_temp_: (Deg C) The avg. water temp in the tank. Default=60-C
     
     Returns:
         storage_tank_: A new HW Tank Object. You can add this tank to a Service Hot Water system.
 """
 
-import honeybee_ph_utils.preview
-import honeybee_energy_ph.hvac.hot_water
+from honeybee_ph_utils import preview
+from honeybee_energy_ph.hvac import hot_water
 
 #-------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create SHW Tank"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_09_2022')
 if DEV:
-    reload(honeybee_ph_utils.preview)
-    reload(honeybee_energy_ph.hvac.hot_water)
+    reload(preview)
+    reload(hot_water)
 
 
 #-------------------------------------------------------------------------------
 # Creat Storage Tank
-storage_tank_ = honeybee_energy_ph.hvac.hot_water.PhSHWTank()
-if _tank_type: storage_tank_.type = _tank_type
-storage_tank_.name = _name_ or '_unnamed_tank_'
-storage_tank_.quantity = quantity_ or 1
-if for_solar_ is not None: storage_tank_.for_solar = for_solar_
-if heat_loss_rate_: storage_tank_.heat_loss_rate = heat_loss_rate_
-if volume_: storage_tank_.volume = volume_
-if standby_frac_: storage_tank_.standby_fraction = tank_standby_frac_
+storage_tank_ = hot_water.PhSHWTank()
+
+storage_tank_.tank_type = _tank_type or storage_tank_.tank_type
+storage_tank_.display_name = _display_name_ or storage_tank_.display_name
+storage_tank_.quantity = quantity_ or storage_tank_.quantity
+
+if for_solar_ is not None:
+    storage_tank_.solar_connection = for_solar_
+
+storage_tank_.standby_losses = heat_loss_rate_ or storage_tank_.standby_losses
+storage_tank_.storage_capacity = volume_ or storage_tank_.storage_capacity
+storage_tank_.standby_fraction = standby_frac_ or storage_tank_.standby_fraction
+
 if in_conditioned_space_ is not None:
-    storage_tank_.location = in_conditioned_space_
-else:
-    storage_tank_.location = True
-storage_tank_.location_temp = location_temp_ or 20
+    storage_tank_.in_conditioned_space = in_conditioned_space_
+
+storage_tank_.room_temp = location_temp_ or 20
+storage_tank_.water_temp = water_temp_ or 60
 
 
 # ------------------------------------------------------------------------------
-honeybee_ph_utils.preview.object_preview(storage_tank_)
+preview.object_preview(storage_tank_)

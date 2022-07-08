@@ -28,7 +28,7 @@ order to download the latest version of the plugin libraries and components.
 This tool will download and install several new libraries into the Ladybug Tools
 python interpreter, and will download and install new Grasshopper components.
 -
-EM May 22, 2022
+EM June 10, 2022
     Args:
         _install: (bool) Set to True to install Honeybee-PH on your computer.
         _branch_: (str) Optional branch to download. Default = 'main'
@@ -36,7 +36,7 @@ EM May 22, 2022
 
 ghenv.Component.Name = 'HBPH Installer'
 ghenv.Component.NickName = 'HBPHInstall'
-ghenv.Component.Message = 'DEV | MAY_22_2022'
+ghenv.Component.Message = 'DEV | JUN_10_2022'
 ghenv.Component.Category = 'Honeybee-PH'
 ghenv.Component.SubCategory = '0 | Installer'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -154,11 +154,33 @@ def get_paths(_repo="honeybee_ph", _branch='main'):
     return download_url, download_file
 
 
-def check_lbt_version(_min_version_allowed):
-    # type: (Tuple[int, int, int]) -> None
-    lbt_version_installed = honeybee.config.folders.honeybee_core_version # -> (1, 50, 0)
+def check_rhino_version(_min_version_allowed):
+    # type: (Tuple[int, int]) -> Tuple[int, int]
+    minimum_major_version = _min_version_allowed[0]
+    minimum_minor_version = _min_version_allowed[1]
     
-    for inst_num, min_num in zip(lbt_version_installed, _min_version_allowed):
+    if Rhino.RhinoApp.Version.Minor >= minimum_major_version:
+        if Rhino.RhinoApp.Version.Minor >= minimum_minor_version:
+            return (Rhino.RhinoApp.Version.Major, Rhino.RhinoApp.Version.Minor)
+    msg = "Error: Honeybee-PH requires Rhino version: "\
+        "{}.{} or better. Please update Rhino before proceeding.".format(minimum_major_version, minimum_minor_version)
+    print msg
+    raise Exception(msg)
+
+def check_lbt_version(_min_version_allowed):
+    # type: (Tuple[int, int, int]) -> Tuple[int, int, int]
+    try:
+        lbt_version_installed = honeybee.config.folders.honeybee_core_version # -> (1, 50, 0)
+    except:
+        msg = 'Error: Cannot load "honeybee.config.folders.honeybee_core_version" for some reason?'\
+            'Please make sure you have Ladybug Tools installed, and updated to a the current version '\
+            'before proceeding with the installation.'
+        print msg
+        ghenv.Component.AddRuntimeMessage(Message.Error,msg)
+        return
+    
+    # Only check against Major and Minor, not the third number
+    for inst_num, min_num in zip(lbt_version_installed, _min_version_allowed[:2]):
         if inst_num < min_num:
             msg = "Honeybee-PH is not "\
                 "compatible with the version of Ladybug Tools installed on this computer: {}. Please "\
@@ -168,7 +190,7 @@ def check_lbt_version(_min_version_allowed):
             print msg
             ghenv.Component.AddRuntimeMessage(Message.Error,msg)
             break
-
+    return lbt_version_installed
 
 def download_repo_from_github(_download_url, _download_file):
     # type: (str, str) -> str
@@ -339,16 +361,20 @@ rich_version = "12.4.1"
 xlwings_version = "0.27.7"
 
 # versions
-lbt_min_version = (1, 51, 0)
+rhino_min_version = (7,18)
+lbt_min_version = (1, 51, 11)
 honeybee_ph_version = '0.1'
 phx_version = '0.1'
 
+# --------------------------------------------------------------------------
+# -- Check version compatibility
+rh_version_installed = check_rhino_version(rhino_min_version)
+print "Rhino version: {}.{} found.".format(*rh_version_installed)
+
+lbt_version_installed = check_lbt_version(lbt_min_version)
+print "Ladybug Tools version: {}.{}.{} found.".format(*lbt_version_installed)
+
 if _install:
-    # --------------------------------------------------------------------------
-    # -- Check version compatibility
-    check_lbt_version(lbt_min_version)
-    
-    
     # --------------------------------------------------------------------------
     # install the Rich dependancy
     print 'Installing Python package: Rich.'
@@ -378,8 +404,8 @@ if _install:
     
     
     # --------------------------------------------------------------------------
-    copy_from_github_repo('honeybee_ph', 'phpp_exporter', honeybee_ph_version)
-    copy_from_github_repo('PHX', 'main', phx_version)
+    copy_from_github_repo('honeybee_ph', _hbph_branch or 'main', honeybee_ph_version)
+    copy_from_github_repo('PHX', _phx_branch or 'main', phx_version)
     
 
     # ------------------------------------------------------------------------------------------
@@ -394,6 +420,6 @@ if _install:
 else:  # give a message to the user about what to do
     if hb_loaded:
         check_lbt_version(lbt_min_version)
-    print 'Make sure you have installed Ladybug Tools (v1.4.1 or newer), are connected to '\
-    'the internet, and set _install to True!'   
+    print 'Please:- Be sure you have already installed Ladybug Tools.- Are connected to '\
+    'the internet.- Set _install to "True" to install Honeybee-PH on this system.'   
     

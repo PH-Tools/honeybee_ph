@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""Energy conversion factor (CO2, Source) functions"""
+
 try:
     from typing import List, Any, Generator
 except ImportError:
@@ -20,6 +25,8 @@ def clean_input(input):
 
 def build_factors_from_library(_factor_dict):
     # type: (dict[str, dict[str, Any]]) -> List[Factor]
+    """Returns a list of factors based on an input data dict. from the library."""
+
     factor_list = []
     for item, item_dict in _factor_dict.items():
         new_factor = Factor()
@@ -85,6 +92,17 @@ class FactorCollection(_base._Base):
         else:
             self.factors = []
 
+    def add_factor(self, _new_factor):
+        # type: (Factor) -> None
+        """Add a new factor to the collection. If the factor already exists, update it."""
+
+        for i, exg_factor in enumerate(self.factors):
+            if exg_factor.fuel_name == _new_factor.fuel_name:
+                self.factors[i] = _new_factor
+                return None
+        self.factors.append(_new_factor)
+        return None
+
     def validate_fuel_types(self, _allowed_fuels):
         for factor in self.factors:
             if factor.fuel_name not in _allowed_fuels:
@@ -109,6 +127,20 @@ class FactorCollection(_base._Base):
             new_obj.factors.append(Factor.from_dict(factor_dict))
 
         return new_obj
+
+    def __copy__(self):
+        # type: () -> FactorCollection
+        obj = FactorCollection()
+
+        obj.set_base_attrs_from_source(self)
+        obj.name = self.name
+        obj.factors = [f for f in self.factors]
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> FactorCollection
+        return self.__copy__()
 
     def __iter__(self):
         # type: () -> Generator[Factor, None, None]

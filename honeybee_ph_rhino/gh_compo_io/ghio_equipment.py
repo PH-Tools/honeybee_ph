@@ -6,7 +6,11 @@
 from copy import copy
 # Note: Use copy so that specific equipments can overwrite base with their own hints
 
-from honeybee_ph_rhino.gh_io import input_to_int, ComponentInput
+from GhPython import Component
+from Grasshopper.Kernel.Parameters import Hints
+
+from honeybee_ph_rhino.gh_io import ComponentInput
+from honeybee_ph_utils.input_tools import input_to_int
 
 
 class InputTypeNotFoundError(Exception):
@@ -18,38 +22,77 @@ class InputTypeNotFoundError(Exception):
 # -----------------------------------------------------------------------------
 # Setup the component input node groups
 inputs_base = {
-    2: ComponentInput(_name='comment', _description='(str) User defined comment / note.'),
-    3: ComponentInput(_name='reference_quantity', _description='()'),
-    4: ComponentInput(_name='quantity', _description='(int) The total number of equipments used.'),
-    5: ComponentInput(_name='in_conditioned_space', _description='(bool) default=True'),
-    6: ComponentInput(_name='reference_energy_norm', _description='()'),
-    7: ComponentInput(_name='energy_demand', _description='(float)'),
-    8: ComponentInput(_name='energy_demand_per_use', _description='(float)'),
-    9: ComponentInput(_name='combined_energy_factor', _description='(float)'),
+    2: ComponentInput(_name='comment',
+                      _description='(str) User defined comment / note.',
+                      _type_hint=Component.NewStrHint()),
+    3: ComponentInput(_name='reference_quantity',
+                      _description='() some WUFI stuff.'),
+    4: ComponentInput(_name='quantity',
+                      _description='(int) The total number of appliances / pieces of equipment included.',
+                      _type_hint=Hints.GH_IntegerHint_CS()),
+    5: ComponentInput(_name='in_conditioned_space',
+                      _description='(bool) default=True, Set False if the appliance is outside and the waste heat from the appliance does not count towards internal-gains in the space.',
+                      _type_hint=Hints.GH_BooleanHint_CS()),
+    6: ComponentInput(_name='reference_energy_norm',
+                      _description='() some other WUFI stuff.',
+                      _type_hint=Component.NewStrHint()),
+    7: ComponentInput(_name='energy_demand',
+                      _description='(float) usually kWh/yr',
+                      _type_hint=Component.NewFloatHint()),
+    8: ComponentInput(_name='energy_demand_per_use',
+                      _description='(float) usually kWh/use',
+                      _type_hint=Component.NewFloatHint()),
+    9: ComponentInput(_name='combined_energy_factor',
+                      _description='(float)',
+                      _type_hint=Component.NewFloatHint()),
 }
 
 inputs_dishwasher = copy(inputs_base)
 inputs_dishwasher.update({
-    10: ComponentInput(_name='capacity_type', _description='Input "1-Standard" or '),
-    11: ComponentInput(_name='capacity', _description='(float)'),
-    12: ComponentInput(_name='water_connection', _description='Input "1-DHW Connection" or "2-Cold Water Connection"'),
+    10: ComponentInput(_name='capacity_type',
+                       _description='Input "1-Standard" or ',
+                       _type_hint=Component.NewStrHint()),
+    11: ComponentInput(_name='capacity',
+                       _description='(float)',
+                       _type_hint=Component.NewFloatHint()),
+    12: ComponentInput(_name='water_connection',
+                       _description='Input either -\n "1-DHW Connection"\n "2-Cold Water Connection"',
+                       _type_hint=Component.NewStrHint()),
 })
 
 inputs_clothes_washer = copy(inputs_base)
 inputs_clothes_washer.update({
-    10: ComponentInput(_name='capacity', _description=''),
-    11: ComponentInput(_name='modified_energy_factor', _description=''),
-    12: ComponentInput(_name='connection', _description=''),
-    13: ComponentInput(_name='utilization_factor', _description=''),
+    10: ComponentInput(_name='capacity',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
+    11: ComponentInput(_name='modified_energy_factor',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
+    12: ComponentInput(_name='water_connection',
+                       _description='Input either -\n "1-DHW Connection"\n "2-Cold Water Connection"',
+                       _type_hint=Component.NewStrHint()),
+    13: ComponentInput(_name='utilization_factor',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
 })
 
 inputs_clothes_dryer = copy(inputs_base)
 inputs_clothes_dryer.update({
-    10: ComponentInput(_name='dryer_type', _description=''),
-    11: ComponentInput(_name='gas_consumption', _description=''),
-    12: ComponentInput(_name='gas_efficiency_factor', _description=''),
-    13: ComponentInput(_name='field_utilization_factor_type', _description=''),
-    14: ComponentInput(_name='field_utilization_factor', _description=''),
+    10: ComponentInput(_name='dryer_type',
+                       _description='Input either -\n "1-CLOTHES LINE"\n "2-DRYING CLOSET (COLD!)"\n "3-DRYING CLOSET (COLD!) IN EXTRACT AIR"\n "4-CONDENSATION DRYER"\n "5-ELECTRIC EXHAUST AIR DRYER"\n "6-GAS EXHAUST AIR DRYER"\n ',
+                       _type_hint=Component.NewStrHint()),
+    11: ComponentInput(_name='gas_consumption',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
+    12: ComponentInput(_name='gas_efficiency_factor',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
+    13: ComponentInput(_name='field_utilization_factor_type',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
+    14: ComponentInput(_name='field_utilization_factor',
+                       _description='',
+                       _type_hint=Component.NewFloatHint()),
 })
 
 inputs_refrigerator = copy(inputs_base)
@@ -63,7 +106,9 @@ inputs_fridge_freezer.update({})
 
 inputs_cooktop = copy(inputs_base)
 inputs_cooktop.update({
-    10: ComponentInput(_name='cooktop_type', _description=''),
+    10: ComponentInput(_name='cooktop_type',
+                       _description='Input either -\n "1-ELECTRICITY"\n "2-NATURAL GAS"\n "3-LPG",',
+                      _type_hint=Component.NewStrHint()),
 })
 
 input_Phius_MEL = copy(inputs_base)
@@ -71,19 +116,25 @@ input_Phius_MEL.update({})
 
 inputs_Phius_Lighting_Int = copy(inputs_base)
 inputs_Phius_Lighting_Int.update({
-    10: ComponentInput(_name='frac_high_efficiency', _description=''),
+    10: ComponentInput(_name='frac_high_efficiency',
+                       _description='The percentage of lighting which is "high efficiency."',
+                       _type_hint=Component.NewFloatHint()),
 })
 
 
 inputs_Phius_Lighting_Ext = copy(inputs_base)
 inputs_Phius_Lighting_Ext.update({
-    10: ComponentInput(_name='frac_high_efficiency', _description=''),
+    10: ComponentInput(_name='frac_high_efficiency',
+                       _description='The percentage of lighting which is "high efficiency."',
+                       _type_hint=Component.NewFloatHint()),
 })
 
 
 inputs_Phius_Lighting_Garage = copy(inputs_base)
 inputs_Phius_Lighting_Garage.update({
-    10: ComponentInput(_name='frac_high_efficiency', _description=''),
+    10: ComponentInput(_name='frac_high_efficiency',
+                       _description='The percentage of lighting which is "high efficiency."',
+                       _type_hint=Component.NewFloatHint()),
 })
 
 inputs_Custom_Elec = copy(inputs_base)
@@ -127,6 +178,7 @@ def get_component_inputs(_equipment_type):
         return {}
 
     input_type_id = input_to_int(_equipment_type)
+
     if not input_type_id:
         raise InputTypeNotFoundError(input_type_id)
 

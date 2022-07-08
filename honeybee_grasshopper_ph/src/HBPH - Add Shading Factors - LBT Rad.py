@@ -34,16 +34,19 @@ but does not scale well for complex geometries or many test points. For such
 complex cases and situations where relfection of solar energy are important,
 honeybee-radiance should be used."
 -
-EM May 23, 2022
+EM June 10, 2022
     Args:
         _setttings: The Settings to use for the shading calculations. Connect a 
             'HBPH - Shading Factor Settings - LBT Rad'
             
-        _shading_surfaces: A flat list of all the surfaces to consider when calculating 
+        _winter_shading_surfaces: A flat list of all the surfaces to consider when calculating 
             the detailed shading factors. At the least, these should include all of the 
             building surfaces 'punched' with the apertures and all the aperture side
             'reveals'. This may also include additional site or building shading surfaces
             as desired. Use the 'HBPH - Create Building Shading' to generate 'punched' building shading.
+        
+        _summer_shading_surfaces: Optional. If none, will be set the same as the _winter_shading_surfaces.
+            This allows for seasonal difference in shading due to deciduous trees or similar.
         
         _hb_rooms: The Honeybee Rooms with apertures.
         
@@ -74,7 +77,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add Shading Factors - LBT Rad"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_23_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
     reload(ghio_lbt_shading)
     reload(ghio_win_shade_surfaces)
@@ -101,8 +104,13 @@ if _run and _settings and _hb_rooms:
     
     # ---------------------------------------------------------------------------
     # Create the context shading mesh geometry
-    shade_mesh = ghio_lbt_shading.create_shading_mesh(
-        _shading_surfaces,
+    winter_shade_mesh = ghio_lbt_shading.create_shading_mesh(
+        _winter_shading_surfaces,
+        _settings.mesh_params
+    )
+    
+    summer_shade_mesh = ghio_lbt_shading.create_shading_mesh(
+        _summer_shading_surfaces or _winter_shading_surfaces,
         _settings.mesh_params
     )
     
@@ -140,7 +148,7 @@ if _run and _settings and _hb_rooms:
                 
                 # Solve Winter
                 # ----------------------------------------------------------------------
-                args_winter = (shade_mesh, win_msh_bck, pts, w_sky_vecs, nrmls, cpus)
+                args_winter = (winter_shade_mesh, win_msh_bck, pts, w_sky_vecs, nrmls, cpus)
                 
                 int_matrix_s, int_matrix_u, angles_s, angles_u = ghio_lbt_shading.generate_intersection_data(*args_winter)
                 w_rads_shaded, face_areas = ghio_lbt_shading.calc_win_radiation(int_matrix_s, angles_s, w_total_sky_rad, win_msh)
@@ -156,7 +164,7 @@ if _run and _settings and _hb_rooms:
                 
                 # Solve Summer
                 # ----------------------------------------------------------------------
-                args_summer = (shade_mesh, win_msh_bck, pts, s_sky_vecs, nrmls, cpus)
+                args_summer = (summer_shade_mesh, win_msh_bck, pts, s_sky_vecs, nrmls, cpus)
                 
                 int_matrix_s, int_matrix_u, angles_s, angles_u = ghio_lbt_shading.generate_intersection_data(*args_summer)
                 s_rads_shaded, face_areas = ghio_lbt_shading.calc_win_radiation(int_matrix_s, angles_s, s_total_sky_rad, win_msh)
@@ -180,6 +188,7 @@ if _run and _settings and _hb_rooms:
                 
                 
                 win_count += 1
+        hb_rooms_.append(new_room)
     
     
     # Create the mesh and legend outputs
@@ -196,8 +205,8 @@ if _run and _settings and _hb_rooms:
     
     summer_graphic, title = ghio_lbt_shading.create_graphic_container('Summer', summer_rad_vals, joined_window_mesh, _settings.legend_par)
     summer_radiation_shaded_mesh_, legend_ = ghio_lbt_shading.create_rhino_mesh(summer_graphic, joined_window_mesh)
-
-    hb_rooms_.append(new_room)
+    
+    
 else:
     hb_rooms_ = _hb_rooms
 

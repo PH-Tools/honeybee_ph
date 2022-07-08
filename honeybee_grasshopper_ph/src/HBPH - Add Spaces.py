@@ -25,7 +25,7 @@ can be made up of one or more individual volumes. This is useful if you are calc
 interior net-floor-area or volume as in the Passive House models. Each Space will map to 
 a single entry in the WUFI 'Ventilation Rooms' or a PHPP 'Additional Ventilation'.
 -
-EM April 1, 2022
+EM June 10, 2022
     Args:
         _spaces: (list[Space]) A list of the new PH-Spaces to add to the Honeybee-Rooms.
         
@@ -57,20 +57,17 @@ import ghpythonlib.components as ghc
 import Grasshopper as gh
 
 from ladybug_rhino.fromgeometry import from_point3d
-import honeybee_ph_rhino
-from honeybee_ph_rhino.make_spaces import space
+from honeybee_ph_rhino.make_spaces import make_space
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add Spaces"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
-    reload(honeybee_ph_rhino.gh_io)
-    reload(honeybee_ph_rhino.make_spaces)
-    from honeybee_ph_rhino.make_spaces import space
-    reload(space)
+    #reload(make_space)
+    pass
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
@@ -79,8 +76,8 @@ IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 # ------------------------------------------------------------------------------
 # -- Clean up the inpt spaces, host in the HB-Rooms
 offset_dist = _offset_dist_ or 0.1
-spaces = [space.offset_space_reference_points(IGH, sp, offset_dist) for sp in _spaces]
-hb_rooms_, un_hosted_spaces = space.add_spaces_to_honeybee_rooms(spaces, _hb_rooms, inherit_room_names_)
+spaces = [make_space.offset_space_reference_points(IGH, sp, offset_dist) for sp in _spaces]
+hb_rooms_, un_hosted_spaces = make_space.add_spaces_to_honeybee_rooms(spaces, _hb_rooms, inherit_room_names_)
 
 # ------------------------------------------------------------------------------
 # -- if any un_hosted_spaces, pull out their center points for troubelshooting

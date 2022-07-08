@@ -8,20 +8,21 @@ could figure out how to get Rhino dependencies to be recognized by testing frame
 probably would not need something like this? I suppose it does help reduce coupling?
 """
 
+
 try:
-    from typing import Any, Sequence, Union
+    from typing import Any, Sequence, Union, List, Dict
 except ImportError:
     pass  # Python 3
 
 try:
     from itertools import izip as zip
 except ImportError:
-    # Python3+
-    pass
+    pass  # Python3+
+
+from GhPython import Component
 
 from contextlib import contextmanager
 from copy import deepcopy
-import re
 
 import honeybee.face
 from ladybug_geometry.geometry3d.face import Face3D
@@ -40,13 +41,7 @@ from ladybug_rhino.fromgeometry import (
     from_polyline3d,
 )
 
-
-class SelectionInputError(Exception):
-    def __init__(self, _in):
-        self.message = 'Input Error: Cannot use input "{}" [{}].\n' "Please check the allowable input options.".format(
-            _in, type(_in)
-        )
-        super(SelectionInputError, self).__init__(self.message)
+from honeybee_ph_utils.input_tools import input_to_int, clean_get
 
 
 class LBTGeometryConversionError(Exception):
@@ -68,6 +63,8 @@ class IGH:
         * _sc: (scriptcontext)
         * _rh: (Rhino)
         * _rs (rhinoscriptsyntax)
+        * _ghc (ghpythonlib.components)
+        * _gh (Grasshopper)
     """
 
     def __init__(self, _ghdoc, _ghenv, _sc, _rh, _rs, _ghc, _gh):
@@ -76,7 +73,7 @@ class IGH:
         self.scriptcontext = _sc
         self.Rhino = _rh
         self.rhinoscriptsyntax = _rs
-        self.grasshopper_components = _ghc
+        self.ghpythonlib_components = _ghc
         self.Grasshopper = _gh
 
     def gh_compo_find_input_index_by_name(self, _input_name):
@@ -117,7 +114,7 @@ class IGH:
         return self.ghenv.Component.Params.Input[_node_number].VolatileData
 
     def gh_compo_get_input_guids(self, _input_index_number, _branch_num=0):
-        # type: (int, int) -> list[System.Guid]
+        # type: (int, int) -> List[System.Guid]
         """
         Returns a list of all the GUIDs of the objects being passed to the
         component's specified input node.
@@ -171,7 +168,7 @@ class IGH:
             self.scriptcontext.doc = self.ghdoc
 
     def get_rh_obj_UserText_dict(self, _rh_obj_guids):
-        # type: (System.guid) -> list[dict]
+        # type: (System.guid) -> List[Dict]
         """
         Get any Rhino-side UserText attribute data for the Object/Elements.
         Note: this only works in Rhino v6.0+ I believe...
@@ -217,7 +214,7 @@ class IGH:
         return output_list
 
     def convert_to_LBT_geom(self, _inputs):
-        # type: (list[Any]) -> list[list]
+        # type: (List[Any]) -> List[List]
         """Converts a list of RH- or GH-Geometry into a list of LBT-Geometry. If
             input is a string, boolean or number, will just return that without converting.
 
@@ -266,7 +263,7 @@ class IGH:
         return lbt_geometry
 
     def convert_to_rhino_geom(self, _inputs):
-        # type: (list) -> list
+        # type: (List) -> List
         """Converts a list of LBT-Geometry into RH-Geometry.
 
         Arguments:
@@ -298,7 +295,7 @@ class IGH:
         return rh_geom
 
     def inset_LBT_face(self, _lbt_face, _inset_distance):
-        # type: (honeybee.face.Face, float) -> list
+        # type: (honeybee.face.Face, float) -> List
         """Converts an LBT face to Rhino Geom and performs an 'inset' operation on it. Returns the newly inset Face3D
 
         Arguments:
@@ -317,41 +314,41 @@ class IGH:
             return rh_floor_surface
 
         # -----------------------------------------------------------------------
-        srfcPerim = self.grasshopper_components.JoinCurves(
-            self.grasshopper_components.BrepEdges(rh_floor_surface)[0], preserve=False
+        srfcPerim = self.ghpythonlib_components.JoinCurves(
+            self.ghpythonlib_components.BrepEdges(rh_floor_surface)[0], preserve=False
         )
 
         # Get the inset Curve
         # -----------------------------------------------------------------------
         srfcCentroid = self.Rhino.Geometry.AreaMassProperties.Compute(
             rh_floor_surface).Centroid
-        plane = self.grasshopper_components.XYPlane(srfcCentroid)
-        plane = self.grasshopper_components.IsPlanar(rh_floor_surface, True).plane
-        srfcPerim_Inset_Pos = self.grasshopper_components.OffsetCurve(
+        plane = self.ghpythonlib_components.XYPlane(srfcCentroid)
+        plane = self.ghpythonlib_components.IsPlanar(rh_floor_surface, True).plane
+        srfcPerim_Inset_Pos = self.ghpythonlib_components.OffsetCurve(
             srfcPerim, _inset_distance, plane, 1)
-        srfcPerim_Inset_Neg = self.grasshopper_components.OffsetCurve(
+        srfcPerim_Inset_Neg = self.ghpythonlib_components.OffsetCurve(
             srfcPerim, _inset_distance * -1, plane, 1)
 
         # Choose the right Offset Curve. The one with the smaller area
         # Check IsPlanar first to avoid self.grasshopper_components.BoundarySurfaces error
         # -----------------------------------------------------------------------
         if srfcPerim_Inset_Pos.IsPlanar:
-            srfcInset_Pos = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Pos = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim_Inset_Pos)
         else:
-            srfcInset_Pos = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Pos = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim)  # Use the normal perim
 
         if srfcPerim_Inset_Neg.IsPlanar():
-            srfcInset_Neg = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Neg = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim_Inset_Neg)
         else:
-            srfcInset_Neg = self.grasshopper_components.BoundarySurfaces(
+            srfcInset_Neg = self.ghpythonlib_components.BoundarySurfaces(
                 srfcPerim)  # Use the normal perim
 
         # -----------------------------------------------------------------------
-        area_Pos = self.grasshopper_components.Area(srfcInset_Pos).area
-        area_neg = self.grasshopper_components.Area(srfcInset_Neg).area
+        area_Pos = self.ghpythonlib_components.Area(srfcInset_Pos).area
+        area_neg = self.ghpythonlib_components.Area(srfcInset_Neg).area
 
         if area_Pos < area_neg:
             return self.convert_to_LBT_geom(srfcInset_Pos)
@@ -359,7 +356,7 @@ class IGH:
             return self.convert_to_LBT_geom(srfcInset_Neg)
 
     def merge_Face3D(self, _face3Ds):
-        # type: (honeybee.face.Face3D) -> list[ list[honeybee.face.Face3D] ]
+        # type: (honeybee.face.Face3D) -> List[ List[honeybee.face.Face3D] ]
         """Combine a set of Face3D surfaces together into 'merged' Face3Ds
 
         This *should* work on surfaces that are touching, AND ones that overlap. Using
@@ -379,10 +376,10 @@ class IGH:
         perims = []
         for face3D in _face3Ds:
             rh_brep = self.convert_to_rhino_geom(face3D)
-            faces, edges, vertices = self.grasshopper_components.DeconstructBrep(rh_brep)
-            perims.append(self.grasshopper_components.JoinCurves(edges, True))
+            faces, edges, vertices = self.ghpythonlib_components.DeconstructBrep(rh_brep)
+            perims.append(self.ghpythonlib_components.JoinCurves(edges, True))
 
-        joined_curves = self.grasshopper_components.RegionUnion(perims)
+        joined_curves = self.ghpythonlib_components.RegionUnion(perims)
 
         if not isinstance(joined_curves, list):
             joined_curves = [joined_curves]
@@ -399,11 +396,11 @@ class IGH:
         return new_LBT_face3ds
 
     def extrude_Face3D_WorldZ(self, _face3D, _dist=2.5):
-        # type: (list[Face3D], float) -> list[Face3D]
+        # type: (List[Face3D], float) -> List[Face3D]
         """Returns a list of Face3D surfaces representing a closed brep extrusion of the base Face3D"""
-        extrusion_vector = self.grasshopper_components.UnitZ(_dist)
+        extrusion_vector = self.ghpythonlib_components.UnitZ(_dist)
         rh_brep = from_face3d(_face3D)
-        volume_geom = self.grasshopper_components.Extrude(rh_brep, extrusion_vector)
+        volume_geom = self.ghpythonlib_components.Extrude(rh_brep, extrusion_vector)
 
         return self.convert_to_LBT_geom(volume_geom)[0]
 
@@ -427,14 +424,15 @@ class IGH:
 class ComponentInput:
     """GH-Component Input Node data class."""
 
-    def __init__(self, _name='-', _description='', _access=0):
-        # type: (str, str, int) -> None
+    def __init__(self, _name='-', _description='', _access=0, _type_hint=Component.NoChangeHint()):
+        # type: (str, str, int, Component.NoChangeHint) -> None
         self.name = _name
         self.description = _description
         self.access = _access  # 0='item, 1='list', 2='tree'
+        self.type_hint = _type_hint
 
     def __str__(self):
-        return '{}(name={})'.format(self.__class__.__name__, self.name, self.input_type)
+        return '{}(name={})'.format(self.__class__.__name__, self.name, self.access, self.type_hint)
 
     def __repr__(self):
         return str(self)
@@ -444,7 +442,7 @@ class ComponentInput:
 
 
 def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
-    # type: (IGH, list, str, int) -> list[dict]
+    # type: (IGH, list, str, int) -> List[dict]
     """
     Generic Rhino / GH Geometry input handler
 
@@ -483,58 +481,8 @@ def handle_inputs(IGH, _input_objects, _input_name, _branch_num=0):
     return output_list
 
 
-def input_to_int(_input_value, _default=None):
-    # type: (Any, Any) -> int | None
-    """For 'selection' type inputs, clean and convert input to int.
-
-    ie: if the Grasshopper input allows:
-        "1-A First Type"
-        "2-A Second Type"
-
-    will strip the string part and return just the integer value, or raise SelectionInputError.
-    """
-
-    if not _input_value:
-        return _default
-
-    result = re.search(r"\d+", str(_input_value))
-    try:
-        return int(result.group(0))
-    except ValueError:
-        raise SelectionInputError(_input_value)
-    except AttributeError as e:
-        # If no 'group', ie: no int part supplied in the string
-        raise SelectionInputError(_input_value)
-
-
-def clean_get(_list, _i, _default=None):
-    # type: (list[Any], int, Any) -> Any
-    """Get list item cleanly based on index pos. If IndexError, try getting list[0]
-
-    This is useful for gh-components with multiple list inputs which are sometimes
-    the same length, and sometimes not the same length.
-
-    Arguments:
-    ---------
-        * _list: Any iterable to get the item from.
-        * _i (int): The index position to try and get
-        * _default (Any): The optional deault value to use if _list[0] fails.
-
-    Returns:
-    --------
-        * Any
-    """
-    try:
-        return _list[_i]
-    except ValueError:
-        try:
-            return _list[0]
-        except ValueError:
-            return _default
-
-
 def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
-    # type: (IGH, dict[int, ComponentInput], int, int) -> None
+    # type: (IGH, Dict[int, ComponentInput], int, int) -> None
     """Dynamic GH component input node configuration.
 
     Arguments:
@@ -553,11 +501,12 @@ def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
         input_item = _input_dict.get(input_num, ComponentInput('-', '-'))
 
         try:
-            IGH.ghenv.Component.Params.Input[input_num].NickName = input_item.name
-            IGH.ghenv.Component.Params.Input[input_num].Name = input_item.name
-            IGH.ghenv.Component.Params.Input[input_num].Description = input_item.description
-            access = IGH.Grasshopper.Kernel.GH_ParamAccess(input_item.access)
-            IGH.ghenv.Component.Params.Input[input_num].Access = access
+            input_node = IGH.ghenv.Component.Params.Input[input_num]
+            input_node.NickName = input_item.name
+            input_node.Name = input_item.name
+            input_node.Description = input_item.description
+            input_node.Access = IGH.Grasshopper.Kernel.GH_ParamAccess(input_item.access)
+            input_node.TypeHint = input_item.type_hint
         except ValueError:
             # -- past end of component inputs
             pass
@@ -567,14 +516,25 @@ def setup_component_inputs(IGH, _input_dict, _start_i=1, _end_i=20):
 
 def _get_component_input_value(_input):
     # type: (Sequence[Any]) -> Union[float, str]
+    """Try and cast the input value to the appropriate type."""
+
     try:
-        return float(_input[0])
+        input_value = _input[0].Value
+
+        if isinstance(input_value, str):
+            # For some reason, floats come as Str?....
+            try:
+                return float(input_value)
+            except:
+                return input_value
+        else:
+            return input_value
     except:
         return str(_input[0])
 
 
 def get_component_input_values(ghenv):
-    # type: (Any) -> dict[str, Any]
+    # type: (Any) -> Dict[str, Any]
     """ Dynamic Component Input 'get' - pulls all the component input names/values into a dictionary.
 
     Arguments:
@@ -600,7 +560,7 @@ def get_component_input_values(ghenv):
                 for v in input_list:
                     val.append(_get_component_input_value([v]))
             elif str(input.Access) == 'tree':
-                raise NotImplementedError
+                raise NotImplementedError("Tree input not allowed yet....")
             else:
                 val = _get_component_input_value(input_list)
 

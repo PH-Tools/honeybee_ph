@@ -1,38 +1,75 @@
 # -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
 
-"""HB-PH Electric Equipment"""
+"""HB-PH Electric Equipment and Appliances."""
 
 try:
-    from typing import Any
+    from typing import Any, Dict, Optional
 except ImportError:
     pass  # IronPython
 
 import sys
 
 from honeybee_energy_ph.load import _base
+from honeybee_ph_utils import enumerables
+from honeybee_ph_utils.input_tools import input_to_int
 
 
-class PhEquipmentMergeError(Exception):
-    def __init__(self, _type_1, _type_2):
-        self.msg = 'Error: Cannot merge PhEquipment with type: "{}" to PhEquipment with type: "{}"'.format(
-            _type_1, _type_2)
-        super(PhEquipmentMergeError, self).__init__(self.msg)
+# -----------------------------------------------------------------------------
+# - Type Enums
+
+class PhDishwasherType(enumerables.CustomEnum):
+    allowed = [
+        "1-DHW CONNECTION",
+        "2-COLD WATER CONNECTION",
+    ]
+
+    def __init__(self, _value=1):
+        super(PhDishwasherType, self).__init__(_value)
 
 
-class UnknownPhEquipmentTypeError(Exception):
-    def __init__(self, _heater_types, _received_type):
-        self.msg = 'Error: Unknown PH Equipment type? Got: "{}" but only types: {} are allowed?'.format(
-            _received_type, _heater_types)
-        super(UnknownPhEquipmentTypeError, self).__init__(self.msg)
+class PhClothesWasherType(enumerables.CustomEnum):
+    allowed = [
+        "1-DHW CONNECTION",
+        "2-COLD WATER CONNECTION",
+    ]
 
+    def __init__(self, _value=1):
+        super(PhClothesWasherType, self).__init__(_value)
+
+
+class PhClothesDryerType(enumerables.CustomEnum):
+    allowed = [
+        "1-CLOTHES LINE",
+        "2-DRYING CLOSET (COLD!)",
+        "3-DRYING CLOSET (COLD!) IN EXTRACT AIR",
+        "4-CONDENSATION DRYER",
+        "5-ELECTRIC EXHAUST AIR DRYER",
+        "6-GAS EXHAUST AIR DRYER",
+    ]
+
+    def __init__(self, _value=1):
+        super(PhClothesDryerType, self).__init__(_value)
+
+
+class PhCookingType(enumerables.CustomEnum):
+    allowed = [
+        "1-ELECTRICITY",
+        "2-NATURAL GAS",
+        "3-LPG",
+    ]
+
+    def __init__(self, _value=1):
+        super(PhCookingType, self).__init__(_value)
+
+
+# -----------------------------------------------------------------------------
+# - Appliance Base
 
 class PhEquipment(_base._Base):
     """Base for PH Equipment / Appliances with the common attributes."""
 
-    defaults = {}  # Implemented by subclasses
-
-    def __init__(self, _defaults=False):
+    def __init__(self):
         super(PhEquipment, self).__init__()
         self.equipment_type = self.__class__.__name__
         self.display_name = '_unnamed_equipment_'
@@ -45,16 +82,14 @@ class PhEquipment(_base._Base):
         self.energy_demand_per_use = 0  # kwh/use
         self.combined_energy_factor = 0  # CEF
 
-        self.apply_default_attr_values(_defaults)
-
-    def apply_default_attr_values(self, _defaults):
-        # type: (bool) -> None
-        """Sets all the object attributes to default values, as specified in the class's "defaults" dict."""
+    def apply_default_attr_values(self, _defaults={}):
+        # type: (Dict) -> None
+        """Sets all the object attributes to default values, as specified in a "defaults" dict."""
 
         if not _defaults:
             return
 
-        for k, v in self.defaults.items():
+        for k, v in _defaults.items():
             setattr(self, k, v)
 
     def to_dict(self):
@@ -116,7 +151,9 @@ class PhEquipment(_base._Base):
         """
 
         if self.equipment_type != other.equipment_type:
-            raise PhEquipmentMergeError(self.equipment_type, other.equipment_type)
+            msg = 'Error: Cannot merge PhEquipment with type: "{}" to PhEquipment with type: "{}"'.format(
+                self.equipment_type, other.equipment_type)
+            raise Exception(msg)
 
         self.quantity += other.quantity
 
@@ -142,6 +179,8 @@ class PhEquipment(_base._Base):
     def __str__(self):
         return "{}(name={}, quantity={})".format(self.__class__.__name__, self.display_name, self.quantity)
 
+    def __repr__(self):
+        return str(self)
 
 # -----------------------------------------------------------------------------
 # - Appliances
@@ -149,26 +188,23 @@ class PhEquipment(_base._Base):
 
 class PhDishwasher(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 1,  # PH case occupants
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,  # Year
-        'energy_demand': 269,  # kWh
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'capacity_type': 1,  # Standard
-        'capacity': 12,
-        'water_connection': 1,  # DHW connection
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhDishwasher, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhDishwasher, self).__init__()
         self.display_name = "Kitchen dishwasher"
         self.capacity_type = 1
         self.capacity = 12
-        self.water_connection = 1
+        self._water_connection = PhDishwasherType("1-DHW CONNECTION")
+        self.apply_default_attr_values(_defaults)
+
+    @property
+    def water_connection(self):
+        return self._water_connection
+
+    @water_connection.setter
+    def water_connection(self, _input):
+        # type: (Optional[str]) -> None
+        if _input:
+            self._water_connection = PhDishwasherType(input_to_int(_input))
 
     def to_dict(self):
         # type: () -> dict
@@ -176,7 +212,7 @@ class PhDishwasher(PhEquipment):
         d.update(super(PhDishwasher, self).to_dict())
         d['capacity_type'] = self.capacity_type
         d['capacity'] = self.capacity
-        d['water_connection'] = self.water_connection
+        d['_water_connection'] = self._water_connection.to_dict()
         return d
 
     @classmethod
@@ -186,7 +222,8 @@ class PhDishwasher(PhEquipment):
         super(PhDishwasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.capacity_type = _input_dict['capacity_type']
         new_obj.capacity = _input_dict['capacity']
-        new_obj.water_connection = _input_dict['water_connection']
+        new_obj._water_connection = PhDishwasherType.from_dict(
+            _input_dict['_water_connection'])
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -195,28 +232,24 @@ class PhDishwasher(PhEquipment):
 
 class PhClothesWasher(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 1,  # PH case occupants
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,  # Year
-        'energy_demand': 120,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'capacity': 0.1274,
-        'modified_energy_factor': 2.7,
-        'connection': 1,  # DHW connection
-        'utilization_factor': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhClothesWasher, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhClothesWasher, self).__init__()
         self.display_name = "Laundry - washer"
         self.capacity = 0.1274
         self.modified_energy_factor = 2.7
-        self.connection = 1
+        self._water_connection = PhClothesWasherType("1-DHW CONNECTION")
         self.utilization_factor = 1
+        self.apply_default_attr_values(_defaults)
+
+    @property
+    def water_connection(self):
+        return self._water_connection
+
+    @water_connection.setter
+    def water_connection(self, _input):
+        # type: (Optional[str]) -> None
+        if _input:
+            self._water_connection = PhClothesWasherType(input_to_int(_input))
 
     def to_dict(self):
         # type: () -> dict
@@ -224,7 +257,7 @@ class PhClothesWasher(PhEquipment):
         d.update(super(PhClothesWasher, self).to_dict())
         d['capacity'] = self.capacity
         d['modified_energy_factor'] = self.modified_energy_factor
-        d['connection'] = self.connection
+        d['_water_connection'] = self._water_connection.to_dict()
         d['utilization_factor'] = self.utilization_factor
         return d
 
@@ -235,7 +268,8 @@ class PhClothesWasher(PhEquipment):
         super(PhClothesWasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.capacity = _input_dict['capacity']
         new_obj.modified_energy_factor = _input_dict['modified_energy_factor']
-        new_obj.connection = _input_dict['connection']
+        new_obj._water_connection = PhClothesWasherType.from_dict(
+            _input_dict['_water_connection'])
         new_obj.utilization_factor = _input_dict['utilization_factor']
         return new_obj
 
@@ -245,36 +279,31 @@ class PhClothesWasher(PhEquipment):
 
 class PhClothesDryer(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 1,  # PH case occupants
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,  # CEF - Combined Energy Factor
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 3.93,
-        'dryer_type': 4,  # Condensation dryer
-        'gas_consumption': 0,
-        'gas_efficiency_factor': 2.67,
-        'field_utilization_factor_type': 1,  # Timer controls
-        'field_utilization_factor': 1.18,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhClothesDryer, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhClothesDryer, self).__init__()
         self.display_name = "Laundry - dryer"
-        self.dryer_type = 4
+        self._dryer_type = PhClothesDryerType("4-CONDENSATION DRYER")
         self.gas_consumption = 0
         self.gas_efficiency_factor = 2.67
         self.field_utilization_factor_type = 1
         self.field_utilization_factor = 1.18
+        self.apply_default_attr_values(_defaults)
+
+    @property
+    def dryer_type(self):
+        return self._dryer_type
+
+    @dryer_type.setter
+    def dryer_type(self, _input):
+        # type: (Optional[str]) -> None
+        if _input:
+            self._dryer_type = PhClothesDryerType(input_to_int(_input))
 
     def to_dict(self):
         # type: () -> dict
         d = {}
         d.update(super(PhClothesDryer, self).to_dict())
-        d['dryer_type'] = self.dryer_type
+        d['_dryer_type'] = self._dryer_type.to_dict()
         d['gas_consumption'] = self.gas_consumption
         d['gas_efficiency_factor'] = self.gas_efficiency_factor
         d['field_utilization_factor_type'] = self.field_utilization_factor_type
@@ -286,7 +315,7 @@ class PhClothesDryer(PhEquipment):
         # type: (dict) -> PhClothesDryer
         new_obj = cls()
         super(PhClothesDryer, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.dryer_type = _input_dict['dryer_type']
+        new_obj._dryer_type = PhClothesDryerType.from_dict(_input_dict['_dryer_type'])
         new_obj.gas_consumption = _input_dict['gas_consumption']
         new_obj.gas_efficiency_factor = _input_dict['gas_efficiency_factor']
         new_obj.field_utilization_factor_type = _input_dict['field_utilization_factor_type']
@@ -302,20 +331,10 @@ class PhClothesDryer(PhEquipment):
 
 class PhRefrigerator(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 4,  # PH case Units
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Day
-        'energy_demand': 1.0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhRefrigerator, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhRefrigerator, self).__init__()
         self.display_name = "Kitchen refrigerator"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -338,20 +357,10 @@ class PhRefrigerator(PhEquipment):
 
 class PhFreezer(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 4,  # PH case Units
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Day
-        'energy_demand': 2.07,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhFreezer, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhFreezer, self).__init__()
         self.display_name = "Kitchen freezer"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -374,20 +383,10 @@ class PhFreezer(PhEquipment):
 
 class PhFridgeFreezer(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 4,  # PH case Units
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Day
-        'energy_demand': 1.22,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhFridgeFreezer, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhFridgeFreezer, self).__init__()
         self.display_name = "Kitchen fridge/freeze combo"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -410,28 +409,27 @@ class PhFridgeFreezer(PhEquipment):
 
 class PhCooktop(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 1,  # PH case occupants
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Use
-        'energy_demand': 0.2,  # kWh/use
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'cooktop_type': 1,  # Cooking with electricity
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhCooktop, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhCooktop, self).__init__()
         self.display_name = "Kitchen cooking"
-        self.cooktop_type = 1  # Electric
+        self._cooktop_type = PhCookingType("1-ELECTRICITY")
+        self.apply_default_attr_values(_defaults)
+
+    @property
+    def cooktop_type(self):
+        return self._cooktop_type
+
+    @cooktop_type.setter
+    def cooktop_type(self, _input):
+        # type: (Optional[str]) -> None
+        if _input:
+            self._cooktop_type = PhCookingType(input_to_int(_input))
 
     def to_dict(self):
         # type: () -> dict
         d = {}
         d.update(super(PhCooktop, self).to_dict())
-        d['cooktop_type'] = self.cooktop_type
+        d['_cooktop_type'] = self._cooktop_type.to_dict()
         return d
 
     @classmethod
@@ -439,7 +437,7 @@ class PhCooktop(PhEquipment):
         # type: (dict) -> PhCooktop
         new_obj = cls()
         super(PhCooktop, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.cooktop_type = _input_dict['cooktop_type']
+        new_obj._cooktop_type = PhCookingType.from_dict(_input_dict['_cooktop_type'])
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -452,20 +450,10 @@ class PhCooktop(PhEquipment):
 
 class PhPhiusMEL(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 3,  # Bedroooms
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Use
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhPhiusMEL, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhPhiusMEL, self).__init__()
         self.display_name = "PHIUS+ MELS"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -486,22 +474,11 @@ class PhPhiusMEL(PhEquipment):
 
 class PhPhiusLightingInterior(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 6,  # PH case floor area
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Use
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'frac_high_efficiency': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhPhiusLightingInterior, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhPhiusLightingInterior, self).__init__()
         self.display_name = "PHIUS+ Interior Lighting"
         self.frac_high_efficiency = 1  # CEF
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -522,22 +499,11 @@ class PhPhiusLightingInterior(PhEquipment):
 
 class PhPhiusLightingExterior(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 6,  # PH case floor area
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 1,  # Use
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'frac_high_efficiency': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhPhiusLightingExterior, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhPhiusLightingExterior, self).__init__()
         self.display_name = "PHIUS+ Exterior Lighting"
         self.frac_high_efficiency = 1  # CEF
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -558,22 +524,11 @@ class PhPhiusLightingExterior(PhEquipment):
 
 class PhPhiusLightingGarage(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 2,
-        'quantity': 0,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 100,
-        'energy_demand_per_use': 100,
-        'combined_energy_factor': 0,
-        'frac_high_efficiency': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhPhiusLightingGarage, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhPhiusLightingGarage, self).__init__()
         self.display_name = "PHIUS+ Garage Lighting"
         self.frac_high_efficiency = 1  # CEF
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -594,21 +549,10 @@ class PhPhiusLightingGarage(PhEquipment):
 
 class PhCustomAnnualElectric(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 5,
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'frac_high_efficiency': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhCustomAnnualElectric, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhCustomAnnualElectric, self).__init__()
         self.display_name = "User defined"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -631,21 +575,10 @@ class PhCustomAnnualElectric(PhEquipment):
 
 class PhCustomAnnualLighting(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 5,
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'frac_high_efficiency': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhCustomAnnualLighting, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhCustomAnnualLighting, self).__init__()
         self.display_name = "User defined - lighting"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -668,21 +601,10 @@ class PhCustomAnnualLighting(PhEquipment):
 
 class PhCustomAnnualMEL(PhEquipment):
 
-    defaults = {
-        'comment': 'default',
-        'reference_quantity': 5,
-        'quantity': 1,
-        'in_conditioned_space': True,
-        'reference_energy_norm': 2,
-        'energy_demand': 0,
-        'energy_demand_per_use': 0,
-        'combined_energy_factor': 0,
-        'frac_high_efficiency': 1.0,
-    }
-
-    def __init__(self, _defaults=False):
-        super(PhCustomAnnualMEL, self).__init__(_defaults)
+    def __init__(self, _defaults={}):
+        super(PhCustomAnnualMEL, self).__init__()
         self.display_name = "User defined - Misc electric loads"
+        self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
         # type: () -> dict
@@ -702,6 +624,7 @@ class PhCustomAnnualMEL(PhEquipment):
     def annual_energy_kWh(self, _ref_room=None):
         return self.energy_demand
 
+
 # -----------------------------------------------------------------------------
 # Collections
 
@@ -718,7 +641,9 @@ class PhEquipmentBuilder(object):
         valid_class_types = [nm for nm in dir(
             sys.modules[__name__]) if nm.startswith('Ph')]
         if equipment_type not in valid_class_types:
-            raise UnknownPhEquipmentTypeError(valid_class_types, equipment_type)
+            msg = 'Error: Unknown PH Equipment type? Got: "{}" but only types: {} are allowed?'.format(
+                valid_class_types, equipment_type)
+            raise Exception(msg)
 
         equipment_class = getattr(sys.modules[__name__], equipment_type)
         new_equipment = equipment_class.from_dict(_input_dict)
@@ -736,6 +661,10 @@ class PhEquipmentBuilder(object):
 
 
 class PhEquipmentCollection(object):
+    """A Collection of PH-Equipment / Appliances.
+
+    This is stored on the Honeybee-Room's properties.energy.electric_equipment.properties.ph
+    """
 
     def __init__(self, _host):
         self._equipment_set = {}

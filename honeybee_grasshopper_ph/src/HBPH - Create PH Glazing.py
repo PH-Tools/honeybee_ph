@@ -23,7 +23,7 @@
 Create a new HBPH Window Glazing.
 
 -
-EM April 23, 2022
+EM July 2, 2022
     Args:
         _name_: (str)
         
@@ -37,41 +37,38 @@ EM April 23, 2022
     Returns:
         glazing_: A new HBPH WindowGlazing which can be used to build an HBPH Window Constrution.
 """
-
-try:  # import the core honeybee dependencies
-    from honeybee.typing import clean_and_id_ep_string, clean_ep_string
-except ImportError as e:
-    raise ImportError('Failed to import honeybee:\t{}'.format(e))
-
-try:
-    from honeybee_energy_ph.construction import window
-except ImportError as e:
-    raise ImportError('Failed to import honeybee_energy_ph:\t{}'.format(e))
-    
+   
 try:
     from honeybee_ph_utils import preview
 except ImportError as e:
     raise ImportError('Failed to import honeybee_ph_utils:\t{}'.format(e))
 
+try:
+    from honeybee_ph_rhino.gh_compo_io import ghio_ph_glazing
+except ImportError as e:
+    raise ImportError('Failed to import honeybee_ph_rhino:\t{}'.format(e))
 
-# --
+
+# -------------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create PH Glazing"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_23_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_02_2022')
 
 if DEV:
-    #reload(window)
+    #reload(ghio_ph_glazing)
     reload(preview)
 
 
-# -- 
-ident = clean_and_id_ep_string('PhWindowGlazing')
-glazing_ = window.PhWindowGlazing(ident)
-glazing_.display_name = ident if _name_ is None else clean_ep_string(_name_)
-glazing_.u_factor = _u_factor if _u_factor is not None else 0.8
-glazing_.g_value = _g_value if _g_value is not None else 0.4
+# -------------------------------------------------------------------------------------
+ghio_glazing = ghio_ph_glazing.IPhWindowGlazing()
+ghio_glazing.display_name = _name_
+ghio_glazing.u_factor = _u_factor
+ghio_glazing.g_value = _g_value
 
-# -- 
+glazing_ = ghio_glazing.create_HBPH_Object()
+
+
+# -------------------------------------------------------------------------------------
 preview.object_preview(glazing_)

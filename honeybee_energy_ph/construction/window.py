@@ -20,6 +20,7 @@ class PhWindowFrameElement(_base._Base):
         self.u_factor = 1.0
         self.psi_glazing = 0.04
         self.psi_install = 0.04
+        self.chi_value = 0.0
 
     def to_dict(self):
         # type: () -> dict[str, Any]
@@ -28,6 +29,7 @@ class PhWindowFrameElement(_base._Base):
         d['u_factor'] = self.u_factor
         d['psi_glazing'] = self.psi_glazing
         d['psi_install'] = self.psi_install
+        d['chi_value'] = self.chi_value
         return d
 
     @classmethod
@@ -39,6 +41,7 @@ class PhWindowFrameElement(_base._Base):
         new_obj.u_factor = _input_dict['u_factor']
         new_obj.psi_glazing = _input_dict['psi_glazing']
         new_obj.psi_install = _input_dict['psi_install']
+        new_obj.chi_value = _input_dict['chi_value']
         return new_obj
 
     def duplicate(self):
@@ -53,11 +56,12 @@ class PhWindowFrameElement(_base._Base):
         new_obj.u_factor = self.u_factor
         new_obj.psi_glazing = self.psi_glazing
         new_obj.psi_install = self.psi_install
+        new_obj.chi_value = self.chi_value
         return new_obj
 
     def __str__(self):
-        return '{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f})'.format(
-            self.__class__.__name__, self.width, self.u_factor, self.psi_glazing, self.psi_install)
+        return '{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f}, chi_value={:.3f})'.format(
+            self.__class__.__name__, self.width, self.u_factor, self.psi_glazing, self.psi_install, self.chi_value)
 
     def __repr__(self):
         return str(self)
@@ -71,10 +75,10 @@ class PhWindowFrame(_base._Base):
 
     def __init__(self, _identifier):
         super(PhWindowFrame, self).__init__(_identifier)
-        self.top = PhWindowFrameElement('_default_')
-        self.right = PhWindowFrameElement('_default_')
-        self.bottom = PhWindowFrameElement('_default_')
-        self.left = PhWindowFrameElement('_default_')
+        self.top = PhWindowFrameElement('PhWindowFrameElement')
+        self.right = PhWindowFrameElement('PhWindowFrameElement')
+        self.bottom = PhWindowFrameElement('PhWindowFrameElement')
+        self.left = PhWindowFrameElement('PhWindowFrameElement')
 
     @property
     def elements(self):

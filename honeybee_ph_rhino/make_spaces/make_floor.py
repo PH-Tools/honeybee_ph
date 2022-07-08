@@ -4,19 +4,19 @@
 """Functions to create new SpaceFloor objects based on Rhino / Grasshopper inputs"""
 
 try:
-    from typing import Any
+    from typing import Any, List
 except ImportError:
     pass  # IronPython
 
 from collections import defaultdict
 
 from honeybee_ph_rhino import gh_io
-from honeybee_ph_rhino.make_spaces import floor_segment
+from honeybee_ph_rhino.make_spaces import make_floor_segment
 from honeybee_ph import space
 
 
 def gather_neighbor_group_ids(IGH, _flr_segments):
-    # type: (gh_io.IGH, list[space.SpaceFloorSegment]) -> tuple[dict[int, set[int]], list[space.SpaceFloorSegment]]
+    # type: (gh_io.IGH, List[space.SpaceFloorSegment]) -> tuple[dict[int, set[int]], List[space.SpaceFloorSegment]]
     """Returns a dict of sets of 'Neighbor' (touching) FloorSegment ids.
 
     Arguments:
@@ -68,7 +68,7 @@ def gather_neighbor_group_ids(IGH, _flr_segments):
 
 
 def group_floor_segments_by_neighbor(_neighbor_group_id_groups, _flr_segments):
-    # type: (dict[int, set[int]], list[space.SpaceFloorSegment]) -> list[list[space.SpaceFloorSegment]]
+    # type: (dict[int, set[int]], List[space.SpaceFloorSegment]) -> List[List[space.SpaceFloorSegment]]
     """Group the FloorSegments if they are 'touching'
 
     Arguments:
@@ -92,7 +92,7 @@ def group_floor_segments_by_neighbor(_neighbor_group_id_groups, _flr_segments):
 
 
 def build_floors_from_segments(IGH, _flr_segments):
-    # type: (gh_io.IGH, list[space.SpaceFloorSegment]) -> tuple[list[space.SpaceFloor], list[space.SpaceFloorSegment]]
+    # type: (gh_io.IGH, List[space.SpaceFloorSegment]) -> tuple[list[space.SpaceFloor], List[space.SpaceFloorSegment]]
     """Create new SpaceFloor objects from the SpaceFloor Segments. This will attempt to 
         group and merge SpaceFloorSegments if they are touching one another.
 
@@ -139,25 +139,42 @@ def build_floors_from_segments(IGH, _flr_segments):
     return (new_floors, error_surfaces)
 
 
-def space_floor_from_rh_geom(IGH, _flr_segment_geom):
-    # type: (gh_io.IGH, list[Any]) -> tuple[list[space.SpaceFloor], list[space.SpaceFloorSegment]]
+def space_floor_from_rh_geom(IGH, _flr_segment_geom, _weighting_factors):
+    # type: (gh_io.IGH, List[Any], List[float]) -> tuple[list[space.SpaceFloor], List[space.SpaceFloorSegment]]
     """Return a list of new SpaceFloors built from a list of Rhino floor-segment Geometry.
 
     Arguments:
     ----------
         * IGH (gh_io.IGH): Honeybee-PH Grasshopper Interface Object.
-        * _flr_segment_geom (list[Any]): A list of the Rhino Geometry representing the FloorSegments.
+        * _flr_segment_geom (List[Any]): A list of the Rhino Geometry representing the FloorSegments.
+        * _weighting_factors (List[float]): A List of the weighting-factors (0.0-1.0)
+            to apply to the floor segments. Note: the length of this list should match the 
+            _flr_segment_geom length.
 
     Returns:
     --------
-        [0] list[space.SpaceFloor]: A list of the SpaceFloor objects built from the Rhino Geometry.
-        [1] list[space.SpaceFloorSegment]: A list of any surfaces that cause and error 
+        [0] List[space.SpaceFloor]: A list of the SpaceFloor objects built from the Rhino Geometry.
+        [1] List[space.SpaceFloorSegment]: A list of any surfaces that cause and error 
             during Merge. If no errors, this list will be empty. 
     """
 
+    # -- Check inputs
+    weighting_factors = []
+    for i in range(len(_flr_segment_geom)):
+        try:
+            weighting_factors.append(_weighting_factors[i])
+        except IndexError:
+            try:
+                weighting_factors.append(_weighting_factors[0])
+            except IndexError:
+                raise Exception(
+                    "Error: Weighting Factors input {} cannot be used?".format(
+                        _weighting_factors)
+                )
+
     # -- Build the new SpaceFloorSegments from the Rhino Geometry
-    flr_segments = floor_segment.create_floor_segment_from_rhino_geom(
-        IGH, _flr_segment_geom)
+    flr_segments = make_floor_segment.create_floor_segment_from_rhino_geom(
+        IGH, _flr_segment_geom, weighting_factors)
 
     # -- Build the new SpaceFloors from the new SpaceFloorSegments
     new_floors, error_surfaces = build_floors_from_segments(IGH, flr_segments)

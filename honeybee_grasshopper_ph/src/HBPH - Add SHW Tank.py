@@ -22,7 +22,7 @@
 """
 Adds new Passive House Service Hot Water (SHW) tanks to honeybee-Room's SHW System.
 -
-EM April 1, 2022
+EM June 9, 2022
     Args:
         tank_1_: A new Passive House hot-water storage tank to add to the SHW System.
         tank_2_: A new Passive House hot-water storage tank to add to the SHW System.        
@@ -42,7 +42,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add SHW Tank"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_09_2022')
 if DEV:
     pass
     reload(honeybee_ph_utils.preview)
@@ -67,7 +67,7 @@ for hb_room in _hb_rooms:
     
     
     if tank_1_: new_room.properties.energy.shw.properties.ph.tank_1 = tank_1_
-    if tank_2_: new_room.properties.energy.shw.properties.ph.tank_2 = tank_1_
+    if tank_2_: new_room.properties.energy.shw.properties.ph.tank_2 = tank_2_
     if buffer_tank_: new_room.properties.energy.shw.properties.ph.tank_buffer = buffer_tank_
     if solar_tank_: new_room.properties.energy.shw.properties.ph.tank_solar = solar_tank_
 

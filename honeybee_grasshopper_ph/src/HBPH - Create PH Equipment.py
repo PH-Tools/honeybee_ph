@@ -23,7 +23,7 @@
 Create a new detailed Passive House style equipment which can be added to the 
 honeybee Rooms.
 -
-EM April 29, 2022
+EM June 11, 2022
 """
 
 import scriptcontext as sc
@@ -42,7 +42,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Create PH Equipment"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_29_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_11_2022')
 if DEV:
     reload(honeybee_ph_rhino.gh_io)
     reload(honeybee_ph_rhino.gh_compo_io.ghio_equipment)
@@ -86,6 +86,7 @@ equipment_classes = {
     17: honeybee_energy_ph.load.ph_equipment.PhCustomAnnualLighting,
     18: honeybee_energy_ph.load.ph_equipment.PhCustomAnnualMEL,
     }
+
 if _type:
     try:
         equipment_class = equipment_classes[honeybee_ph_rhino.gh_io.input_to_int(_type)]
@@ -93,16 +94,17 @@ if _type:
         raise EquipmentTypeInputError(_type, honeybee_ph_rhino.gh_compo_io.ghio_equipment.valid_equipment_types)
 
     equipment_ = equipment_class()
-    for attr_name in vars(equipment_):
+    for attr_name in dir(equipment_):
+        
         if attr_name.startswith('_'):
             continue
+        
         input_val = input_values_dict.get(attr_name)
         if input_val:
             setattr(equipment_, attr_name, input_val)
 else:
     msg = "Set the 'equipment_type' to configure the user-inputs."
     ghenv.Component.AddRuntimeMessage(gh.Kernel.GH_RuntimeMessageLevel.Warning, msg)
-
 
 #-------------------------------------------------------------------------------
 # -- Preview

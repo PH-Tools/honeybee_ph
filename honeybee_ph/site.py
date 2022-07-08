@@ -8,14 +8,12 @@ try:
 except ImportError:
     pass  # Python3
 
+try:
+    from typing import Dict, List, Collection
+except ImportError:
+    pass  # IronPython 2.7
+
 from honeybee_ph import _base
-
-
-class InvalidMonthlyDataError(Exception):
-    def __init__(self, _in):
-        self.message = "Error: Monthly data should be a collection of 12 numeric items.\n"\
-            "Got {} of length: {}".format(_in, len(_in))
-        super(InvalidMonthlyDataError, self).__init__(self.message)
 
 
 class Climate_MonthlyValueCollection(_base._Base):
@@ -43,18 +41,22 @@ class Climate_MonthlyValueCollection(_base._Base):
 
     @property
     def values(self):
+        # type: () -> List[float]
         return [getattr(self, month) for month in self.months]
 
     @values.setter
     def values(self, _in):
+        # type: (Collection[float]) -> None
         if (_in is None) or (len(_in) != 12):
-            raise InvalidMonthlyDataError(_in)
+            msg = "Error: Monthly data should be a collection of 12 numeric items.\n"\
+                  "Got a {} of length: {}?".format(type(_in), len(_in))
+            raise Exception(msg)
 
         for val, month_name in zip(_in, self.months):
             setattr(self, month_name, val)
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict
         d = {}
 
         for month in self.months:
@@ -72,18 +74,9 @@ class Climate_MonthlyValueCollection(_base._Base):
 
         return obj
 
-    def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
-
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)
-
 
 class Climate_PeakLoadCollection(_base._Base):
-    """Collection class to orgaize peak load weather data"""
+    """Collection class to organize peak load weather data"""
 
     def __init__(self):
         super(Climate_PeakLoadCollection, self).__init__()
@@ -95,6 +88,7 @@ class Climate_PeakLoadCollection(_base._Base):
         self.rad_global = 0
 
     def to_dict(self):
+        # type: () -> Dict
         d = {}
 
         d['temp'] = self.temp
@@ -108,6 +102,7 @@ class Climate_PeakLoadCollection(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (Dict) -> Climate_PeakLoadCollection
         new_obj = cls()
 
         new_obj.temp = _input_dict.get("temp")
@@ -116,52 +111,6 @@ class Climate_PeakLoadCollection(_base._Base):
         new_obj.rad_south = _input_dict.get("rad_south")
         new_obj.rad_west = _input_dict.get("rad_west")
         new_obj.rad_global = _input_dict.get("rad_global")
-
-        return new_obj
-
-    def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
-
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)
-
-
-class Climate_Location(_base._Base):
-    def __init__(self):
-        super(Climate_Location, self).__init__()
-        # NYC Default
-        self.latitude = 40.6
-        self.longitude = -73.8
-        self.weather_station_elevation = 3.0
-        self.climate_zone = 1
-        self.hours_from_UTC = -4
-
-    def to_dict(self):
-        # type: () -> dict
-        d = {}
-
-        d["latitude"] = self.latitude
-        d["longitude"] = self.longitude
-        d["weather_station_elevation"] = self.weather_station_elevation
-        d["climate_zone"] = self.climate_zone
-        d["hours_from_UTC"] = self.hours_from_UTC
-
-        return d
-
-    @classmethod
-    def from_dict(cls, _input_dict):
-        # type: (dict) -> Climate_Location
-        new_obj = cls()
-
-        new_obj.latitude = _input_dict.get("latitude")
-        new_obj.longitude = _input_dict.get("longitude")
-        new_obj.weather_station_elevation = _input_dict.get(
-            "weather_station_elevation")
-        new_obj.climate_zone = _input_dict.get("climate_zone")
-        new_obj.hours_from_UTC = _input_dict.get("hours_from_UTC")
 
         return new_obj
 
@@ -176,7 +125,7 @@ class Climate_Ground(_base._Base):
         self.flow_rate_groundwater = 0.05
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict
         d = {}
 
         d["ground_thermal_conductivity"] = self.ground_thermal_conductivity
@@ -189,6 +138,7 @@ class Climate_Ground(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (Dict) -> Climate_Ground
         new_obj = cls()
 
         new_obj.ground_thermal_conductivity = _input_dict.get(
@@ -206,11 +156,11 @@ class Climate_Ground(_base._Base):
 class Climate(_base._Base):
     def __init__(self):
         super(Climate, self).__init__()
-        self.name = None
+        self.display_name = "New York"
+        self.station_elevation = 0.0  # m
         self.summer_daily_temperature_swing = 8  # Deg K
-        self.average_wind_speed = 4
+        self.average_wind_speed = 4  # m/s
 
-        self.location = Climate_Location()
         self.ground = Climate_Ground()
 
         self.monthly_temperature_air = Climate_MonthlyValueCollection()
@@ -230,14 +180,14 @@ class Climate(_base._Base):
         self.peak_cooling_2 = Climate_PeakLoadCollection()
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict
         d = {}
 
-        d["name"] = self.name
+        d["display_name"] = self.display_name
+        d["station_elevation"] = self.station_elevation
         d["summer_daily_temperature_swing"] = self.summer_daily_temperature_swing
         d["average_wind_speed"] = self.average_wind_speed
 
-        d["location"] = self.location.to_dict()
         d["ground"] = self.ground.to_dict()
 
         d["monthly_temperature_air"] = self.monthly_temperature_air.to_dict()
@@ -260,15 +210,15 @@ class Climate(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (Dict) -> Climate
         new_obj = cls()
 
-        new_obj.name = _input_dict.get("name")
+        new_obj.display_name = _input_dict.get("display_name")
+        new_obj.station_elevation = _input_dict.get("station_elevation")
         new_obj.summer_daily_temperature_swing = _input_dict.get(
             "summer_daily_temperature_swing")
         new_obj.average_wind_speed = _input_dict.get("average_wind_speed")
 
-        new_obj.location = Climate_Location.from_dict(
-            _input_dict.get("location", {}))
         new_obj.ground = Climate_Ground.from_dict(
             _input_dict.get("ground", {}))
 
@@ -311,3 +261,180 @@ class Climate(_base._Base):
             _input_dict.get("peak_cooling_2", {}))
 
         return new_obj
+
+    def __copy__(self):
+        # type: () -> Climate
+        obj = Climate()
+        obj.set_base_attrs_from_source(self)
+        for attr_nm, attr_val in vars(self).items():
+            setattr(obj, attr_nm, attr_val)
+        return obj
+
+    def duplicate(self):
+        # type: () -> Climate
+        return self.__copy__()
+
+
+class Location(_base._Base):
+    """Geographic Location Information."""
+
+    def __init__(self):
+        super(Location, self).__init__()
+        # NYC Default
+        self.latitude = 40.6
+        self.longitude = -73.8
+        self.site_elevation = None
+        self.climate_zone = 1
+        self.hours_from_UTC = -4
+
+    def to_dict(self):
+        # type: () -> Dict
+        d = {}
+
+        d["latitude"] = self.latitude
+        d["longitude"] = self.longitude
+        d["site_elevation"] = self.site_elevation
+        d["climate_zone"] = self.climate_zone
+        d["hours_from_UTC"] = self.hours_from_UTC
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> Location
+        new_obj = cls()
+
+        new_obj.latitude = _input_dict["latitude"]
+        new_obj.longitude = _input_dict["longitude"]
+        new_obj.site_elevation = _input_dict["site_elevation"]
+        new_obj.climate_zone = _input_dict["climate_zone"]
+        new_obj.hours_from_UTC = _input_dict["hours_from_UTC"]
+
+        return new_obj
+
+    def __copy__(self):
+        # type: () -> Location
+        obj = Location()
+
+        obj.set_base_attrs_from_source(self)
+        obj.latitude = self.latitude
+        obj.longitude = self.longitude
+        obj.site_elevation = self.site_elevation
+        obj.climate_zone = self.climate_zone
+        obj.hours_from_UTC = self.hours_from_UTC
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> Location
+        return self.__copy__()
+
+
+class PHPPCodes(_base._Base):
+    """Settings / names if using Pre-loaded PHPP Library Data"""
+
+    def __init__(self):
+        super(PHPPCodes, self).__init__()
+        # PHPP Specific settings
+        self.country_code = "US-United States of America"
+        self.region_code = "New York"
+        self._dataset_name = "US0055b-New York"
+
+    @property
+    def dataset_name(self):
+        return self._dataset_name
+
+    @dataset_name.setter
+    def dataset_name(self, _in):
+        if _in is None:
+            return
+
+        vals = _in.split("-")
+        if len(vals) != 2:
+            raise Exception(
+                "Error: PHPP Dataset name format should be "
+                "'xx01234-xxxx'. Got: {}".format(self._dataset_name))
+        self._dataset_name = _in
+        self.display_name = vals[1]
+
+    def to_dict(self):
+        # type: () -> Dict
+        d = {}
+
+        d["phpp_country_code"] = self.country_code
+        d["phpp_region_code"] = self.region_code
+        d["phpp_dataset_name"] = self.dataset_name
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict) -> PHPPCodes
+        obj = cls()
+
+        obj.country_code = _input_dict["phpp_country_code"]
+        obj.region_code = _input_dict["phpp_region_code"]
+        obj.dataset_name = _input_dict["phpp_dataset_name"]
+
+        return obj
+
+    def __copy__(self):
+        # type: () -> PHPPCodes
+        obj = PHPPCodes()
+
+        obj.set_base_attrs_from_source(self)
+        obj.country_code = self.country_code
+        obj.region_code = self.region_code
+        obj._dataset_name = self._dataset_name
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> PHPPCodes
+        return self.__copy__()
+
+
+class Site(_base._Base):
+    """Location and Climate data for the building site."""
+
+    def __init__(self):
+        super(Site, self).__init__()
+        self.location = Location()
+        self.climate = Climate()
+        self.phpp_library_codes = PHPPCodes()
+
+    def to_dict(self):
+        # type: () -> Dict
+        d = {}
+
+        d['location'] = self.location.to_dict()
+        d['climate'] = self.climate.to_dict()
+        d['phpp_library_codes'] = self.phpp_library_codes.to_dict()
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict) -> Site
+        obj = cls()
+
+        obj.location = Location.from_dict(_input_dict['location'])
+        obj.climate = Climate.from_dict(_input_dict['climate'])
+        obj.phpp_library_codes = PHPPCodes.from_dict(_input_dict['phpp_library_codes'])
+
+        return obj
+
+    def __copy__(self):
+        # type: () -> Site
+        obj = Site()
+
+        obj.set_base_attrs_from_source(self)
+        obj.location = self.location.duplicate()
+        obj.climate = self.climate.duplicate()
+        obj.phpp_library_codes = self.phpp_library_codes.duplicate()
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> Site
+        return self.__copy__()

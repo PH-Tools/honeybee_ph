@@ -4,19 +4,19 @@
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except:
     pass  # IronPython
 
 from honeybee_ph import _base
-from honeybee_ph.properties import space
+from honeybee_ph.properties.space import SpaceProperties
 from ladybug_geometry import geometry3d
 
 
 class SpaceFloorSegment(_base._Base):
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
-        self.geometry = None
+        self.geometry = None  # type: Optional[geometry3d.face.Face3D]
         self.weighting_factor = 1.0
 
         # -- Reference Point Note: Usually this is just the center, although for
@@ -24,7 +24,7 @@ class SpaceFloorSegment(_base._Base):
         # -- In those cases, it should be a point 'on' the surface, as near to the
         # -- center as possible. This point is used for testing hosting of the
         # -- SpaceFloorSegment 'inside' an HB-Room.
-        self.reference_point = None
+        self.reference_point = None  # type: Optional[geometry3d.pointvector.Point3D]
 
     @property
     def weighted_floor_area(self):
@@ -74,7 +74,7 @@ class SpaceFloorSegment(_base._Base):
         return new_obj
 
     def duplicate(self):
-        new_obj = self.__class__()
+        new_obj = SpaceFloorSegment()
 
         if self.geometry:
             new_obj.geometry = self.geometry.duplicate()
@@ -146,7 +146,7 @@ class SpaceFloor(_base._Base):
 
     def duplicate(self):
         # type: () -> SpaceFloor
-        new_floor = self.__class__()
+        new_floor = SpaceFloor()
         if self.geometry:
             new_floor.geometry = self.geometry.duplicate()
         for seg in self.floor_segments:
@@ -216,8 +216,12 @@ class SpaceVolume(_base._Base):
         """Returns the Volume's FloorSegment reference points (center)."""
         return self.floor.reference_points
 
+    @property
+    def floor_segment_surfaces(self):
+        return [flr_seg.geometry for flr_seg in self.floor.floor_segments]
+
     def duplicate(self):
-        new_volume = self.__class__()
+        new_volume = SpaceVolume()
         new_volume.avg_ceiling_height = self.avg_ceiling_height
         new_volume.floor = self.floor.duplicate()
         if self.geometry:
@@ -268,7 +272,15 @@ class Space(_base._Base):
         self.host = _host
 
         self._volumes = list()
-        self.properties = space.SpaceProperties(self)
+        self.properties = SpaceProperties(self)
+
+    @property
+    def display_name(self):
+        return "{}: {}-{}".format(self.__class__.__name__, self.number, self.name)
+
+    @property
+    def full_name(self):
+        return "{}-{}".format(self.number, self.name)
 
     @property
     def net_volume(self):
@@ -299,6 +311,12 @@ class Space(_base._Base):
         return sum((vol.floor_area for vol in self.volumes))
 
     @property
+    def average_floor_weighting_factor(self):
+        # type: () -> float
+        """Returns the average weighting factor (TFA/iCFA) for the Space's floor-segments."""
+        return self.weighted_floor_area / self.floor_area
+
+    @property
     def reference_points(self):
         # type: () -> list[geometry3d.Point3D]
         """Returns a list of the Space's Volume reference Points (center)."""
@@ -311,9 +329,13 @@ class Space(_base._Base):
     def volumes(self):
         return self._volumes
 
+    @property
+    def floor_segment_surfaces(self):
+        return [v.floor_segment_surfaces for v in self.volumes]
+
     def add_new_volumes(self, _new_volumes):
         # type: (list[SpaceVolume]) -> None
-        """Add a new SpaceVolume or list of SpaceVolunes to the Space.
+        """Add a new SpaceVolume or list of SpaceVolumes to the Space.
 
         Arguments:
         ----------
@@ -329,13 +351,9 @@ class Space(_base._Base):
         for new_vol in _new_volumes:
             self._volumes.append(new_vol)
 
-    @property
-    def full_name(self):
-        return "{}-{}".format(self.number, self.name)
-
     def duplicate(self, _host=None):
         # type: (Any) -> Space
-        new_space = self.__class__()
+        new_space = Space()
         if _host:
             new_space.host = _host
         else:
@@ -346,7 +364,7 @@ class Space(_base._Base):
         new_space.name = self.name
         new_space.number = self.number
         new_space.add_new_volumes([vol.duplicate() for vol in self.volumes])
-        new_space.properties = self.properties
+        new_space.properties._duplicate_extension_attr(self.properties)
 
         return new_space
 
@@ -363,24 +381,25 @@ class Space(_base._Base):
 
         return d
 
-    @property
-    def display_name(self):
-        return "{}: {}-{}".format(self.__class__.__name__, self.number, self.name)
-
     @classmethod
     def from_dict(cls, _input_dict, _host):
         # type: (dict, Any) -> Space
         new_obj = cls(_host)
 
-        new_obj.quantity = _input_dict.get("quantity")
-        new_obj.wufi_type = _input_dict.get("wufi_type")
-        new_obj.name = _input_dict.get("name")
-        new_obj.number = _input_dict.get("number")
-        new_obj.add_new_volumes([SpaceVolume.from_dict(d)
-                                for d in _input_dict.get("volumes", [])])
-        new_obj.properties = space.SpaceProperties.from_dict(
-            _input_dict.get("properties", {}), _host=new_obj)
-
+        new_obj.quantity = _input_dict["quantity"]
+        new_obj.wufi_type = _input_dict["wufi_type"]
+        new_obj.name = _input_dict["name"]
+        new_obj.number = _input_dict["number"]
+        new_obj.add_new_volumes(
+            [SpaceVolume.from_dict(d) for d in _input_dict["volumes"]]
+        )
+        new_obj.properties = SpaceProperties.from_dict(
+            _input_dict["properties"],
+            _host=new_obj
+        )
+        new_obj.properties._load_extension_attr_from_dict(
+            _input_dict["properties"]
+        )
         return new_obj
 
     def __str__(self):
