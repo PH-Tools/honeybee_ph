@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
 try:
     from typing import Any, Dict
 except ImportError:
@@ -83,10 +86,16 @@ class SpacePhProperties(object):
         # TODO: Temporary override until I figure out right right way
         self._v_sup = None
         self._v_eta = None
+        self._v_tran = None
 
     @property
     def host(self):
         return self._host
+
+    @property
+    def has_ventilation_flow_rates(self):
+        # type: () -> bool
+        return any([self._v_sup, self._v_eta, self._v_tran])
 
     def duplicate(self, new_host=None):
         # type: (Any) -> SpacePhProperties
@@ -96,14 +105,18 @@ class SpacePhProperties(object):
         new_properties_obj.id_num = self.id_num
         new_properties_obj._v_sup = self._v_sup
         new_properties_obj._v_eta = self._v_eta
+        new_properties_obj._v_tran = self._v_tran
 
         return new_properties_obj
 
-    def ToString(self):
-        return self.__repr__()
+    def __str__(self):
+        return "{}: [host: {}], v_eta={}, v_sup={}, v_tran={}".format(self.__class__.__name__, self.host.display_name, self._v_eta, self._v_sup, self._v_tran)
 
     def __repr__(self):
-        return "{}: [host: {}], v_eta={}, v_sup={}".format(self.__class__.__name__, self.host.display_name, self._v_eta, self._v_sup)
+        return str(self)
+
+    def ToString(self):
+        return str(self)
 
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
@@ -117,6 +130,7 @@ class SpacePhProperties(object):
         d['id_num'] = self.id_num
         d['_v_sup'] = self._v_sup
         d['_v_eta'] = self._v_eta
+        d['_v_tran'] = self._v_tran
 
         return {'ph': d}
 
@@ -130,5 +144,6 @@ class SpacePhProperties(object):
         new_prop.id_num = data['id_num']
         new_prop._v_sup = data['_v_sup']
         new_prop._v_eta = data['_v_eta']
+        new_prop._v_tran = data['_v_tran']
 
         return new_prop

@@ -4,7 +4,7 @@
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
 
 try:
-    from typing import Any, Optional
+    from typing import Any, Optional, List, Dict
 except:
     pass  # IronPython
 
@@ -28,8 +28,8 @@ class SpaceFloorSegment(_base._Base):
 
     @property
     def weighted_floor_area(self):
-        """The floor area of the floor segment weighted by any reduction factors (iFCA, TFA)"""
         # type: () -> float
+        """The floor area of the floor segment weighted by any reduction factors (iFCA, TFA)"""
         if self.geometry:
             return self.geometry.area * self.weighting_factor
         else:
@@ -37,15 +37,15 @@ class SpaceFloorSegment(_base._Base):
 
     @property
     def floor_area(self):
-        """The floor area of the floor segment UN-weighted by any reduction factors (iFCA, TFA)"""
         # type: () -> float
+        """The floor area of the floor segment UN-weighted by any reduction factors (iFCA, TFA)"""
         if self.geometry:
             return self.geometry.area
         else:
             return 0
 
     def to_dict(self):
-        # type: () -> dict[str, Any]
+        # type: () -> Dict[str, Any]
         d = {}
 
         d['weighting_factor'] = self.weighting_factor
@@ -58,7 +58,7 @@ class SpaceFloorSegment(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict[str, Any]) -> SpaceFloorSegment
+        # type: (Dict[str, Any]) -> SpaceFloorSegment
         new_obj = cls()
 
         new_obj.weighting_factor = _input_dict.get('weighting_factor', 1.0)
@@ -74,6 +74,7 @@ class SpaceFloorSegment(_base._Base):
         return new_obj
 
     def duplicate(self):
+        # type: () -> SpaceFloorSegment
         new_obj = SpaceFloorSegment()
 
         if self.geometry:
@@ -119,8 +120,8 @@ class SpaceFloor(_base._Base):
 
     @property
     def floor_area(self):
-        """The total floor area of all floor segments, UN-weighted by any reduction factors (iFCA, TFA)"""
         # type: () ->  float
+        """The total floor area of all floor segments, UN-weighted by any reduction factors (iFCA, TFA)"""
         return sum((seg.floor_area for seg in self.floor_segments))
 
     def add_floor_segment(self, _floor_seg):
@@ -154,7 +155,7 @@ class SpaceFloor(_base._Base):
         return new_floor
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict[str, Any]
         d = {}
 
         d['floor_segments'] = [seg.to_dict() for seg in self.floor_segments]
@@ -164,7 +165,7 @@ class SpaceFloor(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict[str, Any]) -> SpaceFloor
+        # type: (Dict[str, Any]) -> SpaceFloor
         new_obj = cls()
 
         geom_dict = _input_dict.get('geometry', None)
@@ -196,7 +197,8 @@ class SpaceVolume(_base._Base):
 
     @property
     def net_volume(self):
-        return self.weighted_floor_area * self.avg_ceiling_height
+        # type: () -> float
+        return self.floor_area * self.avg_ceiling_height
 
     @property
     def weighted_floor_area(self):
@@ -218,9 +220,11 @@ class SpaceVolume(_base._Base):
 
     @property
     def floor_segment_surfaces(self):
+        # type: () -> List
         return [flr_seg.geometry for flr_seg in self.floor.floor_segments]
 
     def duplicate(self):
+        # type: () -> SpaceVolume
         new_volume = SpaceVolume()
         new_volume.avg_ceiling_height = self.avg_ceiling_height
         new_volume.floor = self.floor.duplicate()
@@ -229,7 +233,7 @@ class SpaceVolume(_base._Base):
         return new_volume
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict[str, Any]
         d = {}
 
         d['avg_ceiling_height'] = self.avg_ceiling_height
@@ -240,6 +244,7 @@ class SpaceVolume(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> SpaceVolume
         new_obj = cls()
 
         new_obj.avg_ceiling_height = _input_dict.get("avg_ceiling_height")
@@ -276,10 +281,12 @@ class Space(_base._Base):
 
     @property
     def display_name(self):
+        # type: () -> str
         return "{}: {}-{}".format(self.__class__.__name__, self.number, self.name)
 
     @property
     def full_name(self):
+        # type: () -> str
         return "{}-{}".format(self.number, self.name)
 
     @property
@@ -294,9 +301,9 @@ class Space(_base._Base):
 
         total_weighted_height = 0
         for vol in self.volumes:
-            total_weighted_height += vol.weighted_floor_area * vol.avg_ceiling_height
+            total_weighted_height += vol.floor_area * vol.avg_ceiling_height
 
-        return total_weighted_height / self.weighted_floor_area
+        return total_weighted_height / self.floor_area
 
     @property
     def weighted_floor_area(self):
@@ -327,10 +334,12 @@ class Space(_base._Base):
 
     @property
     def volumes(self):
+        # type: () -> List[SpaceVolume]
         return self._volumes
 
     @property
     def floor_segment_surfaces(self):
+        # type: () -> List
         return [v.floor_segment_surfaces for v in self.volumes]
 
     def add_new_volumes(self, _new_volumes):
@@ -369,7 +378,7 @@ class Space(_base._Base):
         return new_space
 
     def to_dict(self):
-        # type: () -> dict[str, Any]
+        # type: () -> Dict[str, Any]
         d = {}
 
         d['quantity'] = self.quantity
@@ -383,7 +392,7 @@ class Space(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict, _host):
-        # type: (dict, Any) -> Space
+        # type: (Dict[str, Any], Any) -> Space
         new_obj = cls(_host)
 
         new_obj.quantity = _input_dict["quantity"]

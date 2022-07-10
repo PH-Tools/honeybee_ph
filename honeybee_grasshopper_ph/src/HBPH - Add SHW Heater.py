@@ -25,7 +25,7 @@ Passive-House style heater to the HB-Room. Ensure that the HB-Room has a HB-Ener
 'Service Hot Water' system before adding this heater. Use the 'HB SHW System' component to 
 add that system to the HB Rooms if they do not already have them.
 -
-EM April 1, 2022
+EM July 10, 2022
     Args:
         _heater: The new PH style HW-Heater to add to the HB-Rooms.
         
@@ -44,7 +44,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Add SHW Heater"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='APR_01_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_10_2022')
 if DEV:
     reload(honeybee_energy_ph.hvac.hot_water)
     reload(honeybee_ph_utils.preview)
@@ -75,6 +75,9 @@ class TempDataObject:
 # -- Get the unique SHW systems in the rooms
 shw_systems = {}
 for room in _hb_rooms:
+    if not room:
+        continue
+    
     new = TempDataObject()
     try:
         new.shw_object = room.properties.energy.shw.duplicate()
@@ -106,7 +109,9 @@ for data in shw_systems.values():
 # --- Add the new modified SHW System back onto the Rooms
 hb_rooms_ = []
 for room in _hb_rooms:
-    
+    if not room:
+        continue
+        
     new_room = room.duplicate()
     for data in shw_systems.values():
         if new_room.identifier in data.room_id_list:
