@@ -4,7 +4,7 @@
 """Functions for exporting a PDF report page."""
 
 import os
-from xml.etree.ElementTree import tostring
+
 try:
     from itertools import izip_longest
 except:
@@ -22,8 +22,9 @@ except ImportError:
     pass  # Outside .NET
 
 try:
-    from Rhino.Geometry import Mesh, Hatch, TextJustification, Point3d
-    from Rhino.DocObjects import ObjectAttributes
+    from Rhino.Geometry import Mesh, Hatch, TextJustification, Point3d, Rectangle3d, Transform
+    from Rhino.DocObjects import ObjectAttributes, DetailViewObject
+    from Rhino.DocObjects.DimensionStyle import MaskFrame
 except ImportError:
     pass  # Outside Rhino
 
@@ -33,58 +34,31 @@ except ImportError:
     pass  # Outside Grasshopper
 
 from honeybee_ph_rhino import gh_io
-from honeybee_ph_rhino.gh_compo_io import ghio_validators
+
+from honeybee_ph_rhino.reporting.annotations import TextAnnotation
+from honeybee_ph_rhino.reporting.build_floor_segments import ClippingPlaneLocation
 
 
-class RHTextJustify(ghio_validators.Validated):
-    """Validator for Integer user-input conversion into Rhino.Geometry.TextJustification Enum."""
+def _transform_annotation(_IGH, _annotation, _transform):
+    # type: (gh_io.IGH, TextAnnotation, Transform) -> TextAnnotation
+    """Applies a transform to a TextAnnotation object. Returns a copy of the Annotation.
 
-    def validate(self, name, new_value, old_value):
-        if new_value is None:
-            return old_value
+    Arguments:
+    ----------
+        * _IGH (gh_io.IGH):
+        * _annotation (TextAnnotation):
+        * _transform (Any):
 
-        mapping = {
-            0: TextJustification.BottomLeft, 1: TextJustification.BottomCenter,
-            2: TextJustification.BottomRight, 3: TextJustification.MiddleLeft,
-            4: TextJustification.MiddleCenter, 5: TextJustification.MiddleRight,
-            6: TextJustification.TopLeft, 7: TextJustification.TopCenter,
-            8: TextJustification.TopRight
-        }
-        return mapping[int(new_value)]
+    Returns:
+    --------
+        * (TextAnnotation): The new TextAnnotation with the .location transformed.
+    """
 
+    new_obj = _annotation.duplicate()
+    new_obj.location = _IGH.ghpythonlib_components.Transform(
+        new_obj.location, _transform)
 
-class LayoutPageLabel(object):
-    """Dataclass for Layout-Page Labels."""
-    justification = RHTextJustify('justification')
-
-    def __init__(self, _text, _size, _location, _format, _justification):
-        # type: (str, float, Point3d, str, int) -> None
-        self._text = _text
-        self.text_size = _size
-        self.location = _location
-        self.format = _format
-        self.justification = _justification
-
-    @property
-    def text(self):
-        fmt = "{}".format(self.format)
-        try:
-            return fmt.format(self._text)
-        except ValueError:
-            try:
-                return fmt.format(float(self._text))
-            except Exception:
-                return self._text
-
-    def __str__(self):
-        return '{}(text={}, text_size={}, location={}, format={}, justification={})'.format(
-            self.__class__.__name__, self.text, self.text_size, self.location, self.format, self.justification)
-
-    def __repr__(self):
-        return str(self)
-
-    def ToString(self):
-        return str(self)
+    return new_obj
 
 
 def _clean_filename(_input_str):
@@ -186,6 +160,19 @@ def set_active_layer_by_name(_IGH, _layer_name):
             raise Exception(
                 "Error: Cannot find the Layer with name: '{}'?".format(_layer_name))
         _IGH.rhinoscriptsyntax.CurrentLayer(_layer_name)
+
+
+def get_detail_views_for_active_view(_IGH):
+    # type: (gh_io.IGH) -> List[DetailViewObject]
+    """Return a List of the DetailViewObjects for the Active View."""
+
+    with _IGH.context_rh_doc():
+        active_view = _IGH.scriptcontext.doc.Views.ActiveView
+        try:
+            return active_view.GetDetailViews()
+        except:
+            # If its not a Layout View....
+            return []
 
 
 def find_layers_with_detail_views(_IGH):
@@ -474,12 +461,12 @@ def bake_geometry_object(_IGH, _geom_obj, _attr_obj, _layer_name):
     geometry = doc_object.Geometry
 
     with _IGH.context_rh_doc():
-        layerT = _IGH.Rhino.RhinoDoc.ActiveDoc.Layers  # layer table
+        target_layer = _IGH.Rhino.RhinoDoc.ActiveDoc.Layers  # layer table
 
         if _IGH.rhinoscriptsyntax.IsMesh(geometry):
             # Find the target layer index
             parentLayerIndex = _IGH.Rhino.DocObjects.Tables.LayerTable.FindByFullPath(
-                layerT, _layer_name, True)
+                target_layer, _layer_name, True)
 
             # Create a hatch from the mesh
             guids = []
@@ -493,7 +480,9 @@ def bake_geometry_object(_IGH, _geom_obj, _attr_obj, _layer_name):
                 attr.PlotColor = colors[count]
                 attr.ColorSource = _IGH.Rhino.DocObjects.ObjectColorSource.ColorFromObject
                 attr.PlotColorSource = _IGH.Rhino.DocObjects.ObjectPlotColorSource.PlotColorFromObject
-                # attr.DisplayOrder = 0  # 1 = Front, -1 = Back
+
+                if _attr_obj and _attr_obj.DisplayOrder:
+                    attr.DisplayOrder = _attr_obj.DisplayOrder  # 1 = Front, -1 = Back
 
                 guids.append(_IGH.Rhino.RhinoDoc.ActiveDoc.Objects.AddHatch(hatch, attr))
 
@@ -522,24 +511,30 @@ def bake_geometry_object(_IGH, _geom_obj, _attr_obj, _layer_name):
             _IGH.rhinoscriptsyntax.ObjectLayer(rhino_geom, _layer_name)
 
 
-def bake_label_object(_IGH, _label, _label_layer, _avoidCollisions=False):
-    # type: (gh_io.IGH, LayoutPageLabel, str, bool) -> None
-    """
+def bake_annotation_object(_IGH, _annotation, _target_layer, _avoid_collisions=False, _neighbors=None):
+    # type: (gh_io.IGH, TextAnnotation, str, bool, Optional[List[Rectangle3d]]) -> Optional[Rectangle3d]
+    """Add a new Text element to the Rhino document.
 
     Arguments:
     ----------
-        *
+        * _IGH (gh_io.IGH):
+        * _annotation (TextAnnotation):
+        * _target_layer (str):
+        * _avoid_collisions (bool):
+        * _neighbors (Optional[List[Rectangle3d]])
 
     Returns:
     --------
-        *
+        * (Optional[Rhino.Geometry.Rectangle3d])
     """
 
     # https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_TextEntity.htm
+    bounding_rect = None
+    _neighbors = _neighbors or []
     with _IGH.context_rh_doc():
 
         # The base-plane for the Text
-        origin = _label.location
+        origin = _annotation.location
         basePlane_origin = _IGH.Rhino.Geometry.Point3d(origin)
         basePlan_normal = _IGH.Rhino.Geometry.Vector3d(0, 0, 1)  # Assumes Top View
         basePlane = _IGH.Rhino.Geometry.Plane(
@@ -547,15 +542,20 @@ def bake_label_object(_IGH, _label, _label_layer, _avoidCollisions=False):
 
         # Create the txt object
         txt = _IGH.Rhino.Geometry.TextEntity()
-        txt.Text = _label.text
+        txt.Text = _annotation.text
         txt.Plane = basePlane
-        txt.TextHeight = _label.text_size
-        txt.Justification = _label.justification
+        txt.TextHeight = _annotation.text_size
+        txt.Justification = _annotation.justification
+        txt.MaskEnabled = _annotation.mask_draw
+        txt.MaskColor = _annotation.mask_color
+        txt.MaskOffset = _annotation.mask_offset
+        txt.MaskFrame = _annotation.mask_frame
+        txt.DrawTextFrame = _annotation.mask_draw_frame
 
-        if _avoidCollisions:
+        if _avoid_collisions:
             raise NotImplementedError('Not yet....')
             #  Test against the other text items on the sheet
-            # First, find / create the bouding box rectangle of the text note
+            # First, find / create the bounding box rectangle of the text note
             this_bounding_box = txt.GetBoundingBox(txt.Plane)
             box_x_dim = abs(this_bounding_box.Min.X - this_bounding_box.Max.X)
             box_y_dim = abs(this_bounding_box.Min.Y - this_bounding_box.Max.Y)
@@ -567,7 +567,7 @@ def bake_label_object(_IGH, _label, _label_layer, _avoidCollisions=False):
                 txt.Plane, domain_x, domain_y, 0).rectangle
 
             # Compare the current text note to the others already in the scene
-            # Move the current tag if neccessary
+            # Move the current tag if necessary
             for eachNeighbor in _neighbors:
                 intersection = _IGH.ghpythonlib_components.CurveXCurve(
                     eachNeighbor, bounding_rect)
@@ -601,31 +601,31 @@ def bake_label_object(_IGH, _label, _label_layer, _avoidCollisions=False):
                     # Re-Set the text tag's origin to the new location
                     txt.Plane = _IGH.ghpythonlib_components.DeconstuctRectangle(
                         bounding_rect).base_plane
-        else:
-            bounding_rect = None
 
         # Add the new text object to the Scene
         txtObj = _IGH.Rhino.RhinoDoc.ActiveDoc.Objects.AddText(txt)
 
         # Set the new Text's Layer
-        if not _IGH.rhinoscriptsyntax.IsLayer(_label_layer):
-            _IGH.rhinoscriptsyntax.AddLayer(_label_layer)
-        _IGH.rhinoscriptsyntax.ObjectLayer(txtObj, _label_layer)
+        if not _IGH.rhinoscriptsyntax.IsLayer(_target_layer):
+            _IGH.rhinoscriptsyntax.AddLayer(_target_layer)
+        _IGH.rhinoscriptsyntax.ObjectLayer(txtObj, _target_layer)
 
-    return bounding_rect  # Return the text bounding box
+    return bounding_rect
 
 
-def export_single_pdf(_IGH, _file_path):
-    # type: (gh_io.IGH,  str) -> None
-    """
+def export_single_pdf(_IGH, _file_path, _dpi=300, _raster=True):
+    # type: (gh_io.IGH,  str, float, bool) -> None
+    """Export a single-page PDF document of the Active Layout View.
 
     Arguments:
     ----------
-        *
+        * _IGH (gh_io.IGH): Grasshopper Interface
+        * _file_path (str): The full path for the PDF file to create
+        * _dpi (float): default=300
 
     Returns:
     --------
-        *
+        * (None)
     """
     # Layout Page Size in Layout's Units
     page_height = _IGH.scriptcontext.doc.Views.ActiveView.PageHeight
@@ -635,39 +635,75 @@ def export_single_pdf(_IGH, _file_path):
     # Ref: https://developer.rhino3d.com/api/RhinoScriptSyntax/#document-UnitScale
     # Ref: https://developer.rhino3d.com/api/RhinoCommon/html/P_Rhino_RhinoDoc_PageUnitSystem.htm
     page_unit_system_number = _IGH.rhinoscriptsyntax.UnitSystem(in_model_units=False)
+    page_unit_scale = _IGH.rhinoscriptsyntax.UnitScale(
+        8, page_unit_system_number)  # Type 8 = Inches
 
-    page_height = page_height * \
-        _IGH.rhinoscriptsyntax.UnitScale(8, page_unit_system_number)  # Type 8 = Inches
-    page_width = page_width * \
-        _IGH.rhinoscriptsyntax.UnitScale(8, page_unit_system_number)
+    page_height = page_height * page_unit_scale
+    page_width = page_width * page_unit_scale
     page_height = round(page_height, 2)
     page_width = round(page_width, 2)
 
     pdf = _IGH.Rhino.FileIO.FilePdf.Create()
-    dpi = 300
-    # Should get this from the view?
-    size = Size(page_width*dpi, page_height*dpi)
+    size = Size(page_width*_dpi, page_height*_dpi)
     settings = _IGH.Rhino.Display.ViewCaptureSettings(
-        _IGH.scriptcontext.doc.Views.ActiveView, size, dpi)
-    settings.RasterMode = True
+        _IGH.scriptcontext.doc.Views.ActiveView, size, _dpi)
+    settings.RasterMode = _raster
     settings.OutputColor = _IGH.Rhino.Display.ViewCaptureSettings.ColorMode.DisplayColor
     pdf.AddPage(settings)
 
     try:
         os.remove(_file_path)
-        # print("Removed file: {}".format(_file_path))
     except OSError as e:
         if not os.path.exists(_file_path):
             pass
         else:
-            raise OSError("{}/nFile {} can not be removed".format(e, _file_path))
+            raise OSError("{}/nFile {} can not be removed?".format(e, _file_path))
 
-    # print('Writing file: {}'.format(_file_path))
     pdf.Write(_file_path)
 
 
-def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _geom, _geom_attrs, _labels):
-    # type: (gh_io.IGH, List[str], str, List[str], DataTree[Guid], DataTree[ObjectAttributes], DataTree[LayoutPageLabel]) -> None
+def add_clipping_plane(_IGH, _cp_location, _cp_layer, _dtl_view_objs):
+    # type: (gh_io.IGH, ClippingPlaneLocation, str, List[DetailViewObject]) -> None
+    """Add a new ClippingPlane object into the Rhino Scene.
+
+    Ref: https://developer.rhino3d.com/samples/rhinocommon/add-clipping-plane/
+
+    Arguments:
+    ----------
+        * (gh_io.IGH):
+        * (ClippingPlaneLocation): 
+
+    Returns:
+    --------
+        * (System.Guid)
+    """
+
+    pl = _IGH.Rhino.Geometry.Plane(
+        _cp_location.origin,
+        _cp_location.normal
+    )
+
+    with _IGH.context_rh_doc():
+        cp_id = _IGH.scriptcontext.doc.Objects.AddClippingPlane(
+            plane=pl,
+            uMagnitude=1,
+            vMagnitude=1,
+            clippedViewportIds=[dv.Id for dv in _dtl_view_objs]
+        )
+
+        # Set the new ClippingPlane's Layer
+        if not _IGH.rhinoscriptsyntax.IsLayer(_cp_layer):
+            _IGH.rhinoscriptsyntax.AddLayer(_cp_layer)
+        _IGH.rhinoscriptsyntax.ObjectLayer(cp_id, _cp_layer)
+
+        if cp_id != Guid.Empty:
+            _IGH.scriptcontext.doc.Views.Redraw()
+
+    return cp_id
+
+
+def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _geom_attrs, _labels, _annotations, _raster):
+    # type: (gh_io.IGH, List[str], str, List[str], DataTree[ClippingPlaneLocation],DataTree[Guid], DataTree[ObjectAttributes], DataTree[TextAnnotation], DataTree[TextAnnotation], bool) -> None
     """
 
     Arguments:
@@ -685,13 +721,17 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _geom, _geom_attrs,
         * None
     """
 
-    # print('writing PDF files....')
-
-    # -- Setup the layers and views
+    # -- Sort out the layers and views and transforms
     starting_active_view_name = get_active_view_name(_IGH)
     set_active_view_by_name(_IGH, _layout_name)
+    dtl_view_objs = get_detail_views_for_active_view(_IGH)
+    dtl_view_transforms = [vw.WorldToPageTransform for vw in dtl_view_objs]
     detail_view_layers = find_layers_with_detail_views(_IGH)
-    set_active_layer_by_name(_IGH, detail_view_layers[0])
+
+    try:
+        set_active_layer_by_name(_IGH, detail_view_layers[0])
+    except:
+        raise Exception("Error: No Detail view found?")
 
     # add all layers with a detail views to the 'on' list
     _layers_on.extend(detail_view_layers)
@@ -699,10 +739,12 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _geom, _geom_attrs,
 
     # -- Bake objects
     for branch_num, geom_list in enumerate(_geom.Branches):
-        geom_bake_layer = create_bake_layer(_IGH)  # Make temp layer
-        label_bake_layer = create_bake_layer(_IGH)  # Make temp layer
-        set_active_view_by_name(_IGH, 'Top')  # Change to 'Top' View for Baking
+        geom_bake_layer = create_bake_layer(_IGH)  # Geometry
+        label_bake_layer = create_bake_layer(_IGH)  # Text Labels
+        cp_layer = create_bake_layer(_IGH)  # Clipping Planes
 
+        # -- Bake the Geometry into the Scene
+        set_active_view_by_name(_IGH, 'Top')  # Change to 'Top' View for Baking
         for i, geom_obj in enumerate(geom_list):
             # -- Object Attribute
             attr_obj = _geom_attrs.Branch(branch_num)[i]
@@ -710,21 +752,57 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _geom, _geom_attrs,
             # -- Bake Geometry to the specified layer
             bake_geometry_object(_IGH, geom_obj, attr_obj, geom_bake_layer)
 
-        # -- Bake Labels to the specified layer
-        set_active_view_by_name(_IGH, _layout_name)
+        # -- Add any ClippingPlanes into the scene
         try:
-            for label in _labels.Branch(branch_num):
-                bake_label_object(_IGH, label, label_bake_layer)
+            for cp in _cp_loc.Branch(branch_num):
+                add_clipping_plane(_IGH, cp, cp_layer, dtl_view_objs)
         except ValueError:
             pass
 
+        # -- Bake Titleblock Labels to the specified layer
+        set_active_view_by_name(_IGH, _layout_name)
+        try:
+            for label in _labels.Branch(branch_num):
+                bake_annotation_object(_IGH, label, label_bake_layer)
+        except ValueError:
+            pass
+
+        # -- Bake Annotations (text in the RH model space)
+        if _annotations.BranchCount != 0:
+            # -- Warning
+            if len(dtl_view_objs) != 1:
+                msg = "Warning. There are {} Detail Views found on '{}'. Text annotations"\
+                    " may not work right when multiple Detail Views are present on a single"\
+                    " Layout page.".format(len(dtl_view_objs), _layout_name)
+                _IGH.warning(msg)
+
+            # -- Bake the Annotations to the Rhino Scene
+            text_bounding_boxes = []  # the note bounding boxes
+            for annotation in _annotations.Branch(branch_num):
+                # -- Transform the Annotation's Location to Paperspace
+                annotation = _transform_annotation(
+                    _IGH, annotation, dtl_view_transforms[0])
+
+                # -- Bake text
+                text_bounding_box = bake_annotation_object(
+                    _IGH=_IGH,
+                    _annotation=annotation,
+                    _target_layer=label_bake_layer,
+                    _avoid_collisions=False,
+                    _neighbors=text_bounding_boxes,
+                )
+
+                # -- Keep track of bounding boxes for collision detection
+                text_bounding_boxes.append(text_bounding_box)
+
         # # -- Export PDF file
         set_active_view_by_name(_IGH, _layout_name)
-        export_single_pdf(_IGH, _file_paths[branch_num])
+        export_single_pdf(_IGH, _file_paths[branch_num], _raster=_raster)
 
         # -- Cleanup baked items
         remove_bake_layer(_IGH, geom_bake_layer)
         remove_bake_layer(_IGH, label_bake_layer)
+        remove_bake_layer(_IGH, cp_layer)
 
     # -- Cleanup layer vis and active view
     reset_all_layer_visibility(_IGH, starting_layer_visibilities)

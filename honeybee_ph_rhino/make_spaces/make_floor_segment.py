@@ -8,71 +8,11 @@ try:
 except ImportError:
     pass  # IronPython
 
-try:
-    from itertools import izip as zip
-except ImportError:
-    pass  # Python 3
 
-from collections import namedtuple
 from ladybug_geometry.geometry3d import face, pointvector
 from ladybug_rhino.fromgeometry import from_point3d, from_face3d
 from honeybee_ph_rhino import gh_io
 from honeybee_ph import space
-
-# -- Temporary dataclasses to organize input data
-VentilationData = namedtuple('VentilationData', ['v_sup', 'v_eta', 'v_trans'])
-FloorSegmentData = namedtuple(
-    'FloorSegmentData', ['name', 'number', 'full_name', 'ventilation_flow_rates', 'geometry'])
-
-
-def handle_floor_seg_user_input(IGH, _flr_segments, _input_name):
-    # type: (gh_io.IGH, List[Any], str) -> List[FloorSegmentData]
-    """Try and read in all the user-supplied input data for the GH-Component input node and organize the data.
-
-    Will try and read in all the inputs of whatever type and get as much data as possible. If the input objects
-    are Rhino objects, will try and read in any UserText attribute data from the Rhino scene. All data is organized
-    into FloorSegmentData objects before output.
-
-    Arguments:
-    ----------
-        * IGH (gh_io.IGH): The Grasshopper Interface object.
-        * _flr_segments (list[Any]): A list of the user-supplied input data / Geometry.
-        * _input_name (str): The name of the GH-Component input node to read input data from.
-
-    Returns:
-    --------
-        * list[FloorSegmentData]: A list of FloorSegmentData objects with user inputs organized.
-    """
-
-    if not isinstance(_flr_segments, (list, tuple, set)):
-        _flr_segments = [_flr_segments]
-
-    # -- Get the GH-Component Input Object Attribute UserText values (if any)
-    input_index_number = IGH.gh_compo_find_input_index_by_name(_input_name)
-    input_guids = IGH.gh_compo_get_input_guids(input_index_number)
-    input_data = IGH.get_rh_obj_UserText_dict(input_guids)
-
-    # -- Build the FloorSegmentData objects, organize all the attributes.
-    floor_segment_input_data = []
-    for data_dict, geom in zip(input_data, _flr_segments):
-        segment_vent_data = VentilationData(
-            data_dict.get('V_sup'),
-            data_dict.get('V_eta'),
-            data_dict.get('V_trans')
-        )
-
-        segment_data = FloorSegmentData(
-            data_dict.get('Object Name'),
-            data_dict.get('Room_Number'),
-            '{}-{}'.format(data_dict.get('Object Name'),
-                           data_dict.get('Room_Number')),
-            segment_vent_data,
-            geom
-        )
-
-        floor_segment_input_data.append(segment_data)
-
-    return floor_segment_input_data
 
 
 def calc_reference_point(IGH, _face3D):

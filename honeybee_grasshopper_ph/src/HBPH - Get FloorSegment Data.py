@@ -36,23 +36,20 @@ EM June 10, 2022
     Returns:
         flr_seg_srfcs_: (Tree[Geometry]) The geometry found. 
         
+        weighting_factors: (Tree[float]) Any TFA/iCFA weighting factors found.
+        
         flr_seg_name_: (Tree[str]) Any space names found on the geometry.
         
         flr_seg_numbers_: (Tree[str]) Any space numbers found on the geometry.
 """
-
-from collections import defaultdict, namedtuple
 
 import scriptcontext as sc
 import Rhino as rh
 import rhinoscriptsyntax as rs
 import ghpythonlib.components as ghc
 import Grasshopper as gh
-from Grasshopper import DataTree
-from System import Object
-from Grasshopper.Kernel.Data import GH_Path
 
-from honeybee_ph_rhino.make_spaces import make_floor_segment
+from honeybee_ph_rhino.gh_compo_io import ghio_get_flr_seg_data
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
@@ -61,37 +58,14 @@ ghenv.Component.Name = "HBPH - Get FloorSegment Data"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
 if DEV:
-    pass
-    #reload(honeybee_ph_rhino.gh_io)
-    #reload(make_spaces)
+    reload(ghio_get_flr_seg_data)
+
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
 IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
-# ------------------------------------------------------------------------------
-# -- Try and get any data from the Rhino side
-flr_seg_srfcs_ = DataTree[Object]()
-flr_seg_data = make_floor_segment.handle_floor_seg_user_input(IGH, _floor_seg_geom, '_floor_seg_geom')
 
 # ------------------------------------------------------------------------------
-# -- Organize outputs
-flr_seg_name_ = DataTree[Object]()
-flr_seg_numbers_ = DataTree[Object]()
-NameGroupItem = namedtuple('NameGroupItem', ['breps', 'name', 'number'])
-if _group_by_name:
-    name_groups = defaultdict(list)
-    for k, flr_seg in enumerate(flr_seg_data):
-        new_entry = NameGroupItem(flr_seg.geometry, str(flr_seg.name).upper(), str(flr_seg.number).upper())
-        name_groups[flr_seg.full_name].append(new_entry)
-    
-    for i, name_group in enumerate(name_groups.values()):
-        for item in name_group:
-            flr_seg_srfcs_.Add(item.breps, GH_Path(i))
-            flr_seg_name_.Add(item.name, GH_Path(i))
-            flr_seg_numbers_.Add(item.number, GH_Path(i))
-else:
-    for i, flr_seg in enumerate(flr_seg_data):
-        flr_seg_srfcs_.Add(flr_seg.geometry, GH_Path(i))
-        flr_seg_name_.Add(flr_seg.name, GH_Path(i))
-        flr_seg_numbers_.Add(flr_seg.number, GH_Path(i))
+ghio_obj = ghio_get_flr_seg_data.IGetFloorSegData(IGH, _group_by_name, _floor_seg_geom)
+flr_seg_srfcs_, weighting_factors_, flr_seg_names_, flr_seg_numbers_ = ghio_obj.create_output()

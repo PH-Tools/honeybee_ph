@@ -6,262 +6,295 @@ These are called when the component is instantiated within the Grasshopper canva
 """
 
 RELEASE_VERSION = "HONEYBEE-PH v0.1"
-CATEGORY = "Honeybee-PH"
-SUB_CATGORIES = {
+CATEGORY = "HB-PH"
+SUB_CATEGORIES = {
     0: "00 | Utils",
-    4: "04 | Honeybee-PH",
-    5: "05 | Temp",
-    6: "06 | Temp",
+    1: "01 | Model",
+    2: "02 | Shading",
+    3: "03 | Write",
+    4: "04 | PDF",
 }
 COMPONENT_PARAMS = {
+    # -- Model
     "HBPH - Merge Rooms": {
         "NickName": "Merge HB Rooms",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Bldg Segment": {
         "NickName": "PH Bldg Segment",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Phius Certification": {
         "NickName": "Phius Cert.",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - PH Site": {
         "NickName": "PH Site",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - PH Location": {
         "NickName": "PH Location",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - PH Climate Data": {
         "NickName": "PH Climate Data",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - PH PHPP Climate": {
         "NickName": "PH PHPP Climate",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Spaces": {
         "NickName": "PH Spaces",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Vent. Schedule": {
         "NickName": "PH Vent. Sched.",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Operation Period": {
         "NickName": "PH Op. Period",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
-    # -- Spaces
     "HBPH - Get FloorSegment Data": {
         "NickName": "Get Seg. Data",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Spaces": {
         "NickName": "Create PH Spaces",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Add Spaces": {
         "NickName": "Add PH Spaces",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Ventilator": {
         "NickName": "PH Ventilator",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
-    },
-    "HBPH - Write WUFI XML": {
-        "NickName": "Write WUFI XML",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create SHW Tank": {
         "NickName": "Create SHW Tank",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Add SHW Tank": {
         "NickName": "Add SHW Tank",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create SHW Heater": {
         "NickName": "Create SHW Heater",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Add SHW Heater": {
         "NickName": "Add SHW Heater",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create PH Equipment": {
         "NickName": "Create PH Equipment",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Add PH Equipment": {
         "NickName": "Add PH Equipment",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Set Res Occupancy": {
         "NickName": "Set Res Occupancy",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Phius MF Res Calculator": {
         "NickName": "Phius MF Res Calc",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Phius Program Finder": {
         "NickName": "Phius Programs",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Conversion Factor": {
         "NickName": "Factor",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Add Mech Systems": {
         "NickName": "Add Mech",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Heating System": {
         "NickName": "Create Heating",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Cooling System": {
         "NickName": "Create Cooling",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Ventilation System": {
         "NickName": "Create Vent",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create PH Window Frame Element": {
         "NickName": "Create Frame Element",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create PH Window Frame": {
         "NickName": "Create Frame",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create PH Glazing": {
         "NickName": "Create Glazing",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create PH Window Construction": {
         "NickName": "Create PH Win Const",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - PHI Certification": {
         "NickName": "PHI Cert.",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
-    },
-    "HBPH - Write to PHPP": {
-        "NickName": "Write PHPP",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
-    },
-    "HBPH - Create Building Shading": {
-        "NickName": "Create Shading",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
-    },
-    "HBPH - Shading Factor Settings - LBT Rad": {
-        "NickName": "Settings",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
-    },
-    "HBPH - Add Shading Dims": {
-        "NickName": "Shading Dims",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
-    },
-    "HBPH - Add Shading Factors - LBT Rad": {
-        "NickName": "Shading Factors",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Create Thermal Bridges": {
         "NickName": "Create Thermal Bridges",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
-        "SubCategory": 4,
+        "SubCategory": 1,
     },
     "HBPH - Add Thermal Bridges to Rooms": {
         "NickName": "Add Thermal Bridges",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+    # -- Shading
+    "HBPH - Create Building Shading": {
+        "NickName": "Create Shading",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 2,
+    },
+    "HBPH - Shading Factor Settings - LBT Rad": {
+        "NickName": "Settings",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 2,
+    },
+    "HBPH - Add Shading Dims": {
+        "NickName": "Shading Dims",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 2,
+    },
+    "HBPH - Add Shading Factors - LBT Rad": {
+        "NickName": "Shading Factors",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 2,
+    },
+    # -- Write Model
+    "HBPH - Write to PHPP": {
+        "NickName": "Write PHPP",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 3,
+    },
+    "HBPH - Write WUFI XML": {
+        "NickName": "Write WUFI XML",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 3,
+    },
+    # -- Export PDF
+    "HBPH - Report Envelope Data": {
+        "NickName": "Report Envelope",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
         "SubCategory": 4,
     },
-
+    "HBPH - Report Thermal Bridge Data": {
+        "NickName": "Report TB",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Report Space Floor Segments": {
+        "NickName": "Report Floor Segments",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Create Text Annotation": {
+        "NickName": "TextAnnotation",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
+    "HBPH - Export PDFs": {
+        "NickName": "Export PDFs",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 4,
+    },
 }
 
 
@@ -294,7 +327,7 @@ def set_component_params(ghenv, dev=False):
         compo_name = ghenv.Component.Name
         sub_cat_num = COMPONENT_PARAMS.get(
             compo_name, {}).get("SubCategory", 1)
-        sub_cat_name = SUB_CATGORIES.get(sub_cat_num)
+        sub_cat_name = SUB_CATEGORIES.get(sub_cat_num)
     except Exception as e:
         raise ComponentNameError(compo_name, e)
 

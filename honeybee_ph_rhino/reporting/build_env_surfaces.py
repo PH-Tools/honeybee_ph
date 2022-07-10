@@ -19,7 +19,7 @@ try:
 except ImportError:
     pass  # Outside Rhino
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 
 from honeybee import model, face
 from ladybug_rhino.fromgeometry import from_face3d
@@ -50,8 +50,10 @@ def _get_hb_face_groups_from_model(_hb_model):
     # type: (model.Model) -> Dict[str, List[face.Face]]
     """Return a dict with Honeybee-Faces grouped by their Construction-Name."""
 
-    face_groups = defaultdict(list)
+    if not _hb_model:
+        return {}
 
+    face_groups = defaultdict(list)
     for hb_room in _hb_model.rooms:
         for hb_face in hb_room.faces:
             hb_face_constr_name = hb_face.properties.energy.construction.display_name
@@ -64,6 +66,9 @@ def _get_hb_face_groups_from_model(_hb_model):
 def _get_all_construction_names(_hb_model):
     # type: (model.Model) -> List[str]
     """Returns a sorted list of all the construction names found in the Honeybee-Model."""
+    if not _hb_model:
+        return []
+
     hb_cont_names = set()
     for hb_room in _hb_model.rooms:
         for hb_face in hb_room.faces:
