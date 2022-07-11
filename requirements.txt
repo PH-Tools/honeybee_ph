@@ -40,7 +40,7 @@ Rhino-stubs>=7.7.21140
 six==1.16.0
 snowballstemmer==2.2.0
 toml==0.10.2
-tqdm==4.62.3
+tqdm==4.64.0
 typing-extensions==4.2.0
 urllib3==1.26.9
 webencodings==0.5.1
