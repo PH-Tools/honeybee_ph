@@ -10,9 +10,9 @@ except ImportError:
 
 from collections import defaultdict
 
+from honeybee_ph import space
 from honeybee_ph_rhino import gh_io
 from honeybee_ph_rhino.make_spaces import make_floor_segment
-from honeybee_ph import space
 
 
 def gather_neighbor_group_ids(IGH, _flr_segments):

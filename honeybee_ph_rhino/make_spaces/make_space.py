@@ -5,11 +5,11 @@
 
 from collections import namedtuple
 
-from honeybee_ph import space
 from honeybee import room
-from honeybee_ph_rhino import gh_io
 from ladybug_rhino.fromgeometry import from_point3d
 from ladybug_rhino.togeometry import to_point3d
+
+from honeybee_ph import space
 
 
 SpaceData = namedtuple('SpaceData', ['space', 'reference_points'])
@@ -93,6 +93,14 @@ def add_spaces_to_honeybee_rooms(_spaces, _hb_rooms, _inherit_names=False):
                     room.properties.ph.merge_new_space(sp)
                 else:
                     room.properties.ph.add_new_space(sp)
+
+                # -- Add in any detailed PH-Style vent flow rates if they exist
+                if sp.properties.ph.has_ventilation_flow_rates:
+                    sp_flow_rate = sp.properties.ph.honeybee_flow_rate
+
+                    existing_room_flow = room.properties.energy.ventilation.flow_per_zone
+                    new_room_flow = sp_flow_rate + existing_room_flow
+                    room.properties.energy.abolute_ventilation(new_room_flow)
 
                 # -- to speed up further checks
                 del spaces_dict[space_data_id]

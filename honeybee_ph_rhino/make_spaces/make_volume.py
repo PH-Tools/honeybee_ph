@@ -5,7 +5,6 @@
 
 from honeybee_ph import space
 from honeybee_ph_rhino import gh_io
-from ladybug_geometry.geometry3d.face import Face3D
 
 
 def volumes_from_floors(IGH, _floors, _heights):

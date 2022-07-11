@@ -2,7 +2,7 @@
 # -*- Python Version: 2.7 -*-
 
 try:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
 except ImportError:
     pass  # Python 2.7
 
@@ -96,6 +96,13 @@ class SpacePhProperties(object):
     def has_ventilation_flow_rates(self):
         # type: () -> bool
         return any([self._v_sup, self._v_eta, self._v_tran])
+
+    @property
+    def honeybee_flow_rate(self):
+        # type: () -> Optional[float]
+        if not self.has_ventilation_flow_rates:
+            return None
+        return max([self._v_sup or 0, self._v_eta or 0, self._v_tran or 0])
 
     def duplicate(self, new_host=None):
         # type: (Any) -> SpacePhProperties

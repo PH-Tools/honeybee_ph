@@ -31,8 +31,23 @@ class SpacePhVentFlowRates(object):
         self.v_eta = _v_eta
         self.v_tran = _v_tran
 
+    def __add__(self, other):
+        # type: (SpacePhVentFlowRates, SpacePhVentFlowRates) -> SpacePhVentFlowRates
+        obj = SpacePhVentFlowRates(0.0, 0.0, 0.0)
+        obj.v_sup = self.v_sup + other.v_sup
+        obj.v_eta = self.v_eta + other.v_eta
+        obj.v_tran = self.v_tran + other.v_tran
+        return obj
+
+    def __radd__(self, other):
+        # type: (SpacePhVentFlowRates, SpacePhVentFlowRates) -> SpacePhVentFlowRates
+        if isinstance(other, int):
+            return self
+        else:
+            return self + other
+
     def __str__(self):
-        return '{}(v_sup={:.2f}, v_eta={:.2f}, v_tran={:.2f})'.format(
+        return '{}(v_sup={:.4f} m3/s, v_eta={:.4f} m3/s, v_tran={:.4f} m3/s)'.format(
             self.__class__.__name__, self.v_sup, self.v_eta, self.v_tran)
 
     def __repr__(self):

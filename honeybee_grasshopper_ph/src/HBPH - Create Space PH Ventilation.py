@@ -1,22 +1,22 @@
 #
 # Honeybee-PH: A Plugin for adding Passive-House data to LadybugTools Honeybee-Energy Models
-# 
+#
 # This component is part of the PH-Tools toolkit <https://github.com/PH-Tools>.
-# 
-# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com> 
-# Honeybee-PH is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published 
-# by the Free Software Foundation; either version 3 of the License, 
-# or (at your option) any later version. 
-# 
+#
+# Copyright (c) 2022, PH-Tools and bldgtyp, llc <phtools@bldgtyp.com>
+# Honeybee-PH is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3 of the License,
+# or (at your option) any later version.
+#
 # Honeybee-PH is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # For a copy of the GNU General Public License
 # see <https://github.com/PH-Tools/honeybee_ph/blob/main/LICENSE>.
-# 
+#
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
@@ -41,7 +41,7 @@ import rhinoscriptsyntax as rs
 import ghpythonlib.components as ghc
 import Grasshopper as gh
 
-from honeybee_ph_rhino.gh_compo_io import gh_io_spc_vent
+from honeybee_ph_rhino.gh_compo_io import ghio_spc_vent
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
@@ -50,12 +50,12 @@ ghenv.Component.Name = "HBPH - Create Space PH Ventilation"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_11_2022')
 if DEV:
-    reload(gh_io_spc_vent)
+    reload(ghio_spc_vent)
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
-IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
+IGH = honeybee_ph_rhino.gh_io.IGH(ghdoc, ghenv, sc, rh, rs, ghc, gh)
 
 # ------------------------------------------------------------------------------
-ghio_obj = gh_io_spc_vent.ISpacePhVentFlows(IGH, _v_sup, _v_eta, _v_tran)
+ghio_obj = ghio_spc_vent.ISpacePhVentFlows(IGH, _v_sup, _v_eta, _v_tran)
 space_ph_vent_ = ghio_obj.create_output()

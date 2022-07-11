@@ -8,11 +8,11 @@ try:
 except ImportError:
     pass  # IronPython
 
-
-from ladybug_geometry.geometry3d import face, pointvector
 from ladybug_rhino.fromgeometry import from_point3d, from_face3d
-from honeybee_ph_rhino import gh_io
+from ladybug_geometry.geometry3d import face, pointvector
+
 from honeybee_ph import space
+from honeybee_ph_rhino import gh_io
 
 
 def calc_reference_point(IGH, _face3D):
