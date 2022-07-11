@@ -55,15 +55,15 @@ def color_by_TFA(_flr_seg, _space):
     """Return a System.Drawing.Color based on the TFA Weighting factor of the SpaceFloorSegment."""
 
     if _flr_seg.weighting_factor > 0.6:
-        return Color.FromArgb(255, 255, 255, 17)
+        return Color.FromArgb(255, 252, 252, 139)  # Yellow
     elif 0.5 < _flr_seg.weighting_factor <= 0.6:
-        return Color.FromArgb(255, 189, 103, 107)
+        return Color.FromArgb(255, 227, 201, 168)  # Brown
     elif 0.3 < _flr_seg.weighting_factor <= 0.5:
-        return Color.FromArgb(255, 154, 205, 50)
+        return Color.FromArgb(255, 213, 247, 143)  # Green
     elif 0.0 < _flr_seg.weighting_factor <= 0.3:
-        return Color.FromArgb(255, 0, 255, 127)
+        return Color.FromArgb(255, 173, 247, 223)  # Blue
     else:
-        return Color.FromArgb(255, 238, 130, 238)
+        return Color.FromArgb(255, 252, 182, 252)  # Purple
 
 
 def color_by_Vent(_flr_seg, _space):
