@@ -64,6 +64,12 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
+    "HBPH - Create Space PH Ventilation": {
+        "NickName": "Create Space PH Vent",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
     "HBPH - Vent. Schedule": {
         "NickName": "PH Vent. Sched.",
         "Message": RELEASE_VERSION,

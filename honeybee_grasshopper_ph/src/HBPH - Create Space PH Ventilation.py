@@ -20,27 +20,19 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
-Use to get any user-defined Floor-Segment geometry and data from the Rhino scene.
-This is only useful if you  have assigned detailed space numbers and names to the 
-floor-segment geometry back in the Rhino scene. This component will help gather and 
-organize this data so that it can be passed along to the 'Create Spaces' component.
+Create a List or Tree of new SpacePhVentFlowRates objects which can be used to 
+set the PH-Style ventilation flow rates for a Space.
 -
 EM June 11, 2022
     Args:
-        _group_by_name: (bool): If True, will attempt to group the Floor Segments 
-            found based on their number/name
+        _v_sup: (float): A list or Tree of Supply-air ventilation flow rates.
         
-        _floor_seg_geom: (List[Geometry]): The input Rhino Geometry to try and get
-            the data for.
-    
+        _v_eta: (float): A list or Tree of Extract-air ventilation flow rates.
+        
+        _v_tran: (float): A list or Tree of Transfer-air ventilation flow rates.
+
     Returns:
-        flr_seg_srfcs_: (Tree[Geometry]) The geometry found. 
-        
-        weighting_factors: (Tree[float]) Any TFA/iCFA weighting factors found.
-        
-        flr_seg_name_: (Tree[str]) Any space names found on the geometry.
-        
-        flr_seg_numbers_: (Tree[str]) Any space numbers found on the geometry.
+        space_ph_vent_: (Tree[SpacePhVentFlowRates]) A DataTree of the Space Flow rate objects.
 """
 
 import scriptcontext as sc
@@ -49,23 +41,21 @@ import rhinoscriptsyntax as rs
 import ghpythonlib.components as ghc
 import Grasshopper as gh
 
-from honeybee_ph_rhino.gh_compo_io import ghio_get_flr_seg_data
+from honeybee_ph_rhino.gh_compo_io import gh_io_spc_vent
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
-ghenv.Component.Name = "HBPH - Get FloorSegment Data"
+ghenv.Component.Name = "HBPH - Create Space PH Ventilation"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_11_2022')
 if DEV:
-    reload(ghio_get_flr_seg_data)
-
+    reload(gh_io_spc_vent)
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
 IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
-
 # ------------------------------------------------------------------------------
-ghio_obj = ghio_get_flr_seg_data.IGetFloorSegData(IGH, _group_by_name, _floor_seg_geom)
-flr_seg_srfcs_, weighting_factors_, flr_seg_names_, flr_seg_numbers_ = ghio_obj.create_output()
+ghio_obj = gh_io_spc_vent.ISpacePhVentFlows(IGH, _v_sup, _v_eta, _v_tran)
+space_ph_vent_ = ghio_obj.create_output()
