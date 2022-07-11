@@ -66,7 +66,7 @@ ghenv.Component.Name = "HBPH - Add Spaces"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_11_2022')
 if DEV:
-    #reload(make_space)
+    reload(make_space)
     pass
 
 # ------------------------------------------------------------------------------

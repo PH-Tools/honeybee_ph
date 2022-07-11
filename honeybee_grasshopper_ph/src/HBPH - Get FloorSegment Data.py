@@ -34,13 +34,15 @@ EM June 11, 2022
             the data for.
     
     Returns:
-        flr_seg_srfcs_: (Tree[Geometry]) The geometry found. 
+        srfcs_: (Tree[Geometry]) The geometry found. 
         
         weighting_factors: (Tree[float]) Any TFA/iCFA weighting factors found.
         
-        flr_seg_name_: (Tree[str]) Any space names found on the geometry.
+        name_: (Tree[str]) Any space names found on the geometry.
         
-        flr_seg_numbers_: (Tree[str]) Any space numbers found on the geometry.
+        numbers_: (Tree[str]) Any space numbers found on the geometry.
+        
+        vent_rates_: (Tree[]) A Tree of any PH-Style ventilaion flow-rates found.
 """
 
 import scriptcontext as sc
@@ -50,6 +52,7 @@ import ghpythonlib.components as ghc
 import Grasshopper as gh
 
 from honeybee_ph_rhino.gh_compo_io import ghio_get_flr_seg_data
+from honeybee_ph_rhino import gh_io
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
@@ -63,9 +66,9 @@ if DEV:
 
 # ------------------------------------------------------------------------------
 # -- GH Interface
-IGH = honeybee_ph_rhino.gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
+IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 
 # ------------------------------------------------------------------------------
 ghio_obj = ghio_get_flr_seg_data.IGetFloorSegData(IGH, _group_by_name, _floor_seg_geom)
-flr_seg_srfcs_, weighting_factors_, flr_seg_names_, flr_seg_numbers_ = ghio_obj.create_output()
+srfcs_, weighting_factors_, names_, numbers_, vent_rates_ = ghio_obj.create_output()
