@@ -9,7 +9,7 @@ except ImportError:
     pass  # Python 2.7
 
 try:
-    from System import Object, Array
+    from System import Object
     from System.Drawing import Color
 except ImportError:
     pass  # Outside .NET
@@ -50,8 +50,8 @@ class ClippingPlaneLocation(object):
 
 # -----------------------------------------------------------------------------
 # -- Styles
-def color_by_TFA(_flr_seg):
-    # type: (space.SpaceFloorSegment) -> Color
+def color_by_TFA(_flr_seg, _space):
+    # type: (space.SpaceFloorSegment, space.Space) -> Color
     """Return a System.Drawing.Color based on the TFA Weighting factor of the SpaceFloorSegment."""
 
     if _flr_seg.weighting_factor > 0.6:
@@ -66,20 +66,18 @@ def color_by_TFA(_flr_seg):
         return Color.FromArgb(255, 238, 130, 238)
 
 
-def color_by_Vent(_flr_seg):
-    # type: (space.SpaceFloorSegment) -> Color
+def color_by_Vent(_flr_seg, _space):
+    # type: (space.SpaceFloorSegment, space.Space) -> Color
     """Return a System.Drawing.Color based on the Ventilation Air Flow Rate of the Space"""
 
-    if _flr_seg.weighting_factor > 0.6:
-        return Color.FromArgb(255, 255, 255, 17)
-    elif 0.5 < _flr_seg.weighting_factor <= 0.6:
-        return Color.FromArgb(255, 189, 103, 107)
-    elif 0.3 < _flr_seg.weighting_factor <= 0.5:
-        return Color.FromArgb(255, 154, 205, 50)
-    elif 0.0 < _flr_seg.weighting_factor <= 0.3:
-        return Color.FromArgb(255, 0, 255, 127)
+    if _space.properties.ph._v_sup > 0 and _space.properties.ph._v_eta > 0:
+        return Color.FromArgb(255, 234, 192, 240)  # Balanced
+    elif _space.properties.ph._v_sup > 0:
+        return Color.FromArgb(255, 183, 227, 238)  # Supply Only
+    elif _space.properties.ph._v_eta > 0:
+        return Color.FromArgb(255, 246, 170, 154)  # Extract Only
     else:
-        return Color.FromArgb(255, 238, 130, 238)
+        return Color.FromArgb(255, 235, 235, 235)  # No Vent Flow
 
 
 def text_by_TFA(_space):
@@ -104,9 +102,9 @@ def text_by_Vent(_space):
         'ZONE: {}'.format(_space.host.display_name),
         'NAME: {}'.format(_space.full_name),
         'GROSS AREA: {:.01f} m2'.format(_space.floor_area),
-        'SUP: {:.01f} m3/hr'.format(0.0),
-        'ETA: {:.01f} m3/hr'.format(0.0),
-        'TRAN: {:.01f} m3/hr'.format(0.0),
+        'SUP: {:.0f} m3/hr'.format(_space.properties.ph._v_sup * 3600),
+        'ETA: {:.0f} m3/hr'.format(_space.properties.ph._v_eta * 3600),
+        'TRAN: {:.0f} m3/hr'.format(_space.properties.ph._v_tran * 3600),
     ]
 
     return "\n".join(txt)
@@ -202,7 +200,7 @@ def _get_flr_seg_data(_IGH, _get_color, _space):
     for volume in _space.volumes:
         for flr_seg in volume.floor.floor_segments:
             # -- Object Attributes
-            rh_attr = _build_rh_attrs(_IGH, _get_color(flr_seg))
+            rh_attr = _build_rh_attrs(_IGH, _get_color(flr_seg, _space))
 
             # -- Geometry as Mesh
             brp = from_face3d(flr_seg.geometry)
