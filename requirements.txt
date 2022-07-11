@@ -1,6 +1,6 @@
 alabaster==0.7.12
 attrs==21.2.0
-Babel==2.9.1
+Babel==2.10.3
 bleach==4.1.0
 certifi==2022.5.18.1
 charset-normalizer==2.0.7
