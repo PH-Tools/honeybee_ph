@@ -37,13 +37,13 @@ cause all sorts of unexpected results sometimes.
 -
 Set the component '_export_pdfs' to 'True' to run the exporter.
 -
-EM July 10, 2022
+EM July 12, 2022
     Args:
         _save_folder: (str) The name of the target folder to save the PDF files to.
         
         _file_names: (Tree[str]) A Tree where each branch contains the name of the PDF file to export.
         
-        _layout_name: (str) The name of the Rhino-Layout to use when exporting the PDF report.
+        _layout_names: (Tree[str]) A Tree of namea of the Rhino-Layout to use when exporting the PDF report.
         
         _layers_on: (List[str]) A list of the Layer names to leave 'on' (visible) when exporting
             to PDF. When the exporter is run, all layers EXCEPT the ones listed here will be turned
@@ -92,23 +92,25 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Export PDFs"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_10_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_12_2022')
 if DEV:
     reload(to_pdf)
 
-        
+
 # ------------------------------------------------------------------------------
 # -- GH Interface
 IGH = gh_io.IGH( ghdoc, ghenv, sc, rh, rs, ghc, gh )
 
 # ------------------------------------------------------------------------------
 file_paths_ = to_pdf.gen_file_paths(_save_folder, _file_names, _geom.BranchCount)
+layout_names_ = to_pdf.gen_layout_names(_layout_names, _geom.BranchCount) 
 
-if file_paths_ and _geom and _layout_name and _export_pdfs:
+
+if file_paths_ and _geom and layout_names_ and _export_pdfs:
     to_pdf.export_pdfs(
                 IGH,
                 file_paths_,
-                _layout_name,
+                layout_names_,
                 _layers_on,
                 _clipping_plane_locations,
                 _geom,
@@ -117,4 +119,3 @@ if file_paths_ and _geom and _layout_name and _export_pdfs:
                 _model_annotations,
                 _raster,
                 )
-    

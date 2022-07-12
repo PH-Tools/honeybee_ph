@@ -118,6 +118,32 @@ def gen_file_paths(_save_folder, _file_names, _target_length):
     return file_paths
 
 
+def gen_layout_names(_layout_names, _target_length):
+    layout_names = []
+
+    if not _layout_names:
+        return layout_names
+
+    if _layout_names.BranchCount == 0:
+        return layout_names
+
+    if _target_length == 0:
+        # layout-name list len should match the target (geometry) len.
+        return layout_names
+
+    # -- Create the LayoutNames list
+    for i in range(_target_length):
+        try:
+            layout_names.append(_layout_names.Branch(i)[0])
+        except:
+            try:
+                layout_names.append(_layout_names.Branch(0)[0])
+            except:
+                raise Exception("Error: Shape of _layout_names does not match geometry?")
+
+    return layout_names
+
+
 def get_active_view_name(_IGH):
     return _IGH.scriptcontext.doc.Views.ActiveView.ActiveViewport.Name
 
@@ -150,6 +176,13 @@ def set_active_view_by_name(_IGH, _view_name):
         else:
             msg = "\"{0}\" is not a valid view name?".format(_view_name)
             _IGH.error(msg)
+
+
+def get_active_layer_name(_IGH):
+    # type (gh_io.IGH) -> str
+    """Return the name of the current active layer"""
+    with _IGH.context_rh_doc():
+        return _IGH.scriptcontext.doc.Layers.CurrentLayer.FullPath
 
 
 def set_active_layer_by_name(_IGH, _layer_name):
@@ -214,8 +247,17 @@ def find_layers_with_detail_views(_IGH):
     return list(set(layer_names_))
 
 
+def get_current_layer_visibilities(_IGH):
+    # type: (gh_io.IGH) -> List[bool]
+    """Return a list of current Layer visibilities"""
+    with _IGH.context_rh_doc():
+        return [_IGH.rhinoscriptsyntax.LayerVisible(layer)
+                for layer
+                in _IGH.rhinoscriptsyntax.LayerNames()]
+
+
 def turn_off_all_layers(_IGH, _except_layers):
-    # type: (gh_io.IGH, List[str]) -> List[bool]
+    # type: (gh_io.IGH, List[str]) -> None
     """Turn all Layer Visibilities 'Off' except for the specified layers. Returns a list
         of the starting layer states before changing as a bool (True=On, False=Off).
 
@@ -226,16 +268,10 @@ def turn_off_all_layers(_IGH, _except_layers):
 
     Returns:
     --------
-        * (List[bool]): List of the starting layer states before changing (True=On, False=Off)
+        * (None)
     """
 
     with _IGH.context_rh_doc():
-
-        # Record the starting layer visibility state for resetting when done
-        layer_visibilities = [_IGH.rhinoscriptsyntax.LayerVisible(layer)
-                              for layer
-                              in _IGH.rhinoscriptsyntax.LayerNames()]
-
         # Set layers 'off' if they aren't on the list to stay on
         for layer_name in _IGH.rhinoscriptsyntax.LayerNames():
             # if list(layer.Split(":"))[-1] not in allLayersOn:
@@ -246,8 +282,6 @@ def turn_off_all_layers(_IGH, _except_layers):
 
         _IGH.Rhino.RhinoDoc.ActiveDoc.Views.RedrawEnabled = True
         _IGH.Rhino.RhinoDoc.ActiveDoc.Views.Redraw()
-
-    return layer_visibilities
 
 
 def reset_all_layer_visibility(_IGH, _layer_vis_settings):
@@ -622,6 +656,7 @@ def export_single_pdf(_IGH, _file_path, _dpi=300, _raster=True):
         * _IGH (gh_io.IGH): Grasshopper Interface
         * _file_path (str): The full path for the PDF file to create
         * _dpi (float): default=300
+        * _raster (bool): Use raster output mode. default=False.
 
     Returns:
     --------
@@ -670,8 +705,10 @@ def add_clipping_plane(_IGH, _cp_location, _cp_layer, _dtl_view_objs):
 
     Arguments:
     ----------
-        * (gh_io.IGH):
-        * (ClippingPlaneLocation): 
+        * _IGH (gh_io.IGH):
+        * _cp_location (ClippingPlaneLocation): The ClippingPlaneLocation object with an origin and normal.
+        * _cp_layer(str): The name of the Clipping Plane layer to bake to.
+        * _dtl_view_objs (List[DetailViewObject]): A list of DetailViewObjects to apply the ClippingPlane to.
 
     Returns:
     --------
@@ -702,8 +739,8 @@ def add_clipping_plane(_IGH, _cp_location, _cp_layer, _dtl_view_objs):
     return cp_id
 
 
-def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _geom_attrs, _labels, _annotations, _raster):
-    # type: (gh_io.IGH, List[str], str, List[str], DataTree[ClippingPlaneLocation],DataTree[Guid], DataTree[ObjectAttributes], DataTree[TextAnnotation], DataTree[TextAnnotation], bool) -> None
+def export_pdfs(_IGH, _file_paths, _layout_names, _layers_on, _cp_loc, _geom, _geom_attrs, _labels, _annotations, _raster):
+    # type: (gh_io.IGH, List[str], List[str], List[str], DataTree[ClippingPlaneLocation],DataTree[Guid], DataTree[ObjectAttributes], DataTree[TextAnnotation], DataTree[TextAnnotation], bool) -> None
     """
 
     Arguments:
@@ -720,25 +757,25 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _ge
     --------
         * None
     """
-
     # -- Sort out the layers and views and transforms
     starting_active_view_name = get_active_view_name(_IGH)
-    set_active_view_by_name(_IGH, _layout_name)
-    dtl_view_objs = get_detail_views_for_active_view(_IGH)
-    dtl_view_transforms = [vw.WorldToPageTransform for vw in dtl_view_objs]
-    detail_view_layers = find_layers_with_detail_views(_IGH)
-
-    try:
-        set_active_layer_by_name(_IGH, detail_view_layers[0])
-    except:
-        raise Exception("Error: No Detail view found?")
-
-    # add all layers with a detail views to the 'on' list
-    _layers_on.extend(detail_view_layers)
-    starting_layer_visibilities = turn_off_all_layers(_IGH, _except_layers=_layers_on)
+    starting_active_layer_name = get_active_layer_name(_IGH)
+    starting_layer_visibilities = get_current_layer_visibilities(_IGH)
 
     # -- Bake objects
     for branch_num, geom_list in enumerate(_geom.Branches):
+
+        # -- Setup the right layers
+        set_active_view_by_name(_IGH, _layout_names[branch_num])
+        layers_with_detail_views = find_layers_with_detail_views(_IGH)
+        layers_on = _layers_on + layers_with_detail_views
+        turn_off_all_layers(_IGH, _except_layers=layers_on)
+
+        # -- Find the detail-view objects
+        dtl_view_objs = get_detail_views_for_active_view(_IGH)
+        dtl_view_transforms = [vw.WorldToPageTransform for vw in dtl_view_objs]
+
+        # -- Create new temporary output layers
         geom_bake_layer = create_bake_layer(_IGH)  # Geometry
         label_bake_layer = create_bake_layer(_IGH)  # Text Labels
         cp_layer = create_bake_layer(_IGH)  # Clipping Planes
@@ -760,7 +797,7 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _ge
             pass
 
         # -- Bake Titleblock Labels to the specified layer
-        set_active_view_by_name(_IGH, _layout_name)
+        set_active_view_by_name(_IGH, _layout_names[branch_num])
         try:
             for label in _labels.Branch(branch_num):
                 bake_annotation_object(_IGH, label, label_bake_layer)
@@ -773,7 +810,7 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _ge
             if len(dtl_view_objs) != 1:
                 msg = "Warning. There are {} Detail Views found on '{}'. Text annotations"\
                     " may not work right when multiple Detail Views are present on a single"\
-                    " Layout page.".format(len(dtl_view_objs), _layout_name)
+                    " Layout page.".format(len(dtl_view_objs), _layout_names[branch_num])
                 _IGH.warning(msg)
 
             # -- Bake the Annotations to the Rhino Scene
@@ -796,7 +833,7 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _ge
                 text_bounding_boxes.append(text_bounding_box)
 
         # # -- Export PDF file
-        set_active_view_by_name(_IGH, _layout_name)
+        set_active_view_by_name(_IGH, _layout_names[branch_num])
         export_single_pdf(_IGH, _file_paths[branch_num], _raster=_raster)
 
         # -- Cleanup baked items
@@ -807,3 +844,4 @@ def export_pdfs(_IGH, _file_paths, _layout_name, _layers_on, _cp_loc, _geom, _ge
     # -- Cleanup layer vis and active view
     reset_all_layer_visibility(_IGH, starting_layer_visibilities)
     set_active_view_by_name(_IGH, starting_active_view_name)
+    set_active_layer_by_name(_IGH, starting_active_layer_name)
