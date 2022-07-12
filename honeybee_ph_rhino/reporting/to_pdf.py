@@ -495,12 +495,12 @@ def bake_geometry_object(_IGH, _geom_obj, _attr_obj, _layer_name):
     geometry = doc_object.Geometry
 
     with _IGH.context_rh_doc():
-        target_layer = _IGH.Rhino.RhinoDoc.ActiveDoc.Layers  # layer table
+        layer_table = _IGH.Rhino.RhinoDoc.ActiveDoc.Layers  # layer table
 
         if _IGH.rhinoscriptsyntax.IsMesh(geometry):
             # Find the target layer index
             parentLayerIndex = _IGH.Rhino.DocObjects.Tables.LayerTable.FindByFullPath(
-                target_layer, _layer_name, True)
+                layer_table, _layer_name, True)
 
             # Create a hatch from the mesh
             guids = []
