@@ -218,7 +218,7 @@ def _get_flr_seg_data(_IGH, _get_color, _space):
     return flr_seg_geom_, flr_sef_attrs_
 
 
-def _get_clipping_plane_locations(_IGH, _room_group, _offset_up=0.5, _offset_down=0.5):
+def _get_clipping_plane_locations(_IGH, _room_group, _offset_up=0.25, _offset_down=0.25):
     # type: (gh_io.IGH, List[room.Room], float, float) -> Tuple[ClippingPlaneLocation, ClippingPlaneLocation]
     """Return a pair of ClippingPlaneLocation objects. One pointing 'up' and the other 'down'.
 
@@ -231,15 +231,16 @@ def _get_clipping_plane_locations(_IGH, _room_group, _offset_up=0.5, _offset_dow
                  for f in rm.faces if (
                      isinstance(f.type, facetype.Floor)
                  )]
-    flr_level_z = min(hb_face.min.z for hb_face in flr_faces)
+    flr_level_min_z = min(hb_face.min.z for hb_face in flr_faces)
+    flr_level_max_z = max(hb_face.max.z for hb_face in flr_faces)
 
     # --Create the clipping plane location objects up/down from that level.
     upper_clipping_plane = ClippingPlaneLocation(
-        _IGH.Rhino.Geometry.Point3d(0, 0, flr_level_z+_offset_up),
+        _IGH.Rhino.Geometry.Point3d(0, 0, flr_level_max_z+_offset_up),
         _IGH.Rhino.Geometry.Vector3d(0, 0, -1)
     )
     lower_clipping_plane = ClippingPlaneLocation(
-        _IGH.Rhino.Geometry.Point3d(0, 0, flr_level_z-_offset_down),
+        _IGH.Rhino.Geometry.Point3d(0, 0, flr_level_min_z-_offset_down),
         _IGH.Rhino.Geometry.Vector3d(0, 0, 1)
     )
 
