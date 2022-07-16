@@ -98,13 +98,27 @@ def text_by_TFA(_space):
 def text_by_Vent(_space):
     """Return the space data in a formatted block."""
 
+    # -- get the data cleanly, in case None
+    try:
+        v_sup = "{:.0f}".format(_space.properties.ph._v_sup * 3600)
+    except:
+        v_sup = "-"
+    try:
+        v_eta = "{:.0f}".format(_space.properties.ph._v_eta * 3600)
+    except:
+        v_eta = "-"
+    try:
+        v_tran = "{:.0f}".format(_space.properties.ph._v_tran * 3600)
+    except:
+        v_tran = "-"
+
     txt = [
         'ZONE: {}'.format(_space.host.display_name),
         'NAME: {}'.format(_space.full_name),
         'GROSS AREA: {:.01f} m2'.format(_space.floor_area),
-        'SUP: {:.0f} m3/hr'.format(_space.properties.ph._v_sup * 3600),
-        'ETA: {:.0f} m3/hr'.format(_space.properties.ph._v_eta * 3600),
-        'TRAN: {:.0f} m3/hr'.format(_space.properties.ph._v_tran * 3600),
+        'SUP: {} m3/hr'.format(v_sup),
+        'ETA: {} m3/hr'.format(v_eta),
+        'TRAN: {} m3/hr'.format(v_tran),
     ]
 
     return "\n".join(txt)
