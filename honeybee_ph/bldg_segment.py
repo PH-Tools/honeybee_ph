@@ -141,6 +141,7 @@ class BldgSegment(_base._Base):
         # type () -> BldgSegment
         new_obj = BldgSegment()
 
+        new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.num_floor_levels = self.num_floor_levels
         new_obj.num_dwelling_units = self.num_dwelling_units

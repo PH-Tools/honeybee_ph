@@ -79,8 +79,12 @@ class RoomPhProperties(object):
 
         new_prop = cls(host)
         new_prop.id_num = _dict.get('id_num', 0)
-        new_prop.ph_bldg_segment = BldgSegment.from_dict(
-            _dict.get('ph_bldg_segment', {}))
+
+        if 'ph_bldg_segment' in _dict.keys():
+            new_prop.ph_bldg_segment = BldgSegment.from_dict(
+                _dict.get('ph_bldg_segment', {}))
+        else:
+            new_prop.ph_bldg_segment = None
 
         for sp in (space.Space.from_dict(d, host) for d in _dict.get('spaces', [])):
             new_prop.add_new_space(sp)
