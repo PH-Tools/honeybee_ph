@@ -72,9 +72,9 @@ ghenv.Component.Name = "HBPH - Create Thermal Bridges"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_29_2022')
 if DEV:
-    reload(thermal_bridge)
-    reload(ghio_validators)
-    reload(ghio_create_tb)
+    #reload(thermal_bridge)
+    #reload(ghio_validators)
+    #reload(ghio_create_tb)
     #reload(input_tools)
     reload(preview)
 
