@@ -35,7 +35,7 @@ NOTE:
     be sure to save your PHPP file with the new data to the appropriate location on 
     your computer.
 -
-EM May 22, 2022
+EM August 1, 2022
     Args:
         _hbjson_file: (str) The full file path to the HBJSON you would like to write 
             out to PHPP.
@@ -64,7 +64,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Write to PHPP"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_22_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='AUG_1_2022')
 if DEV:
     reload(PHX.run)
 
@@ -74,18 +74,10 @@ if os.name != 'nt':
         "you are running '{}'?".format(os.name)
     ghenv.Component.AddRuntimeMessage(ghK.GH_RuntimeMessageLevel.Error, msg)
 
-
 #-------------------------------------------------------------------------------
-shape_file = os.path.join(
-    honeybee.config.folders.python_package_path,
-    "PHX",
-    "to_phpp",
-    "phpp_localization",
-    "{}.json".format(_phpp_version_ or "ENSI")
-)
-
 if _write and _hbjson_file:
-    PHX.run.write_hbjson_to_phpp(_hbjson_file, shape_file)
+    hb_python_site_packages = honeybee.config.folders.python_package_path
+    PHX.run.write_hbjson_to_phpp(_hbjson_file, hb_python_site_packages)
 else:
     msg = "Open a valid PHPP file in Excel, and set _write to True."
     ghenv.Component.AddRuntimeMessage(ghK.GH_RuntimeMessageLevel.Warning, msg)
