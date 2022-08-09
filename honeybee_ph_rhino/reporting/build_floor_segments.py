@@ -303,8 +303,8 @@ def _build_annotation_leader_marker(_IGH, _cp, _radius=0.0075):
 
 # -----------------------------------------------------------------------------
 
-def create_flr_segment_data(_IGH, _hb_model, _get_color, _create_annotation_text, _units):
-    # type: (gh_io.IGH, model.Model, Callable, Callable, str) -> Tuple
+def create_flr_segment_data(_IGH, _hb_model, _get_color, _create_annotation_text, _units, _flr_anno_txt_size):
+    # type: (gh_io.IGH, model.Model, Callable, Callable, str, float) -> Tuple
     """Create the SpaceFloorSegment geometry, attributes and text-annotations for a Floor Plan view.
 
     Arguments:
@@ -314,6 +314,7 @@ def create_flr_segment_data(_IGH, _hb_model, _get_color, _create_annotation_text
         * _get_color (Callable): The function which returns the floor-segment color.
         * _create_annotation_text (Callable): The function which returns the annotation text.
         * _units (str): IP or SI units
+        * _flr_anno_txt_size (float): The text annotation size
 
     Returns:
     --------
@@ -365,12 +366,12 @@ def create_flr_segment_data(_IGH, _hb_model, _get_color, _create_annotation_text
             # -- Add the text Annotation object
             txt_annotation = TextAnnotation(
                 _text=_create_annotation_text(space),
-                _size=0.02,
+                _size=_flr_anno_txt_size,
                 _location=anno_cp,
                 _format="{}",
                 _justification=4,
                 _mask_draw=True,
-                _mask_offset=0.02,
+                _mask_offset=_flr_anno_txt_size,
                 _mask_draw_frame=True,
             )
             floor_annotations_.Add(txt_annotation, pth(i))

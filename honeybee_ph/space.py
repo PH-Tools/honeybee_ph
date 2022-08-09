@@ -326,7 +326,7 @@ class Space(_base._Base):
     @property
     def reference_points(self):
         # type: () -> list[geometry3d.Point3D]
-        """Returns a list of the Space's Volume reference Points (center)."""
+        """Returns a list of the Space's Volume reference Points (center of the floor segments)."""
         pts = []
         for vol in self.volumes:
             pts += vol.reference_points

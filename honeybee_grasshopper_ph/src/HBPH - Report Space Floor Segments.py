@@ -25,7 +25,7 @@ TFA/iCFA or Fresh-air ventilation data. This component will read through the
 Honeybee-Model and pull out relevant data and prepare it for export using
 the "HBPH - Export PDFs" component.
 -
-EM July 10, 2022
+EM August 9, 2022
     Args:
         _hb_model: (honeybee.model.Model) The honeybee Model to use as the source.
         
@@ -36,6 +36,8 @@ EM July 10, 2022
         _units_: (str) Default=SI. Units type to output. Input either -
             - "SI" (default)
             - "IP"
+            
+        _flr_anno_txt_size: (float) Default=1.0 The size of the annotation text.
 
     Returns:
         floor_names_: A Tree of the floor/story-names found.
@@ -64,7 +66,7 @@ import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Report Space Floor Segments"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUL_10_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='AUG_09_2022')
 if DEV:
     reload(build_floor_segments)
 
@@ -92,7 +94,8 @@ results = build_floor_segments.create_flr_segment_data(
             _hb_model,
             colors,
             text,
-            _units_ or 'SI'
+            _units_ or 'SI',
+            _flr_anno_txt_size or 1.0,
             )
 
 floor_names_, clipping_plane_locations_, floor_geom_, floor_rh_attributes_, floor_annotations_ = results
