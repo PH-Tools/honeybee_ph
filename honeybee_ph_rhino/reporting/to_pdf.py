@@ -809,16 +809,21 @@ def export_pdfs(_IGH, _file_paths, _layout_names, _layers_on, _cp_loc, _geom, _g
             # -- Warning
             if len(dtl_view_objs) != 1:
                 msg = "Warning. There are {} Detail Views found on '{}'. Text annotations"\
-                    " may not work right when multiple Detail Views are present on a single"\
-                    " Layout page.".format(len(dtl_view_objs), _layout_names[branch_num])
+                    " require one viewport, and may not work right when multiple Detail Views "\
+                    " are present on a single Layout page.".format(
+                        len(dtl_view_objs), _layout_names[branch_num])
                 _IGH.warning(msg)
 
             # -- Bake the Annotations to the Rhino Scene
             text_bounding_boxes = []  # the note bounding boxes
             for annotation in _annotations.Branch(branch_num):
                 # -- Transform the Annotation's Location to Paperspace
-                annotation = _transform_annotation(
-                    _IGH, annotation, dtl_view_transforms[0])
+                try:
+                    annotation = _transform_annotation(
+                        _IGH, annotation, dtl_view_transforms[0])
+                except IndexError:
+                    msg = "Error: Cannot find a viewport in the _layers_on set? Check that the Layout Viewport's layer is in the list."
+                    raise Exception(msg)
 
                 # -- Bake text
                 text_bounding_box = bake_annotation_object(
