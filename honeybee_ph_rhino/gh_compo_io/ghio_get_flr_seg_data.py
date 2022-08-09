@@ -158,6 +158,7 @@ class IGetFloorSegData(object):
                 flr_seg_srfcs_.Add(flr_seg.geometry, pth(i))
                 flr_seg_names_.Add(flr_seg.name, pth(i))
                 flr_seg_numbers_.Add(flr_seg.number, pth(i))
+                flr_seg_weighting_factors_.Add(flr_seg.weighting_factor, pth(i))
                 flr_seg_vent_rates_.Add(
                     SpacePhVentFlowRates(
                         flr_seg.vent_rates.v_sup,
