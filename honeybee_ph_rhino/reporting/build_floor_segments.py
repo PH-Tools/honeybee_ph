@@ -240,11 +240,19 @@ def _get_clipping_plane_locations(_IGH, _room_group, _offset_up=0.25, _offset_do
     """
 
     # -- Find the Min Z-location of the Floor-Faces of the Room-Group
-    flr_faces = [f
-                 for rm in _room_group
-                 for f in rm.faces if (
-                     isinstance(f.type, facetype.Floor)
-                 )]
+    # -- use both the space floor-segments and the Honeybee 'Floor' surfaces
+    space_floor_segments = [face
+                            for rm in _room_group
+                            for sp in rm.properties.ph.spaces
+                            for faces in sp.floor_segment_surfaces
+                            for face in faces
+                            ]
+    hb_room_floor_srfcs = [face
+                           for rm in _room_group
+                           for face in rm.faces if (
+                               isinstance(face.type, facetype.Floor)
+                           )]
+    flr_faces = space_floor_segments + hb_room_floor_srfcs
     flr_level_min_z = min(hb_face.min.z for hb_face in flr_faces)
     flr_level_max_z = max(hb_face.max.z for hb_face in flr_faces)
 
