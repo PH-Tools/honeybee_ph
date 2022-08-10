@@ -220,7 +220,7 @@ class SpaceVolume(_base._Base):
 
     @property
     def floor_segment_surfaces(self):
-        # type: () -> List
+        # type: () -> List[Optional[geometry3d.face.Face3D]]
         return [flr_seg.geometry for flr_seg in self.floor.floor_segments]
 
     def duplicate(self):
@@ -339,7 +339,7 @@ class Space(_base._Base):
 
     @property
     def floor_segment_surfaces(self):
-        # type: () -> List
+        # type: () -> List[List[Optional[geometry3d.face.Face3D]]]
         return [v.floor_segment_surfaces for v in self.volumes]
 
     def add_new_volumes(self, _new_volumes):
