@@ -3,6 +3,7 @@
 
 """HB-Aperture Passive House (PH) Properties."""
 
+
 try:
     from typing import Any, Dict
 except ImportError:
@@ -81,6 +82,7 @@ class AperturePhProperties(object):
         self.winter_shading_factor = 0.75
         self.summer_shading_factor = 0.75
         self.shading_dimensions = None  # type: Optional[ShadingDimensions]
+        self.variant_type = '_unnamed_type_'
 
     @property
     def host(self):
@@ -98,6 +100,7 @@ class AperturePhProperties(object):
         if self.shading_dimensions:
             new_properties_obj.shading_dimensions = self.shading_dimensions.duplicate(
                 self)
+        new_properties_obj.variant_type = self.variant_type
 
         return new_properties_obj
 
@@ -117,6 +120,7 @@ class AperturePhProperties(object):
         d["summer_shading_factor"] = self.summer_shading_factor
         if self.shading_dimensions:
             d['shading_dims'] = self.shading_dimensions.to_dict()
+        d["variant_type"] = self.variant_type
 
         return {"ph": d}
 
@@ -131,6 +135,7 @@ class AperturePhProperties(object):
         new_prop.inset_dist = _input_dict["inset_dist"]
         new_prop.winter_shading_factor = _input_dict["winter_shading_factor"]
         new_prop.summer_shading_factor = _input_dict["summer_shading_factor"]
+        new_prop.variant_type = _input_dict["variant_type"]
 
         shading_dim_dict = _input_dict.get("shading_dims", None)
         if shading_dim_dict:
@@ -159,5 +164,6 @@ class AperturePhProperties(object):
         shading_dim_dict = _aperture_prop_dict.get("shading_dims", None)
         if shading_dim_dict:
             self.shading_dimensions = ShadingDimensions.from_dict(shading_dim_dict)
+        self.variant_type = _aperture_prop_dict["variant_type"]
 
         return None
