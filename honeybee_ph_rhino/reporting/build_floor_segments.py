@@ -28,6 +28,7 @@ from ladybug_rhino.fromgeometry import from_face3d, from_point3d
 from honeybee_ph_rhino import gh_io
 from honeybee_ph import space
 from honeybee_ph_rhino.reporting.annotations import TextAnnotation
+from honeybee_ph_utils.units import convert
 
 
 class ClippingPlaneLocation(object):
@@ -80,22 +81,35 @@ def color_by_Vent(_flr_seg, _space):
         return Color.FromArgb(255, 235, 235, 235)  # No Vent Flow
 
 
-def text_by_TFA(_space):
+def text_by_TFA(_space, _units="SI"):
+    # type: (space.Space, str) -> str
     """Return the space data in a formatted block."""
 
-    txt = [
-        'ZONE: {}'.format(_space.host.display_name),
-        'NAME: {}'.format(_space.full_name),
-        'GROSS AREA: {:.01f} m2'.format(_space.floor_area),
-        'WEIGHTED AREA: {:.01f} m2'.format(_space.weighted_floor_area),
-        'Vn50: {:.01f} m3'.format(_space.net_volume),
-        'CLG HEIGHT: {:.01f} m'.format(_space.avg_clear_height),
-    ]
+    if str(_units).upper().strip() == "IP":
+        txt = [
+            'ZONE: {}'.format(_space.host.display_name),
+            'NAME: {}'.format(_space.full_name),
+            'GROSS AREA: {:.01f} ft2'.format(convert(_space.floor_area, 'M2', 'FT2')),
+            'WEIGHTED AREA: {:.01f} ft2'.format(
+                convert(_space.weighted_floor_area, 'M2', 'FT2')),
+            'Vn50: {:.01f} ft3'.format(convert(_space.net_volume, 'M3', 'FT3')),
+            'CLG HEIGHT: {:.01f} ft'.format(convert(_space.avg_clear_height, 'M', 'FT')),
+        ]
+    else:
+        txt = [
+            'ZONE: {}'.format(_space.host.display_name),
+            'NAME: {}'.format(_space.full_name),
+            'GROSS AREA: {:.01f} m2'.format(_space.floor_area),
+            'WEIGHTED AREA: {:.01f} m2'.format(_space.weighted_floor_area),
+            'Vn50: {:.01f} m3'.format(_space.net_volume),
+            'CLG HEIGHT: {:.01f} m'.format(_space.avg_clear_height),
+        ]
 
     return "\n".join(txt)
 
 
-def text_by_Vent(_space):
+def text_by_Vent(_space, _units="SI"):
+    # type: (space.Space, str) -> str
     """Return the space data in a formatted block."""
 
     # -- get the data cleanly, in case None
@@ -112,14 +126,24 @@ def text_by_Vent(_space):
     except:
         v_tran = "-"
 
-    txt = [
-        'ZONE: {}'.format(_space.host.display_name),
-        'NAME: {}'.format(_space.full_name),
-        'GROSS AREA: {:.01f} m2'.format(_space.floor_area),
-        'SUP: {} m3/hr'.format(v_sup),
-        'ETA: {} m3/hr'.format(v_eta),
-        'TRAN: {} m3/hr'.format(v_tran),
-    ]
+    if str(_units).upper().strip() == "IP":
+        txt = [
+            'ZONE: {}'.format(_space.host.display_name),
+            'NAME: {}'.format(_space.full_name),
+            'GROSS AREA: {:.01f} ft2'.format(convert(_space.floor_area, 'M2', 'FT2')),
+            'SUP: {:.0f} cfm'.format(convert(v_sup, 'M3/HR', 'CFM')),
+            'ETA: {:.0f} cfm'.format(convert(v_eta, 'M3/HR', 'CFM')),
+            'TRAN: {:.0f} cfm'.format(convert(v_tran, 'M3/HR', 'CFM')),
+        ]
+    else:
+        txt = [
+            'ZONE: {}'.format(_space.host.display_name),
+            'NAME: {}'.format(_space.full_name),
+            'GROSS AREA: {:.01f} m2'.format(_space.floor_area),
+            'SUP: {} m3/hr'.format(v_sup),
+            'ETA: {} m3/hr'.format(v_eta),
+            'TRAN: {} m3/hr'.format(v_tran),
+        ]
 
     return "\n".join(txt)
 
@@ -373,7 +397,7 @@ def create_flr_segment_data(_IGH, _hb_model, _get_color, _create_annotation_text
 
             # -- Add the text Annotation object
             txt_annotation = TextAnnotation(
-                _text=_create_annotation_text(space),
+                _text=_create_annotation_text(space, _units),
                 _size=_flr_anno_txt_size,
                 _location=anno_cp,
                 _format="{}",
