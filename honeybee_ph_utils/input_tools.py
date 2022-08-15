@@ -9,6 +9,11 @@ try:
 except ImportError:
     pass  # Python 3
 
+try:
+    from scriptcontext import sticky
+except ImportError:
+    pass  # Not in Rhino Grasshopper
+
 import re
 
 
@@ -74,3 +79,30 @@ def clean_get(_list, _i, _default=None):
             return _list[0]
         except IndexError:
             return _default
+
+
+def memoize(func):
+    """Simple caching decorator using function arguments as key.
+
+    Uses the Grasshopper 'sticky' dict to store values.
+
+    https://book.pythontips.com/en/latest/function_caching.html
+
+    Usage:
+    >>> @memoize
+    >>> def fibonacci(n):
+    >>>     if n < 2: return n
+    >>>    return fibonacci(n - 1) + fibonacci(n - 2)
+    >>> 
+    >>> fibonacci(25)
+    """
+
+    def wrapper(*args, **kwargs):
+        try:
+            return sticky[args]
+        except KeyError:
+            rv = func(*args, **kwargs)
+            sticky[args] = rv
+            return rv
+
+    return wrapper

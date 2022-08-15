@@ -39,6 +39,9 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import honeybee_radiance:\n\t{}'.format(e))
 
+
+from honeybee_ph_utils.input_tools import memoize
+
 # -----------------------------------------------------------------------------
 # constants for converting RGB values output by gendaymtx to broadband radiation
 PATCHES_PER_ROW = {
@@ -51,6 +54,7 @@ PATCH_ROW_COEFF = {
 }
 
 
+@memoize
 def create_analysis_period_hoys(_period):
     # type: (Tuple[int, int]) -> Tuple
     """Return a new Ladybug Analysis Period HOYS."""
@@ -118,6 +122,7 @@ def parse_mtx_data(data_str, wea_duration, sky_density=1):
     return broadband_irr
 
 
+@memoize
 def gen_matrix(_epw_file, _period, _north):
     # type: (epw.EPW, Tuple[int, int], Any) -> Any
 
