@@ -4,7 +4,7 @@
 """PH-Properties classes for SHWSystem (System / Equipment) objects."""
 
 try:
-    from typing import Any, ValuesView
+    from typing import Any, ValuesView, Dict
 except:
     pass  # IronPython
 
@@ -25,12 +25,14 @@ class SHWSystemPhProperties(object):
         self._host = _host
         self.id_num = 0
 
-        self.tank_1 = None
-        self.tank_2 = None
-        self.tank_buffer = None
-        self.tank_solar = None
+        self.tank_1 = None  # Optional[PhSHWTank]
+        self.tank_2 = None  # Optional[PhSHWTank]
+        self.tank_buffer = None  # Optional[PhSHWTank]
+        self.tank_solar = None  # Optional[PhSHWTank]
 
-        self._heaters = {}
+        self._heaters = {}  # type: Dict[str, hot_water.PhHotWaterHeater]
+        self._branch_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
+        self._recirc_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
 
     @property
     def heaters(self):
@@ -50,6 +52,32 @@ class SHWSystemPhProperties(object):
         assert hasattr(
             _h, 'to_dict'), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
         self._heaters[_h.identifier] = _h
+
+    def add_branch_piping(self, _branch_piping):
+        # type: (hot_water.PhPipeElement) -> None
+        self._branch_piping[_branch_piping.identifier] = _branch_piping
+
+    def clear_branch_piping(self):
+        self._branch_piping = {}
+
+    @property
+    def branch_piping(self):
+        # type: () -> ValuesView[hot_water.PhPipeElement]
+        """Returns a list of all the branch-piping objects in the system."""
+        return self._branch_piping.values()
+
+    def add_recirc_piping(self, _recirc_piping):
+        # type: (hot_water.PhPipeElement) -> None
+        self._recirc_piping[_recirc_piping.identifier] = _recirc_piping
+
+    def clear_recirc_piping(self):
+        self._recirc_piping = {}
+
+    @property
+    def recirc_piping(self):
+        # type: () -> ValuesView[hot_water.PhPipeElement]
+        """Returns a list of all the recirculation-piping objects in the system."""
+        return self._recirc_piping.values()
 
     @property
     def host(self):
@@ -83,6 +111,14 @@ class SHWSystemPhProperties(object):
         for heater in self.heaters:
             d['heaters'][id(heater)] = heater.to_dict()
 
+        d['branch_piping'] = {}
+        for branch_piping in self.branch_piping:
+            d['branch_piping'][branch_piping.identifier] = branch_piping.to_dict()
+
+        d['recirc_piping'] = {}
+        for recirc_piping in self.recirc_piping:
+            d['recirc_piping'][recirc_piping.identifier] = recirc_piping.to_dict()
+
         return {'ph': d}
 
     @classmethod
@@ -110,8 +146,15 @@ class SHWSystemPhProperties(object):
                 _input_dict['tank_buffer'])
 
         for heater_dict in _input_dict['heaters'].values():
-            new_heater = hot_water.PhSHWHeaterBuilder.from_dict(heater_dict)
             new_prop.add_heater(hot_water.PhSHWHeaterBuilder.from_dict(heater_dict))
+
+        for branch_piping_dict in _input_dict['branch_piping'].values():
+            new_prop.add_branch_piping(
+                hot_water.PhPipeElement.from_dict(branch_piping_dict))
+
+        for recirc_piping_dict in _input_dict['recirc_piping'].values():
+            new_prop.add_recirc_piping(
+                hot_water.PhPipeElement.from_dict(recirc_piping_dict))
 
         return new_prop
 
@@ -126,15 +169,25 @@ class SHWSystemPhProperties(object):
         # type: (Any) -> SHWSystemPhProperties
         _host = new_host or self._host
         new_obj = SHWSystemPhProperties(_host)
-
         new_obj.id_num = self.id_num
-        new_obj.tank_1 = self.tank_1
-        new_obj.tank_2 = self.tank_2
-        new_obj.tank_buffer = self.tank_buffer
-        new_obj.tank_solar = self.tank_solar
+
+        if self.tank_1:
+            new_obj.tank_1 = self.tank_1.duplicate()
+        if self.tank_2:
+            new_obj.tank_2 = self.tank_2.duplicate()
+        if self.tank_buffer:
+            new_obj.tank_buffer = self.tank_buffer.duplicate()
+        if self.tank_solar:
+            new_obj.tank_solar = self.tank_solar.duplicate()
 
         for k, v in self._heaters.items():
             new_obj._heaters[k] = v
+
+        for k, v in self._branch_piping.items():
+            new_obj._branch_piping[k] = v.duplicate()
+
+        for k, v in self._recirc_piping.items():
+            new_obj._recirc_piping[k] = v.duplicate()
 
         return new_obj
 

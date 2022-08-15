@@ -20,9 +20,12 @@ class CustomEnum(object):
     allowed = []  # type: list[str]
 
     def __init__(self, _value='', _index_offset=-1):
-        """Standard offset is 1 since most listings start at 1 (but not all)"""
-        self.index_offset = _index_offset  # type: int
-        self._value = ""  # type: str
+        # type: (Union[str, int], int) -> None
+
+        # Standard offset is 1 since most listings start at 1 (but not all)
+        self.index_offset = _index_offset
+
+        self._value = ""
         self.value = _value
 
     @property
@@ -42,6 +45,7 @@ class CustomEnum(object):
             integer is passed in, will attempt to find the corresponding value from the 
             allowed-values list (1-based, ie: user-input '1' -> self.allowed.index(0) ).
         """
+        print(self.index_offset)
         if str(_in).upper() in self.allowed_upper:
             self._value = str(_in).upper()
         else:

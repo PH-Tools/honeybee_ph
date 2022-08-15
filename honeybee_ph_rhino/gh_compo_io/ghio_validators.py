@@ -26,6 +26,8 @@ try:  # import the core honeybee dependencies
 except ImportError as e:
     raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
 
+from honeybee_ph_utils import units
+
 
 class Validated(object):
     """Base class for all Validator objects. Ensure all children have a 'validate' method.
@@ -215,3 +217,31 @@ class FloatPercentage(Validated):
                 "Error: input for '{}' must be between 0.0 and 1.0".format(name))
 
         return new_value
+
+
+# --- Unit converters ---------------------------------------------------------
+
+
+class UnitM(Validated):
+    """A Meter value (float) of any value (positive or negative)."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        input_units, input_value = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "M", "M")
+
+        print('Converting: {} -> {:.4f} M'.format(new_value, result))
+
+        return result

@@ -106,6 +106,7 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
+    # -- DHW
     "HBPH - Create SHW Tank": {
         "NickName": "Create SHW Tank",
         "Message": RELEASE_VERSION,
@@ -130,6 +131,13 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
+    "HBPH - Create DHW Branch Pipes": {
+        "NickName": "Create Branch Pipes",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+
     "HBPH - Create PH Equipment": {
         "NickName": "Create PH Equipment",
         "Message": RELEASE_VERSION,

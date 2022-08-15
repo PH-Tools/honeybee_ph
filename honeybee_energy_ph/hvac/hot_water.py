@@ -4,9 +4,11 @@
 """Passive House Service Hot Water Objects"""
 
 try:
-    from typing import Any, Union
+    from typing import Any, Union, List, Dict
 except ImportError:
     pass  # IronPython
+
+from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
 from honeybee_energy_ph.hvac import _base
 from honeybee_ph_utils import enumerables
@@ -19,6 +21,162 @@ class UnknownPhHeaterTypeError(Exception):
         super(UnknownPhHeaterTypeError, self).__init__(self.msg)
 
 
+# -- Piping ---------------------------------------------------------------------
+
+
+class PhPipeSegment(_base._PhHVACBase):
+    """A single pipe segment (linear) with geometry and a diameter"""
+
+    def __init__(self, _geom, _diameter=0.0127, _insul_thickness=0.0, _insul_conductivity=0.04, _insul_refl=True):
+        # type: (LineSegment3D, float, float, float, bool) -> None
+        super(PhPipeSegment, self).__init__()
+        self.geometry = _geom
+        self.diameter = _diameter
+        self.insulation_thickness = _insul_thickness
+        self.insulation_conductivity = _insul_conductivity
+        self.insulation_reflective = _insul_refl
+
+    @property
+    def length(self):
+        # type: () -> float
+        return self.geometry.length
+
+    def __copy__(self):
+        # type: () -> PhPipeSegment
+        new_obj = PhPipeSegment(self.geometry)
+
+        new_obj.diameter = self.diameter
+        new_obj.insulation_thickness = self.insulation_thickness
+        new_obj.insulation_conductivity = self.insulation_conductivity
+        new_obj.insulation_reflective = self.insulation_reflective
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+
+        return self
+
+    def duplicate(self):
+        # type: () -> PhPipeSegment
+        return self.__copy__()
+
+    def to_dict(self):
+        # type: () -> dict[str, Union[str, dict]]
+        d = {}
+
+        d['geometry'] = self.geometry.to_dict()
+        d['diameter'] = self.diameter
+        d['insulation_thickness'] = self.insulation_thickness
+        d['insulation_conductivity'] = self.insulation_conductivity
+        d['insulation_reflective'] = self.insulation_reflective
+        d['identifier'] = self.identifier
+        d['display_name'] = self.display_name
+        d['user_data'] = self.user_data
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhPipeSegment
+        new_obj = cls(
+            _geom=LineSegment3D.from_dict(_input_dict['geometry'])
+        )
+        new_obj.diameter = _input_dict['diameter']
+        new_obj.insulation_thickness = _input_dict['insulation_thickness']
+        new_obj.insulation_conductivity = _input_dict['insulation_conductivity']
+        new_obj.insulation_reflective = _input_dict['insulation_reflective']
+        new_obj.identifier = _input_dict['identifier']
+        new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict['user_data']
+
+        return new_obj
+
+    def __str__(self):
+        return "{}: diam={}".format(self.__class__.__name__, self.diameter)
+
+    def __repr__(self):
+        return "{}: diam={}".format(self.__class__.__name__, self.diameter)
+
+    def ToString(self):
+        return self.__repr__()
+
+
+class PhPipeElement(_base._PhHVACBase):
+    """A Pipe Element made up of one or more individual Pipe Segments."""
+
+    def __init__(self):
+        super(PhPipeElement, self).__init__()
+        self._segments = {}  # type: Dict[str, PhPipeSegment]
+
+    @property
+    def segments(self):
+        # type: () -> List[PhPipeSegment]
+        return list(self._segments.values())
+
+    @property
+    def length(self):
+        # type: () -> float
+        return sum(s.length for s in self.segments)
+
+    def add_segment(self, _segment):
+        # type: (PhPipeSegment) -> None
+        self._segments[_segment.identifier] = _segment
+
+    def __copy__(self):
+        # type: () -> PhPipeElement
+        new_obj = PhPipeElement()
+
+        for segment in self.segments:
+            new_obj.add_segment(segment.duplicate())
+
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> PhPipeElement
+        return self.__copy__()
+
+    def to_dict(self):
+        # type: () -> dict[str, Union[str, dict]]
+        d = {}
+
+        d['segments'] = {}
+        for segment in self.segments:
+            d['segments'][segment.identifier] = segment.to_dict()
+        d['identifier'] = self.identifier
+        d['display_name'] = self.display_name
+        d['user_data'] = self.user_data
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhPipeElement
+        new_obj = cls()
+
+        for seg_dict in _input_dict['segments'].values():
+            new_obj._segments[seg_dict['identifier']] = PhPipeSegment.from_dict(seg_dict)
+        new_obj.identifier = _input_dict['identifier']
+        new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict['user_data']
+
+        return new_obj
+
+    def __str__(self):
+        return "{}: {} [{} segments]".format(self.__class__.__name__, self.display_name, len(self.segments))
+
+    def __repr__(self):
+        return "{}: {} [{} segments]".format(self.__class__.__name__, self.display_name, len(self.segments))
+
+    def ToString(self):
+        return self.__repr__()
+
+
+# -- Tank ---------------------------------------------------------------------
+
+
 class PhSHWTankType(enumerables.CustomEnum):
     allowed = [
         "0-No storage tank",
@@ -27,6 +185,7 @@ class PhSHWTankType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1, _index_offset=0):
+        # type: (Union[str, int], int) -> None
         super(PhSHWTankType, self).__init__(_value, _index_offset)
 
 
@@ -54,6 +213,29 @@ class PhSHWTank(object):
     def tank_type(self, _in):
         # type: (Union[str, int]) -> None
         self._tank_type = PhSHWTankType(_in)
+
+    def __copy__(self):
+        # type: () -> PhSHWTank
+        new_obj = PhSHWTank()
+
+        new_obj.display_name = self.display_name
+        new_obj.quantity = self.quantity
+        new_obj._tank_type = self._tank_type
+        new_obj.in_conditioned_space = self.in_conditioned_space
+        new_obj.solar_connection = self.solar_connection
+        new_obj.solar_losses = self.solar_losses
+        new_obj.storage_loss_rate = self.storage_loss_rate
+        new_obj.storage_capacity = self.storage_capacity
+        new_obj.standby_losses = self.standby_losses
+        new_obj.standby_fraction = self.standby_fraction
+        new_obj.room_temp = self.room_temp
+        new_obj.water_temp = self.water_temp
+
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> PhSHWTank
+        return self.__copy__()
 
     def to_dict(self):
         # type: () -> dict[str, Any]
