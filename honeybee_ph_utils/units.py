@@ -38,7 +38,58 @@ CONVERSION_SCHEMAS = {
     "DELTA-F": {"SI": "{}*0.555555556", "DELTA-C": "{}*0.555555556", "DELTA-F": "{}*1"},
     "IN": {"SI": "{}*0.0254", "M": "{}*0.0254", "MM": "{}*25.4", "FT": "{}/12", "IN": "{}*1"},
     "FT": {"SI": "{}*0.3048", "M": "{}*0.3048", "MM": "{}*304.8", "FT": "{}*1", "IN": "{}*12"},
+    "BTU/HR-FT-F": {"SI": "{}*1.730734908", "W/MK": "{}*1.730734908", "HR-FT2-F/BTU-IN": "1/({}*12)"},
+    "HR-FT2-F/BTU-IN": {"SI": "{}*1.730734908", "W/MK": "(1/({}*12))*1.730734908", "BTU/HR-FT-F": "1/({}*12)"},
 }
+
+
+def _standardize_input_unit(_in):
+    """Standardize unit nomenclature. ie: 'FT3/M' and 'CFM' both return 'CFM'."""
+
+    codes = {
+        'FT': 'FT', "'": 'FT',
+        'IN': 'IN', '"': 'IN',
+        'MM': 'MM',
+        'CM': 'CM',
+        'M': 'M',
+        'IP': 'IP',
+        'FT3': 'FT3',
+        'M3': 'M3',
+        'F': 'F', 'DEG F': 'F',
+        'C': 'C', 'DEG C': 'C',
+        'CFM': 'CFM', 'FT3/M': 'CFM', 'FT3M': 'CFM',
+        'CFH': 'CFH', 'FT3/H': 'CFH', 'FT3H': 'CFH',
+        'L': 'L',
+        'GA': 'GA', 'GALLON': 'GA',
+        'BTU/H': 'BTUH', 'BTUH': 'BTUH',
+        'KBTU/H': 'KBTUH', 'KBTUH': 'KBTUH',
+        'TON': 'TON',
+        'W': 'W',
+        'WH': 'WH',
+        'KW': 'KW',
+        'KWH': 'KWH',
+        'W/M2K': 'W/M2K', 'WM2K': 'WM2K',
+        'W/MK': 'W/MK',
+        'W/K': 'W/K',
+        'M3/H': 'M3/H', 'M3H': 'M3/H', 'CMH': 'M3/H',
+        'W/W': 'W/W',
+        'BTU/WH': 'BTU/WH', 'BTUH/W': 'BTU/WH', 'BTU/W': 'BTU/WH',
+        'R/IN': 'R/IN', 'R-IN': 'R/IN', 'HR-FT2-F/BTU-IN': 'HR-FT2-F/BTU-IN',
+        'HR-FT2-F/BTU': 'HR-FT2-F/BTU',
+        'BTU/HR-FT-F': 'BTU/HR-FT-F',
+    }
+    # Note: BTU/W conversion isn't really right, but I think many folks use that
+    # when they mean Btu/Wh (or Btu-h/W)
+
+    _input_string = str(_in).upper()
+    try:
+        input_unit = codes[_input_string]
+    except KeyError:
+        raise Exception(
+            "Error: I do not know how to read the input: {}?".format(_input_string)
+        )
+
+    return input_unit
 
 
 def convert(_value, _input_unit, _target_unit):
@@ -60,6 +111,7 @@ def convert(_value, _input_unit, _target_unit):
 
     # -- Clean user inputs
     input_unit = str(_input_unit).upper().strip().replace(" ", "")
+    input_unit = _standardize_input_unit(input_unit)
     target_unit = str(_target_unit).upper().strip().replace(" ", "")
 
     # -- Get the right conversion Schema for the starting unit
@@ -83,76 +135,32 @@ def convert(_value, _input_unit, _target_unit):
     return eval("{}".format(conversion_equation).format(_value))
 
 
-def _standardize_input_unit(_in):
-    """Standardize unit nomenclature. ie: 'FT3/M' and 'CFM' both return 'CFM'."""
-
-    codes = {
-        'FT': 'FT', "'": 'FT',
-        'IN': 'IN', '"': 'IN',
-        'MM': 'MM',
-        'CM': 'CM',
-        'M': 'M:',
-        'IP': 'IP',
-        'FT3': 'FT3',
-        'M3': 'M3',
-        'F': 'F', 'DEG F': 'F',
-        'C': 'C', 'DEG C': 'C',
-        'CFM': 'CFM', 'FT3/M': 'CFM', 'FT3M': 'CFM',
-        'CFH': 'CFH', 'FT3/H': 'CFH', 'FT3H': 'CFH',
-        'L': 'L',
-        'GA': 'GA', 'GALLON': 'GA',
-        'BTU/H': 'BTUH', 'BTUH': 'BTUH',
-        'KBTU/H': 'KBTUH', 'KBTUH': 'KBTUH',
-        'TON': 'TON',
-        'W': 'W',
-        'WH': 'WH',
-        'KW': 'KW',
-        'KWH': 'KWH',
-        'W/M2K': 'W/M2K', 'WM2K': 'WM2K',
-        'W/MK': 'W/MK',
-        'W/K': 'W/K',
-        'M3/H': 'M3/H', 'M3H': 'M3/H', 'CMH': 'M3/H',
-        'W/W': 'W/W',
-        'BTU/WH': 'BTU/WH', 'BTUH/W': 'BTU/WH', 'BTU/W': 'BTU/WH',
-        'R/IN': 'R/IN', 'R-IN': 'R/IN'
-    }
-    # Note: BTU/W conversion isn't really right, but I think many folks use that
-    # when they mean Btu/Wh (or Btu-h/W)
-
-    _input_string = str(_in).upper()
-    input_unit = codes.get(_input_string, 'SI')
-
-    return input_unit
-
-
 def parse_input(_input_string):
-    # type: (str) -> Tuple[Optional[str], str]
-    """Parse an input string into the 'units part' and the 'value part'.
+    # type: (str) -> Tuple[str, Optional[str]]
+    """Parse an input string into the 'value part' and the 'units part'.
 
-    ie: '0.5 in' will return ('IN', '0.5')
+    examples:
+        '0.5 in' returns -> ('0.5', 'IN')
+        '0.5" ' returns -> ('0.5', 'IN')
+        0.5 returns -> ('0.5', None)
+        '0.5Btu/hr-Ft2-F' returns -> ('0.5', 'BTU/HR-FT2-F')
     """
 
-    try:
-        string_found, value_found = None, "0"
+    # -- First, try and split the input string at the first alpha-character found
+    # -- ie: the input string: "0.5 HR-FT2-F/BTU-IN" will get split at index=4
+    # --                           ^
+    # -- You can't just look for the numbers, since some units have numbers in them ('FT2', ...)
 
-        # Pull out just the NON decimal numeric characters, if any
-        for each in re.split(r'[^\D\.]', _input_string):
-            if each == '.':
-                continue
+    input_string = str(_input_string).strip().upper()
+    rx = re.compile(r"[^\d. ]", re.IGNORECASE)
+    match = rx.search(input_string)
 
-            if len(each) == 0:
-                continue
+    if not match:
+        # -- No alpha part
+        return (input_string, None)
 
-            string_found = _standardize_input_unit(each.upper().lstrip().rstrip())
-            break
+    found_span = match.span()
+    alpha_part = _input_string[found_span[0]:].strip()
+    numeric_part = _input_string[:found_span[0]].strip()
 
-        # Pull out just the decimal numeric characters, if any
-        for each in re.split(r'[^\d\.]', _input_string):
-            if len(each) > 0:
-                value_found = each
-                break  # so it will only take the first number found, "123 ft3" doesn't work otherwise
-
-        return string_found, value_found
-    except:
-        msg = "Error: Cannot parse the input string: '{_input_string}'?"
-        raise Exception(msg)
+    return numeric_part, alpha_part

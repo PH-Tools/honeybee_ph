@@ -27,14 +27,16 @@ class UnknownPhHeaterTypeError(Exception):
 class PhPipeSegment(_base._PhHVACBase):
     """A single pipe segment (linear) with geometry and a diameter"""
 
-    def __init__(self, _geom, _diameter=0.0127, _insul_thickness=0.0, _insul_conductivity=0.04, _insul_refl=True):
-        # type: (LineSegment3D, float, float, float, bool) -> None
+    def __init__(self, _geom, _diameter=0.0127, _insul_thickness=0.0, _insul_conductivity=0.04, _insul_refl=True, _insul_quality=None, _daily_period=24.0):
+        # type: (LineSegment3D, float, float, float, bool, None, float) -> None
         super(PhPipeSegment, self).__init__()
         self.geometry = _geom
         self.diameter = _diameter
         self.insulation_thickness = _insul_thickness
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
+        self.insulation_quality = _insul_quality
+        self.daily_period = _daily_period
 
     @property
     def length(self):
@@ -49,6 +51,8 @@ class PhPipeSegment(_base._PhHVACBase):
         new_obj.insulation_thickness = self.insulation_thickness
         new_obj.insulation_conductivity = self.insulation_conductivity
         new_obj.insulation_reflective = self.insulation_reflective
+        new_obj.insulation_quality = self.insulation_quality
+        new_obj.daily_period = self.daily_period
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.user_data = self.user_data
@@ -68,6 +72,8 @@ class PhPipeSegment(_base._PhHVACBase):
         d['insulation_thickness'] = self.insulation_thickness
         d['insulation_conductivity'] = self.insulation_conductivity
         d['insulation_reflective'] = self.insulation_reflective
+        d['insulation_quality'] = self.insulation_quality
+        d['daily_period'] = self.daily_period
         d['identifier'] = self.identifier
         d['display_name'] = self.display_name
         d['user_data'] = self.user_data
@@ -84,6 +90,8 @@ class PhPipeSegment(_base._PhHVACBase):
         new_obj.insulation_thickness = _input_dict['insulation_thickness']
         new_obj.insulation_conductivity = _input_dict['insulation_conductivity']
         new_obj.insulation_reflective = _input_dict['insulation_reflective']
+        new_obj.insulation_quality = _input_dict['insulation_quality']
+        new_obj.daily_period = _input_dict['daily_period']
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
         new_obj.user_data = _input_dict['user_data']
@@ -91,10 +99,10 @@ class PhPipeSegment(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}".format(self.__class__.__name__, self.diameter)
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
 
     def __repr__(self):
-        return "{}: diam={}".format(self.__class__.__name__, self.diameter)
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
 
     def ToString(self):
         return self.__repr__()
@@ -165,10 +173,10 @@ class PhPipeElement(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: {} [{} segments]".format(self.__class__.__name__, self.display_name, len(self.segments))
+        return "{}: {} [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, len(self.segments), self.length)
 
     def __repr__(self):
-        return "{}: {} [{} segments]".format(self.__class__.__name__, self.display_name, len(self.segments))
+        return "{}: {} [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, len(self.segments), self.length)
 
     def ToString(self):
         return self.__repr__()

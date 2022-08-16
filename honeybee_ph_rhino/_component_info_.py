@@ -137,7 +137,18 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-
+    "HBPH - Create DHW Recirculation Pipes": {
+        "NickName": "Create Recric Pipes",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+    "HBPH - Add DHW Piping": {
+        "NickName": "Add DHW Piping",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
     "HBPH - Create PH Equipment": {
         "NickName": "Create PH Equipment",
         "Message": RELEASE_VERSION,

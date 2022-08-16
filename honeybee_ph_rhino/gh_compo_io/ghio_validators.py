@@ -219,6 +219,28 @@ class FloatPercentage(Validated):
         return new_value
 
 
+class FloatMax24(Validated):
+    """A Floating Point value which is less than 24.0"""
+    tolerance = -0.0001
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        try:
+            new_value = float(new_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float values only.".format(
+                                 new_value, type(new_value)))
+
+        if 24.0 - new_value < self.tolerance:
+            raise ValueError(
+                "Error: input for '{}' cannot be greater than 24.".format(name))
+
+        return new_value
+
+
 # --- Unit converters ---------------------------------------------------------
 
 
@@ -229,7 +251,7 @@ class UnitM(Validated):
         if new_value is None:
             return old_value
 
-        input_units, input_value = units.parse_input(str(new_value))
+        input_value, input_units = units.parse_input(str(new_value))
 
         # -- Make sure the value is a float
         try:
@@ -243,5 +265,35 @@ class UnitM(Validated):
         result = units.convert(input_value, input_units or "M", "M")
 
         print('Converting: {} -> {:.4f} M'.format(new_value, result))
+
+        return result
+
+
+class UnitW_MK(Validated):
+    """A W/MK conductivity value (float) of any positive value."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        input_value, input_units = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "W/MK", "W/MK")
+
+        print('Converting: {} -> {:.4f} W/MK'.format(new_value, result))
+
+        # -- Make sure its positive
+        if result and result < 0.0:
+            raise ValueError(
+                "Error: input for '{}' cannot be negative.".format(name))
 
         return result
