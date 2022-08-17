@@ -102,7 +102,7 @@ class PhPipeSegment(_base._PhHVACBase):
         return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
 
     def __repr__(self):
-        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
+        return str(self)
 
     def ToString(self):
         return self.__repr__()
@@ -173,10 +173,10 @@ class PhPipeElement(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: {} [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, len(self.segments), self.length)
+        return "{}: (display_name={}, identifier={} ) [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, self.identifier, len(self.segments), self.length)
 
     def __repr__(self):
-        return "{}: {} [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, len(self.segments), self.length)
+        return str(self)
 
     def ToString(self):
         return self.__repr__()
@@ -197,8 +197,9 @@ class PhSHWTankType(enumerables.CustomEnum):
         super(PhSHWTankType, self).__init__(_value, _index_offset)
 
 
-class PhSHWTank(object):
+class PhSHWTank(_base._PhHVACBase):
     def __init__(self):
+        super(PhSHWTank, self).__init__()
         self.display_name = '_unnamed_hw_tank_'  # type: str
         self.quantity = 1  # type: int
         self._tank_type = PhSHWTankType("2-DHW only")  # type: enumerables.CustomEnum
@@ -227,6 +228,8 @@ class PhSHWTank(object):
         new_obj = PhSHWTank()
 
         new_obj.display_name = self.display_name
+        new_obj.identifier = self.identifier
+        new_obj.user_data = self.user_data
         new_obj.quantity = self.quantity
         new_obj._tank_type = self._tank_type
         new_obj.in_conditioned_space = self.in_conditioned_space
@@ -250,6 +253,8 @@ class PhSHWTank(object):
         d = {}
 
         d['display_name'] = self.display_name
+        d['identifier'] = self.identifier
+        d['user_data'] = self.user_data
         d['quantity'] = self.quantity
         d['_tank_type'] = self._tank_type.to_dict()
         d['in_conditioned_space'] = self.in_conditioned_space
@@ -270,6 +275,8 @@ class PhSHWTank(object):
         obj = cls()
 
         obj.display_name = _input_dict['display_name']
+        obj.identifier = _input_dict['identifier']
+        obj.user_data = _input_dict['user_data']
         obj.quantity = _input_dict['quantity']
         obj._tank_type = PhSHWTankType.from_dict(_input_dict['_tank_type'])
         obj.in_conditioned_space = _input_dict['in_conditioned_space']

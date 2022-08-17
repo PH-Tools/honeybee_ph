@@ -22,7 +22,7 @@ class MyClassWithValidation(object):
 """
 
 try:  # import the core honeybee dependencies
-    from honeybee.typing import clean_ep_string
+    from honeybee.typing import clean_ep_string, clean_and_id_ep_string
 except ImportError as e:
     raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
 
@@ -105,8 +105,12 @@ class HBName(Validated):
 
     def validate(self, name, new_value, old_value):
         if new_value is None:
-            return old_value
-
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return clean_and_id_ep_string(self.default)
+            except AttributeError:
+                return old_value
+        
         # No spaces, no leading or trailing whitespace
         new_value = str(new_value).strip().replace(" ", "_")
         new_value = clean_ep_string(new_value)

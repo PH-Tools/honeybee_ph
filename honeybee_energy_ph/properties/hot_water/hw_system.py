@@ -161,10 +161,6 @@ class SHWSystemPhProperties(object):
     def apply_properties_from_dict(self, abridged_data):
         return
 
-    def duplicate(self, new_host=None):
-        # type: (Any) -> SHWSystemPhProperties
-        return self.__copy__(new_host)
-
     def __copy__(self, new_host=None):
         # type: (Any) -> SHWSystemPhProperties
         _host = new_host or self._host
@@ -191,6 +187,10 @@ class SHWSystemPhProperties(object):
 
         return new_obj
 
+    def duplicate(self, new_host=None):
+        # type: (Any) -> SHWSystemPhProperties
+        return self.__copy__(new_host)
+
     def __str__(self):
         return '{}: id={}'.format(self.__class__.__name__, self.id_num)
 
@@ -202,3 +202,31 @@ class SHWSystemPhProperties(object):
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
+
+    def __add__(self, other):
+        # type: (SHWSystemPhProperties) -> SHWSystemPhProperties
+        new_obj = self.duplicate()
+
+        for heater in self.heaters:
+            new_obj.add_heater(heater)
+        for heater in other.heaters:
+            new_obj.add_heater(heater)
+
+        for branch_pipe in self.branch_piping:
+            new_obj.add_branch_piping(branch_pipe)
+        for branch_pipe in other.branch_piping:
+            new_obj.add_branch_piping(branch_pipe)
+
+        for recirc_pipe in self.recirc_piping:
+            new_obj.add_recirc_piping(recirc_pipe)
+        for recirc_pipe in other.recirc_piping:
+            new_obj.add_recirc_piping(recirc_pipe)
+
+        return new_obj
+
+    def __radd__(self, other):
+        # type: (SHWSystemPhProperties) -> SHWSystemPhProperties
+        if isinstance(other, int):
+            return self
+        else:
+            return self + other

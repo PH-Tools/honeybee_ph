@@ -59,7 +59,7 @@ def _standardize_input_unit(_in):
         'C': 'C', 'DEG C': 'C',
         'CFM': 'CFM', 'FT3/M': 'CFM', 'FT3M': 'CFM',
         'CFH': 'CFH', 'FT3/H': 'CFH', 'FT3H': 'CFH',
-        'L': 'L',
+        'L': 'LITER', "LITER": "LITER",
         'GA': 'GA', 'GALLON': 'GA',
         'BTU/H': 'BTUH', 'BTUH': 'BTUH',
         'KBTU/H': 'KBTUH', 'KBTUH': 'KBTUH',
