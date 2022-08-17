@@ -155,6 +155,13 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
+    "HBPH - Apply SHW System": {
+        "NickName": "Apply SHW Sys",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+    
     "HBPH - Create PH Equipment": {
         "NickName": "Create PH Equipment",
         "Message": RELEASE_VERSION,

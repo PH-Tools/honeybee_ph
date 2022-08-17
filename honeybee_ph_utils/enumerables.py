@@ -8,7 +8,6 @@ try:
 except ImportError:
     pass  # IronPython
 
-
 class ValueNotAllowedError(Exception):
     def __init__(self, _in, _enum):
         self.message = 'Value: {} not allowed for enum {}.\nValid input: {} '.format(
