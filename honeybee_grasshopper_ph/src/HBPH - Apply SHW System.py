@@ -59,12 +59,14 @@ hb_rooms_ = []
 for room in _hb_rooms:
     new_room = room.duplicate()
     
-    if room.properties.energy.service_hot_water is None:
+    print _hb_shw
+    
+    if new_room.properties.energy.service_hot_water is None:
         # assign a Hot Water flow first
         flow = 0.001 # L/hour
-        room.properties.energy.abolute_service_hot_water(flow, conversion_to_meters())
+        new_room.properties.energy.abolute_service_hot_water(flow, conversion_to_meters())
     
     if _hb_shw is not None:
-        room.properties.energy.shw = _hb_shw
+        new_room.properties.energy.shw = _hb_shw
         
     hb_rooms_.append(new_room)
