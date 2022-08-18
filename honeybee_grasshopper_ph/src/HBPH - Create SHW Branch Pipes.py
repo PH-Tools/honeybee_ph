@@ -22,10 +22,10 @@
 """
 Create new HBPH DHW Branch Piping Object.
 -
-EM August 16, 2022
+EM August 18, 2022
 
     Args:
-        _geometry: (List[Curve]): A list of curves representing the DHW Branch
+        _geometry: (List[Curve]): A list of curves representing the SHW Branch
             Piping elements.
             
         _name: (List[str]) A name for the Pipe element (Optional)
@@ -55,17 +55,17 @@ from honeybee_ph_utils import input_tools, preview
 #-------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
-ghenv.Component.Name = "HBPH - Create DHW Branch Pipes"
+ghenv.Component.Name = "HBPH - Create SHW Branch Pipes"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='AUG_16_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='AUG_18_2022')
 if DEV:
     #from honeybee_ph_utils import units
     #reload(units)
     #from honeybee_ph_rhino.gh_compo_io import ghio_validators
     #reload(ghio_validators)
-    from honeybee_energy_ph.hvac import hot_water
-    reload(hot_water)
-    reload(ghio_create_dhw_pipe)
+    #from honeybee_energy_ph.hvac import hot_water
+    #reload(hot_water)
+    #reload(ghio_create_dhw_pipe)
     reload(preview)
 
 # ------------------------------------------------------------------------------

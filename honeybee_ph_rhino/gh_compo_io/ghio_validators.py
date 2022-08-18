@@ -110,7 +110,7 @@ class HBName(Validated):
                 return clean_and_id_ep_string(self.default)
             except AttributeError:
                 return old_value
-        
+
         # No spaces, no leading or trailing whitespace
         new_value = str(new_value).strip().replace(" ", "_")
         new_value = clean_ep_string(new_value)
@@ -294,6 +294,36 @@ class UnitW_MK(Validated):
         result = units.convert(input_value, input_units or "W/MK", "W/MK")
 
         print('Converting: {} -> {:.4f} W/MK'.format(new_value, result))
+
+        # -- Make sure its positive
+        if result and result < 0.0:
+            raise ValueError(
+                "Error: input for '{}' cannot be negative.".format(name))
+
+        return result
+
+
+class UnitW_K(Validated):
+    """A W/K heat loss value (float) of any positive value."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            return old_value
+
+        input_value, input_units = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "W/K", "W/K")
+
+        print('Converting: {} -> {:.4f} W/K'.format(new_value, result))
 
         # -- Make sure its positive
         if result and result < 0.0:

@@ -113,38 +113,20 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-    "HBPH - Add SHW Tank": {
-        "NickName": "Add SHW Tank",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 1,
-    },
     "HBPH - Create SHW Heater": {
         "NickName": "Create SHW Heater",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-    "HBPH - Add SHW Heater": {
-        "NickName": "Add SHW Heater",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 1,
-    },
-    "HBPH - Create DHW Branch Pipes": {
+    "HBPH - Create SHW Branch Pipes": {
         "NickName": "Create Branch Pipes",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-    "HBPH - Create DHW Recirculation Pipes": {
+    "HBPH - Create SHW Recirculation Pipes": {
         "NickName": "Create Recric Pipes",
-        "Message": RELEASE_VERSION,
-        "Category": CATEGORY,
-        "SubCategory": 1,
-    },
-    "HBPH - Add DHW Piping": {
-        "NickName": "Add DHW Piping",
         "Message": RELEASE_VERSION,
         "Category": CATEGORY,
         "SubCategory": 1,
@@ -161,7 +143,7 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-    
+
     "HBPH - Create PH Equipment": {
         "NickName": "Create PH Equipment",
         "Message": RELEASE_VERSION,

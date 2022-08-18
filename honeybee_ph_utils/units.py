@@ -40,6 +40,7 @@ CONVERSION_SCHEMAS = {
     "FT": {"SI": "{}*0.3048", "M": "{}*0.3048", "MM": "{}*304.8", "FT": "{}*1", "IN": "{}*12"},
     "BTU/HR-FT-F": {"SI": "{}*1.730734908", "W/MK": "{}*1.730734908", "HR-FT2-F/BTU-IN": "1/({}*12)"},
     "HR-FT2-F/BTU-IN": {"SI": "{}*1.730734908", "W/MK": "(1/({}*12))*1.730734908", "BTU/HR-FT-F": "1/({}*12)"},
+    "BTU/HR-F": {"SI": "{}*0.527528", "W/K": "{}*0.527528"},
 }
 
 
@@ -77,6 +78,7 @@ def _standardize_input_unit(_in):
         'R/IN': 'R/IN', 'R-IN': 'R/IN', 'HR-FT2-F/BTU-IN': 'HR-FT2-F/BTU-IN',
         'HR-FT2-F/BTU': 'HR-FT2-F/BTU',
         'BTU/HR-FT-F': 'BTU/HR-FT-F',
+        'BTU/HR-F': 'BTU/HR-F', 'BTU/H-F': 'BTU/HR-F', 'BTUH/F': 'BTU/HR-F', 'BTUHR/F': 'BTU/HR-F'
     }
     # Note: BTU/W conversion isn't really right, but I think many folks use that
     # when they mean Btu/Wh (or Btu-h/W)

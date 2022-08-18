@@ -6,7 +6,7 @@
 try:
     from typing import List, Optional, Union
 except ImportError:
-    pass # IronPython 2.7
+    pass  # IronPython 2.7
 
 try:  # import the honeybee extension
     from honeybee.room import Room
@@ -21,19 +21,20 @@ except ImportError as e:
 from honeybee_energy_ph.hvac import hot_water
 from honeybee_ph_rhino.gh_compo_io import ghio_validators
 
+
 class ICreateSHWSystem(object):
     """Interface for collect and clean SHW System user-inputs."""
     display_name = ghio_validators.HBName("display_name", default="SHW System")
     efficiency = ghio_validators.FloatPercentage("efficiency")
-    loss_coeff = ghio_validators.FloatPositiveValue("loss_coeff")
+    loss_coeff = ghio_validators.UnitW_K("loss_coeff")
 
     def __init__(self, sys_type, display_name, efficiency, condition, loss_coeff, tank_1, tank_2, buffer_tank, solar_tank, heaters, branch_piping, recirc_piping):
-        # type: (str, str, Optional[float], Union[None, Room, int], Optional[float], Optional[hot_water.PhSHWTank], Optional[hot_water.PhSHWTank], Optional[hot_water.PhSHWTank], Optional[hot_water.PhSHWTank], List, List, List) -> None
+        # type: (str, str, Optional[float], Union[None, Room, int], Union[None, float, str], Optional[hot_water.PhSHWTank], Optional[hot_water.PhSHWTank], Optional[hot_water.PhSHWTank], Optional[hot_water.PhSHWTank], List, List, List) -> None
         self.sys_type = sys_type
         self.display_name = display_name
         self.efficiency = efficiency
         self.condition = condition
-        self.loss_coeff = loss_coeff or 6
+        self.loss_coeff = loss_coeff or 6  # W/K
         self.tank_1 = tank_1
         self.tank_2 = tank_2
         self.buffer_tank = buffer_tank
@@ -65,16 +66,21 @@ class ICreateSHWSystem(object):
 
     def create_hb_shw_obj(self):
         # type: () -> shw.SHWSystem
-        
+
         # -- Create the basic HB-Energy object
-        shw_sys = shw.SHWSystem(self.display_name, self.sys_type, self.efficiency, self.condition, self.loss_coeff)
+        shw_sys = shw.SHWSystem(self.display_name, self.sys_type,
+                                self.efficiency, self.condition, self.loss_coeff)
         shw_sys.display_name = self.display_name
-        
+
         # -- Add any HB-PH Tanks
-        if self.tank_1: shw_sys.properties.ph.tank_1 = self.tank_1
-        if self.tank_2: shw_sys.properties.ph.tank_2 = self.tank_2
-        if self.buffer_tank: shw_sys.properties.ph.tank_buffer = self.buffer_tank
-        if self.solar_tank: shw_sys.properties.ph.tank_solar = self.solar_tank
+        if self.tank_1:
+            shw_sys.properties.ph.tank_1 = self.tank_1
+        if self.tank_2:
+            shw_sys.properties.ph.tank_2 = self.tank_2
+        if self.buffer_tank:
+            shw_sys.properties.ph.tank_buffer = self.buffer_tank
+        if self.solar_tank:
+            shw_sys.properties.ph.tank_solar = self.solar_tank
 
         # -- Add any HB-PH Heaters and Piping
         for heater in self.heaters:
