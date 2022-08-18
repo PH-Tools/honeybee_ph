@@ -55,7 +55,9 @@ def _standardize_input_unit(_in):
         'M': 'M',
         'IP': 'IP',
         'FT3': 'FT3',
+        'FT2': 'FT2',
         'M3': 'M3',
+        'M2': 'M2',
         'F': 'F', 'DEG F': 'F',
         'C': 'C', 'DEG C': 'C',
         'CFM': 'CFM', 'FT3/M': 'CFM', 'FT3M': 'CFM',
@@ -72,13 +74,17 @@ def _standardize_input_unit(_in):
         'W/M2K': 'W/M2K', 'WM2K': 'WM2K',
         'W/MK': 'W/MK',
         'W/K': 'W/K',
-        'M3/H': 'M3/H', 'M3H': 'M3/H', 'CMH': 'M3/H',
+        'M3/H': 'M3/HR', 'M3H': 'M3/HR', 'CMH': 'M3/HR', 'M3/HR': 'M3/HR',
         'W/W': 'W/W',
         'BTU/WH': 'BTU/WH', 'BTUH/W': 'BTU/WH', 'BTU/W': 'BTU/WH',
         'R/IN': 'R/IN', 'R-IN': 'R/IN', 'HR-FT2-F/BTU-IN': 'HR-FT2-F/BTU-IN',
         'HR-FT2-F/BTU': 'HR-FT2-F/BTU',
         'BTU/HR-FT-F': 'BTU/HR-FT-F',
-        'BTU/HR-F': 'BTU/HR-F', 'BTU/H-F': 'BTU/HR-F', 'BTUH/F': 'BTU/HR-F', 'BTUHR/F': 'BTU/HR-F'
+        'BTU/HR-F': 'BTU/HR-F', 'BTU/H-F': 'BTU/HR-F', 'BTUH/F': 'BTU/HR-F', 'BTUHR/F': 'BTU/HR-F',
+        'DELTA-C': 'DELTA-C', 'DELTA-F': 'DELTA-F',
+        'KWH/M2': 'KWH/M2',
+        'M2K/W': 'M2K/W',
+        'WH/M3': 'WH/M3',
     }
     # Note: BTU/W conversion isn't really right, but I think many folks use that
     # when they mean Btu/Wh (or Btu-h/W)
