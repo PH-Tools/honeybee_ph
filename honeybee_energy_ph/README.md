@@ -4,7 +4,7 @@ These modules extend the [Honeybee-Energy](https://github.com/ladybug-tools/hone
 ![image](https://user-images.githubusercontent.com/69652712/169719164-ef3daeec-e285-4c37-a2be-b1b56c298e6a.png)
 
 # Usage
-The classes here will automatically extend the existing Honeybee-Energy objects at import time. This is done through the [_extend_honeybee_energy_ph.py](https://github.com/PH-Tools/honeybee_ph/blob/phpp_exporter/honeybee_energy_ph/_extend_honeybee_energy_ph.py) module which will be called by Honeybee-Energy the first time it is imported by a Grasshopper component into the scene.
+The classes here will automatically extend the existing Honeybee-Energy objects at import time. This is done through the [_extend_honeybee_energy_ph.py](https://github.com/PH-Tools/honeybee_ph/blob/main/honeybee_energy_ph/_extend_honeybee_energy_ph.py) module which will be called by Honeybee-Energy the first time it is imported by a Grasshopper component into the scene.
 
 # Python Version:
 All Classes should be written to comply with Python 2.7 (IronPython) format <u>only</u>. Because these classes are used within the McNeel Rhinoceros/Grasshopper platform, all classes must be backwards compatible to Python 2.7 / IronPython.
