@@ -74,20 +74,20 @@ class ICreateSHWSystem(object):
 
         # -- Add any HB-PH Tanks
         if self.tank_1:
-            shw_sys.properties.ph.tank_1 = self.tank_1
+            shw_sys.properties.ph.tank_1 = self.tank_1  # type: ignore
         if self.tank_2:
-            shw_sys.properties.ph.tank_2 = self.tank_2
+            shw_sys.properties.ph.tank_2 = self.tank_2  # type: ignore
         if self.buffer_tank:
-            shw_sys.properties.ph.tank_buffer = self.buffer_tank
+            shw_sys.properties.ph.tank_buffer = self.buffer_tank  # type: ignore
         if self.solar_tank:
-            shw_sys.properties.ph.tank_solar = self.solar_tank
+            shw_sys.properties.ph.tank_solar = self.solar_tank  # type: ignore
 
         # -- Add any HB-PH Heaters and Piping
         for heater in self.heaters:
-            shw_sys.properties.ph.add_heater(heater)
+            shw_sys.properties.ph.add_heater(heater)  # type: ignore
         for branch_piping in self.branch_piping:
-            shw_sys.properties.ph.add_branch_piping(branch_piping)
+            shw_sys.properties.ph.add_branch_piping(branch_piping)  # type: ignore
         for recirc_piping in self.recirc_piping:
-            shw_sys.properties.ph.add_recirc_piping(recirc_piping)
+            shw_sys.properties.ph.add_recirc_piping(recirc_piping)  # type: ignore
 
         return shw_sys

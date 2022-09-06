@@ -2,20 +2,20 @@ import honeybee_ph.site
 
 
 def test_collection_empty():
-    collection = honeybee_ph.site.Climate_PeakLoadCollection()
+    collection = honeybee_ph.site.Climate_PeakLoadValueSet()
     assert collection
 
 
 def test_collection_serialization_empty():
-    collection = honeybee_ph.site.Climate_PeakLoadCollection()
+    collection = honeybee_ph.site.Climate_PeakLoadValueSet()
     d = collection.to_dict()
-    new_obj = honeybee_ph.site.Climate_PeakLoadCollection.from_dict(d)
+    new_obj = honeybee_ph.site.Climate_PeakLoadValueSet.from_dict(d)
 
     assert new_obj.to_dict() == d
 
 
 def test_collection_serialization_with_values():
-    collection = honeybee_ph.site.Climate_PeakLoadCollection()
+    collection = honeybee_ph.site.Climate_PeakLoadValueSet()
 
     collection.temp = 1
     collection.rad_north = 2
@@ -25,6 +25,6 @@ def test_collection_serialization_with_values():
     collection.rad_global = 6
 
     d = collection.to_dict()
-    new_obj = honeybee_ph.site.Climate_PeakLoadCollection.from_dict(d)
+    new_obj = honeybee_ph.site.Climate_PeakLoadValueSet.from_dict(d)
 
     assert new_obj.to_dict() == d

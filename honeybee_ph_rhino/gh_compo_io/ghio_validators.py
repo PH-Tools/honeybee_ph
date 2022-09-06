@@ -147,7 +147,11 @@ class Float(Validated):
 
     def validate(self, name, new_value, old_value):
         if new_value is None:
-            return old_value
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return float(self.default)
+            except AttributeError:
+                return old_value
 
         try:
             new_value = float(new_value)
@@ -253,7 +257,11 @@ class UnitM(Validated):
 
     def validate(self, name, new_value, old_value):
         if new_value is None:
-            return old_value
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return float(self.default)
+            except AttributeError:
+                return old_value
 
         input_value, input_units = units.parse_input(str(new_value))
 
@@ -303,6 +311,35 @@ class UnitW_MK(Validated):
         return result
 
 
+class UnitKWH_M2(Validated):
+    """A kWh/m2 value (float) of any positive or negative value."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return float(self.default)
+            except AttributeError:
+                return old_value
+
+        input_value, input_units = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "KWH/M2", "KWH/M2")
+
+        print('Converting: {} -> {:.4f} kWh/m2'.format(new_value, result))
+
+        return result
+
+
 class UnitW_K(Validated):
     """A W/K heat loss value (float) of any positive value."""
 
@@ -329,5 +366,92 @@ class UnitW_K(Validated):
         if result and result < 0.0:
             raise ValueError(
                 "Error: input for '{}' cannot be negative.".format(name))
+
+        return result
+
+
+class UnitDeltaC(Validated):
+    """A Delta Degree Celsius value (float) of any value (positive or negative)."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return float(self.default)
+            except AttributeError:
+                return old_value
+
+        input_value, input_units = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "DELTA-C", "DELTA-C")
+
+        print('Converting: {} -> {:.4f} Delta-C'.format(new_value, result))
+
+        return result
+
+
+class UnitDegreeC(Validated):
+    """A Degree Celsius value (float) of any value (positive or negative)."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return float(self.default)
+            except AttributeError:
+                return old_value
+
+        input_value, input_units = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "C", "C")
+
+        print('Converting: {} -> {:.4f} C'.format(new_value, result))
+
+        return result
+
+
+class UnitMeterPerSecond(Validated):
+    """A Meter-per-Second value (float) of any value (positive or negative)."""
+
+    def validate(self, name, new_value, old_value):
+        if new_value is None:
+            # If the user passed a 'default' attribute, try and use that
+            try:
+                return float(self.default)
+            except AttributeError:
+                return old_value
+
+        input_value, input_units = units.parse_input(str(new_value))
+
+        # -- Make sure the value is a float
+        try:
+            input_value = float(input_value)
+        except:
+            raise ValueError("Error: input {} of type: {} is not allowed."
+                             "Supply float only.".format(
+                                 new_value, type(new_value)))
+
+        # -- Convert to Meters
+        result = units.convert(input_value, input_units or "M/S", "M/S")
+
+        print('Converting: {} -> {:.4f} meter/second'.format(new_value, result))
 
         return result

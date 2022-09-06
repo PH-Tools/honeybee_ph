@@ -4,20 +4,20 @@
 """Passive-House Style Monthly Climate Data"""
 
 try:
-    from itertools import izip as zip
+    from itertools import izip as zip  # type: ignore
 except ImportError:
     pass  # Python3
 
 try:
-    from typing import Dict, List, Collection
+    from typing import Dict, List, Collection, Any, Union, Optional
 except ImportError:
     pass  # IronPython 2.7
 
 from honeybee_ph import _base
 
 
-class Climate_MonthlyValueCollection(_base._Base):
-    """Collection class to organize monthly climate values"""
+class Climate_MonthlyValueSet(_base._Base):
+    """A set of 12 monthly values (temp, radiation, etc)."""
 
     months = [
         "january",
@@ -34,10 +34,10 @@ class Climate_MonthlyValueCollection(_base._Base):
         "december",
     ]
 
-    def __init__(self):
-        super(Climate_MonthlyValueCollection, self).__init__()
-        for month_name in self.months:
-            setattr(self, month_name, 0)
+    def __init__(self, _values=[0.0]*12):
+        # type: (Collection[float]) -> None
+        super(Climate_MonthlyValueSet, self).__init__()
+        self.values = _values
 
     @property
     def values(self):
@@ -56,7 +56,7 @@ class Climate_MonthlyValueCollection(_base._Base):
             setattr(self, month_name, val)
 
     def to_dict(self):
-        # type: () -> Dict
+        # type: () -> Dict[str, float]
         d = {}
 
         for month in self.months:
@@ -66,7 +66,7 @@ class Climate_MonthlyValueCollection(_base._Base):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> Climate_MonthlyValueCollection
+        # type: (Dict[str, float]) -> Climate_MonthlyValueSet
         obj = cls()
 
         for month in cls.months:
@@ -75,20 +75,123 @@ class Climate_MonthlyValueCollection(_base._Base):
         return obj
 
 
-class Climate_PeakLoadCollection(_base._Base):
-    """Collection class to organize peak load weather data"""
+class Climate_MonthlyTempCollection(_base._Base):
+    """Collection class to organize monthly temperature values"""
 
-    def __init__(self):
-        super(Climate_PeakLoadCollection, self).__init__()
-        self.temp = 0
-        self.rad_north = 0
-        self.rad_east = 0
-        self.rad_south = 0
-        self.rad_west = 0
-        self.rad_global = 0
+    def __init__(self,
+                 _air=Climate_MonthlyValueSet(),
+                 _dewpoint=Climate_MonthlyValueSet(),
+                 _sky=Climate_MonthlyValueSet(),
+                 _ground=Climate_MonthlyValueSet()
+                 ):
+        # type: (Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet) -> None
+        super(Climate_MonthlyTempCollection, self).__init__()
+        self.air_temps = _air
+        self.dewpoints = _dewpoint
+        self.sky_temps = _sky
+        self.ground_temps = _ground
 
     def to_dict(self):
-        # type: () -> Dict
+        # type: () -> Dict[str, Dict[str, float]]
+        d = {}
+
+        d["identifier"] = self.identifier
+        d["display_name"] = self.display_name
+        d["air_temps"] = self.air_temps.to_dict()
+        d["dewpoints"] = self.dewpoints.to_dict()
+        d["sky_temps"] = self.sky_temps.to_dict()
+        d["ground_temps"] = self.ground_temps.to_dict()
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Dict[str, float]]) -> Climate_MonthlyTempCollection
+        new_obj = cls(
+            _air=Climate_MonthlyValueSet.from_dict(_input_dict["air_temps"]),
+            _dewpoint=Climate_MonthlyValueSet.from_dict(_input_dict["dewpoints"]),
+            _sky=Climate_MonthlyValueSet.from_dict(_input_dict["sky_temps"]),
+            _ground=Climate_MonthlyValueSet.from_dict(_input_dict["ground_temps"]),
+        )
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+
+        return new_obj
+
+
+class Climate_MonthlyRadiationCollection(_base._Base):
+
+    def __init__(self,
+                 _north=Climate_MonthlyValueSet(),
+                 _east=Climate_MonthlyValueSet(),
+                 _south=Climate_MonthlyValueSet(),
+                 _west=Climate_MonthlyValueSet(),
+                 _glob=Climate_MonthlyValueSet()):
+        super(Climate_MonthlyRadiationCollection, self).__init__()
+        self.north = _north
+        self.east = _east
+        self.south = _south
+        self.west = _west
+        self.glob = _glob
+
+    def to_dict(self):
+        # type: () -> Dict[str, Dict[str, float]]
+        d = {}
+
+        d["identifier"] = self.identifier
+        d["display_name"] = self.display_name
+        d["north"] = self.north.to_dict()
+        d["east"] = self.east.to_dict()
+        d["south"] = self.south.to_dict()
+        d["west"] = self.west.to_dict()
+        d["glob"] = self.glob.to_dict()
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Dict[str, float]]) -> Climate_MonthlyRadiationCollection
+        new_obj = cls(
+            _north=Climate_MonthlyValueSet.from_dict(_input_dict["north"]),
+            _east=Climate_MonthlyValueSet.from_dict(_input_dict["east"]),
+            _south=Climate_MonthlyValueSet.from_dict(_input_dict["south"]),
+            _west=Climate_MonthlyValueSet.from_dict(_input_dict["west"]),
+            _glob=Climate_MonthlyValueSet.from_dict(_input_dict["glob"]),
+        )
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+
+        return new_obj
+
+
+class Climate_PeakLoadValueSet(_base._Base):
+    """A set of Peak Load data."""
+
+    def __init__(self,
+                 _temp=0.0,
+                 _rad_north=0.0,
+                 _rad_east=0.0,
+                 _rad_south=0.0,
+                 _rad_west=0.0,
+                 _rad_global=0.0,
+                 _dewpoint_temp=None,
+                 _sky_temp=None,
+                 _ground_temp=None,
+                 ):
+        # type: (float, float, float, float, float, float, Optional[float], Optional[float], Optional[float]) -> None
+        super(Climate_PeakLoadValueSet, self).__init__()
+        self.temp = _temp
+        self.rad_north = _rad_north
+        self.rad_east = _rad_east
+        self.rad_south = _rad_south
+        self.rad_west = _rad_west
+        self.rad_global = _rad_global
+        self.dewpoint = _dewpoint_temp
+        self.sky_temp = _sky_temp
+        self.ground_temp = _ground_temp
+
+    def to_dict(self):
+        # type: () -> Dict[str, float]
         d = {}
 
         d['temp'] = self.temp
@@ -97,20 +200,70 @@ class Climate_PeakLoadCollection(_base._Base):
         d['rad_south'] = self.rad_south
         d['rad_west'] = self.rad_west
         d['rad_global'] = self.rad_global
+        d["dewpoint"] = self.dewpoint
+        d["sky_temp"] = self.sky_temp
+        d["ground_temp"] = self.ground_temp
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, float]) -> Climate_PeakLoadValueSet
+        new_obj = cls()
+
+        new_obj.temp = _input_dict["temp"]
+        new_obj.rad_north = _input_dict["rad_north"]
+        new_obj.rad_east = _input_dict["rad_east"]
+        new_obj.rad_south = _input_dict["rad_south"]
+        new_obj.rad_west = _input_dict["rad_west"]
+        new_obj.rad_global = _input_dict["rad_global"]
+        new_obj.rad_global = _input_dict["dewpoint"]
+        new_obj.rad_global = _input_dict["sky_temp"]
+        new_obj.rad_global = _input_dict["ground_temp"]
+
+        return new_obj
+
+
+class Climate_PeakLoadCollection(_base._Base):
+    """A Collection of Peak Loads (Heating and Cooling)."""
+
+    def __init__(self,
+                 _heat_load_1=Climate_PeakLoadValueSet(),
+                 _heat_load_2=Climate_PeakLoadValueSet(),
+                 _cooling_load_1=Climate_PeakLoadValueSet(),
+                 _cooling_load_2=Climate_PeakLoadValueSet(),
+                 ):
+        # type: (Climate_PeakLoadValueSet, Climate_PeakLoadValueSet, Climate_PeakLoadValueSet, Climate_PeakLoadValueSet) -> None
+        super(Climate_PeakLoadCollection, self).__init__()
+        self.heat_load_1 = _heat_load_1
+        self.heat_load_2 = _heat_load_2
+        self.cooling_load_1 = _cooling_load_1
+        self.cooling_load_2 = _cooling_load_2
+
+    def to_dict(self):
+        # type: () -> Dict[str, Union[Dict[str, float], str]]
+        d = {}
+
+        d["heat_load_1"] = self.heat_load_1.to_dict()
+        d["heat_load_2"] = self.heat_load_2.to_dict()
+        d["cooling_load_1"] = self.cooling_load_1.to_dict()
+        d["cooling_load_2"] = self.cooling_load_2.to_dict()
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate_PeakLoadCollection
-        new_obj = cls()
-
-        new_obj.temp = _input_dict.get("temp")
-        new_obj.rad_north = _input_dict.get("rad_north")
-        new_obj.rad_east = _input_dict.get("rad_east")
-        new_obj.rad_south = _input_dict.get("rad_south")
-        new_obj.rad_west = _input_dict.get("rad_west")
-        new_obj.rad_global = _input_dict.get("rad_global")
+        new_obj = cls(
+            Climate_PeakLoadValueSet.from_dict(_input_dict["heat_load_1"]),
+            Climate_PeakLoadValueSet.from_dict(_input_dict["heat_load_2"]),
+            Climate_PeakLoadValueSet.from_dict(_input_dict["cooling_load_1"]),
+            Climate_PeakLoadValueSet.from_dict(_input_dict["cooling_load_2"]),
+        )
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.identifier = _input_dict["identifier"]
 
         return new_obj
 
@@ -154,30 +307,26 @@ class Climate_Ground(_base._Base):
 
 
 class Climate(_base._Base):
-    def __init__(self):
+    def __init__(self,
+                 _display_name="New York",
+                 _station_elevation=0.0,
+                 _daily_temp_swing=8.0,
+                 _average_wind_speed=4.0,
+                 _monthly_temps=Climate_MonthlyTempCollection(),
+                 _monthly_radiation=Climate_MonthlyRadiationCollection(),
+                 _peak_loads=Climate_PeakLoadCollection()
+                 ):
+        # type: (str, float, float, float, Climate_MonthlyTempCollection, Climate_MonthlyRadiationCollection, Climate_PeakLoadCollection) -> None
         super(Climate, self).__init__()
-        self.display_name = "New York"
-        self.station_elevation = 0.0  # m
-        self.summer_daily_temperature_swing = 8  # Deg K
-        self.average_wind_speed = 4  # m/s
+        self.display_name = _display_name
+        self.station_elevation = _station_elevation  # m
+        self.summer_daily_temperature_swing = _daily_temp_swing  # Deg-K
+        self.average_wind_speed = _average_wind_speed  # m/s
 
         self.ground = Climate_Ground()
-
-        self.monthly_temperature_air = Climate_MonthlyValueCollection()
-        self.monthly_temperature_dewpoint = Climate_MonthlyValueCollection()
-        self.monthly_temperature_sky = Climate_MonthlyValueCollection()
-        self.monthly_temperature_ground = Climate_MonthlyValueCollection()
-
-        self.monthly_radiation_north = Climate_MonthlyValueCollection()
-        self.monthly_radiation_east = Climate_MonthlyValueCollection()
-        self.monthly_radiation_south = Climate_MonthlyValueCollection()
-        self.monthly_radiation_west = Climate_MonthlyValueCollection()
-        self.monthly_radiation_global = Climate_MonthlyValueCollection()
-
-        self.peak_heating_1 = Climate_PeakLoadCollection()
-        self.peak_heating_2 = Climate_PeakLoadCollection()
-        self.peak_cooling_1 = Climate_PeakLoadCollection()
-        self.peak_cooling_2 = Climate_PeakLoadCollection()
+        self.monthly_temps = _monthly_temps
+        self.monthly_radiation = _monthly_radiation
+        self.peak_loads = _peak_loads
 
     def to_dict(self):
         # type: () -> Dict
@@ -190,21 +339,9 @@ class Climate(_base._Base):
 
         d["ground"] = self.ground.to_dict()
 
-        d["monthly_temperature_air"] = self.monthly_temperature_air.to_dict()
-        d["monthly_temperature_dewpoint"] = self.monthly_temperature_dewpoint.to_dict()
-        d["monthly_temperature_sky"] = self.monthly_temperature_sky.to_dict()
-        d["monthly_temperature_ground"] = self.monthly_temperature_ground.to_dict()
-
-        d["monthly_radiation_north"] = self.monthly_radiation_north.to_dict()
-        d["monthly_radiation_east"] = self.monthly_radiation_east.to_dict()
-        d["monthly_radiation_south"] = self.monthly_radiation_south.to_dict()
-        d["monthly_radiation_west"] = self.monthly_radiation_west.to_dict()
-        d["monthly_radiation_global"] = self.monthly_radiation_global.to_dict()
-
-        d["peak_heating_1"] = self.peak_heating_1.to_dict()
-        d["peak_heating_2"] = self.peak_heating_2.to_dict()
-        d["peak_cooling_1"] = self.peak_cooling_1.to_dict()
-        d["peak_cooling_2"] = self.peak_cooling_2.to_dict()
+        d["monthly_temps"] = self.monthly_temps.to_dict()
+        d["monthly_radiation"] = self.monthly_radiation.to_dict()
+        d["peak_loads"] = self.peak_loads.to_dict()
 
         return d
 
@@ -221,44 +358,12 @@ class Climate(_base._Base):
 
         new_obj.ground = Climate_Ground.from_dict(
             _input_dict.get("ground", {}))
-
-        new_obj.monthly_temperature_air = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_temperature_air", {})
-        )
-        new_obj.monthly_temperature_dewpoint = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_temperature_dewpoint", {})
-        )
-        new_obj.monthly_temperature_sky = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_temperature_sky", {})
-        )
-        new_obj.monthly_temperature_ground = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_temperature_ground", {})
-        )
-
-        new_obj.monthly_radiation_north = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_radiation_north", {})
-        )
-        new_obj.monthly_radiation_east = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_radiation_east", {})
-        )
-        new_obj.monthly_radiation_south = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_radiation_south", {})
-        )
-        new_obj.monthly_radiation_west = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_radiation_west", {})
-        )
-        new_obj.monthly_radiation_global = Climate_MonthlyValueCollection.from_dict(
-            _input_dict.get("monthly_radiation_global", {})
-        )
-
-        new_obj.peak_heating_1 = Climate_PeakLoadCollection.from_dict(
-            _input_dict.get("peak_heating_1", {}))
-        new_obj.peak_heating_2 = Climate_PeakLoadCollection.from_dict(
-            _input_dict.get("peak_heating_2", {}))
-        new_obj.peak_cooling_1 = Climate_PeakLoadCollection.from_dict(
-            _input_dict.get("peak_cooling_1", {}))
-        new_obj.peak_cooling_2 = Climate_PeakLoadCollection.from_dict(
-            _input_dict.get("peak_cooling_2", {}))
+        new_obj.monthly_temps = Climate_MonthlyTempCollection.from_dict(
+            _input_dict.get("monthly_temps", {}))
+        new_obj.monthly_radiation = Climate_MonthlyRadiationCollection.from_dict(
+            _input_dict.get("monthly_radiation", {}))
+        new_obj.peak_loads = Climate_PeakLoadCollection.from_dict(
+            _input_dict.get("peak_loads", {}))
 
         return new_obj
 
@@ -278,14 +383,20 @@ class Climate(_base._Base):
 class Location(_base._Base):
     """Geographic Location Information."""
 
-    def __init__(self):
+    def __init__(self,
+                 latitude=40.6,
+                 longitude=-73.8,
+                 site_elevation=None,
+                 climate_zone=1,
+                 hours_from_UTC=-4,
+                 ):
+        # type: (float, float, Optional[float], int, int) -> None
         super(Location, self).__init__()
-        # NYC Default
-        self.latitude = 40.6
-        self.longitude = -73.8
-        self.site_elevation = None
-        self.climate_zone = 1
-        self.hours_from_UTC = -4
+        self.latitude = latitude
+        self.longitude = longitude
+        self.site_elevation = site_elevation
+        self.climate_zone = climate_zone
+        self.hours_from_UTC = hours_from_UTC
 
     def to_dict(self):
         # type: () -> Dict
@@ -296,32 +407,36 @@ class Location(_base._Base):
         d["site_elevation"] = self.site_elevation
         d["climate_zone"] = self.climate_zone
         d["hours_from_UTC"] = self.hours_from_UTC
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> Location
-        new_obj = cls()
-
-        new_obj.latitude = _input_dict["latitude"]
-        new_obj.longitude = _input_dict["longitude"]
-        new_obj.site_elevation = _input_dict["site_elevation"]
-        new_obj.climate_zone = _input_dict["climate_zone"]
-        new_obj.hours_from_UTC = _input_dict["hours_from_UTC"]
+        new_obj = cls(
+            _input_dict["latitude"],
+            _input_dict["longitude"],
+            _input_dict["site_elevation"],
+            _input_dict["climate_zone"],
+            _input_dict["hours_from_UTC"],
+        )
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.identifier = _input_dict["identifier"]
 
         return new_obj
 
     def __copy__(self):
         # type: () -> Location
-        obj = Location()
-
+        obj = Location(
+            self.latitude,
+            self.longitude,
+            self.site_elevation,
+            self.climate_zone,
+            self.hours_from_UTC,
+        )
         obj.set_base_attrs_from_source(self)
-        obj.latitude = self.latitude
-        obj.longitude = self.longitude
-        obj.site_elevation = self.site_elevation
-        obj.climate_zone = self.climate_zone
-        obj.hours_from_UTC = self.hours_from_UTC
 
         return obj
 

@@ -34,6 +34,7 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
+    # -- Climate
     "HBPH - PH Site": {
         "NickName": "PH Site",
         "Message": RELEASE_VERSION,
@@ -58,6 +59,25 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
+    "HBPH - PH Climate Monthly Temps": {
+        "NickName": "PH Monthly Temps",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+    "HBPH - PH Climate Monthly Radiation": {
+        "NickName": "PH Monthly Radiation",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+    "HBPH - PH Climate Peak Load": {
+        "NickName": "PH Peak Load",
+        "Message": RELEASE_VERSION,
+        "Category": CATEGORY,
+        "SubCategory": 1,
+    },
+    # -- Spaces
     "HBPH - Create Spaces": {
         "NickName": "PH Spaces",
         "Message": RELEASE_VERSION,
@@ -143,7 +163,7 @@ COMPONENT_PARAMS = {
         "Category": CATEGORY,
         "SubCategory": 1,
     },
-
+    # --
     "HBPH - Create PH Equipment": {
         "NickName": "Create PH Equipment",
         "Message": RELEASE_VERSION,

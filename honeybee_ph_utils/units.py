@@ -19,7 +19,8 @@ CONVERSION_SCHEMAS = {
     "LITER": {"SI": "{}*1", "LITER": "{}*1", "GALLON": "{}*0.264172", "FT3": "{}*0.035314667", "M3": "{}*0.001"},
     "MM": {"SI": "{}*1", "MM": "{}*1", "FT": "{}*0.00328084", "IN": "{}*0.0394"},
     "M": {"SI": "{}*1", "M": "{}*1", "CM": "{}*100", "MM": "{}*1000", "FT": "{}*3.280839895", "IN": "{}*39.3701"},
-    "M/DAY": {"SI": "{}*1", "M/DAY": "{}*1", "FT/DAY": "{}*3.280839895"},
+    "M/DAY": {"SI": "{}*1", "M/DAY": "{}*1", "FT/DAY": "{}*3.280839895", "M/S": "{}/24/60/60"},
+    "M/S": {"SI": "{}*1", "M/S": "{}*1", "M/DAY": "{}*24*60*60", "FT/S": "{}*3.280839895", "FT/DAY": "{}*3.280839895*24*60*60", "MPH": "{}/0.44704"},
     "M2": {"SI": "{}*1", "M2": "{}*1", "FT2": "{}*10.76391042"},
     "M3": {"SI": "{}*1", "M3": "{}*1", "FT3": "{}*35.31466672", "LITER": "{}*1000", "GALLON": "{}*264.1720524"},
     "M3/HR": {"SI": "{}*1", "M3/HR": "{}*1", "CFM": "{}*0.588577779"},
@@ -41,6 +42,10 @@ CONVERSION_SCHEMAS = {
     "BTU/HR-FT-F": {"SI": "{}*1.730734908", "W/MK": "{}*1.730734908", "HR-FT2-F/BTU-IN": "1/({}*12)"},
     "HR-FT2-F/BTU-IN": {"SI": "{}*1.730734908", "W/MK": "(1/({}*12))*1.730734908", "BTU/HR-FT-F": "1/({}*12)"},
     "BTU/HR-F": {"SI": "{}*0.527528", "W/K": "{}*0.527528"},
+    "KBTU/FT2": {"SI": "{}*3.154591186", "KWH/M2": "{}*3.154591186", "KWH/FT2": "{}*0.293071111"},
+    "MPH": {"SI": "{}*0.44704", "M/S": "{}*0.44704", "M/DAY": "{}*0.44704*60*60*24"},
+    "FT/S": {"SI": "{}*0.3048", "M/S": "{}*0.3048", "M/DAY": "{}*0.3048*60*60*24"},
+    "FT/DAY": {"SI": "{}*0.3048", "M/DAY": "{}*0.3048"},
 }
 
 
@@ -83,8 +88,12 @@ def _standardize_input_unit(_in):
         'BTU/HR-F': 'BTU/HR-F', 'BTU/H-F': 'BTU/HR-F', 'BTUH/F': 'BTU/HR-F', 'BTUHR/F': 'BTU/HR-F',
         'DELTA-C': 'DELTA-C', 'DELTA-F': 'DELTA-F',
         'KWH/M2': 'KWH/M2',
+        'KBTU/FT2': 'KBTU/FT2', 'KBTU/SF': 'KBTU/FT2',
         'M2K/W': 'M2K/W',
         'WH/M3': 'WH/M3',
+        'M/S': 'M/S', 'METER/SEC': 'M/S', 'METER/SECOND': 'M/S', 'M/DAY': 'M/DAY',
+        'FT/S': 'FT/S', 'FT/DAY': 'FT/DAY',
+        'MPH': 'MPH'
     }
     # Note: BTU/W conversion isn't really right, but I think many folks use that
     # when they mean Btu/Wh (or Btu-h/W)
@@ -158,9 +167,13 @@ def parse_input(_input_string):
     # -- ie: the input string: "0.5 HR-FT2-F/BTU-IN" will get split at index=4
     # --                           ^
     # -- You can't just look for the numbers, since some units have numbers in them ('FT2', ...)
+    # -- Exclude the '.' and '-' characters from the find so that float and
+    # -- negative values don't cause an error.
+    # --
+    # -- https://regex101.com/
 
     input_string = str(_input_string).strip().upper()
-    rx = re.compile(r"[^\d. ]", re.IGNORECASE)
+    rx = re.compile(r"[^\d.-]", re.IGNORECASE)
     match = rx.search(input_string)
 
     if not match:
