@@ -4,7 +4,7 @@ These modules extend the [Honeybee-Core](https://github.com/ladybug-tools/honeyb
 ![image](https://user-images.githubusercontent.com/69652712/169719258-0da1597e-d203-4f2d-9e28-bbf89f8385fc.png)
 
 # Usage
-The classes here will automatically extend the existing Honeybee-Core objects at import time. This is done through the [_extend_honeybee_ph.py](https://github.com/PH-Tools/honeybee_ph/blob/phpp_exporter/honeybee_ph/_extend_honeybee_ph.py) module which will be called by Honeybee-Core the first time it is imported by a component into the Grasshopper scene.
+The classes here will automatically extend the existing Honeybee-Core objects at import time. This is done through the [_extend_honeybee_ph.py](https://github.com/PH-Tools/honeybee_ph/blob/main/honeybee_ph/_extend_honeybee_ph.py) module which will be called by Honeybee-Core the first time it is imported by a component into the Grasshopper scene.
 
 # Python Version:
 All Classes should be written to comply with Python 2.7 (IronPython) format <u>only</u>. Because these classes are used within the McNeel Rhinoceros/Grasshopper platform, all classes must be backwards compatible to Python 2.7 / IronPython.
