@@ -10,12 +10,23 @@ except:
     pass  # Python3
 
 try:
-    from typing import Any, List, Collection, Tuple
+    from typing import Any, List, Collection, Tuple, Optional
 except ImportError:
     pass  # IronPython
 
 try:
+    from System import Object
+except ImportError:
+    pass
+
+try:
     import Rhino.Geometry as rg
+except ImportError:
+    pass
+
+try:
+    from Grasshopper import DataTree
+    from Grasshopper.Kernel.Data import GH_Path
 except ImportError:
     pass
 
@@ -26,7 +37,6 @@ except ImportError as e:
     raise ImportError("\nFailed to import ladybug:\n\t{}".format(e))
 
 try:
-    from ladybug_rhino.config import conversion_to_meters
     from ladybug_rhino.togeometry import to_joined_gridded_mesh3d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_geometry.geometry3d import Mesh3D
@@ -37,6 +47,8 @@ try:
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_rhino:\n\t{}".format(e))
 
+from honeybee_ph_rhino.gh_compo_io import ghio_win_shade_surfaces
+from honeybee_ph_utils import sky_matrix
 
 # Radiation and Shading Factor Calcs
 # -----------------------------------------------------------------------------
@@ -262,3 +274,199 @@ def create_rhino_mesh(_graphic, _lb_mesh):
     legend = legend_objects(_graphic.legend)
 
     return mesh, legend
+
+
+# Component Interface
+# -----------------------------------------------------------------------------
+class HBPH_LBTRadSettings:
+    """LBT Radiation Solver Settings."""
+
+    def __init__(self,  _wsm, _ssm, _mshp, _gs, _lgp, _cpus):
+        # type: (Any, Any, rg.MeshingParameters, float, Any, Optional[int]) -> None
+        self.winter_sky_matrix = _wsm
+        self.summer_sky_matrix = _ssm
+        self.mesh_params = _mshp
+        self.grid_size = _gs
+        self.legend_par = _lgp
+        self.cpus = _cpus
+
+    def __str__(self):
+        return '{}()'.format(self.__class__.__name__)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
+
+class IShadingLBTRadiationSettings(object):
+    """Interface for LBT Radiation Solver Settings."""
+
+    # -- Defaults
+    winter_period = (10, 3)  # October 1 to March 31
+    summer_period = (6, 9)  # June 1 to September 30'
+
+    def __init__(self, _epw_file, _north, _winter_sky_matrix, _summer_sky_matrix,
+                 _mesh_params, _grid_size, _legend_par, _cpus):
+        # type: (str, float, Any, Any, rg.MeshingParameters, float, Any, Optional[int]) -> None
+        self.epw_file = _epw_file
+        self.winter_sky_matrix = _winter_sky_matrix or sky_matrix.gen_matrix(
+            self.epw_file, self.winter_period, _north)
+        self.summer_sky_matrix = _summer_sky_matrix or sky_matrix.gen_matrix(
+            self.epw_file, self.summer_period, _north)
+        self.mesh_params = _mesh_params or rg.MeshingParameters.Default
+        self.grid_size = _grid_size or 1.0
+        self.legend_par = _legend_par or None
+        self.cpus = _cpus or None
+
+    def create_hbph_obj(self):
+        hbph_obj = HBPH_LBTRadSettings(
+            self.winter_sky_matrix,
+            self.summer_sky_matrix,
+            self.mesh_params,
+            self.grid_size,
+            self.legend_par,
+            self.cpus
+        )
+        return hbph_obj
+
+
+class IShadingLBTRadiation(object):
+
+    def __init__(self,
+                 _settings,
+                 _shading_surfaces_winter,
+                 _shading_surfaces_summer,
+                 _hb_rooms,
+                 ):
+        # type: (Any, List, List, List) -> None
+        self.settings = _settings
+        self.shading_surfaces_winter = _shading_surfaces_winter
+        self.shading_surfaces_summer = _shading_surfaces_summer
+        self.hb_rooms = _hb_rooms
+
+    def run(self):
+        hb_rooms_ = []
+
+        # -- Create context Shade meshes
+        # ---------------------------------------------------------------------
+        shade_mesh_winter = create_shading_mesh(
+            self.shading_surfaces_winter,
+            self.settings.mesh_params
+        )
+        shade_mesh_summer = create_shading_mesh(
+            self.shading_surfaces_summer,
+            self.settings.mesh_params
+        )
+
+        # Deconstruct the sky-matrix and get the sky dome vectors. Winter (w) and Summer (s)
+        # ---------------------------------------------------------------------
+        w_sky_vecs, w_total_sky_rad = deconstruct_sky_matrix(
+            self.settings.winter_sky_matrix)
+        s_sky_vecs, s_total_sky_rad = deconstruct_sky_matrix(
+            self.settings.summer_sky_matrix)
+
+        # Calc window surface shaded and unshaded radiation
+        # ---------------------------------------------------------------------
+        lb_window_meshes = []
+        winter_radiation_shaded_ = DataTree[Object]()
+        winter_radiation_shaded_detailed_ = DataTree[Object]()
+        winter_radiation_unshaded_ = DataTree[Object]()
+        summer_radiation_shaded_ = DataTree[Object]()
+        summer_radiation_shaded_detailed_ = DataTree[Object]()
+        summer_radiation_unshaded_ = DataTree[Object]()
+        mesh_by_window = DataTree[Object]()
+
+        win_count = 0
+        for room in self.hb_rooms:
+            new_room = room.duplicate()
+
+            for face in new_room.faces:
+                for aperture in face.apertures:
+                    window_surface = ghio_win_shade_surfaces.create_inset_aperture_surface(
+                        aperture)
+
+                    # Build the meshes
+                    # ----------------------------------------------------------------------
+                    pts, nrmls, win_msh, win_msh_bck, rh_msh = build_window_meshes(
+                        window_surface, self.settings.grid_size, self.settings.mesh_params)
+                    lb_window_meshes.append(win_msh)
+
+                    # Solve Winter
+                    # ----------------------------------------------------------------------
+                    args_winter = (shade_mesh_winter, win_msh_bck, pts,
+                                   w_sky_vecs, nrmls, self.settings.cpus)
+
+                    int_matrix_s, int_matrix_u, angles_s, angles_u = generate_intersection_data(
+                        *args_winter)
+                    w_rads_shaded, face_areas = calc_win_radiation(
+                        int_matrix_s, angles_s, w_total_sky_rad, win_msh)
+                    w_rads_unshaded, face_areas = calc_win_radiation(
+                        int_matrix_u, angles_u, w_total_sky_rad, win_msh)
+
+                    winter_rad_shaded = sum(w_rads_shaded)/sum(face_areas)
+                    winter_rad_unshaded = sum(w_rads_unshaded)/sum(face_areas)
+
+                    winter_radiation_shaded_detailed_.AddRange(
+                        w_rads_shaded, GH_Path(win_count))
+                    winter_radiation_shaded_.Add(winter_rad_shaded, GH_Path(win_count))
+                    winter_radiation_unshaded_.Add(
+                        winter_rad_unshaded, GH_Path(win_count))
+
+                    # Solve Summer
+                    # ----------------------------------------------------------------------
+                    args_summer = (shade_mesh_summer, win_msh_bck, pts,
+                                   s_sky_vecs, nrmls, self.settings.cpus)
+
+                    int_matrix_s, int_matrix_u, angles_s, angles_u = generate_intersection_data(
+                        *args_summer)
+                    s_rads_shaded, face_areas = calc_win_radiation(
+                        int_matrix_s, angles_s, s_total_sky_rad, win_msh)
+                    s_rads_unshaded, face_areas = calc_win_radiation(
+                        int_matrix_u, angles_u, s_total_sky_rad, win_msh)
+
+                    summer_rad_shaded = sum(s_rads_shaded)/sum(face_areas)
+                    summer_rad_unshaded = sum(s_rads_unshaded)/sum(face_areas)
+
+                    summer_radiation_shaded_detailed_.AddRange(
+                        s_rads_shaded, GH_Path(win_count))
+                    summer_radiation_shaded_.Add(summer_rad_shaded, GH_Path(win_count))
+                    summer_radiation_unshaded_.Add(
+                        summer_rad_unshaded, GH_Path(win_count))
+
+                    mesh_by_window.Add(rh_msh, GH_Path(win_count))
+
+                    # Set the aperture shading factors
+                    # ----------------------------------------------------------------------
+                    aperture.properties.ph.winter_shading_factor = winter_rad_shaded / winter_rad_unshaded
+                    aperture.properties.ph.summer_shading_factor = summer_rad_shaded / summer_rad_unshaded
+
+                    win_count += 1
+
+            # -- Add the new room to the output set
+            # ----------------------------------------------------------------------
+            hb_rooms_.append(new_room)
+
+        # Create the mesh and legend outputs
+        # --------------------------------------------------------------------------
+        # Flatten the radiation data trees
+        winter_rad_vals = [
+            item for branch in winter_radiation_shaded_detailed_.Branches for item in branch]
+        summer_rad_vals = [
+            item for branch in summer_radiation_shaded_detailed_.Branches for item in branch]
+
+        # Create the single window Mesh
+        joined_window_mesh = create_window_mesh(lb_window_meshes)
+
+        winter_graphic, title = create_graphic_container(
+            'Winter', winter_rad_vals, joined_window_mesh, self.settings.legend_par)
+        winter_radiation_shaded_mesh_, legend_ = create_rhino_mesh(
+            winter_graphic, joined_window_mesh)
+
+        summer_graphic, title = create_graphic_container(
+            'Summer', summer_rad_vals, joined_window_mesh, self.settings.legend_par)
+        summer_radiation_shaded_mesh_, legend_ = create_rhino_mesh(
+            summer_graphic, joined_window_mesh)
+
+        return legend_, winter_radiation_shaded_mesh_, summer_radiation_shaded_mesh_, hb_rooms_

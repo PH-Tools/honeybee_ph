@@ -39,7 +39,7 @@ def create_inset_aperture_surface(_aperture):
     """Return Rhino.Geometry.Brep of an aperture's face, inset."""
     inset_face = from_face3d(
         _aperture.geometry.move(
-            _aperture.geometry.normal.reverse() * _aperture.properties.ph.inset_dist
+            _aperture.geometry.normal.reverse() * _aperture.properties.ph.inset_dist  # type: ignore
         )
     )  # type: Optional[rg.Brep]
 
@@ -65,11 +65,12 @@ def create_window_reveal(_hb_aperture):
     # type: (aperture.Aperture) -> List[rg.Brep]
     """Return a list of the Aperture 'reveal' surfaces."""
 
-    extrusion_vector = _hb_aperture.normal.reverse() * _hb_aperture.properties.ph.inset_dist
+    extrusion_vector = _hb_aperture.normal.reverse(
+    ) * _hb_aperture.properties.ph.inset_dist  # type: ignore
     return [
         from_face3d(Face3D.from_extrusion(seg, extrusion_vector))
         for seg in _hb_aperture.geometry.boundary_segments
-    ]
+    ]  # type: ignore
 
 
 def create_window_reveals(_hb_rooms):

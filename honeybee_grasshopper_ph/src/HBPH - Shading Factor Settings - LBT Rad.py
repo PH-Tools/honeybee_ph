@@ -23,7 +23,7 @@
 Settings and parameter values used when calculating the Window Shading Factors
 using the Passive House LBT-Radiation solver.
 -
-EM May 23, 2022
+EM September 7, 2022
     Args:
         _epw_file: 
         
@@ -42,6 +42,8 @@ EM May 23, 2022
             
         _legend_par_: Optional Ladybug legend parameter object to control the 
             output visualizations.
+            
+        _cpus_: (int) Optional. The number of computer CPUs to use to calculate the result.
     
     Returns:
         settings_: The new HBPH Settings which are used to configure the LBT-Radiation
@@ -49,38 +51,33 @@ EM May 23, 2022
 """
 
 
-import Rhino
-
-from honeybee_ph_utils import sky_matrix
+from honeybee_ph_utils import preview
+from honeybee_ph_rhino.gh_compo_io import ghio_lbt_shading
 
 # ------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - Shading Factor Settings - LBT Rad"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='MAY_23_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='SEP_07_2022')
 if DEV:
-    reload(sky_matrix)
-
+    reload(preview)
+    reload(ghio_lbt_shading)
 
 # ------------------------------------------------------------------------------
-class Settings:
-    def __init__(self, _wsm, _ssm, _mshp, _gs, _lgp):
-        self.winter_sky_matrix = _wsm
-        self.summer_sky_matrix = _ssm
-        self.mesh_params = _mshp
-        self.grid_size = _gs
-        self.legend_par = _lgp
-
-winter_period = (10,3) # October 1 to March 31
-summer_period = (6, 9) # June 1 to September 30
-
 if _epw_file:
-    settings_ = Settings(
-        _winter_sky_matrix_ or sky_matrix.gen_matrix(_epw_file, winter_period, north_),
-        _summer_sky_matrix_ or sky_matrix.gen_matrix(_epw_file, summer_period, north_),
-        _shading_mesh_settings_ or Rhino.Geometry.MeshingParameters.Default,
-        _grid_size_ or 1.0,
-        _legend_par_ or None,
-        )
-        
+    IShadingLBTRadiationSettings_ = ghio_lbt_shading.IShadingLBTRadiationSettings(
+            _epw_file,
+            _north_,
+            _winter_sky_matrix_,
+            _summer_sky_matrix_,
+            _shading_mesh_settings_,
+            _grid_size_,
+            _legend_par_,
+            _cpus_ 
+    )
+
+    settings_ = IShadingLBTRadiationSettings_.create_hbph_obj()
+
+# ------------------------------------------------------------------------------  
+preview.object_preview(settings_)

@@ -75,13 +75,13 @@ def create_analysis_period_hoys(_period):
 def broadband_radiation(patch_row_str, row_number, wea_duration, sky_density=1):
     """Parse a row of gendaymtx RGB patch data in W/sr/m2 to radiation in kWh/m2.
 
-    This includes aplying broadband weighting to the RGB bands, multiplication
+    This includes applying broadband weighting to the RGB bands, multiplication
     by the steradians of each patch, and multiplying by the duration of time that
     they sky matrix represents in hours.
 
     Args:
         patch_row_str: Text string for a single row of RGB patch data.
-        row_number: Interger for the row number that the patch corresponds to.
+        row_number: Integer for the row number that the patch corresponds to.
         sky_density: Integer (either 1 or 2) for the density.
         wea_duration: Number for the duration of the Wea in hours. This is used
             to convert between the average value output by the command and the
@@ -96,7 +96,7 @@ def parse_mtx_data(data_str, wea_duration, sky_density=1):
     """Parse a string of Radiance gendaymtx data to a list of radiation-per-patch.
 
     This function handles the removing of the header and the conversion of the
-    RGB irradianc-=per-steraidian values to broadband radiation. It also removes
+    RGB irradiance-=per-steraidian values to broadband radiation. It also removes
     the first patch, which is the ground and is not used by Ladybug.
 
     Args:
@@ -124,7 +124,7 @@ def parse_mtx_data(data_str, wea_duration, sky_density=1):
 
 @memoize
 def gen_matrix(_epw_file, _period, _north):
-    # type: (epw.EPW, Tuple[int, int], Any) -> Any
+    # type: (str, Tuple[int, int], Any) -> Any
 
     epw_data = epw.EPW(_epw_file)
     _location = epw_data.location
@@ -136,7 +136,7 @@ def gen_matrix(_epw_file, _period, _north):
     _folder_ = None
 
     # -------------------------------------------------------------------------
-    # check the istalled Radiance date and get the path to the gemdaymtx executable
+    # check the installed Radiance date and get the path to the gendaymtx executable
     check_radiance_date()
     gendaymtx_exe = os.path.join(hb_folders.radbin_path, 'gendaymtx.exe') if \
         os.name == 'nt' else os.path.join(hb_folders.radbin_path, 'gendaymtx')
