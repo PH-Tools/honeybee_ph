@@ -63,7 +63,7 @@ jobs:
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
       - name: sleep for 10 minutes for PyPI update
         if: contains(steps.new_release.outputs.tag, '.')
-        run: sleep 600s
+        run: sleep 200s
         shell: bash
       - name: Update honeybee-ph
         if: contains(steps.new_release.outputs.tag, '.')
