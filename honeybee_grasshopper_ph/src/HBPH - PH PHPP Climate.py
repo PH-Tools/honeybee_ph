@@ -23,11 +23,11 @@
 Set the PHPP Climate Data set to use from the PHPP pre-loaded libraries. This component 
 will only affect the PHPP, not WUFI-Passive.
 -
-Note: be sure that the inputs matche the text in the  PHPP library exactly. The easiest 
+Note: be sure that the inputs match the text in the  PHPP library exactly. The easiest 
 way to do that is to just open the PHPP, find the dataset you would like to use, and 
 copy/past the text into a GH Panel.
 -
-EM June 13, 2022
+EM September 7, 2022
     Args:
         _country_code: (str) default = "US-United States of America" Optional country-code
             that matches the PHPP datasets. Note: be sure that the input matches the text in the 
@@ -48,26 +48,30 @@ EM June 13, 2022
         phpp_climate_: A new HBPH PHPP Code object that can passed along to an "HBPH - Site" component.
 """
 
-from honeybee_ph import site
 from honeybee_ph_utils import preview
+from honeybee_ph_rhino.gh_compo_io import ghio_climate
 
 # -------------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - PH PHPP Climate"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_13_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='SEP_07_2022')
 
 if DEV:
+    reload(ghio_climate)
+    from honeybee_ph import site
     reload(site)
     reload(preview)
     
 # -------------------------------------------------------------------------------------
-# -- Collect the new Site elements
-phpp_climate_ = site.PHPPCodes()
-phpp_climate_.country_code = _country_code or phpp_climate_.country_code
-phpp_climate_.region_code = _region_code or phpp_climate_.region_code
-phpp_climate_.dataset_name = _dataset_name or phpp_climate_.dataset_name
+IPHPPCodes_ = ghio_climate.IPHPPCodes(
+                _country_code,
+                _region_code,
+                _dataset_name,
+            )
+
+phpp_climate_ = IPHPPCodes_.create_hbph_obj()
 
 # -------------------------------------------------------------------------------------
 preview.object_preview(phpp_climate_)

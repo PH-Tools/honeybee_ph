@@ -96,7 +96,7 @@ class Climate_MonthlyTempCollection(_base._Base):
         d = {}
 
         d["identifier"] = self.identifier
-        d["display_name"] = self.display_name
+        d["identifier"] = self.display_name
         d["air_temps"] = self.air_temps.to_dict()
         d["dewpoints"] = self.dewpoints.to_dict()
         d["sky_temps"] = self.sky_temps.to_dict()
@@ -448,60 +448,49 @@ class Location(_base._Base):
 class PHPPCodes(_base._Base):
     """Settings / names if using Pre-loaded PHPP Library Data"""
 
-    def __init__(self):
+    def __init__(self,
+                 _country_code="US-United States of America",
+                 _region_code="New York",
+                 _dataset_name="US0055b-New York",
+                 ):
+        # type: (str, str, str) -> None
         super(PHPPCodes, self).__init__()
-        # PHPP Specific settings
-        self.country_code = "US-United States of America"
-        self.region_code = "New York"
-        self._dataset_name = "US0055b-New York"
-
-    @property
-    def dataset_name(self):
-        return self._dataset_name
-
-    @dataset_name.setter
-    def dataset_name(self, _in):
-        if _in is None:
-            return
-
-        vals = _in.split("-")
-        if len(vals) != 2:
-            raise Exception(
-                "Error: PHPP Dataset name format should be "
-                "'xx01234-xxxx'. Got: {}".format(self._dataset_name))
-        self._dataset_name = _in
-        self.display_name = vals[1]
+        self.country_code = _country_code
+        self.region_code = _region_code
+        self.dataset_name = _dataset_name
 
     def to_dict(self):
         # type: () -> Dict
         d = {}
 
-        d["phpp_country_code"] = self.country_code
-        d["phpp_region_code"] = self.region_code
-        d["phpp_dataset_name"] = self.dataset_name
+        d["country_code"] = self.country_code
+        d["region_code"] = self.region_code
+        d["dataset_name"] = self.dataset_name
+        d["display_name"] = self.dataset_name
+        d["identifier"] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> PHPPCodes
-        obj = cls()
-
-        obj.country_code = _input_dict["phpp_country_code"]
-        obj.region_code = _input_dict["phpp_region_code"]
-        obj.dataset_name = _input_dict["phpp_dataset_name"]
-
+        obj = cls(
+            _input_dict["country_code"],
+            _input_dict["region_code"],
+            _input_dict["dataset_name"],
+        )
+        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
         return obj
 
     def __copy__(self):
         # type: () -> PHPPCodes
-        obj = PHPPCodes()
-
+        obj = PHPPCodes(
+            self.country_code,
+            self.region_code,
+            self.dataset_name,
+        )
         obj.set_base_attrs_from_source(self)
-        obj.country_code = self.country_code
-        obj.region_code = self.region_code
-        obj._dataset_name = self._dataset_name
-
         return obj
 
     def duplicate(self):
@@ -512,30 +501,38 @@ class PHPPCodes(_base._Base):
 class Site(_base._Base):
     """Location and Climate data for the building site."""
 
-    def __init__(self):
+    def __init__(self,
+                 _location=Location(),
+                 _climate=Climate(),
+                 _phpp_library_codes=PHPPCodes(),
+                 ):
         super(Site, self).__init__()
-        self.location = Location()
-        self.climate = Climate()
-        self.phpp_library_codes = PHPPCodes()
+        self.location = _location
+        self.climate = _climate
+        self.phpp_library_codes = _phpp_library_codes
 
     def to_dict(self):
-        # type: () -> Dict
+        # type: () -> Dict[str, Any]
         d = {}
 
         d['location'] = self.location.to_dict()
         d['climate'] = self.climate.to_dict()
         d['phpp_library_codes'] = self.phpp_library_codes.to_dict()
+        d['display_name'] = self.display_name
+        d['identifier'] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (Dict) -> Site
-        obj = cls()
-
-        obj.location = Location.from_dict(_input_dict['location'])
-        obj.climate = Climate.from_dict(_input_dict['climate'])
-        obj.phpp_library_codes = PHPPCodes.from_dict(_input_dict['phpp_library_codes'])
+        # type: (Dict[str, Any]) -> Site
+        obj = cls(
+            Location.from_dict(_input_dict['location']),
+            Climate.from_dict(_input_dict['climate']),
+            PHPPCodes.from_dict(_input_dict['phpp_library_codes']),
+        )
+        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
 
         return obj
 

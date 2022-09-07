@@ -20,88 +20,89 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
-Set the detailed monthly and peak-hourly climate data to use for the PHPP and WUFI-Passive model.
+Set the detailed monthly and peak-load climate data to use for the Passive House models.
 - 
-Note: if you would like to use one of the pre-loaded PHPP cliamte data sets instead of providing detailed
-info here (for PHPP only) you can use the "HBPH - PH PHPP Climate" component to set the dataset to use.
+    - PHI: https://passipedia.org/planning/climate_data_tool
+    - PHIUS: https://www.phius.org/climate-data
 -
-EM June 13, 2022
+Note also that this component will *NOT* reset any of the Honeybee EnergyPlus climate, and you will need to set
+that separately using a normal EPW file with hourly data.
+-
+Note: if you would like to use one of the pre-loaded PHPP climate data sets instead of providing detailed
+info here (for PHPP only) you can use the "HBPH - PH PHPP Climate" component to simply specify the dataset to load.
+-
+EM September 7, 2022
     Args:
-        _display_name: (str) Optional name for the climate data set.
+        _display_name_: (str) Optional name for the climate data set.
         
-        _startion_elevation: (m) default = 5.0
+        _station_elevation_: (m) default = 5.0 The elevation of the weather station the data
+            is coming from is located.
         
-        _daily_temp_swing: (deg K) default = 8.0K
+        _daily_temp_swing_: (deg K) default = 8.0K The summer average dailty temperature swing.
         
-        _avg_wind_speed: (m/s) default = 4.0 m/s
+        _avg_wind_speed_: (m/s) default = 4.0 m/s The summer average wind speed.
         
+        _monthly_temps_: Connect a 'HBPH - PH Climate Monthly Temps' component to set the climate data.
+            If none is input, all Zero values will be set as the default.
+            
+        _monthly_radiation_: Connect a 'HBPH - PH Climate Monthly Radiation' component to set the climate data.
+            If none is input, all Zero values will be set as the default.
+            
+        _peak_heat_load_1_: (HBPH_Climate_PeakLoadValueSet) Connect a "HBPH - PH Climate Peak Load"
+            component to set the data for the peak heat load 1 case.
+        
+        _peak_heat_load_2_: (HBPH_Climate_PeakLoadValueSet) Connect a "HBPH - PH Climate Peak Load"
+            component to set the data for the peak heat load 2 case.   
+            
+        _peak_cooling_load_1_: (HBPH_Climate_PeakLoadValueSet) Connect a "HBPH - PH Climate Peak Load"
+            component to set the data for the peak cooling load 1 case.
+        
+        _peak_cooling_load_2_: (HBPH_Climate_PeakLoadValueSet) Connect a "HBPH - PH Climate Peak Load"
+            component to set the data for the peak cooling load 2 case.        
+            
     Returns:
-        climate_data_: A new HBPH Climate Data object that can passed along to an "HBPH - Site" component.
+        climate_data_: A new HBPH Climate Data object that can passed along to an "HBPH - PH Site" component.
 """
 
-from honeybee_ph import site
 from honeybee_ph_utils import preview
+from honeybee_ph_rhino.gh_compo_io import ghio_climate
 
 # -------------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
 ghenv.Component.Name = "HBPH - PH Climate Data"
 DEV = True
-honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='JUN_13_2022')
+honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='SEP_07_2022')
 
 if DEV:
+    from honeybee_ph import site
     reload(site)
+    from honeybee_ph_utils import units
+    reload(units)
+    from honeybee_ph_rhino.gh_compo_io import ghio_validators
+    reload(ghio_validators)
+    reload(ghio_climate)
     reload(preview)
-
+    
 # -------------------------------------------------------------------------------------
-# -- Collect the new Climate inputs
-climate_data_ = site.Climate()
-climate_data_.display_name = _display_name or climate_data_.display_name
-climate_data_.station_elevation = _station_elevation or climate_data_.station_elevation
-climate_data_.summer_daily_temperature_swing = _daily_temp_swing or climate_data_.summer_daily_temperature_swing
-climate_data_.dataset_name = _avg_wind_speed or climate_data_.average_wind_speed
+IClimate_PeakLoads_ = ghio_climate.IClimate_PeakLoads(
+        _peak_heat_load_1_,
+        _peak_heat_load_2_,
+        _peak_cooling_load_1_,
+        _peak_cooling_load_2_,
+    )
+peak_loads_ = IClimate_PeakLoads_.create_hbph_obj()
 
-# -------------------------------------------------------------------------------------
-# -- Set the default Climate Data
-# -- Monthly
-climate_data_.monthly_temperature_air.values = [1.2,-0.2,5.6,10.9,16.1,21.7,25.0,24.8,19.9,14.0,7.3,3.3]
-climate_data_.monthly_temperature_dewpoint.values = [-4.3,-7.4,0.3,4.7,9.1,15.8,20.3,17.1,13.2,7.9,2.1,-2.8]
-climate_data_.monthly_temperature_sky.values = [-17.4,-20.0,-10.9,-4.8,1.0,9.8,14.5,8.4,5.8,-2.8,-8.6,-11.4]
-
-climate_data_.monthly_radiation_north.values = [21,29,34,39,56,60,59,50,34,30,20,16]
-climate_data_.monthly_radiation_east.values = [32,46,57,65,82,76,78,84,60,54,33,28]
-climate_data_.monthly_radiation_south.values = [83,106,103,86,80,73,78,104,97,129,87,87]
-climate_data_.monthly_radiation_west.values = [48,70,92,95,114,121,120,130,91,94,47,45]
-climate_data_.monthly_radiation_global.values = [50,72,111,133,170,176,177,182,124,109,62,46]
-
-# -- Peak Loads
-climate_data_.peak_heating_1.temp = -6.7
-climate_data_.peak_heating_1.rad_north = 46
-climate_data_.peak_heating_1.rad_east = 80
-climate_data_.peak_heating_1.rad_south = 200
-climate_data_.peak_heating_1.rad_west = 113
-climate_data_.peak_heating_1.rad_global = 121
-
-climate_data_.peak_heating_2.temp = -4.2
-climate_data_.peak_heating_2.rad_north = 16
-climate_data_.peak_heating_2.rad_east = 22
-climate_data_.peak_heating_2.rad_south = 46
-climate_data_.peak_heating_2.rad_west = 26
-climate_data_.peak_heating_2.rad_global = 38
-
-climate_data_.peak_cooling_1.temp = 26.1
-climate_data_.peak_cooling_1.rad_north = 64
-climate_data_.peak_cooling_1.rad_east = 106
-climate_data_.peak_cooling_1.rad_south = 132
-climate_data_.peak_cooling_1.rad_west = 159
-climate_data_.peak_cooling_1.rad_global = 230
-
-climate_data_.peak_cooling_2.temp = 26.1
-climate_data_.peak_cooling_2.rad_north = 64
-climate_data_.peak_cooling_2.rad_east = 106
-climate_data_.peak_cooling_2.rad_south = 132
-climate_data_.peak_cooling_2.rad_west = 159
-climate_data_.peak_cooling_2.rad_global = 230
+IClimate_ = ghio_climate.IClimate(
+        _display_name_,
+        _station_elevation_,
+        _daily_temp_swing_,
+        _avg_wind_speed_,
+        _monthly_temps_,
+        _monthly_radiation_,
+        peak_loads_,
+    )
+climate_data_ = IClimate_.create_hbph_obj()
 
 
 # -------------------------------------------------------------------------------------

@@ -20,58 +20,59 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 #
 """
-Set the geographic location data for the Passive House model. Note: if none is supplied, the default
-values for NYC, USA will be used.
+Input PH-Style monthly average temperature values for the air, dewpoint, sky and ground. This data 
+will be used to configure the 'Climate' inputs in the Passive House models. Note that this data should
+represent monthly average values. Information on climate data can be found at:
+-
+    - PHI: https://passipedia.org/planning/climate_data_tool
+    - PHIUS: https://www.phius.org/climate-data
 -
 Note also that this component will *NOT* reset any of the Honeybee EnergyPlus climate, and you will need to set
 that separately using a normal EPW file with hourly data.
 -
 EM September 7, 2022
     Args:
-        _latitude: (deg) default = 40.6 (NYC)
+        _air_temps_: (List[float]) A list of 12 monthly air temperature values (deg. C). If none are 
+            input, all values will be set to 0
         
-        _longitude: (deg) default = -73.8 (NYC)
-        
-        _site_elevation: (m) default = None. If None, the weather-station elevation will be 
-            used as the site-elevation.
+        _dewpoints_: (List[float]) A list of 12 monthly dewpoint temperature values (deg. C). If none are 
+            input, all values will be set to 0
             
-        _climate_zone: (int) For WUFI-Passive.
+        _sky_temps_: (List[float]) A list of 12 monthly sky temperature values (deg. C). If none are 
+            input, all values will be set to 0
         
-        _hours_from_UTC: (hours) For WUFI-Passive.
+        _ground_temps_: (List[float]) A list of 12 monthly ground temperature values (deg. C). If none are 
+            input, all values will be set to 0
 
     Returns:
-        location_: A new HBPH Location object which can be passed to an "HBPH - PH Site"
+        monthly_temps_: A new HBPH Monthly-Temps object which can be passed to an "HBPH - PH Climate Data"
             component.
 """
 
-from honeybee_ph import site
 from honeybee_ph_rhino.gh_compo_io import ghio_climate
 from honeybee_ph_utils import preview
 
 # -------------------------------------------------------------------------------------
 import honeybee_ph_rhino._component_info_
 reload(honeybee_ph_rhino._component_info_)
-ghenv.Component.Name = "HBPH - PH Location"
+ghenv.Component.Name = "HBPH - PH Climate Monthly Temps"
 DEV = True
 honeybee_ph_rhino._component_info_.set_component_params(ghenv, dev='SEP_07_2022')
 
 if DEV:
+    from honeybee_ph import site
     reload(site)
     reload(ghio_climate)
-    reload(preview)
-    
+
 # -------------------------------------------------------------------------------------
-# -- Create the new Location Object
-ILocation_ = ghio_climate.ILocation(
-        _display_name,
-        _latitude,
-        _longitude,
-        _site_elevation,
-        _climate_zone,
-        _hours_from_UTC,
+IClimateMonthlyTemps = ghio_climate.IClimateMonthlyTemps(
+        _air_temps_,
+        _dewpoints_,
+        _sky_temps_,
+        _ground_temps_,
     )
 
-location_ = ILocation_.create_hbph_obj()
+monthly_temps_ = IClimateMonthlyTemps.create_hbph_obj()
 
 # -------------------------------------------------------------------------------------
-preview.object_preview(location_)
+preview.object_preview(monthly_temps_)

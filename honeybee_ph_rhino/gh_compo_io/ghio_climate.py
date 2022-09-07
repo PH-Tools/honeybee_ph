@@ -1,7 +1,8 @@
 # -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
 
-"""HBPH Create Site | Climate Interface"""
+"""HBPH Site (Climate, Location) Grasshopper Component Interfaces."""
+
 try:
     from typing import List, Optional
 except ImportError:
@@ -13,7 +14,7 @@ from honeybee_ph_rhino.gh_compo_io import ghio_validators
 
 
 class IClimateMonthlyTemps(object):
-    """Interface for Climate Monthly Temperature Component."""
+    """Interface for "HBPH - PH Climate Monthly Temps" Component."""
 
     def __init__(self, _air_temps, _dewpoints, _sky_temps, _ground_temps):
         # type: (List[float], List[float], List[float], List[float]) -> None
@@ -93,7 +94,7 @@ class IClimateMonthlyTemps(object):
 
 
 class IClimateMonthlyRadiation(object):
-    """Interface for Climate Monthly Radiation Component."""
+    """Interface for "HBPH - PH Climate Monthly Radiation" Component."""
 
     def __init__(self, _north, _east, _south, _west, _glob):
         # type: (List[float], List[float], List[float], List[float], List[float]) -> None
@@ -183,7 +184,7 @@ class IClimateMonthlyRadiation(object):
 
 
 class IClimate_PeakLoad(object):
-    """Interface for a single Peak Load data Component."""
+    """Interface for the "HBPH - PH Climate Peak Load" Component."""
 
     display_name = ghio_validators.HBName("display_name")
     temp = ghio_validators.UnitDegreeC("temp", default=0.0)
@@ -238,7 +239,7 @@ class IClimate_PeakLoad(object):
 
 
 class IClimate_PeakLoads(object):
-    """Interface for the Peak Loads Collection."""
+    """Interface for the a Peak Load Collection."""
 
     def __init__(self, _peak_heat_load_1, _peak_heat_load_2, _peak_cooling_load_1, _peak_cooling_load_2):
         # type: (site.Climate_PeakLoadValueSet, site.Climate_PeakLoadValueSet, site.Climate_PeakLoadValueSet, site.Climate_PeakLoadValueSet) -> None
@@ -260,7 +261,7 @@ class IClimate_PeakLoads(object):
 
 
 class IClimate(object):
-    """Interface for Climate Component."""
+    """Interface for "HBPH - PH Climate Data" Component."""
 
     display_name = ghio_validators.HBName("display_name", default="New York")
     station_elevation = ghio_validators.UnitM("station_elevation", default=0.0)
@@ -303,7 +304,7 @@ class IClimate(object):
 
 
 class ILocation(object):
-    """Interface for the Location Component."""
+    """Interface for the "HBPH - PH Location" Component."""
     display_name = ghio_validators.HBName("display_name", default="New York")
     site_elevation = ghio_validators.UnitM("site_elevation", default=0.0)
 
@@ -336,7 +337,70 @@ class ILocation(object):
         return hbph_obj
 
 
-class ISite(object):
+class IPHPPCodes(object):
+    """Interface for the "HBPH - PH PHPP Climate" Component."""
 
-    def __init__(self):
-        raise NotImplementedError("TODO")
+    def __init__(self,
+                 _country_code,
+                 _region_code,
+                 _dataset_name,
+                 ):
+        # type: (str, str, str) -> None
+        self.country_code = _country_code or "US-United States of America"
+        self.region_code = _region_code or "New York"
+        self.dataset_name = _dataset_name or "US0055b-New York"
+
+    @property
+    def dataset_name(self):
+        # type: () -> str
+        return self._dataset_name
+
+    @dataset_name.setter
+    def dataset_name(self, _in):
+        if _in is None:
+            self._dataset_name = ""
+
+        vals = _in.split("-")
+        if len(vals) != 2:
+            raise Exception(
+                "Error: input for '_dataset_name' format should be "
+                "'xx01234-xxxx'. Got: '{}'?".format(_in)
+            )
+        self._dataset_name = _in
+        self.display_name = vals[1]
+
+    def create_hbph_obj(self):
+        # type: () -> site.PHPPCodes
+        hbph_obj = site.PHPPCodes(
+            self.country_code,
+            self.region_code,
+            self.dataset_name,
+        )
+        return hbph_obj
+
+
+class ISite(object):
+    """Interface for "HBPH - PH Site" Component."""
+
+    def __init__(self,
+                 _display_name,
+                 _location,
+                 _climate_data,
+                 _phpp_library_codes,
+                 ):
+        # type: (str, site.Location, site.Climate, site.PHPPCodes) -> None
+        self.display_name = _display_name or "_unnamed_"
+        self.location = _location or site.Location()
+        self.climate_data = _climate_data or site.Climate()
+        self.phpp_library_codes = _phpp_library_codes or site.PHPPCodes()
+
+    def create_hbph_obj(self):
+        # type: () -> site.Site
+        hbph_obj = site.Site(
+            self.location,
+            self.climate_data,
+            self.phpp_library_codes,
+        )
+        hbph_obj.display_name = self.display_name
+
+        return hbph_obj
