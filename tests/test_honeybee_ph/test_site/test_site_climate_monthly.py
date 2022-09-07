@@ -1,4 +1,4 @@
-from honeybee_ph import _base, site
+from honeybee_ph import site
 
 
 def test_basic_climate_monthly_collection():

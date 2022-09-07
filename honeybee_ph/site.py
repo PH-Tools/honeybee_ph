@@ -203,6 +203,8 @@ class Climate_PeakLoadValueSet(_base._Base):
         d["dewpoint"] = self.dewpoint
         d["sky_temp"] = self.sky_temp
         d["ground_temp"] = self.ground_temp
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
 
         return d
 
@@ -217,9 +219,11 @@ class Climate_PeakLoadValueSet(_base._Base):
         new_obj.rad_south = _input_dict["rad_south"]
         new_obj.rad_west = _input_dict["rad_west"]
         new_obj.rad_global = _input_dict["rad_global"]
-        new_obj.rad_global = _input_dict["dewpoint"]
-        new_obj.rad_global = _input_dict["sky_temp"]
-        new_obj.rad_global = _input_dict["ground_temp"]
+        new_obj.dewpoint = _input_dict["dewpoint"]
+        new_obj.sky_temp = _input_dict["sky_temp"]
+        new_obj.ground_temp = _input_dict["ground_temp"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.identifier = _input_dict["identifier"]
 
         return new_obj
 
