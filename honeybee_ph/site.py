@@ -96,7 +96,7 @@ class Climate_MonthlyTempCollection(_base._Base):
         d = {}
 
         d["identifier"] = self.identifier
-        d["identifier"] = self.display_name
+        d["display_name"] = self.display_name
         d["air_temps"] = self.air_temps.to_dict()
         d["dewpoints"] = self.dewpoints.to_dict()
         d["sky_temps"] = self.sky_temps.to_dict()
@@ -333,6 +333,7 @@ class Climate(_base._Base):
         d = {}
 
         d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
         d["station_elevation"] = self.station_elevation
         d["summer_daily_temperature_swing"] = self.summer_daily_temperature_swing
         d["average_wind_speed"] = self.average_wind_speed
@@ -350,11 +351,11 @@ class Climate(_base._Base):
         # type: (Dict) -> Climate
         new_obj = cls()
 
-        new_obj.display_name = _input_dict.get("display_name")
-        new_obj.station_elevation = _input_dict.get("station_elevation")
-        new_obj.summer_daily_temperature_swing = _input_dict.get(
-            "summer_daily_temperature_swing")
-        new_obj.average_wind_speed = _input_dict.get("average_wind_speed")
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.station_elevation = _input_dict["station_elevation"]
+        new_obj.summer_daily_temperature_swing = _input_dict["summer_daily_temperature_swing"]
+        new_obj.average_wind_speed = _input_dict["average_wind_speed"]
 
         new_obj.ground = Climate_Ground.from_dict(
             _input_dict.get("ground", {}))
