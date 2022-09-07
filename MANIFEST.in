@@ -1,0 +1,16 @@
+recursive-include honeybee_energy_ph *
+recursive-include honeybee_ph *
+recursive-include honeybee_ph_standards *
+recursive-include honeybee_ph_utils *
+recursive-exclude honeybee_grasshopper_ph *
+recursive-exclude honeybee_ph_rhino *
+recursive-exclude tests *
+recursive-exclude docs *
+recursive-exclude .github *
+recursive-exclude diagrams *
+recursive-exclude docs *
+exclude .gitignore
+exclude deploy.sh
+exclude build_image.sh
+global-exclude *._pyc
+global-exclude * __pycache__

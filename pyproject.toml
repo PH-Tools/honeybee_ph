@@ -1,6 +1,3 @@
-[tool.black]
-line-length = 119
-
 [tool.pytest.ini_options]
 filterwarnings = [
     "error",
