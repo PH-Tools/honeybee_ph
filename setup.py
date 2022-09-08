@@ -11,13 +11,19 @@ setuptools.setup(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     author="PH-Tools",
-    author_email="info@ladybug.tools",
-    description=" ",
+    author_email="phtools@bldgtyp.com",
+    description="Plugin for Honeybee to enable Passive House modeling.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/PH-Tools/honeybee_ph",
     packages=setuptools.find_packages(
-        exclude=["tests", "diagrams", "docs", "honeybee_grasshopper_ph", "honeybee_ph_rhino"]),
+        exclude=[
+            "tests",
+            "diagrams",
+            "docs",
+            "honeybee_grasshopper_ph",
+            "honeybee_ph_rhino",
+        ]),
     include_package_data=True,
     install_requires=requirements,
     classifiers=[
@@ -25,8 +31,8 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
-        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+) (GPLv3+)",
         "Operating System :: OS Independent"
     ],
-    license="AGPL-3.0"
+    license="GPLv3+"
 )

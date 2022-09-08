@@ -61,17 +61,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-      - name: sleep for 10 minutes for PyPI update
-        if: contains(steps.new_release.outputs.tag, '.')
-        run: sleep 200s
-        shell: bash
-      - name: Update honeybee-ph
-        if: contains(steps.new_release.outputs.tag, '.')
-        env:
-          DISPATCH_REPO: ph-tools/honeybee_ph
-          DEPS_TOKEN: ${{ secrets.DEPS_UPDATING }}
-        run: |
-          curl -X POST https://api.github.com/repos/$DISPATCH_REPO/dispatches \
-          -H "Accept: application/vnd.github.everest-preview+json" \
-          -d '{"event_type": "honeybee_ph_release", "client_payload": {"version": "${{ steps.new_release.outputs.tag }}"}}' \
-          -u ph-tools:$DEPS_TOKEN

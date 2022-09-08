@@ -11,6 +11,6 @@ recursive-exclude diagrams *
 recursive-exclude docs *
 exclude .gitignore
 exclude deploy.sh
+exclude .releaserc.json
 exclude build_image.sh
-global-exclude *._pyc
-global-exclude * __pycache__
+global-exclude *.py[cod]
