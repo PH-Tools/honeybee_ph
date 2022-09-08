@@ -13,4 +13,3 @@ exclude .gitignore
 exclude deploy.sh
 exclude .releaserc.json
 exclude build_image.sh
-global-exclude *.py[cod]

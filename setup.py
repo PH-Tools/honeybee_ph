@@ -31,8 +31,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
-        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+) (GPLv3+)",
-        "Operating System :: OS Independent"
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "Operating System :: OS Independent",
+        "Typing :: Typed",
     ],
     license="GPLv3+"
 )
