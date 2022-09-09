@@ -17,13 +17,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/PH-Tools/honeybee_ph",
     packages=setuptools.find_packages(
-        exclude=[
-            "tests",
-            "diagrams",
-            "docs",
-            "honeybee_grasshopper_ph",
-            "honeybee_ph_rhino",
-        ]),
+        include=['*'],
+        exclude=['tests*', 'honeybee_ph_rhino*', 'honeybee_grasshopper_ph'],
+    ),
     include_package_data=True,
     install_requires=requirements,
     classifiers=[
