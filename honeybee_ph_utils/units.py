@@ -9,7 +9,7 @@ except ImportError:
     pass  # IronPython 2.7
 
 import re
-
+from copy import copy
 
 # {Unit You have: {Unit you Want}, {...}, ...}
 CONVERSION_SCHEMAS = {
@@ -37,8 +37,8 @@ CONVERSION_SCHEMAS = {
     # -- IP -> SI
     "F": {"SI": "({}-32)/1.8", "C": "({}-32)/1.8"},
     "DELTA-F": {"SI": "{}*0.555555556", "DELTA-C": "{}*0.555555556", "DELTA-F": "{}*1"},
-    "IN": {"SI": "{}*0.0254", "M": "{}*0.0254", "MM": "{}*25.4", "FT": "{}/12", "IN": "{}*1"},
-    "FT": {"SI": "{}*0.3048", "M": "{}*0.3048", "MM": "{}*304.8", "FT": "{}*1", "IN": "{}*12"},
+    "IN": {"SI": "{}*0.0254", "M": "{}*0.0254", "CM": "{}*2.54", "MM": "{}*25.4", "FT": "{}/12", "IN": "{}*1"},
+    "FT": {"SI": "{}*0.3048", "M": "{}*0.3048", "CM": "{}*30.48", "MM": "{}*304.8", "FT": "{}*1", "IN": "{}*12"},
     "BTU/HR-FT-F": {"SI": "{}*1.730734908", "W/MK": "{}*1.730734908", "HR-FT2-F/BTU-IN": "1/({}*12)"},
     "HR-FT2-F/BTU-IN": {"SI": "{}*1.730734908", "W/MK": "(1/({}*12))*1.730734908", "BTU/HR-FT-F": "1/({}*12)"},
     "BTU/HR-F": {"SI": "{}*0.527528", "W/K": "{}*0.527528"},
@@ -54,7 +54,7 @@ def _standardize_input_unit(_in):
 
     codes = {
         'FT': 'FT', "'": 'FT',
-        'IN': 'IN', '"': 'IN',
+        'IN': 'IN', '"': 'IN', "IN.": "IN",
         'MM': 'MM',
         'CM': 'CM',
         'M': 'M',
@@ -110,7 +110,7 @@ def _standardize_input_unit(_in):
 
 
 def convert(_value, _input_unit, _target_unit):
-    # type: (Optional[Union[float, int, str]], str, str) -> Optional[Union[int, float]]
+    # type: (Optional[Union[float, int, str]], Optional[str], str) -> Optional[Union[int, float]]
     """Convert an input value between SI and IP.
 
     Arguments:
@@ -127,6 +127,8 @@ def convert(_value, _input_unit, _target_unit):
         return None
 
     # -- Clean user inputs
+    if not _input_unit:
+        _input_unit = copy(_target_unit)
     input_unit = str(_input_unit).upper().strip().replace(" ", "")
     input_unit = _standardize_input_unit(input_unit)
     target_unit = str(_target_unit).upper().strip().replace(" ", "")
