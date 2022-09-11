@@ -1,4 +1,4 @@
-# Honeybee-PH v0.1 (Beta Release | ______ _, 2022)
+# Honeybee-PH v1 (Beta Release | ______ _, 2022)
 Honeybee-PH is a free plugin for [Ladybug Tools](https://www.ladybug.tools/) which enables users to add detailed "Passive House" style attributes to their models in addition to the normal Honeybee inputs. Both Passive House Institute (PHI) and Passive House Institute US (Phius) model data can be added to the Ladybug-Tools models using the plugin.
 
 This plugin is designed to be used as a plugin for Honeybee v1.5 or higher. It can also be utilized by a toolkit for building up models using [Rhino 3D](https://www.rhino3d.com/) and Grasshopper using the [honeybee_grasshopper_ph](https://github.com/PH-Tools/honeybee_grasshopper_ph) tools.
