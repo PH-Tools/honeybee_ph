@@ -4,7 +4,7 @@
 """PH-Properties classes for SHWSystem (System / Equipment) objects."""
 
 try:
-    from typing import Any, ValuesView, Dict
+    from typing import Any, ValuesView, Dict, Optional
 except:
     pass  # IronPython
 
@@ -33,6 +33,23 @@ class SHWSystemPhProperties(object):
         self._heaters = {}  # type: Dict[str, hot_water.PhHotWaterHeater]
         self._branch_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
         self._recirc_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
+
+        self._number_tap_points = None  # type: Optional[int]
+
+    @property
+    def number_tap_points(self):
+        # type: () -> int
+        """Unless set explicitly by the user, will return the number of Branch Pipe Elements."""
+        if self._number_tap_points:
+            return self._number_tap_points
+        else:
+            return len(self._branch_piping)
+
+    @number_tap_points.setter
+    def number_tap_points(self, _input):
+        # type: (Optional[int]) -> None
+        if _input:
+            self._number_tap_points = int(_input)
 
     @property
     def heaters(self):
@@ -119,6 +136,8 @@ class SHWSystemPhProperties(object):
         for recirc_piping in self.recirc_piping:
             d['recirc_piping'][recirc_piping.identifier] = recirc_piping.to_dict()
 
+        d['number_tap_points'] = self._number_tap_points
+
         return {'ph': d}
 
     @classmethod
@@ -156,6 +175,8 @@ class SHWSystemPhProperties(object):
             new_prop.add_recirc_piping(
                 hot_water.PhPipeElement.from_dict(recirc_piping_dict))
 
+        new_prop._number_tap_points = _input_dict['number_tap_points']
+
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
@@ -184,6 +205,8 @@ class SHWSystemPhProperties(object):
 
         for k, v in self._recirc_piping.items():
             new_obj._recirc_piping[k] = v.duplicate()
+
+        new_obj._number_tap_points = self._number_tap_points
 
         return new_obj
 
@@ -221,6 +244,15 @@ class SHWSystemPhProperties(object):
             new_obj.add_recirc_piping(recirc_pipe)
         for recirc_pipe in other.recirc_piping:
             new_obj.add_recirc_piping(recirc_pipe)
+
+        if self._number_tap_points or other._number_tap_points:
+            # -- If either have their tap-points number set explicitly by the use
+            # -- set the new object # as well
+            new_obj.number_tap_points = self.number_tap_points + other.number_tap_points
+        else:
+            # -- If neither obj's have their tap-point number set explicitly by the user
+            # -- Set as None, which will return the length of the Branch Piping dict by default.
+            self._number_tap_points = None
 
         return new_obj
 
