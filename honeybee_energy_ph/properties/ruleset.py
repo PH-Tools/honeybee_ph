@@ -20,9 +20,9 @@ class DailyOperationPeriod(object):
     """PH-Style Daily Operating Period"""
 
     def __init__(self):
-        self.name = ''
-        self.start_hour = 0
-        self.end_hour = 24
+        self.name = "_unnamed_op_period_"
+        self.start_hour = 0.0
+        self.end_hour = 24.0
         self.operation_fraction = 1.0
 
     @classmethod
@@ -148,9 +148,9 @@ class ScheduleRulesetPhProperties(object):
     """Honeybee-PH ScheduleRulesetPhProperties for logging PH-style schedule data."""
 
     def __init__(self, _host):
-        self._host = _host
+        self._host = _host  # type: Any
         self.id_num = 0
-        self.operating_weeks_year = 52
+        self.operating_weeks_year = 52.0
         self.operating_days_wk = 7.0
         self.daily_operating_periods = DailyOperatingPeriodCollection()
 
