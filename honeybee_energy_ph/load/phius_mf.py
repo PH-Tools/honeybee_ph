@@ -4,7 +4,7 @@
 """Helper/Temp Classes for calculating Phius Multifamily Elec. Energy"""
 
 try:
-    from typing import ValuesView
+    from typing import ValuesView, List
 except ImportError:
     pass  # IronPython 2.7
 
@@ -39,7 +39,7 @@ class PhiusResidentialStory(object):
         return self.total_floor_area_m2 * 10.7639
 
     def calc_story_floor_area(self, _hb_rooms):
-        # type: (list[room.Room]) -> float
+        # type: (List[room.Room]) -> float
         story_floor_area = 0
         for rm in _hb_rooms:
             for space in rm.properties.ph.spaces:
@@ -47,7 +47,7 @@ class PhiusResidentialStory(object):
         return story_floor_area
 
     def calc_story_bedrooms(self, _hb_rooms):
-        # type: (list[room.Room]) -> int
+        # type: (List[room.Room]) -> int
         return sum(rm.properties.energy.people.properties.ph.number_bedrooms for rm in _hb_rooms)
 
     def calc_design_occupancy(self):
@@ -105,7 +105,7 @@ class PhiusNonResProgram(object):
 
     def to_phius_mf_workbook(self):
         # type: () -> str
-        """Returns a text block formated to match the Phius MF Calculator."""
+        """Returns a text block formatted to match the Phius MF Calculator."""
         return ",".join([
             str(self.name),
             str(self.usage_days_yr),
@@ -172,7 +172,7 @@ class PhiusNonResProgramCollection(object):
     @property
     def programs(self):
         # type: () -> ValuesView[PhiusNonResProgram]
-        """Returns a list of the PhiusNonResPrograms in the collection."""
+        """Returns a ValuesView of the PhiusNonResPrograms in the collection dict."""
         return self._collection.values()
 
     def __getitem__(self, key):
@@ -180,8 +180,8 @@ class PhiusNonResProgramCollection(object):
         return self._collection[key]
 
     def to_phius_mf_workbook(self):
-        # type: () -> lisr
-        """Returns a text block formated to match the Phius MF Calculator."""
+        # type: () -> List[str]
+        """Returns a text block formatted to match the Phius MF Calculator."""
         return [prog.to_phius_mf_workbook() for prog in self.programs]
 
 

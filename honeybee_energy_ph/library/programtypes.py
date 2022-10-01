@@ -3,8 +3,8 @@
 
 """Find Phius program data and build HBE-Programs."""
 
-try:  # import the core honeybee dependencies
-    from honeybee.typing import clean_and_id_ep_string, clean_ep_string
+try:
+    from honeybee.typing import clean_ep_string
 except ImportError as e:
     raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
 
@@ -18,7 +18,6 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import honeybee_energy:\n\t{}'.format(e))
 
-from re import L
 from honeybee_ph_standards.programtypes import PHIUS_programs
 from honeybee_energy_ph.properties import ruleset
 
@@ -46,7 +45,7 @@ def load_data_from_Phius_standards(_search_key, _search_field='name', _protocol=
     ----------
         * _search_key (str): The key to search the Phius library for.
         * _search_field (str): default='name' | The dict field to search.
-        # _protocol (str): Optional extra flag to filter by the specific 'protocol'
+        * _protocol (str): Optional extra flag to filter by the specific 'protocol'
 
     Returns:
     --------
@@ -207,8 +206,8 @@ def build_hb_elec_equip_from_Phius_data(_data):
 
 
 def build_hb_program_from_Phius_data(_data):
-    # type: (dict) -> None
-    """Return a new HB-Progam with attributes based on an input Phius dataset
+    # type: (dict) -> ProgramType
+    """Return a new HB-Program with attributes based on an input Phius dataset
 
     Arguments:
     ---------
@@ -216,17 +215,19 @@ def build_hb_program_from_Phius_data(_data):
 
     Returns:
     --------
-        * (program): The new Honeybee-Energy Program.
+        * (ProgramType): The new Honeybee-Energy ProgramType.
     """
 
     # -- Sort out the base-program
     base_program = _data['hb_base_program']
+
     if not base_program:
         raise MissingBaseProgramError(_data)
     try:
         base_program_ = building_program_type_by_identifier(base_program)
     except ValueError:
         base_program_ = program_type_by_identifier(base_program)
+
     program = base_program_.duplicate()
     program.identifier = clean_ep_string(
         "Phius_{}".format(_data['name'].replace(' ', '_')))
