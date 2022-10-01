@@ -1,5 +1,5 @@
-# -*- Python Version: 2.7 -*-
 # -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
 
 """Functions for converting values between SI and IP units."""
 
@@ -29,6 +29,7 @@ CONVERSION_SCHEMAS = {
     "KWH/M2": {"SI": "{}*1", "KWH/M2": "{}*1",  "KBTU/FT2": "{}*0.316998286", "KWH/FT2": "{}*0.092903040"},
     "MJ/M3K": {"SI": "{}*1", "MJ/M3K": "{}*1", "BTU/FT3-F": "{}*14.91066014"},
     "W/M2K": {"SI": "{}*1", "W/M2K": "{}*1", "BTU/HR-FT2-F": "{}*0.176110159", "HR-FT2-F/BTU": "{}**-1*5.678264134"},
+    "WH/M3": {"SI": "{}*1", "WH/M3": "{}*1", "W/CFM": "{}*1.699010796"},
     "M2K/W": {"SI": "{}*1", "M2K/W": "{}*1", "HR-FT2-F/BTU": "{}*5.678264134"},
     "W/MK": {"SI": "{}*1", "W/MK": "{}*1", "HR-FT2-F/BTU-IN": "{}**-1*0.144227909", "BTU/HR-FT-F": "{}*0.577789236"},
     "W/K": {"SI": "{}*1", "W/K": "{}*1", "BTU/HR-F": "{}*1.895633976"},
@@ -47,6 +48,7 @@ CONVERSION_SCHEMAS = {
     "MPH": {"SI": "{}*0.44704", "M/S": "{}*0.44704", "M/DAY": "{}*0.44704*60*60*24"},
     "FT/S": {"SI": "{}*0.3048", "M/S": "{}*0.3048", "M/DAY": "{}*0.3048*60*60*24"},
     "FT/DAY": {"SI": "{}*0.3048", "M/DAY": "{}*0.3048"},
+    "W/CFM": {"SI": "{}*0.588577779", "WH/M3": "{}*0.588577779"},
 }
 
 
@@ -77,6 +79,7 @@ def _standardize_input_unit(_in):
         'WH': 'WH',
         'KW': 'KW',
         'KWH': 'KWH',
+        'WH/M3': 'WH/M3', 'W/M3HR': 'WH/M3', 'W/M3H': 'WH/M3',
         'W/M2K': 'W/M2K', 'WM2K': 'WM2K',
         'W/MK': 'W/MK',
         'W/K': 'W/K',
@@ -92,10 +95,10 @@ def _standardize_input_unit(_in):
         'KWH/M2': 'KWH/M2',
         'KBTU/FT2': 'KBTU/FT2', 'KBTU/SF': 'KBTU/FT2',
         'M2K/W': 'M2K/W',
-        'WH/M3': 'WH/M3',
         'M/S': 'M/S', 'METER/SEC': 'M/S', 'METER/SECOND': 'M/S', 'M/DAY': 'M/DAY',
         'FT/S': 'FT/S', 'FT/DAY': 'FT/DAY',
-        'MPH': 'MPH'
+        'MPH': 'MPH',
+        'W/CFM': 'W/CFM',
     }
     # Note: BTU/W conversion isn't really right, but I think many folks use that
     # when they mean Btu/Wh (or Btu-h/W)
