@@ -23,6 +23,9 @@ def object_preview(_obj, _full=False, _level=1):
 
     """
 
+    if not _obj:
+        return None
+
     if not hasattr(_obj, "__dict__"):
         print("{} object has no __dict__ attribute?".format(_obj))
         return None
