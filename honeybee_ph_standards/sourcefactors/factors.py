@@ -4,7 +4,7 @@
 """Energy conversion factor (CO2, Source) functions"""
 
 try:
-    from typing import List, Any, Generator
+    from typing import List, Any, Generator, Optional
 except ImportError:
     pass  # IronPython 2.7
 
@@ -18,8 +18,10 @@ class FuelNotAllowedError(Exception):
 
 
 def clean_input(input):
-    # type: (str) -> str
+    # type: (Optional[str]) -> Optional[str]
     """Returns a clean/standardized string with no spaces, all upper-case"""
+    if not input:
+        return None
     return str(input).lstrip().rstrip().replace(' ', '_').upper()
 
 

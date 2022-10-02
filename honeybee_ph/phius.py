@@ -4,7 +4,7 @@
 """Phius Certification Data Class"""
 
 try:
-    from typing import Optional
+    from typing import Optional, Union
 except ImportError:
     pass  # IronPython 2.7
 
@@ -21,6 +21,7 @@ class PhiusBuildingCategoryType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiusBuildingCategoryType, self).__init__(_value)
 
 
@@ -36,12 +37,13 @@ class PhiusBuildingUseType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiusBuildingUseType, self).__init__(_value)
 
         # Quick double check cus' the numbering here is so stupid
         if self.value == "":
             raise Exception(
-                "Error: WUFI's '_building_use_type' numbering is weird. Check the inputs is valid."
+                "Error: WUFI's '_building_use_type' numbering is weird. Check the 'inputs' value is valid?"
             )
 
 
@@ -53,6 +55,7 @@ class PhiusBuildingStatus(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiusBuildingStatus, self).__init__(_value)
 
 
@@ -64,6 +67,7 @@ class PhiusBuildingType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiusBuildingType, self).__init__(_value)
 
 # -----------------------------------------------------------------------------
@@ -99,7 +103,7 @@ class PhiusCertification(_base._Base):
 
     @building_category_type.setter
     def building_category_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._building_category_type = PhiusBuildingCategoryType(_input)
 
@@ -109,7 +113,7 @@ class PhiusCertification(_base._Base):
 
     @building_use_type.setter
     def building_use_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._building_use_type = PhiusBuildingUseType(_input)
 
@@ -119,7 +123,7 @@ class PhiusCertification(_base._Base):
 
     @building_status.setter
     def building_status(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._building_status = PhiusBuildingStatus(_input)
 
@@ -129,7 +133,7 @@ class PhiusCertification(_base._Base):
 
     @building_type.setter
     def building_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._building_type = PhiusBuildingType(_input)
 

@@ -4,7 +4,7 @@
 """PHI Certification Settings Class"""
 
 try:
-    from typing import Optional
+    from typing import Optional, Union
 except ImportError:
     pass  # IronPython 2.7
 
@@ -22,6 +22,7 @@ class PhiBuildingCategoryType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiBuildingCategoryType, self).__init__(_value)
 
 
@@ -52,6 +53,7 @@ class PhiBuildingUseType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiBuildingUseType, self).__init__(_value)
 
         # Quick double check cus' the numbering here is so stupid
@@ -70,6 +72,7 @@ class PhiIHGType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiIHGType, self).__init__(_value)
 
         # Quick double check cus' the numbering here is so stupid
@@ -86,6 +89,7 @@ class PhiOccupancyType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiOccupancyType, self).__init__(_value)
 
 
@@ -98,6 +102,7 @@ class PhiCertificationType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiCertificationType, self).__init__(_value)
 
 
@@ -109,6 +114,7 @@ class PhiCertificationClass(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiCertificationClass, self).__init__(_value)
 
 
@@ -119,6 +125,7 @@ class PhiPrimaryEnergyType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiPrimaryEnergyType, self).__init__(_value)
 
 
@@ -129,6 +136,7 @@ class PhiEnerPHitType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiEnerPHitType, self).__init__(_value)
 
 
@@ -140,6 +148,7 @@ class PhiRetrofitType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
         super(PhiRetrofitType, self).__init__(_value)
 
 
@@ -168,7 +177,7 @@ class PhiCertification(_base._Base):
 
     @building_category_type.setter
     def building_category_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._building_category_type = PhiBuildingCategoryType(_input)
 
@@ -178,7 +187,7 @@ class PhiCertification(_base._Base):
 
     @building_use_type.setter
     def building_use_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._building_use_type = PhiBuildingUseType(_input)
 
@@ -188,7 +197,7 @@ class PhiCertification(_base._Base):
 
     @occupancy_type.setter
     def occupancy_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._occupancy_type = PhiOccupancyType(_input)
 
@@ -198,7 +207,7 @@ class PhiCertification(_base._Base):
 
     @ihg_type.setter
     def ihg_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._ihg_type = PhiIHGType(_input)
 
@@ -208,7 +217,7 @@ class PhiCertification(_base._Base):
 
     @certification_type.setter
     def certification_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._certification_type = PhiCertificationType(_input)
 
@@ -218,7 +227,7 @@ class PhiCertification(_base._Base):
 
     @certification_class.setter
     def certification_class(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._certification_class = PhiCertificationClass(_input)
 
@@ -228,7 +237,7 @@ class PhiCertification(_base._Base):
 
     @primary_energy_type.setter
     def primary_energy_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._primary_energy_type = PhiPrimaryEnergyType(_input)
 
@@ -238,7 +247,7 @@ class PhiCertification(_base._Base):
 
     @enerphit_type.setter
     def enerphit_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._enerphit_type = PhiEnerPHitType(_input)
 
@@ -248,7 +257,7 @@ class PhiCertification(_base._Base):
 
     @retrofit_type.setter
     def retrofit_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
             self._retrofit_type = PhiRetrofitType(_input)
 
