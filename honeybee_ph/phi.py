@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""PHI Certification Settings Class"""
+"""PHI Certification Settings Class."""
 
 try:
-    from typing import Optional, Union
+    from typing import Optional, Union, Type, Any, Dict
 except ImportError:
     pass  # IronPython 2.7
 
@@ -15,251 +15,284 @@ from honeybee_ph import _base
 # -----------------------------------------------------------------------------
 
 
-class PhiBuildingCategoryType(enumerables.CustomEnum):
-    allowed = [
-        "1-RESIDENTIAL BUILDING",
-        "2-NON-RESIDENTIAL BUILDING",
-    ]
+class EnumProperty(object):
+    """Descriptor for creating and managing the PHI-Cert Enum items.
+    
+    This Descriptor will create a new Enum type when it is called using the 
+    attribute name and the phpp_version #, This new enum will be used to manage
+    the allowable values and clean / filter the user inputs.
+    """
+    
+    allowed_inputs = { # type: Dict[str, Dict[int, List]]
+        "building_category_type": {
+            9: [
+                "1-RESIDENTIAL BUILDING",
+                "2-NON-RESIDENTIAL BUILDING",
+            ],
+            10: []
+        },
+        "building_use_type": {
+            9: [
+                "_", "_", "_", "_", "_", "_", "_", "_", "_",
+                "10-DWELLING",
+                "11-NURSING HOME / STUDENTS",
+                "12-OTHER", 
+                "_", "_", "_", "_", "_", "_", "_",
+                "20-OFFICE / ADMIN. BUILDING",
+                "21-SCHOOL",
+                "22-OTHER",
+            ],
+            10: [
+                "_",  # PHPP is so stupid. Who did the numbering?... sheesh...
+                "_", "_", "_", "_", "_", "_", "_", "_",
+                "10-RESIDENTIAL BUILDING: RESIDENTIAL (DEFAULT)",
+                "_",
+                "12-RESIDENTIAL BUILDING: OTHER",
+                "_", "_", "_", "_", "_", "_", "_",
+                "20-NON-RES BUILDING: OFFICE/ADMINISTRATION",
+                "21-NON-RES BUILDING: SCHOOL HALF-DAYS (< 7 H)",
+                "22-NON-RES BUILDING: SCHOOL FULL-TIME (≥ 7 H)",
+                "23-NON-RES.: OTHER",
+            ]
+        },
+        "ihg_type": {
+            9: [
+                "_",
+                "2-STANDARD",
+                "3-PHPP CALCULATION ('IHG' WORKSHEET)",
+                "4-PHPP CALCULATION ('IHG NON-RES' WORKSHEET)",
+            ],
+            10: [
+                "_",
+                "2-STANDARD",
+                "3-PHPP-CALCULATION ('IHG' WORKSHEET)",
+                "4-PHPP-CALCULATION ('IHG NON-RES' WORKSHEET)",
+            ]
+        },
+        "occupancy_type": {
+            9: [
+                "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)",
+                "2-USER DETERMINED",
+            ],
+            10: []
+        },
+        "certification_type": {
+            9: [
+                "1-PASSIVE HOUSE",
+                "2-ENERPHIT",
+                "3-PHI LOW ENERGY BUILDING",
+                "4-OTHER",
+            ],
+            10: [
+                "_", "_", "_", "_", "_", "_", "_", "_", "_",
+                "10-PASSIVE HOUSE",
+                "_", "_", "_", "_", "_", "_", "_", "_", "_", "_",
+                "21-ENERPHIT (COMPONENT METHOD)",
+                "22-ENERPHIT (ENERGY DEMAND METHOD)",
+                "_", "_", "_", "_", "_", "_", "_",
+                "30-PHI LOW ENERGY BUILDING",
+                "_", "_", "_", "_", "_", "_", "_", "_", "_",
+                "40-OTHER",
+            ]
+        },
+        "certification_class": {
+            9: [
+                "1-CLASSIC",
+                "2-PLUS",
+                "3-PREMIUM",
+            ],
+            10: [                
+                "_", "_", "_", "_", "_", "_", "_", "_", "_",
+                "10-CLASSIC | PER (RENEWABLE)",
+                "11-CLASSIC | PE (NON-RENEWABLE)",
+                "_", "_", "_", "_", "_", "_", "_", "_",
+                "20-PLUS | PER (RENEWABLE)",
+                "_", "_", "_", "_", "_", "_", "_", "_", "_",
+                "30-PREMIUM | PER (RENEWABLE)",
+            ]
+        },
+        "primary_energy_type": {
+            9: [
+                "1-PE (NON-RENEWABLE)",
+                "2-PER (RENEWABLE)",
+            ],
+            10: [
+                "1-STANDARD",
+                "2-PROJECT-SPECIFIC",
+            ]
+        },
+        "enerphit_type": {
+            9: [
+                "1-COMPONENT METHOD",
+                "2-ENERGY DEMAND METHOD",
+            ],
+            10: []
+        },
+        "retrofit_type":{
+            9: [
+                "1-NEW BUILDING",
+                "2-RETROFIT",
+                "3-STEP-BY-STEP RETROFIT",
+            ],
+            10: [
+                "1-NEW BUILDING",
+                "2-RETROFIT",
+                "3-STAGED RETROFIT",
+            ]
+        },
+    }
 
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiBuildingCategoryType, self).__init__(_value)
+    def __init__(self, attribute_name, _phpp_version=9):
+        # type: (str, int) -> None
+        self.attribute_name = attribute_name  # normally the same as the Class Attribute
+        self.phpp_version = _phpp_version
+        self.enum = self._create_enum_class()
+        self.enum.allowed = self.allowed_inputs[self.attribute_name][self.phpp_version]
 
+    def _create_enum_class(self):
+        # type: () -> Type[enumerables.CustomEnum]
+        """Create a new Enum based on the type of value."""
+        return type("{}_phpp_v{}".format(self.attribute_name, self.phpp_version), (enumerables.CustomEnum,), {})
 
-class PhiBuildingUseType(enumerables.CustomEnum):
-    allowed = [
-        "",  # PHPP is so stupid. Who did the numbering?... sheesh...
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "10-DWELLING",
-        "11-NURSING HOME / STUDENTS",
-        "12-OTHER",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "20-OFFICE / ADMIN. BUILDING",
-        "21-SCHOOL",
-        "22-OTHER",
-    ]
+    def __set__(self, instance, value):
+        # type: (Any, Optional[Union[str, int]]) -> None
+        """Set the enum with the input value on the instance __dict__
 
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiBuildingUseType, self).__init__(_value)
+        Arguments:
+        ----------
+            * instance: The descriptor class variable.
+            * value: The value to validate and set.
+        """
+        
+        if value:
+            instance.__dict__[self.attribute_name] = self.enum(value)
+        
+        if instance.__dict__[self.attribute_name].value == "_":
+            msg = "Error: Input value: '{}' for '{}' is not allowed. Check inputs.".format(value, self.attribute_name)
+            raise Exception(msg)
 
-        # Quick double check cus' the numbering here is so stupid
-        if self.value == "":
-            raise Exception(
-                "Error: PHPP's '_building_use_type' numbering is weird. Check the inputs is valid."
-            )
+    def __get__(self, instance, owner):
+        # type: (Any, Any) -> enumerables.CustomEnum
+        """
+        Arguments:
+        ---------
+            * instance: The descriptor class variable.
+            * owner: The Class which has the descriptor as a class variable.
+        Returns:
+        --------
+            * (enumerables.CustomEnum): The Enum Instance object.
+        """
+        return instance.__dict__[self.attribute_name]
 
-
-class PhiIHGType(enumerables.CustomEnum):
-    allowed = [
-        "",
-        "2-STANDARD",
-        "3-PHPP CALCULATION ('IHG' WORKSHEET)",
-        "4-PHPP CALCULATION ('IHG NON-RES' WORKSHEET)",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiIHGType, self).__init__(_value)
-
-        # Quick double check cus' the numbering here is so stupid
-        if self.value == "":
-            raise Exception(
-                "Error: PHPP's '_building_use_type' numbering is weird. Check the inputs is valid."
-            )
-
-
-class PhiOccupancyType(enumerables.CustomEnum):
-    allowed = [
-        "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)",
-        "2-USER DETERMINED",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiOccupancyType, self).__init__(_value)
-
-
-class PhiCertificationType(enumerables.CustomEnum):
-    allowed = [
-        "1-PASSIVE HOUSE",
-        "2-ENERPHIT",
-        "3-PHI LOW ENERGY BUILDING",
-        "4-OTHER",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiCertificationType, self).__init__(_value)
-
-
-class PhiCertificationClass(enumerables.CustomEnum):
-    allowed = [
-        "1-CLASSIC",
-        "2-PLUS",
-        "3-PREMIUM",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiCertificationClass, self).__init__(_value)
-
-
-class PhiPrimaryEnergyType(enumerables.CustomEnum):
-    allowed = [
-        "1-PE (NON-RENEWABLE)",
-        "2-PER (RENEWABLE)",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiPrimaryEnergyType, self).__init__(_value)
-
-
-class PhiEnerPHitType(enumerables.CustomEnum):
-    allowed = [
-        "1-COMPONENT METHOD",
-        "2-ENERGY DEMAND METHOD",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiEnerPHitType, self).__init__(_value)
-
-
-class PhiRetrofitType(enumerables.CustomEnum):
-    allowed = [
-        "1-NEW BUILDING",
-        "2-RETROFIT",
-        "3-STEP-BY-STEP RETROFIT",
-    ]
-
-    def __init__(self, _value=1):
-        # type: (Union[str, int]) -> None
-        super(PhiRetrofitType, self).__init__(_value)
+    def __str__(self):
+        return "Validated[{}](storage_name={})".format(self.__class__.__name__, self.attribute_name)
 
 
 # -----------------------------------------------------------------------------
 
 
-class PhiCertification(_base._Base):
+class _PHPPSettingsBase(object):
+    """Base class with methods for use by PHPP-Settings objects."""
+    phpp_version = 9 # default
+
+    def to_dict(self):
+        # type: () -> Dict[str, int | str]
+        d = {}
+        d['phpp_version'] = self.phpp_version
+        for k in vars(self).keys():
+            attribute = getattr(self, k)
+            try:
+                d[k] = attribute.value #-- Try and set the 'value' first
+            except AttributeError:
+                d[k] = attribute #-- fallback if that fails for some reason
+        return d
+    
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, int | str]) -> _PHPPSettingsBase
+        new_obj = cls()
+        for k in vars(new_obj).keys():
+            getattr(new_obj, k, _input_dict[k])
+        return new_obj
+
+    def __copy__(self):
+        # type: () -> _PHPPSettingsBase
+        new_obj = self.__class__()
+        for k in vars(new_obj).keys():
+            attribute = getattr(self, k)
+            try:
+                setattr(new_obj, k, attribute.value) #-- Try and set the 'value' first
+            except AttributeError:
+                setattr(new_obj, k, attribute) #-- fallback if that fails for some reason
+        return new_obj
+    
+    def duplicate(self):
+        # type: () -> _PHPPSettingsBase
+        return self.__copy__()
+
+
+class PHPPSettings10(_PHPPSettingsBase):
+    """Settings for PHPP v10"""
+    phpp_version = 10
+    building_use_type = EnumProperty("building_use_type", phpp_version)
+    ihg_type = EnumProperty("ihg_type", phpp_version)
+    certification_class = EnumProperty("certification_class", phpp_version)
+    certification_type = EnumProperty("certification_type", phpp_version)
+    primary_energy_type = EnumProperty("primary_energy_type", phpp_version)
+    retrofit_type = EnumProperty("retrofit_type", phpp_version)
 
     def __init__(self):
+        # -- Setup the enum defaults
+        super(PHPPSettings10, self).__init__()
+        self.building_use_type = "10-RESIDENTIAL BUILDING: RESIDENTIAL (DEFAULT)"
+        self.ihg_type = "2-STANDARD"
+        self.certification_class = "10-CLASSIC | PER (RENEWABLE)"
+        self.certification_type = "10-PASSIVE HOUSE"
+        self.primary_energy_type = "1-STANDARD"
+        self.retrofit_type = "1-NEW BUILDING"
+
+
+class PHPPSettings9(_PHPPSettingsBase):
+    """Settings for PHPP v9"""
+    phpp_version = 9
+    building_category_type = EnumProperty("building_category_type", phpp_version)
+    building_use_type = EnumProperty("building_use_type", phpp_version)
+    ihg_type = EnumProperty("ihg_type", phpp_version)
+    occupancy_type = EnumProperty("occupancy_type", phpp_version)
+    certification_type = EnumProperty("certification_type", phpp_version)
+    certification_class = EnumProperty("certification_class", phpp_version)
+    primary_energy_type = EnumProperty("primary_energy_type", phpp_version)
+    enerphit_type = EnumProperty("enerphit_type", phpp_version)
+    retrofit_type = EnumProperty("retrofit_type", phpp_version)
+
+    def __init__(self):
+        # -- Setup the enum defaults
+        super(PHPPSettings9, self).__init__()
+        self.building_category_type = "1-RESIDENTIAL BUILDING"
+        self.building_use_type = "10-DWELLING"
+        self.ihg_type = "2-Standard"
+        self.occupancy_type = "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)"
+        self.certification_type = "1-PASSIVE HOUSE"
+        self.certification_class = "1-CLASSIC"
+        self.primary_energy_type = "2-PER (RENEWABLE)"
+        self.enerphit_type = "2-ENERGY DEMAND METHOD"
+        self.retrofit_type = "1-NEW BUILDING"
+
+
+class PhiCertification(_base._Base):    
+    """PHI PHPP Certification object with Attributes that vary by version (9 | 10)"""
+
+    def __init__(self, phpp_version=9):
+        # type: (int) -> None
         super(PhiCertification, self).__init__()
-        self._building_category_type = PhiBuildingCategoryType("1-RESIDENTIAL BUILDING")
-        self._building_use_type = PhiBuildingUseType("10-DWELLING")
-        self._ihg_type = PhiIHGType("2-Standard")
-        self._occupancy_type = PhiOccupancyType(
-            "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)")
-
-        self._certification_type = PhiCertificationType("1-PASSIVE HOUSE")
-        self._certification_class = PhiCertificationClass("1-CLASSIC")
-        self._primary_energy_type = PhiPrimaryEnergyType("2-PER (RENEWABLE)")
-        self._enerphit_type = PhiEnerPHitType("2-ENERGY DEMAND METHOD")
-        self._retrofit_type = PhiRetrofitType("1-NEW BUILDING")
-
-    @property
-    def building_category_type(self):
-        return self._building_category_type
-
-    @building_category_type.setter
-    def building_category_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._building_category_type = PhiBuildingCategoryType(_input)
-
-    @property
-    def building_use_type(self):
-        return self._building_use_type
-
-    @building_use_type.setter
-    def building_use_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._building_use_type = PhiBuildingUseType(_input)
-
-    @property
-    def occupancy_type(self):
-        return self._occupancy_type
-
-    @occupancy_type.setter
-    def occupancy_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._occupancy_type = PhiOccupancyType(_input)
-
-    @property
-    def ihg_type(self):
-        return self._ihg_type
-
-    @ihg_type.setter
-    def ihg_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._ihg_type = PhiIHGType(_input)
-
-    @property
-    def certification_type(self):
-        return self._certification_type
-
-    @certification_type.setter
-    def certification_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._certification_type = PhiCertificationType(_input)
-
-    @property
-    def certification_class(self):
-        return self._certification_class
-
-    @certification_class.setter
-    def certification_class(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._certification_class = PhiCertificationClass(_input)
-
-    @property
-    def primary_energy_type(self):
-        return self._primary_energy_type
-
-    @primary_energy_type.setter
-    def primary_energy_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._primary_energy_type = PhiPrimaryEnergyType(_input)
-
-    @property
-    def enerphit_type(self):
-        return self._enerphit_type
-
-    @enerphit_type.setter
-    def enerphit_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._enerphit_type = PhiEnerPHitType(_input)
-
-    @property
-    def retrofit_type(self):
-        return self._retrofit_type
-
-    @retrofit_type.setter
-    def retrofit_type(self, _input):
-        # type: (Optional[Union[str, int]]) -> None
-        if _input:
-            self._retrofit_type = PhiRetrofitType(_input)
+        self.phpp_version = phpp_version
+        if phpp_version == 10:
+            self.attributes = PHPPSettings10()
+        elif self.phpp_version == 9:
+            self.attributes = PHPPSettings9()
+        else:
+            msg = "Error: Unknown PHPP Version? Got: '{}'".format(self.phpp_version)
+            raise Exception(msg)
 
     def __str__(self):
         return "{}()".format(self.__class__.__name__)
@@ -271,60 +304,29 @@ class PhiCertification(_base._Base):
         return str(self)
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict
         d = {}
-        d['_building_category_type'] = self._building_category_type.to_dict()
-        d['_building_use_type'] = self._building_use_type.to_dict()
-        d['_ihg_type'] = self._ihg_type.to_dict()
-        d['_occupancy_type'] = self._occupancy_type.to_dict()
-
-        d['_certification_type'] = self._certification_type.to_dict()
-        d['_certification_class'] = self._certification_class.to_dict()
-        d['_primary_energy_type'] = self._primary_energy_type.to_dict()
-        d['_enerphit_type'] = self._enerphit_type.to_dict()
-        d['_retrofit_type'] = self._retrofit_type.to_dict()
+        d['phpp_version'] = self.phpp_version
+        d['attributes'] = self.attributes.to_dict()
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> PhiCertification
+        # type: (Dict) -> PhiCertification
         new_obj = cls()
-
-        new_obj._building_category_type = PhiBuildingCategoryType.from_dict(
-            _input_dict['_building_category_type'])
-        new_obj._building_use_type = PhiBuildingUseType.from_dict(
-            _input_dict['_building_use_type'])
-        new_obj._ihg_type = PhiIHGType.from_dict(
-            _input_dict['_ihg_type'])
-        new_obj._occupancy_type = PhiOccupancyType.from_dict(
-            _input_dict['_occupancy_type'])
-
-        new_obj._certification_type = PhiCertificationType.from_dict(
-            _input_dict['_certification_type'])
-        new_obj._certification_class = PhiCertificationClass.from_dict(
-            _input_dict['_certification_class'])
-        new_obj._primary_energy_type = PhiPrimaryEnergyType.from_dict(
-            _input_dict['_primary_energy_type'])
-        new_obj._enerphit_type = PhiEnerPHitType.from_dict(
-            _input_dict['_enerphit_type'])
-        new_obj._retrofit_type = PhiRetrofitType.from_dict(
-            _input_dict['_retrofit_type'])
+        attr_dict = _input_dict['attributes']
+        if attr_dict['phpp_version'] == 10:
+            new_obj.attributes = PHPPSettings10.from_dict(attr_dict)
+        else:
+            new_obj.attributes = PHPPSettings9.from_dict(attr_dict)
         return new_obj
 
     def __copy__(self):
         # type: () -> PhiCertification
         obj = PhiCertification()
-
+        obj.phpp_version = self.phpp_version
         obj.set_base_attrs_from_source(self)
-        obj._building_category_type = self._building_category_type
-        obj._building_use_type = self._building_use_type
-        obj._ihg_type = self._ihg_type
-        obj._occupancy_type = self._occupancy_type
-        obj._certification_type = self._certification_type
-        obj._certification_class = self._certification_class
-        obj._primary_energy_type = self._primary_energy_type
-        obj._enerphit_type = self._enerphit_type
-        obj._retrofit_type = self._retrofit_type
+        obj.attributes = self.attributes.duplicate()
 
         return obj
 
