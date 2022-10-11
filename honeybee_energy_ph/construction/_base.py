@@ -26,7 +26,7 @@ class _Base(object):
 
     @identifier.setter
     def identifier(self, identifier):
-        self._identifier = valid_ep_string(identifier, 'construction identifier')
+        self._identifier = valid_ep_string(str(identifier), 'construction identifier')
 
     @property
     def display_name(self):
