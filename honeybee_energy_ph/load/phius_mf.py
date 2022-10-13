@@ -27,7 +27,7 @@ class PhiusResidentialStory(object):
         self.total_number_dwellings = len(hb_room_list)
         self.total_number_bedrooms = self.calc_story_bedrooms(hb_room_list)
 
-        self.design_occupancy = self.calc_design_occupancy()
+        self.design_occupancy = self.calc_design_occupancy(hb_room_list)
         self.mel = self.calc_mel()
         self.lighting_int = self.calc_lighting_int()
         self.lighting_ext = self.calc_lighting_ext()
@@ -40,19 +40,19 @@ class PhiusResidentialStory(object):
 
     def calc_story_floor_area(self, _hb_rooms):
         # type: (List[room.Room]) -> float
-        story_floor_area = 0
-        for rm in _hb_rooms:
-            for space in rm.properties.ph.spaces:
-                story_floor_area += space.weighted_floor_area
-        return story_floor_area
+        return sum(
+            space.weighted_floor_area
+            for rm in _hb_rooms
+            for space in rm.properties.ph.spaces
+        )
 
     def calc_story_bedrooms(self, _hb_rooms):
         # type: (List[room.Room]) -> int
         return sum(rm.properties.energy.people.properties.ph.number_bedrooms for rm in _hb_rooms)
 
-    def calc_design_occupancy(self):
-        # type: () -> float
-        return ((self.total_number_bedrooms / self.total_number_dwellings) + 1) * self.total_number_dwellings
+    def calc_design_occupancy(self, _hb_rooms):
+        # type: (List[room.Room]) -> float
+        return sum(rm.properties.energy.people.properties.ph.number_people for rm in _hb_rooms)
 
     def calc_mel(self):
         # type: () -> float
