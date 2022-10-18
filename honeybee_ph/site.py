@@ -128,6 +128,7 @@ class Climate_MonthlyRadiationCollection(_base._Base):
                  _west=Climate_MonthlyValueSet(),
                  _glob=Climate_MonthlyValueSet()):
         super(Climate_MonthlyRadiationCollection, self).__init__()
+        # type: (Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet) -> None
         self.north = _north
         self.east = _east
         self.south = _south
@@ -274,6 +275,7 @@ class Climate_PeakLoadCollection(_base._Base):
 
 class Climate_Ground(_base._Base):
     def __init__(self):
+        # type: () -> None
         super(Climate_Ground, self).__init__()
         self.ground_thermal_conductivity = 2
         self.ground_heat_capacity = 1000
@@ -315,7 +317,7 @@ class Climate(_base._Base):
                  _display_name="New York",
                  _station_elevation=0.0,
                  _daily_temp_swing=8.0,
-                 _average_wind_speed=4.0,
+                 _average_wind_speed=-4.0,
                  _monthly_temps=Climate_MonthlyTempCollection(),
                  _monthly_radiation=Climate_MonthlyRadiationCollection(),
                  _peak_loads=Climate_PeakLoadCollection()
@@ -511,6 +513,7 @@ class Site(_base._Base):
                  _climate=Climate(),
                  _phpp_library_codes=PHPPCodes(),
                  ):
+        # type: (Location, Climate, PHPPCodes) -> None
         super(Site, self).__init__()
         self.location = _location
         self.climate = _climate
