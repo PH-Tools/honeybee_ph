@@ -317,7 +317,7 @@ class Climate(_base._Base):
                  _display_name="New York",
                  _station_elevation=0.0,
                  _daily_temp_swing=8.0,
-                 _average_wind_speed=-4.0,
+                 _average_wind_speed=4.0,
                  _monthly_temps=Climate_MonthlyTempCollection(),
                  _monthly_radiation=Climate_MonthlyRadiationCollection(),
                  _peak_loads=Climate_PeakLoadCollection()
