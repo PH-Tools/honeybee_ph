@@ -90,9 +90,10 @@ class PhiusNonResProgram(object):
     def __init__(self):
         self.name = "__unnamed_nonres_program_"
         self.usage_days_yr = 365
-        self.operating_hours_day = 0
-        self.lighting_W_per_m2 = 0
-        self.mel_kWh_m2_yr = 0
+        self.operating_hours_day = 0.0
+        self.lighting_W_per_m2 = 0.0
+        self.mel_kWh_m2_yr = 0.0
+        self.mel_w_m2 = 0.0
 
     @property
     def lighting_W_per_ft2(self):
@@ -127,6 +128,7 @@ class PhiusNonResProgram(object):
         obj.mel_kWh_m2_yr = obj._calc_mel_kWh_per_m2_from_hb_elec(
             _hb_room.properties.energy.electric_equipment
         )
+        obj.mel_w_m2 = _hb_room.properties.energy.electric_equipment.watts_per_area
 
         return obj
 
@@ -193,7 +195,7 @@ class PhiusNonResRoom(object):
         self.occupancy_sensor = "N"
         self.name = "_unnamed_phius_nonres_room"
         self.icfa_m2 = 0.0
-        self.misc_mel = 0
+        self.misc_mel = 0.0 # kWh/yr
         self.program_type = PhiusNonResProgram()
 
     @property
@@ -206,6 +208,11 @@ class PhiusNonResRoom(object):
         # type: () -> float
         """Total yearly MEL kWh EXCLUDING the Misc MEL"""
         return (self.icfa_m2 * self.program_type.mel_kWh_m2_yr)
+
+    @property
+    def mel_w_m2(self):
+        # type: () -> float
+        return self.program_type.mel_w_m2
 
     @property
     def total_mel_kWh(self):
@@ -223,12 +230,14 @@ class PhiusNonResRoom(object):
         # type: () -> str
         """Returns a string representation that matches the Phius MF Calculator."""
         return ",".join([
-            str(self.multiplier),
-            str(self.occupancy_sensor),
-            str(self.name),
             str(self.program_type.name),
-            str(self.misc_mel),
+            "", # Blank
+            "", # Number
+            str(self.name),
+            str(self.occupancy_sensor),
+            str(self.multiplier),
             str(self.icfa_ft2),
+            str(self.mel_w_m2),
         ])
 
     def to_phius_mf_workbook_results(self):

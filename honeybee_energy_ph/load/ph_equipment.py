@@ -73,14 +73,14 @@ class PhEquipment(_base._Base):
         super(PhEquipment, self).__init__()
         self.equipment_type = self.__class__.__name__
         self.display_name = '_unnamed_equipment_'
-        self.comment = None
+        self.comment = ""
         self.reference_quantity = 2  # Zone Occupants
         self.quantity = 0
         self.in_conditioned_space = True
         self.reference_energy_norm = 2  # Year
-        self.energy_demand = 0  # kwh
-        self.energy_demand_per_use = 0  # kwh/use
-        self.combined_energy_factor = 0  # CEF
+        self.energy_demand = 0.0  # kwh
+        self.energy_demand_per_use = 0.0  # kwh/use
+        self.combined_energy_factor = 0.0  # CEF
 
     def apply_default_attr_values(self, _defaults={}):
         # type: (Dict) -> None
