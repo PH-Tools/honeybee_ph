@@ -177,7 +177,7 @@ class PhEquipment(_base._Base):
         return (self.annual_energy_kWh(_ref_room) * 1000) / 8760
 
     def __str__(self):
-        return "{}(name={}, quantity={})".format(self.__class__.__name__, self.display_name, self.quantity)
+        return "{}(name={}, {})".format(self.__class__.__name__, self.display_name, ", ".join(["{}={}".format(str(k), str(v)) for k, v, in vars(self).items()]))
 
     def __repr__(self):
         return str(self)

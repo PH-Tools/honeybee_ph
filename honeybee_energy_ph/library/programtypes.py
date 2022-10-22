@@ -149,9 +149,17 @@ def build_hb_lighting_from_Phius_data(_data):
 
     # -------------------------------------------------------------------------
     # -- Build the HBE-Lighting and set attributes
+    # -- Phius standard datasets are all in IP units (W/ft2)
+    # -- if any data is found with W/ft2 inputs, convert them
+    try:
+        # Convert W/ft2 to W/M2
+        w_m2 = _data['loads']['watts_per_ft2'] * 0.092903
+    except KeyError:
+        w_m2 = _data['loads']['watts_per_m2']
+    
     hb_lighting = lighting.Lighting(
         _data['loads']['name'],
-        _data['loads']['watts_per_area'],
+        w_m2,
         lighting_sched,
         0.0,
         0.32,
@@ -196,9 +204,18 @@ def build_hb_elec_equip_from_Phius_data(_data):
 
     # -------------------------------------------------------------------------
     # -- Build the HBE-Equipment and set attributes
+
+    # -- Phius standard datasets are all in IP units (W/ft2)
+    # -- if any data is found with W/ft2 inputs, convert them
+    try:
+        # Convert W/ft2 to W/M2
+        w_m2 = _data['loads']['watts_per_ft2'] * 0.092903
+    except KeyError:
+        w_m2 = _data['loads']['watts_per_m2']
+
     hb_elec_equip = equipment.ElectricEquipment(
         _data['loads']['identifier'],
-        _data['loads']['watts_per_area'],
+        w_m2,
         equip_sched
     )
 

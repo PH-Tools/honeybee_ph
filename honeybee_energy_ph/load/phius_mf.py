@@ -80,6 +80,7 @@ class PhiusResidentialStory(object):
     def ToString(self):
         return str(self)
 
+
 # -----------------------------------------------------------------------------
 # -- Non-Res
 
@@ -88,7 +89,7 @@ class PhiusNonResProgram(object):
     """An individual Phius Non-Res Program Type."""
 
     def __init__(self):
-        self.name = "__unnamed_nonres_program_"
+        self.name = "__unnamed_nonres_program__"
         self.usage_days_yr = 365
         self.operating_hours_day = 0.0
         self.lighting_W_per_m2 = 0.0

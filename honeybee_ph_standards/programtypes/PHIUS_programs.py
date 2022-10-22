@@ -41,7 +41,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Assembly",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 12.91668,
+                "watts_per_m2": 12.91668,
             },
         },
         "elec_equipment": {
@@ -53,7 +53,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Assembly",
                 "name": "2021::PHIUS_NR::Assembly",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -91,7 +91,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Theater_Ticketing",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 9.041676,
+                "watts_per_m2": 9.041676,
             },
         },
         "elec_equipment": {
@@ -103,7 +103,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Theater_Ticketing",
                 "name": "2021::PHIUS_NR::Theater_Ticketing",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -141,7 +141,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Canteen",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.45834,
+                "watts_per_m2": 6.45834,
             },
         },
         "elec_equipment": {
@@ -153,7 +153,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Canteen",
                 "name": "2021::PHIUS_NR::Canteen",
-                "watts_per_area": 116.788315,
+                "watts_per_m2": 116.788315,
             },
         },
     },
@@ -191,7 +191,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Hallway",
                 "target_lux": 100,
                 "target_lux_height": 0.0,
-                "watts_per_area": 5.381955,
+                "watts_per_m2": 5.381955,
             },
         },
         "elec_equipment": {
@@ -203,7 +203,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Hallway",
                 "name": "2021::PHIUS_NR::Hallway",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -241,7 +241,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Classroom",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 7.642369,
+                "watts_per_m2": 7.642369,
             },
         },
         "elec_equipment": {
@@ -253,7 +253,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Classroom",
                 "name": "2021::PHIUS_NR::Classroom",
-                "watts_per_area": 14.999495,
+                "watts_per_m2": 14.999495,
             },
         },
     },
@@ -291,7 +291,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Garage_Private",
                 "target_lux": 75,
                 "target_lux_height": 0.0,
-                "watts_per_area": 1.614585,
+                "watts_per_m2": 1.614585,
             },
         },
         "elec_equipment": {
@@ -303,7 +303,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Garage_Private",
                 "name": "2021::PHIUS_NR::Garage_Private",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -341,7 +341,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Garage_Public",
                 "target_lux": 100,
                 "target_lux_height": 0.0,
-                "watts_per_area": 1.614585,
+                "watts_per_m2": 1.614585,
             },
         },
         "elec_equipment": {
@@ -353,7 +353,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Garage_Public",
                 "name": "2021::PHIUS_NR::Garage_Public",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -391,7 +391,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Gym",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 9.68751,
+                "watts_per_m2": 9.68751,
             },
         },
         "elec_equipment": {
@@ -403,7 +403,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Gym",
                 "name": "2021::PHIUS_NR::Gym",
-                "watts_per_area": 18.621547,
+                "watts_per_m2": 18.621547,
             },
         },
     },
@@ -441,7 +441,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Hospital_Ward",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 7.319452,
+                "watts_per_m2": 7.319452,
             },
         },
         "elec_equipment": {
@@ -453,7 +453,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Hospital_Ward",
                 "name": "2021::PHIUS_NR::Hospital_Ward",
-                "watts_per_area": 21.5278,
+                "watts_per_m2": 21.5278,
             },
         },
     },
@@ -491,7 +491,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Hotel_Bedroom",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 4.413199,
+                "watts_per_m2": 4.413199,
             },
         },
         "elec_equipment": {
@@ -503,7 +503,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Hotel_Bedroom",
                 "name": "2021::PHIUS_NR::Hotel_Bedroom",
-                "watts_per_area": 6.748965,
+                "watts_per_m2": 6.748965,
             },
         },
     },
@@ -541,7 +541,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Kitchen_Commercial_Cooking",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 11.732651,
+                "watts_per_m2": 11.732651,
             },
         },
         "elec_equipment": {
@@ -553,7 +553,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Kitchen_Commercial_Cooking",
                 "name": "2021::PHIUS_NR::Kitchen_Commercial_Cooking",
-                "watts_per_area": 403.969167,
+                "watts_per_m2": 403.969167,
             },
         },
     },
@@ -591,7 +591,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Kitchen_Commercial_Prep_Room",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 11.732651,
+                "watts_per_m2": 11.732651,
             },
         },
         "elec_equipment": {
@@ -603,7 +603,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Kitchen_Commercial_Prep_Room",
                 "name": "2021::PHIUS_NR::Kitchen_Commercial_Prep_Room",
-                "watts_per_area": 8.934037,
+                "watts_per_m2": 8.934037,
             },
         },
     },
@@ -641,7 +641,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Laundry_Public",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 5.704867,
+                "watts_per_m2": 5.704867,
             },
         },
         "elec_equipment": {
@@ -653,7 +653,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Laundry_Public",
                 "name": "2021::PHIUS_NR::Laundry_Public",
-                "watts_per_area": 61.677147,
+                "watts_per_m2": 61.677147,
             },
         },
     },
@@ -691,7 +691,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Library_Reading_Room",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 8.934037,
+                "watts_per_m2": 8.934037,
             },
         },
         "elec_equipment": {
@@ -703,7 +703,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Library_Reading_Room",
                 "name": "2021::PHIUS_NR::Library_Reading_Room",
-                "watts_per_area": 10.010427,
+                "watts_per_m2": 10.010427,
             },
         },
     },
@@ -741,7 +741,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Library_Storage",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 8.934037,
+                "watts_per_m2": 8.934037,
             },
         },
         "elec_equipment": {
@@ -753,7 +753,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Library_Storage",
                 "name": "2021::PHIUS_NR::Library_Storage",
-                "watts_per_area": 10.010427,
+                "watts_per_m2": 10.010427,
             },
         },
     },
@@ -791,7 +791,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Library_Stacks",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 8.934037,
+                "watts_per_m2": 8.934037,
             },
         },
         "elec_equipment": {
@@ -803,7 +803,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Library_Stacks",
                 "name": "2021::PHIUS_NR::Library_Stacks",
-                "watts_per_area": 10.010427,
+                "watts_per_m2": 10.010427,
             },
         },
     },
@@ -841,7 +841,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Museum_Exhibition",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 11.302095,
+                "watts_per_m2": 11.302095,
             },
         },
         "elec_equipment": {
@@ -853,7 +853,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Museum_Exhibition",
                 "name": "2021::PHIUS_NR::Museum_Exhibition",
-                "watts_per_area": 3.22917,
+                "watts_per_m2": 3.22917,
             },
         },
     },
@@ -891,7 +891,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Server_Room",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 4.628477,
+                "watts_per_m2": 4.628477,
             },
         },
         "elec_equipment": {
@@ -903,7 +903,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Server_Room",
                 "name": "2021::PHIUS_NR::Server_Room",
-                "watts_per_area": 2.906253,
+                "watts_per_m2": 2.906253,
             },
         },
     },
@@ -941,7 +941,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Manufacturing_Workshop",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 14.315987,
+                "watts_per_m2": 14.315987,
             },
         },
         "elec_equipment": {
@@ -953,7 +953,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Manufacturing_Workshop",
                 "name": "2021::PHIUS_NR::Manufacturing_Workshop",
-                "watts_per_area": 43.0556,
+                "watts_per_m2": 43.0556,
             },
         },
     },
@@ -991,7 +991,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Office_Meeting_Room",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 10.440983,
+                "watts_per_m2": 10.440983,
             },
         },
         "elec_equipment": {
@@ -1003,7 +1003,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Office_Meeting_Room",
                 "name": "2021::PHIUS_NR::Office_Meeting_Room",
-                "watts_per_area": 3.982643,
+                "watts_per_m2": 3.982643,
             },
         },
     },
@@ -1041,7 +1041,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Office_Workspace_Open",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.565979,
+                "watts_per_m2": 6.565979,
             },
         },
         "elec_equipment": {
@@ -1053,7 +1053,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Office_Workspace_Open",
                 "name": "2021::PHIUS_NR::Office_Workspace_Open",
-                "watts_per_area": 7.642369,
+                "watts_per_m2": 7.642369,
             },
         },
     },
@@ -1091,7 +1091,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Office_Workspace_Semiopen",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 7.965286,
+                "watts_per_m2": 7.965286,
             },
         },
         "elec_equipment": {
@@ -1103,7 +1103,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Office_Workspace_Semiopen",
                 "name": "2021::PHIUS_NR::Office_Workspace_Semiopen",
-                "watts_per_area": 6.888896,
+                "watts_per_m2": 6.888896,
             },
         },
     },
@@ -1141,7 +1141,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Office_Workspace_Closed",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 7.965286,
+                "watts_per_m2": 7.965286,
             },
         },
         "elec_equipment": {
@@ -1153,7 +1153,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Office_Workspace_Closed",
                 "name": "2021::PHIUS_NR::Office_Workspace_Closed",
-                "watts_per_area": 6.888896,
+                "watts_per_m2": 6.888896,
             },
         },
     },
@@ -1191,7 +1191,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Other_Habitable",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.565979,
+                "watts_per_m2": 6.565979,
             },
         },
         "elec_equipment": {
@@ -1203,7 +1203,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Other_Habitable",
                 "name": "2021::PHIUS_NR::Other_Habitable",
-                "watts_per_area": 7.642369,
+                "watts_per_m2": 7.642369,
             },
         },
     },
@@ -1241,7 +1241,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Other_Non_Habitable",
                 "target_lux": 100,
                 "target_lux_height": 0.8,
-                "watts_per_area": 4.090282,
+                "watts_per_m2": 4.090282,
             },
         },
         "elec_equipment": {
@@ -1253,7 +1253,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Other_Non_Habitable",
                 "name": "2021::PHIUS_NR::Other_Non_Habitable",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -1291,7 +1291,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Restaurant",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.45834,
+                "watts_per_m2": 6.45834,
             },
         },
         "elec_equipment": {
@@ -1303,7 +1303,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Restaurant",
                 "name": "2021::PHIUS_NR::Restaurant",
-                "watts_per_area": 64.927845,
+                "watts_per_m2": 64.927845,
             },
         },
     },
@@ -1341,7 +1341,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Restroom_Public",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.781257,
+                "watts_per_m2": 6.781257,
             },
         },
         "elec_equipment": {
@@ -1353,7 +1353,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Restroom_Public",
                 "name": "2021::PHIUS_NR::Restroom_Public",
-                "watts_per_area": 2.906253,
+                "watts_per_m2": 2.906253,
             },
         },
     },
@@ -1391,7 +1391,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Department_Store",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 11.302095,
+                "watts_per_m2": 11.302095,
             },
         },
         "elec_equipment": {
@@ -1403,7 +1403,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Department_Store",
                 "name": "2021::PHIUS_NR::Department_Store",
-                "watts_per_area": 3.22917,
+                "watts_per_m2": 3.22917,
             },
         },
     },
@@ -1442,7 +1442,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Grocery",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 11.302095,
+                "watts_per_m2": 11.302095,
             },
         },
         "elec_equipment": {
@@ -1454,7 +1454,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Grocery",
                 "name": "2021::PHIUS_NR::Grocery",
-                "watts_per_area": 10.979178,
+                "watts_per_m2": 10.979178,
             },
         },
     },
@@ -1492,7 +1492,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Storage_Archive",
                 "target_lux": 100,
                 "target_lux_height": 0.8,
-                "watts_per_area": 7.427091,
+                "watts_per_m2": 7.427091,
             },
         },
         "elec_equipment": {
@@ -1504,7 +1504,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Storage_Archive",
                 "name": "2021::PHIUS_NR::Storage_Archive",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -1542,7 +1542,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::School_Auditorium",
                 "target_lux": 500,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.565979,
+                "watts_per_m2": 6.565979,
             },
         },
         "elec_equipment": {
@@ -1554,7 +1554,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::School_Auditorium",
                 "name": "2021::PHIUS_NR::School_Auditorium",
-                "watts_per_area": 4.951394,
+                "watts_per_m2": 4.951394,
             },
         },
     },
@@ -1592,7 +1592,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Theater_Seating",
                 "target_lux": 200,
                 "target_lux_height": 0.8,
-                "watts_per_area": 12.91668,
+                "watts_per_m2": 12.91668,
             },
         },
         "elec_equipment": {
@@ -1604,7 +1604,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Theater_Seating",
                 "name": "2021::PHIUS_NR::Theater_Seating",
-                "watts_per_area": 0,
+                "watts_per_m2": 0,
             },
         },
     },
@@ -1642,7 +1642,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Theater_Lobby",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 9.041676,
+                "watts_per_m2": 9.041676,
             },
         },
         "elec_equipment": {
@@ -1654,7 +1654,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Theater_Lobby",
                 "name": "2021::PHIUS_NR::Theater_Lobby",
-                "watts_per_area": 2.906253,
+                "watts_per_m2": 2.906253,
             },
         },
     },
@@ -1692,7 +1692,7 @@ PHIUS_Non_Res = {
                 "name": "2021::PHIUS_NR::Theater_Stage",
                 "target_lux": 1000,
                 "target_lux_height": 0.8,
-                "watts_per_area": 6.565979,
+                "watts_per_m2": 6.565979,
             },
         },
         "elec_equipment": {
@@ -1704,7 +1704,7 @@ PHIUS_Non_Res = {
             "loads": {
                 "identifier": "2021::PHIUS_NR::Theater_Stage",
                 "name": "2021::PHIUS_NR::Theater_Stage",
-                "watts_per_area": 10.333344,
+                "watts_per_m2": 10.333344,
             },
         },
     },
@@ -1747,19 +1747,19 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Central_Restroom",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 9.687519375,
+                "watts_per_m2": 9.687519375,
             },
         },
         "elec_equipment": {
             "schedule": {
                 "identifier": "2021::PHIUS_MF::Central_Restroom",
                 "name": "2021::PHIUS_MF::Central_Restroom",
-                "annual_utilization_factor": 1.0,
+                "annual_utilization_factor": 0.07,
             },
             "loads": {
                 "identifier": "2021::PHIUS_MF::Central_Restroom",
                 "name": "2021::PHIUS_MF::Central_Restroom",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -1797,7 +1797,7 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Common_Laundry",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 7.534737292,
+                "watts_per_m2": 7.534737292,
             },
         },
         "elec_equipment": {
@@ -1809,7 +1809,7 @@ PHIUS_MF_Calculator = {
             "loads": {
                 "identifier": "2021::PHIUS_MF::Common_Laundry",
                 "name": "2021::PHIUS_MF::Common_Laundry",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -1847,19 +1847,19 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Common_Mail",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 30.13894917,
+                "watts_per_m2": 30.13894917,
             },
         },
         "elec_equipment": {
             "schedule": {
                 "identifier": "2021::PHIUS_MF::Common_Mail",
                 "name": "2021::PHIUS_MF::Common_Mail",
-                "annual_utilization_factor": 1.0,
+                "annual_utilization_factor": 0.5,
             },
             "loads": {
                 "identifier": "2021::PHIUS_MF::Common_Mail",
                 "name": "2021::PHIUS_MF::Common_Mail",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -1897,19 +1897,19 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Common_Office",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 10.76391042,
+                "watts_per_m2": 10.76391042,
             },
         },
         "elec_equipment": {
             "schedule": {
                 "identifier": "2021::PHIUS_MF::Common_Office",
                 "name": "2021::PHIUS_MF::Common_Office",
-                "annual_utilization_factor": 1.0,
+                "annual_utilization_factor": 0.375,
             },
             "loads": {
                 "identifier": "2021::PHIUS_MF::Common_Office",
                 "name": "2021::PHIUS_MF::Common_Office",
-                "watts_per_area": 3.93,
+                "watts_per_m2": 42.30216794,
             },
         },
     },
@@ -1947,19 +1947,19 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Storage_or_Equip",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 16.14586563,
+                "watts_per_m2": 16.14586563,
             },
         },
         "elec_equipment": {
             "schedule": {
                 "identifier": "2021::PHIUS_MF::Storage_or_Equip",
                 "name": "2021::PHIUS_MF::Storage_or_Equip",
-                "annual_utilization_factor": 1.0,
+                "annual_utilization_factor": 0.0416,
             },
             "loads": {
                 "identifier": "2021::PHIUS_MF::Storage_or_Equip",
                 "name": "2021::PHIUS_MF::Storage_or_Equip",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -1997,7 +1997,7 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Elevator",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 13.45488802,
+                "watts_per_m2": 13.45488802,
             },
         },
         "elec_equipment": {
@@ -2009,7 +2009,7 @@ PHIUS_MF_Calculator = {
             "loads": {
                 "identifier": "2021::PHIUS_MF::Elevator",
                 "name": "2021::PHIUS_MF::Elevator",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -2047,7 +2047,7 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Corridor",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 5.381955208,
+                "watts_per_m2": 5.381955208,
             },
         },
         "elec_equipment": {
@@ -2059,7 +2059,7 @@ PHIUS_MF_Calculator = {
             "loads": {
                 "identifier": "2021::PHIUS_MF::Corridor",
                 "name": "2021::PHIUS_MF::Corridor",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -2097,19 +2097,19 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Multi_Purpose",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 11.84030146,
+                "watts_per_m2": 11.84030146,
             },
         },
         "elec_equipment": {
             "schedule": {
                 "identifier": "2021::PHIUS_MF::Multi_Purpose",
                 "name": "2021::PHIUS_MF::Multi_Purpose",
-                "annual_utilization_factor": 1.0,
+                "annual_utilization_factor": 0.5,
             },
             "loads": {
                 "identifier": "2021::PHIUS_MF::Multi_Purpose",
                 "name": "2021::PHIUS_MF::Multi_Purpose",
-                "watts_per_area": 0.0,
+                "watts_per_m2": 0.0,
             },
         },
     },
@@ -2147,19 +2147,19 @@ PHIUS_MF_Calculator = {
                 "name": "2021::PHIUS_MF::Workout",
                 "target_lux": 300,
                 "target_lux_height": 0.8,
-                "watts_per_area": 9.687519375,
+                "watts_per_m2": 9.687519375,
             },
         },
         "elec_equipment": {
             "schedule": {
                 "identifier": "2021::PHIUS_MF::Workout",
                 "name": "2021::PHIUS_MF::Workout",
-                "annual_utilization_factor": 1.0,
+                "annual_utilization_factor": 0.667,
             },
             "loads": {
                 "identifier": "2021::PHIUS_MF::Workout",
                 "name": "2021::PHIUS_MF::Workout",
-                "watts_per_area": 12.04,
+                "watts_per_m2": 12.04,
             },
         },
     },
