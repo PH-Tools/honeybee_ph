@@ -158,8 +158,8 @@ def convert(_value, _input_unit, _target_unit):
             "Error: Unit conversion schema for '{}' does not include '{}'. Input only: {}".format(
                 input_unit, target_unit, list(schema.keys()))
         )
-
-    return eval("{}".format(conversion_equation).format(_value))
+    
+    return eval("{}".format(conversion_equation).format(float(_value)))
 
 
 def parse_input(_input_string):
