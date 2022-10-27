@@ -33,6 +33,7 @@ CONVERSION_SCHEMAS = {
     "M2K/W": {"SI": "{}*1", "M2K/W": "{}*1", "HR-FT2-F/BTU": "{}*5.678264134"},
     "W/MK": {"SI": "{}*1", "W/MK": "{}*1", "HR-FT2-F/BTU-IN": "{}**-1*0.144227909", "BTU/HR-FT-F": "{}*0.577789236"},
     "W/K": {"SI": "{}*1", "W/K": "{}*1", "BTU/HR-F": "{}*1.895633976"},
+    "W/M2": {"SI": "{}*1", "W/M2": "{}*1", "BTU/HR-FT2": "{}*0.316998286", "W/FT2": "{}*0.09290304"},
     "KW": {"SI": "{}*1", "KW": "{}*1", "BTU/HR": "{}*3412.141156", "KBTU/HR": "{}*3.412141156"},
     "W/W": {"SI": "{}*1", "W/W": "{}*1", "BTUHR/W": "{}*3.412141156"},  # SEER
     # -- IP -> SI
@@ -45,6 +46,8 @@ CONVERSION_SCHEMAS = {
     "HR-FT2-F/BTU-IN": {"SI": "{}*1.730734908", "W/MK": "(1/({}*12))*1.730734908", "BTU/HR-FT-F": "1/({}*12)"},
     "HR-FT2-F/BTU": {"SI": "1/((1/{})*5.678264134)", "M2K/W": "1/((1/{})*5.678264134)",  "W/M2K": "(1/{})*5.678264134"},
     
+    "W/FT2": {"SI": "{}*10.76391042", "W/M2": "{}*10.76391042", "BTU/HR-FT2": "{}/3.412141156"},
+    "BTU/HR-FT2": {"SI": "{}*3.154591186", "W/M2": "{}*3.154591186", "W/FT2": "{}*0.293071111"},
     "BTU/HR-F": {"SI": "{}*0.527528", "W/K": "{}*0.527528"},
     "BTU/HR-FT2-F": {"SI": "{}*5.678264134", "W/M2K": "{}*5.678264134"},
     "KBTU/FT2": {"SI": "{}*3.154591186", "KWH/M2": "{}*3.154591186", "KWH/FT2": "{}*0.293071111"},
@@ -94,6 +97,7 @@ def _standardize_input_unit(_in):
         'BTU/HR-FT-F': 'BTU/HR-FT-F',
         'BTU/HR-F': 'BTU/HR-F', 'BTU/H-F': 'BTU/HR-F', 'BTUH/F': 'BTU/HR-F', 'BTUHR/F': 'BTU/HR-F',
         'BTU/HR-FT2-F': 'BTU/HR-FT2-F', 'BTU/H-FT2-F': 'BTU/HR-FT2-F', 'BTU/HR-SF-F': 'BTU/HR-FT2-F', 'U-IP':'BTU/HR-FT2-F',
+        'BTU/HR-FT2': 'BTU/HR-FT2', 'BTU/HR-SF': 'BTU/HR-FT2', 'BTUH/FT2': 'BTU/HR-FT2', 'BTUH/SF': 'BTU/HR-FT2',
         'DELTA-C': 'DELTA-C', 'DELTA-F': 'DELTA-F',
         'KWH/M2': 'KWH/M2',
         'KBTU/FT2': 'KBTU/FT2', 'KBTU/SF': 'KBTU/FT2',
@@ -102,6 +106,7 @@ def _standardize_input_unit(_in):
         'FT/S': 'FT/S', 'FT/DAY': 'FT/DAY',
         'MPH': 'MPH',
         'W/CFM': 'W/CFM',
+        'W/M2': 'W/M2',
     }
     # Note: BTU/W conversion isn't really right, but I think many folks use that
     # when they mean Btu/Wh (or Btu-h/W)
