@@ -72,6 +72,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         self.duct_01 = None
         self.duct_02 = None
         self._ventilation_unit = None  # type: Optional[Ventilator]
+        self.id_num = 0
 
     @property
     def ventilation_unit(self):
@@ -99,6 +100,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         d['sys_type'] = self.sys_type
         d['duct_01'] = self.duct_01
         d['duct_02'] = self.duct_02
+        d['id_num'] = self.id_num
 
         if self.ventilation_unit:
             d['ventilation_unit'] = self.ventilation_unit.to_dict()
@@ -115,6 +117,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj.sys_type = _input_dict['sys_type']
         obj.duct_01 = _input_dict['duct_01']
         obj.duct_02 = _input_dict['duct_02']
+        obj.id_num = _input_dict.get('id_num', 0)
 
         vent_unit_dict = _input_dict.get('ventilation_unit', None)
         if vent_unit_dict:
