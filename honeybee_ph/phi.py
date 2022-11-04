@@ -212,7 +212,7 @@ class _PHPPSettingsBase(object):
         # type: (Dict[str, int | str]) -> _PHPPSettingsBase
         new_obj = cls()
         for k in vars(new_obj).keys():
-            getattr(new_obj, k, _input_dict[k])
+            setattr(new_obj, k, _input_dict[k])
         return new_obj
 
     def __copy__(self):
