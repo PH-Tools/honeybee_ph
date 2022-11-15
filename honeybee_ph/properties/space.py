@@ -6,7 +6,15 @@ try:
 except ImportError:
     pass  # Python 2.7
 
-from honeybee import properties
+try:
+    from ladybug_geometry import geometry3d
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
+
+try:
+    from honeybee import properties
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
 
 
 class SpaceProperties(properties._Properties):
@@ -71,6 +79,37 @@ class SpaceProperties(properties._Properties):
         to this Space among other properties.
         """
         self._reset_extension_attr_to_default()
+
+    def scale(self, factor, origin=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Apply a scale transform to extension attributes.
+
+        This is useful in cases where extension attributes possess geometric data
+        that should be scaled alongside the host object. For example, dynamic
+        geometry within the honeybee-radiance state of an aperture should be
+        scaled if the host aperture is scaled.
+
+        Arguments:
+        ----------
+            * factor (float): The scale factor
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
+                Point3D representing the origin from which to scale. If None, 
+                it will be scaled from the World origin (0, 0, 0).
+        
+        Returns:
+        --------
+            * None
+        """
+        for atr in self._extension_attributes:
+            var = getattr(self, atr)
+            if not hasattr(var, 'scale'):
+                continue
+            try:
+                var.scale(factor, origin)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                raise Exception('Failed to scale {}: {}'.format(var, e))
 
     def __repr__(self):
         """Properties representation."""

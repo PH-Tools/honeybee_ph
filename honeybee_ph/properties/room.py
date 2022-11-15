@@ -4,12 +4,20 @@
 """HB-Room Passive House (PH) Properties."""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except ImportError:
     pass  # Python2.7
 
-from honeybee_ph.bldg_segment import BldgSegment
-from honeybee_ph import space
+try:
+    from ladybug_geometry import geometry3d
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
+
+try:
+    from honeybee_ph.bldg_segment import BldgSegment
+    from honeybee_ph import space
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee_ph:\n\t{}'.format(e))
 
 
 class RoomPhProperties(object):
@@ -137,3 +145,22 @@ class RoomPhProperties(object):
             self._spaces[0].add_new_volumes(_new_space.volumes)
         except IndexError:
             self.add_new_space(_new_space)
+
+    def scale(self, factor, origin=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Scale the room, and all the spaces in the room by a specified factor.
+        
+        Arguments:
+        ----------
+            * factor (float): The scale factor
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
+                Point3D representing the origin from which to scale. If None, 
+                it will be scaled from the World origin (0, 0, 0).
+        
+        Returns:
+        --------
+            * None
+        """
+
+        for space in self.spaces:
+            space.scale(factor, origin=None)

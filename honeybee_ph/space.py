@@ -4,16 +4,26 @@
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
 
 try:
-    from typing import Any, Optional, List, Dict
+    from typing import Any, Optional, List, Dict, Union
 except:
     pass  # IronPython
 
-from honeybee_ph import _base
-from honeybee_ph.properties.space import SpaceProperties
-from ladybug_geometry import geometry3d
+from copy import copy
+
+try:
+    from honeybee_ph import _base
+    from honeybee_ph.properties.space import SpaceProperties
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee_ph:\n\t{}'.format(e))
+
+try:
+    from ladybug_geometry import geometry3d
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 
 class SpaceFloorSegment(_base._Base):
+    
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
         self.geometry = None  # type: Optional[geometry3d.face.Face3D]
@@ -87,6 +97,37 @@ class SpaceFloorSegment(_base._Base):
 
         return new_obj
 
+    def duplicate_geometry(self):
+        # type: () -> geometry3d.face.Face3D
+        try:
+            return self.geometry.duplicate()
+        except AttributeError as e:
+            msg = "\n\tSpaceFloorSegment {} has no geometry? "\
+                    "Cannot duplicate it.".format(self)
+            raise AttributeError(msg, e)
+
+    def scale(self, factor, origin=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Scale the floor-segment geometry by a specified factor.
+        
+        Arguments:
+        ----------
+            * factor (float): The scale factor
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
+                Point3D representing the origin from which to scale. If None, 
+                it will be scaled from the World origin (0, 0, 0).
+        
+        Returns:
+        --------
+            * None
+        """ 
+
+        if self.geometry:
+            self.geometry = self.geometry.scale(factor, origin)
+
+        if self.reference_point:
+            self.reference_point = self.reference_point.scale(factor, origin)
+
     def __str__(self):
         return '{}(weighting_factor={!r}, geometry={!r}, reference_point={!r})'.format(self.__class__.__name__,
                                                                                        self.weighting_factor,
@@ -101,10 +142,11 @@ class SpaceFloorSegment(_base._Base):
 
 
 class SpaceFloor(_base._Base):
+    
     def __init__(self):
         super(SpaceFloor, self).__init__()
-        self._floor_segments = list()  # list[SpaceFloorSegment]
-        self.geometry = None  # geometry3d.Face3D
+        self._floor_segments = list()  # type: List[SpaceFloorSegment]
+        self.geometry = None  # type: Optional[geometry3d.face.Face3D]
 
     @property
     def reference_points(self):
@@ -140,6 +182,9 @@ class SpaceFloor(_base._Base):
             return
         self._floor_segments.append(_floor_seg)
 
+    def clear_floor_segments(self):
+        self._floor_segments = list()
+
     @property
     def floor_segments(self):
         # type: () -> list[SpaceFloorSegment]
@@ -153,6 +198,14 @@ class SpaceFloor(_base._Base):
         for seg in self.floor_segments:
             new_floor.add_floor_segment(seg.duplicate())
         return new_floor
+
+    def duplicate_geometry(self):
+        # type: () -> geometry3d.face.Face3D
+        try:
+            return self.geometry.duplicate()
+        except AttributeError as e:
+            msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(self)
+            raise AttributeError(msg, e)
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -178,6 +231,28 @@ class SpaceFloor(_base._Base):
 
         return new_obj
 
+    def scale(self, factor, origin=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Scale the floor and all the geometry of the floor by a specified factor.
+        
+        Arguments:
+        ----------
+            * factor (float): The scale factor
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
+                Point3D representing the origin from which to scale. If None, 
+                it will be scaled from the World origin (0, 0, 0).
+        
+        Returns:
+        --------
+            * None
+        """ 
+
+        if self.geometry:
+            self.geometry = self.geometry.scale(factor, origin)
+        
+        for segment in self.floor_segments:
+            segment.scale(factor, origin)
+
     def __str__(self):
         return '{}()'.format(self.__class__.__name__)
 
@@ -189,11 +264,12 @@ class SpaceFloor(_base._Base):
 
 
 class SpaceVolume(_base._Base):
+    
     def __init__(self):
         super(SpaceVolume, self).__init__()
         self.avg_ceiling_height = 2.5  # m
         self.floor = SpaceFloor()
-        self.geometry = list()
+        self.geometry = list() # type: List[geometry3d.face.Face3D]
 
     @property
     def net_volume(self):
@@ -222,6 +298,11 @@ class SpaceVolume(_base._Base):
     def floor_segment_surfaces(self):
         # type: () -> List[Optional[geometry3d.face.Face3D]]
         return [flr_seg.geometry for flr_seg in self.floor.floor_segments]
+
+    def clear_volume_geometry(self):
+        # type: () -> None
+        """Delete all the geometry from the SpaceVolume."""
+        self.geometry = []
 
     def duplicate(self):
         # type: () -> SpaceVolume
@@ -255,6 +336,31 @@ class SpaceVolume(_base._Base):
             new_obj.geometry.append(geometry3d.Face3D.from_dict(geom_dict))
 
         return new_obj
+
+    def scale(self, factor, origin=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Scale the volume and all the geometry of the volume by a specified factor.
+        
+        Arguments:
+        ----------
+            * factor (float): The scale factor
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
+                Point3D representing the origin from which to scale. If None, 
+                it will be scaled from the World origin (0, 0, 0).
+        
+        Returns:
+        --------
+            * None
+        """
+
+        original_geometry = copy(self.geometry)
+        self.clear_volume_geometry()
+        for srfc in original_geometry:
+            self.geometry.append(srfc.scale(factor, origin))
+        
+        self.avg_ceiling_height = self.avg_ceiling_height * factor
+
+        self.floor.scale(factor, origin)
 
     def __str__(self):
         return '{}()'.format(self.__class__.__name__)
@@ -343,7 +449,7 @@ class Space(_base._Base):
         return [v.floor_segment_surfaces for v in self.volumes]
 
     def add_new_volumes(self, _new_volumes):
-        # type: (list[SpaceVolume]) -> None
+        # type: (Union[SpaceVolume, list[SpaceVolume]]) -> None
         """Add a new SpaceVolume or list of SpaceVolumes to the Space.
 
         Arguments:
@@ -410,6 +516,26 @@ class Space(_base._Base):
             _input_dict["properties"]
         )
         return new_obj
+
+    def scale(self, factor, origin=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Scale the space and all the volumes in the space by a specified factor.
+        
+        Arguments:
+        ----------
+            * factor (float): The scale factor
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
+                Point3D representing the origin from which to scale. If None, 
+                it will be scaled from the World origin (0, 0, 0).
+        
+        Returns:
+        --------
+            * None
+        """
+
+        for volume in self.volumes:
+            volume.scale(factor, origin)
+        self.properties.scale(factor, origin)
 
     def __str__(self):
         return '{}(name={!r}, number={!r}, volumes={!r})'.format(self.__class__.__name__,

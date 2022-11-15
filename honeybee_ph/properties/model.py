@@ -2,8 +2,9 @@
 # -*- Python Version: 2.7 -*-
 
 """HB-Model Passive House (PH) Properties."""
+
 try:
-    from typing import Any
+    from typing import Any, Optional
 except ImportError:
     pass  # Python 2.7
 
@@ -12,9 +13,15 @@ try:
 except ImportError:
     pass  # Python3
 
+try:
+    from honeybee import extensionutil
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
 
-from honeybee import extensionutil
-from honeybee_ph import bldg_segment
+try:
+    from honeybee_ph import bldg_segment
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee_ph:\n\t{}'.format(e))
 
 
 class ModelPhProperties(object):
