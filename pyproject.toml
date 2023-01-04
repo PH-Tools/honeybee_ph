@@ -9,11 +9,12 @@ filterwarnings = [
 [tool.coverage.run]
 # --- For testing...
 command_line = "-m pytest tests"
-source = ["honeybee_ph"]
+source = ["honeybee_ph", "honeybee_energy_ph", "honeybee_ph_standards", "honeybee_ph_utils"]
 # ---
 branch = true
 cover_pylib = false
 omit = [
+    "*/__init__.py",
     "*.venv/*",
     "*.venv_mbair/*"
 ]
@@ -24,3 +25,6 @@ fail_under = 100
 
 [tool.coverage.html]
 directory = "_coverage_html"
+
+[tool.black]
+line-length = 90
