@@ -81,9 +81,9 @@ class PhCoolingVentilation(PhCoolingSystem):
     def __init__(self):
         super(PhCoolingVentilation, self).__init__()
         self.single_speed = False
-        self.min_coil_temp = 12
-        self.capacity = 10
-        self.annual_COP = 4
+        self.min_coil_temp = 12.0
+        self.capacity = 10.0
+        self.annual_COP = 4.0
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -113,11 +113,11 @@ class PhCoolingRecirculation(PhCoolingSystem):
     def __init__(self):
         super(PhCoolingRecirculation, self).__init__()
         self.single_speed = False
-        self.min_coil_temp = 12
-        self.flow_rate_m3_hr = 100
+        self.min_coil_temp = 12.0
+        self.flow_rate_m3_hr = 100.0
         self.flow_rate_variable = True
-        self.capacity = 10
-        self.annual_COP = 4
+        self.capacity = 10.0
+        self.annual_COP = 4.0
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -151,7 +151,7 @@ class PhCoolingDehumidification(PhCoolingSystem):
     def __init__(self):
         super(PhCoolingDehumidification, self).__init__()
         self.useful_heat_loss = False
-        self.annual_COP = 4
+        self.annual_COP = 4.0
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -176,7 +176,7 @@ class PhCoolingPanel(PhCoolingSystem):
 
     def __init__(self):
         super(PhCoolingPanel, self).__init__()
-        self.annual_COP = 4
+        self.annual_COP = 4.0
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
