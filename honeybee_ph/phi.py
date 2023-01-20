@@ -244,12 +244,12 @@ class PHPPSettings10(_PHPPSettingsBase):
     def __init__(self):
         # -- Setup the enum defaults
         super(PHPPSettings10, self).__init__()
-        self.building_use_type = "10-RESIDENTIAL BUILDING: RESIDENTIAL (DEFAULT)"
-        self.ihg_type = "2-STANDARD"
-        self.certification_class = "10-CLASSIC | PER (RENEWABLE)"
-        self.certification_type = "10-PASSIVE HOUSE"
-        self.primary_energy_type = "1-STANDARD"
-        self.retrofit_type = "1-NEW BUILDING"
+        self.building_use_type = "10-RESIDENTIAL BUILDING: RESIDENTIAL (DEFAULT)" # type: EnumProperty
+        self.ihg_type = "2-STANDARD" # type: EnumProperty
+        self.certification_class = "10-CLASSIC | PER (RENEWABLE)" # type: EnumProperty
+        self.certification_type = "10-PASSIVE HOUSE" # type: EnumProperty
+        self.primary_energy_type = "1-STANDARD" # type: EnumProperty
+        self.retrofit_type = "1-NEW BUILDING" # type: EnumProperty
 
 
 class PHPPSettings9(_PHPPSettingsBase):
@@ -268,15 +268,15 @@ class PHPPSettings9(_PHPPSettingsBase):
     def __init__(self):
         # -- Setup the enum defaults
         super(PHPPSettings9, self).__init__()
-        self.building_category_type = "1-RESIDENTIAL BUILDING"
-        self.building_use_type = "10-DWELLING"
-        self.ihg_type = "2-Standard"
-        self.occupancy_type = "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)"
-        self.certification_type = "1-PASSIVE HOUSE"
-        self.certification_class = "1-CLASSIC"
-        self.primary_energy_type = "2-PER (RENEWABLE)"
-        self.enerphit_type = "2-ENERGY DEMAND METHOD"
-        self.retrofit_type = "1-NEW BUILDING"
+        self.building_category_type = "1-RESIDENTIAL BUILDING" # type: EnumProperty
+        self.building_use_type = "10-DWELLING" # type: EnumProperty
+        self.ihg_type = "2-Standard" # type: EnumProperty
+        self.occupancy_type = "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)" # type: EnumProperty
+        self.certification_type = "1-PASSIVE HOUSE" # type: EnumProperty
+        self.certification_class = "1-CLASSIC" # type: EnumProperty
+        self.primary_energy_type = "2-PER (RENEWABLE)" # type: EnumProperty
+        self.enerphit_type = "2-ENERGY DEMAND METHOD" # type: EnumProperty
+        self.retrofit_type = "1-NEW BUILDING" # type: EnumProperty
 
 
 class PhiCertification(_base._Base):    
