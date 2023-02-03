@@ -9,8 +9,10 @@ except ImportError:
     pass  # IronPython 2.7
 
 from honeybee import room
+from honeybee_energy.properties.room import RoomEnergyProperties
 from honeybee_energy.schedule import ruleset
 from honeybee_energy.load import equipment
+
 from honeybee_ph import space
 
 
@@ -24,7 +26,7 @@ class PhiusResidentialStory(object):
 
         self.story_number = hb_room_list[0].story
         self.total_floor_area_m2 = self.calc_story_floor_area(hb_room_list)
-        self.total_number_dwellings = len(hb_room_list)
+        self.total_number_dwellings = self.calc_num_dwellings(hb_room_list)
         self.total_number_bedrooms = self.calc_story_bedrooms(hb_room_list)
 
         self.design_occupancy = self.calc_design_occupancy(hb_room_list)
@@ -53,6 +55,10 @@ class PhiusResidentialStory(object):
     def calc_design_occupancy(self, _hb_rooms):
         # type: (List[room.Room]) -> float
         return sum(rm.properties.energy.people.properties.ph.number_people for rm in _hb_rooms)
+
+    def calc_num_dwellings(self, _hb_rooms):
+        # type: (List[room.Room]) -> int
+        return sum(rm.properties.energy.people.properties.ph.number_dwelling_units for rm in _hb_rooms)
 
     def calc_mel(self):
         # type: () -> float
@@ -122,14 +128,17 @@ class PhiusNonResProgram(object):
         """Returns a new PhiusNonResProgram object with attributes based on an HBE-Room."""
         obj = cls()
 
-        obj.name = _hb_room.properties.energy.program_type.display_name
+        # -- type Alias
+        rm_prop_energy = _hb_room.properties.energy # type: RoomEnergyProperties # type: ignore
+
+        obj.name = rm_prop_energy.program_type.display_name
         obj.operating_hours_day = obj._operating_hours_day_from_hb_schedule(
-            _hb_room.properties.energy.lighting.schedule)
-        obj.lighting_W_per_m2 = _hb_room.properties.energy.lighting.watts_per_area
+            rm_prop_energy.lighting.schedule)
+        obj.lighting_W_per_m2 = rm_prop_energy.lighting.watts_per_area
         obj.mel_kWh_m2_yr = obj._calc_mel_kWh_per_m2_from_hb_elec(
-            _hb_room.properties.energy.electric_equipment
+            rm_prop_energy.electric_equipment
         )
-        obj.mel_w_m2 = _hb_room.properties.energy.electric_equipment.watts_per_area
+        obj.mel_w_m2 = rm_prop_energy.electric_equipment.watts_per_area
 
         return obj
 
