@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""PH 'Space' and Related Sub-object Classes (FloorSegments, etc)"""
+"""PH 'Space' and Related Sub-object Classes (FloorSegments, etc)."""
 
 try:
     from typing import Any, Optional, List, Dict, Union
