@@ -9,12 +9,12 @@ except ImportError:
 try:
     from ladybug_geometry import geometry3d
 except ImportError as e:
-    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
+    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
 try:
     from honeybee import properties
 except ImportError as e:
-    raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
+    raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
 
 class SpaceProperties(properties._Properties):
@@ -44,17 +44,18 @@ class SpaceProperties(properties._Properties):
         """
         d = {}
         if abridged == False:
-            d['type'] = 'SpaceProperties'
+            d["type"] = "SpaceProperties"
         else:
-            d['type'] = 'SpacePropertiesAbridged'
+            d["type"] = "SpacePropertiesAbridged"
         d = self._add_extension_attr_to_dict(d, abridged, include)
         return d
 
     @classmethod
     def from_dict(cls, _dict={}, _host=None):
         # type: (Dict, Any) -> SpaceProperties
-        assert _dict['type'] == 'SpaceProperties', \
-            'Expected SpaceProperties. Got {}.'.format(_dict['type'])
+        assert (
+            _dict["type"] == "SpaceProperties"
+        ), "Expected SpaceProperties. Got {}.".format(_dict["type"])
 
         obj = cls(_host)
 
@@ -92,32 +93,32 @@ class SpaceProperties(properties._Properties):
         Arguments:
         ----------
             * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
-                Point3D representing the origin from which to scale. If None, 
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
+                Point3D representing the origin from which to scale. If None,
                 it will be scaled from the World origin (0, 0, 0).
-        
+
         Returns:
         --------
             * None
         """
         for atr in self._extension_attributes:
             var = getattr(self, atr)
-            if not hasattr(var, 'scale'):
+            if not hasattr(var, "scale"):
                 continue
             try:
                 var.scale(factor, origin)
             except Exception as e:
                 import traceback
+
                 traceback.print_exc()
-                raise Exception('Failed to scale {}: {}'.format(var, e))
+                raise Exception("Failed to scale {}: {}".format(var, e))
 
     def __repr__(self):
         """Properties representation."""
-        return '{}: {}'.format(self.__class__.__name__, self.host.display_name)
+        return "{}: {}".format(self.__class__.__name__, self.host.display_name)
 
 
 class SpacePhProperties(object):
-
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
@@ -156,7 +157,13 @@ class SpacePhProperties(object):
         return new_properties_obj
 
     def __str__(self):
-        return "{}: [host: {}], v_eta={}, v_sup={}, v_tran={}".format(self.__class__.__name__, self.host.display_name, self._v_eta, self._v_sup, self._v_tran)
+        return "{}: [host: {}], v_eta={}, v_sup={}, v_tran={}".format(
+            self.__class__.__name__,
+            self.host.display_name,
+            self._v_eta,
+            self._v_sup,
+            self._v_tran,
+        )
 
     def __repr__(self):
         return str(self)
@@ -169,27 +176,28 @@ class SpacePhProperties(object):
         d = {}
 
         if abridged:
-            d['type'] = 'SpacePhPropertiesAbridged'
+            d["type"] = "SpacePhPropertiesAbridged"
         else:
-            d['type'] = 'SpacePhProperties'
+            d["type"] = "SpacePhProperties"
 
-        d['id_num'] = self.id_num
-        d['_v_sup'] = self._v_sup
-        d['_v_eta'] = self._v_eta
-        d['_v_tran'] = self._v_tran
+        d["id_num"] = self.id_num
+        d["_v_sup"] = self._v_sup
+        d["_v_eta"] = self._v_eta
+        d["_v_tran"] = self._v_tran
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> SpacePhProperties
-        assert 'SpacePhProperties' in data['type'], \
-            'Expected SpacePhProperties. Got {}.'.format(data['type'])
+        assert (
+            "SpacePhProperties" in data["type"]
+        ), "Expected SpacePhProperties. Got {}.".format(data["type"])
         new_prop = cls(host)
 
-        new_prop.id_num = data['id_num']
-        new_prop._v_sup = data['_v_sup']
-        new_prop._v_eta = data['_v_eta']
-        new_prop._v_tran = data['_v_tran']
+        new_prop.id_num = data["id_num"]
+        new_prop._v_sup = data["_v_sup"]
+        new_prop._v_eta = data["_v_eta"]
+        new_prop._v_tran = data["_v_tran"]
 
         return new_prop

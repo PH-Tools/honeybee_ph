@@ -11,19 +11,18 @@ except:
 from copy import copy
 
 try:
+    from ladybug_geometry import geometry3d
+except ImportError as e:
+    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
+
+try:
     from honeybee_ph import _base
     from honeybee_ph.properties.space import SpaceProperties
 except ImportError as e:
-    raise ImportError('\nFailed to import honeybee_ph:\n\t{}'.format(e))
-
-try:
-    from ladybug_geometry import geometry3d
-except ImportError as e:
-    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
+    raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
 
 class SpaceFloorSegment(_base._Base):
-    
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
         self.geometry = None  # type: Optional[geometry3d.face.Face3D]
@@ -58,11 +57,11 @@ class SpaceFloorSegment(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
-        d['weighting_factor'] = self.weighting_factor
+        d["weighting_factor"] = self.weighting_factor
         if self.geometry:
-            d['geometry'] = self.geometry.to_dict()
+            d["geometry"] = self.geometry.to_dict()
         if self.reference_point:
-            d['reference_point'] = self.reference_point.to_dict()
+            d["reference_point"] = self.reference_point.to_dict()
 
         return d
 
@@ -71,13 +70,13 @@ class SpaceFloorSegment(_base._Base):
         # type: (Dict[str, Any]) -> SpaceFloorSegment
         new_obj = cls()
 
-        new_obj.weighting_factor = _input_dict.get('weighting_factor', 1.0)
+        new_obj.weighting_factor = _input_dict.get("weighting_factor", 1.0)
 
-        geom_dict = _input_dict.get('geometry', None)
+        geom_dict = _input_dict.get("geometry", None)
         if geom_dict:
             new_obj.geometry = geometry3d.Face3D.from_dict(geom_dict)
 
-        ref_pt_dict = _input_dict.get('reference_point', None)
+        ref_pt_dict = _input_dict.get("reference_point", None)
         if ref_pt_dict:
             new_obj.reference_point = geometry3d.Point3D.from_dict(ref_pt_dict)
 
@@ -88,7 +87,7 @@ class SpaceFloorSegment(_base._Base):
         new_obj = SpaceFloorSegment()
 
         if self.geometry:
-            new_obj.geometry = self.geometry.duplicate()
+            new_obj.geometry = self.duplicate_geometry()
 
         if self.reference_point:
             new_obj.reference_point = self.reference_point.duplicate()
@@ -102,25 +101,27 @@ class SpaceFloorSegment(_base._Base):
         try:
             return self.geometry.duplicate()
         except AttributeError as e:
-            msg = "\n\tSpaceFloorSegment {} has no geometry? "\
-                    "Cannot duplicate it.".format(self)
+            msg = (
+                "\n\tSpaceFloorSegment {} has no geometry? "
+                "Cannot duplicate it.".format(self)
+            )
             raise AttributeError(msg, e)
 
     def scale(self, factor, origin=None):
         # type: (float, Optional[geometry3d.Point3D]) -> None
         """Scale the floor-segment geometry by a specified factor.
-        
+
         Arguments:
         ----------
             * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
-                Point3D representing the origin from which to scale. If None, 
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
+                Point3D representing the origin from which to scale. If None,
                 it will be scaled from the World origin (0, 0, 0).
-        
+
         Returns:
         --------
             * None
-        """ 
+        """
 
         if self.geometry:
             self.geometry = self.geometry.scale(factor, origin)
@@ -129,10 +130,12 @@ class SpaceFloorSegment(_base._Base):
             self.reference_point = self.reference_point.scale(factor, origin)
 
     def __str__(self):
-        return '{}(weighting_factor={!r}, geometry={!r}, reference_point={!r})'.format(self.__class__.__name__,
-                                                                                       self.weighting_factor,
-                                                                                       self.geometry,
-                                                                                       self.reference_point)
+        return "{}(weighting_factor={!r}, geometry={!r}, reference_point={!r})".format(
+            self.__class__.__name__,
+            self.weighting_factor,
+            self.geometry,
+            self.reference_point,
+        )
 
     def __repr__(self):
         return str(self)
@@ -142,7 +145,6 @@ class SpaceFloorSegment(_base._Base):
 
 
 class SpaceFloor(_base._Base):
-    
     def __init__(self):
         super(SpaceFloor, self).__init__()
         self._floor_segments = list()  # type: List[SpaceFloorSegment]
@@ -204,15 +206,17 @@ class SpaceFloor(_base._Base):
         try:
             return self.geometry.duplicate()
         except AttributeError as e:
-            msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(self)
+            msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(
+                self
+            )
             raise AttributeError(msg, e)
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
         d = {}
 
-        d['floor_segments'] = [seg.to_dict() for seg in self.floor_segments]
-        d['geometry'] = self.geometry.to_dict() if self.geometry else None
+        d["floor_segments"] = [seg.to_dict() for seg in self.floor_segments]
+        d["geometry"] = self.geometry.to_dict() if self.geometry else None
 
         return d
 
@@ -221,11 +225,11 @@ class SpaceFloor(_base._Base):
         # type: (Dict[str, Any]) -> SpaceFloor
         new_obj = cls()
 
-        geom_dict = _input_dict.get('geometry', None)
+        geom_dict = _input_dict.get("geometry", None)
         if geom_dict:
             new_obj.geometry = geometry3d.Face3D.from_dict(geom_dict)
 
-        flr_seg_dicts = _input_dict.get('floor_segments', [])
+        flr_seg_dicts = _input_dict.get("floor_segments", [])
         for seg_dict in flr_seg_dicts:
             new_obj.add_floor_segment(SpaceFloorSegment.from_dict(seg_dict))
 
@@ -234,27 +238,27 @@ class SpaceFloor(_base._Base):
     def scale(self, factor, origin=None):
         # type: (float, Optional[geometry3d.Point3D]) -> None
         """Scale the floor and all the geometry of the floor by a specified factor.
-        
+
         Arguments:
         ----------
             * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
-                Point3D representing the origin from which to scale. If None, 
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
+                Point3D representing the origin from which to scale. If None,
                 it will be scaled from the World origin (0, 0, 0).
-        
+
         Returns:
         --------
             * None
-        """ 
+        """
 
         if self.geometry:
             self.geometry = self.geometry.scale(factor, origin)
-        
+
         for segment in self.floor_segments:
             segment.scale(factor, origin)
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)
@@ -264,12 +268,11 @@ class SpaceFloor(_base._Base):
 
 
 class SpaceVolume(_base._Base):
-    
     def __init__(self):
         super(SpaceVolume, self).__init__()
         self.avg_ceiling_height = 2.5  # m
         self.floor = SpaceFloor()
-        self.geometry = list() # type: List[geometry3d.face.Face3D]
+        self.geometry = list()  # type: List[geometry3d.face.Face3D]
 
     @property
     def net_volume(self):
@@ -317,9 +320,9 @@ class SpaceVolume(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
-        d['avg_ceiling_height'] = self.avg_ceiling_height
-        d['floor'] = self.floor.to_dict()
-        d['geometry'] = [geom.to_dict() for geom in self.geometry]
+        d["avg_ceiling_height"] = self.avg_ceiling_height
+        d["floor"] = self.floor.to_dict()
+        d["geometry"] = [geom.to_dict() for geom in self.geometry]
 
         return d
 
@@ -340,14 +343,14 @@ class SpaceVolume(_base._Base):
     def scale(self, factor, origin=None):
         # type: (float, Optional[geometry3d.Point3D]) -> None
         """Scale the volume and all the geometry of the volume by a specified factor.
-        
+
         Arguments:
         ----------
             * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
-                Point3D representing the origin from which to scale. If None, 
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
+                Point3D representing the origin from which to scale. If None,
                 it will be scaled from the World origin (0, 0, 0).
-        
+
         Returns:
         --------
             * None
@@ -357,13 +360,13 @@ class SpaceVolume(_base._Base):
         self.clear_volume_geometry()
         for srfc in original_geometry:
             self.geometry.append(srfc.scale(factor, origin))
-        
+
         self.avg_ceiling_height = self.avg_ceiling_height * factor
 
         self.floor.scale(factor, origin)
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)
@@ -373,13 +376,12 @@ class SpaceVolume(_base._Base):
 
 
 class Space(_base._Base):
-
     def __init__(self, _host=None):
         super(Space, self).__init__()
         self.quantity = 1
         self.wufi_type = 99  # -- User-Defined
-        self.name = ''
-        self.number = ''
+        self.name = ""
+        self.number = ""
         self.host = _host
 
         self._volumes = list()
@@ -487,12 +489,12 @@ class Space(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
-        d['quantity'] = self.quantity
-        d['wufi_type'] = self.wufi_type
-        d['name'] = self.name
-        d['number'] = self.number
-        d['volumes'] = [vol.to_dict() for vol in self.volumes]
-        d['properties'] = self.properties.to_dict()
+        d["quantity"] = self.quantity
+        d["wufi_type"] = self.wufi_type
+        d["name"] = self.name
+        d["number"] = self.number
+        d["volumes"] = [vol.to_dict() for vol in self.volumes]
+        d["properties"] = self.properties.to_dict()
 
         return d
 
@@ -509,25 +511,22 @@ class Space(_base._Base):
             [SpaceVolume.from_dict(d) for d in _input_dict["volumes"]]
         )
         new_obj.properties = SpaceProperties.from_dict(
-            _input_dict["properties"],
-            _host=new_obj
+            _input_dict["properties"], _host=new_obj
         )
-        new_obj.properties._load_extension_attr_from_dict(
-            _input_dict["properties"]
-        )
+        new_obj.properties._load_extension_attr_from_dict(_input_dict["properties"])
         return new_obj
 
     def scale(self, factor, origin=None):
         # type: (float, Optional[geometry3d.Point3D]) -> None
         """Scale the space and all the volumes in the space by a specified factor.
-        
+
         Arguments:
         ----------
             * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry 
-                Point3D representing the origin from which to scale. If None, 
+            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
+                Point3D representing the origin from which to scale. If None,
                 it will be scaled from the World origin (0, 0, 0).
-        
+
         Returns:
         --------
             * None
@@ -538,8 +537,9 @@ class Space(_base._Base):
         self.properties.scale(factor, origin)
 
     def __str__(self):
-        return '{}(name={!r}, number={!r}, volumes={!r})'.format(self.__class__.__name__,
-                                                                 self.name, self.number, self.volumes)
+        return "{}(name={!r}, number={!r}, volumes={!r})".format(
+            self.__class__.__name__, self.name, self.number, self.volumes
+        )
 
     def __repr__(self):
         return str(self)

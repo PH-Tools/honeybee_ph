@@ -77,7 +77,9 @@ def test_Space_avg_clear_height_uneven_heights(floor_segment_geometry):
     assert sp.average_floor_weighting_factor == 1.0
     assert len(sp.floor_segment_surfaces) == 2
 
+
 # -- Scale --
+
 
 def test_Space_scale(floor_segment_geometry):
     # --  Build the Floor Segments
@@ -112,7 +114,7 @@ def test_Space_scale(floor_segment_geometry):
     sp.add_new_volumes([vol_1, vol_2])
 
     # -- Scale the Space and all the Volumes, all the floors
-    sp.scale(3.28084) # M --> FOOT
+    sp.scale(3.28084)  # M --> FOOT
 
     assert sp.floor_area == pytest.approx(2_152.7822)
     assert sp.weighted_floor_area == pytest.approx(2_152.7822)
@@ -121,7 +123,9 @@ def test_Space_scale(floor_segment_geometry):
     assert sp.average_floor_weighting_factor == 1.0
     assert len(sp.floor_segment_surfaces) == 2
 
-# -- Serialize -- 
+
+# -- Serialize --
+
 
 def test_Space_serialize(floor_segment_geometry):
     # --  Build the Floor Segments
@@ -161,7 +165,9 @@ def test_Space_serialize(floor_segment_geometry):
 
     assert d1 == d2
 
-# -- Duplicate -- 
+
+# -- Duplicate --
+
 
 def test_Space_duplicate(floor_segment_geometry):
     # --  Build the Floor Segments
@@ -195,8 +201,11 @@ def test_Space_duplicate(floor_segment_geometry):
     sp = space.Space()
     sp.add_new_volumes([vol_1, vol_2])
 
+    # -- duplicate
     new_sp = sp.duplicate(sp.host)
 
+    # --
+    assert new_sp.to_dict() == sp.to_dict()
     assert new_sp.floor_area == sp.floor_area
     assert new_sp.avg_clear_height == sp.avg_clear_height
     assert new_sp.weighted_floor_area == sp.weighted_floor_area
