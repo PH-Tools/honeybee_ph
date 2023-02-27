@@ -101,7 +101,7 @@ class PeoplePhProperties(object):
     def __repr__(self):
         return (
             "{!r}(id_num={!r}, number_bedrooms={!r}"
-            " number_people={!r}, is_dwelling_unit={!r}, number_dwelling_units={!r})".format(
+            " number_people={!r}, number_dwelling_units={!r})".format(
                 self.__class__.__name__,
                 self.id_num,
                 self.number_bedrooms,
