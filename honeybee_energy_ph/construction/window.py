@@ -4,7 +4,7 @@
 """HBPH Window Objects"""
 
 try:
-    from typing import Any
+    from typing import Any, List
 except ImportError:
     pass  # Python 2.7
 
@@ -82,6 +82,8 @@ class PhWindowFrame(_base._Base):
 
     @property
     def elements(self):
+        # type: () -> List[PhWindowFrameElement]
+        """Return all four frame elements in clockwise order from top (t, r, b, l)."""
         return [self.top, self.right, self.bottom, self.left]
 
     def to_dict(self):
