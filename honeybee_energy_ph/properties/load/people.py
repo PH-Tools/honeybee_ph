@@ -3,11 +3,12 @@
 
 """Properties for Honeybee-Energy-PH | Load | People"""
 
+from uuid import uuid4
+
 try:
-    from typing import Any, Optional
+    from typing import Any, Optional, Dict
 except ImportError:
-    # Python 2.7
-    pass
+    pass  # Python 2.7
 
 
 class PeoplePhProperties_FromDictError(Exception):
@@ -18,6 +19,65 @@ class PeoplePhProperties_FromDictError(Exception):
         super(PeoplePhProperties_FromDictError, self).__init__(self.msg)
 
 
+class PhDwellings(object):
+    """A Dwelling Object to store information on the number of dwelling units."""
+
+    _default = None # type: Optional[PhDwellings]
+
+    def __init__(self, _num_dwellings=1):
+        # type: (int) -> None
+        self.identifier = uuid4()
+        self._num_dwellings = _num_dwellings
+
+    @property
+    def num_dwellings(self):
+        # type: () -> int
+        return self._num_dwellings
+
+    def to_dict(self, abridged=False):
+        # type: (bool) -> Dict[str, Any]
+        d = {}
+        d["identifier"] = str(self.identifier)
+        d["num_dwellings"] = self.num_dwellings
+        return d
+    
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhDwellings
+        obj = cls(_input_dict["num_dwellings"])
+        obj.identifier = _input_dict["identifier"]
+        return obj
+
+    @classmethod
+    def default(cls):
+        # type: () -> PhDwellings
+        if cls._default is None:
+            cls._default = cls()
+        return cls._default
+
+    def duplicate(self, new_host=None):
+        # type: (Any) -> PhDwellings
+        obj = self.__class__(self.num_dwellings)
+        obj.identifier = self.identifier
+        return obj
+
+    def __hash__(self):
+        return hash(self.identifier)
+    
+    def __eq__(self, other):
+        # type: (PhDwellings) -> bool
+        return self.identifier == other.identifier
+
+    def __str__(self):
+        return '{}(num_dwellings={})'.format(self.__class__.__name__, self.num_dwellings)
+    
+    def __repr__(self):
+        return str(self)
+    
+    def ToString(self):
+        return str(self)
+
+
 class PeoplePhProperties(object):
     """Ph Properties Object for Honeybee-Energy People"""
 
@@ -26,25 +86,7 @@ class PeoplePhProperties(object):
         self.id_num = 0
         self.number_bedrooms = 0
         self.number_people = 0.0
-        self._is_dwelling_unit = None  # type: Optional[bool]
-        self.number_dwelling_units = 0
-
-    @property
-    def is_dwelling_unit(self):
-        # type: () -> bool
-        if self._is_dwelling_unit is not None:
-            return self._is_dwelling_unit
-        else:
-            if self.number_dwelling_units > 0:
-                return True
-            else:
-                return False
-
-    @is_dwelling_unit.setter
-    def is_dwelling_unit(self, _input):
-        # type: (bool) -> None
-        if _input is not None:
-            self._is_dwelling_unit = _input
+        self.dwellings = PhDwellings.default()
 
     def duplicate(self, new_host=None):
         # type: (Any) -> PeoplePhProperties
@@ -53,8 +95,7 @@ class PeoplePhProperties(object):
         new_properties_obj.id_num = self.id_num
         new_properties_obj.number_bedrooms = self.number_bedrooms
         new_properties_obj.number_people = self.number_people
-        new_properties_obj._is_dwelling_unit = self._is_dwelling_unit
-        new_properties_obj.number_dwelling_units = self.number_dwelling_units
+        new_properties_obj.dwellings = self.dwellings
 
         return new_properties_obj
 
@@ -63,7 +104,7 @@ class PeoplePhProperties(object):
         return self._host
 
     def to_dict(self, abridged=False):
-        # type: (bool) -> dict[str, dict]
+        # type: (bool) -> Dict[str, dict]
         d = {}
 
         if abridged:
@@ -74,14 +115,13 @@ class PeoplePhProperties(object):
         d["id_num"] = self.id_num
         d["number_bedrooms"] = self.number_bedrooms
         d["number_people"] = self.number_people
-        d["_is_dwelling_unit"] = self._is_dwelling_unit
-        d["number_dwelling_units"] = self.number_dwelling_units
+        d["dwellings"] = self.dwellings.to_dict()
 
         return {"ph": d}
 
     @classmethod
     def from_dict(cls, data, host):
-        # type: (dict, Any) -> PeoplePhProperties
+        # type: (Dict[str, Any], Any) -> PeoplePhProperties
         valid_types = ("PeoplePhProperties", "PeoplePhPropertiesAbridged")
         if data["type"] not in valid_types:
             raise PeoplePhProperties_FromDictError(valid_types, data["type"])
@@ -90,23 +130,37 @@ class PeoplePhProperties(object):
         new_prop.id_num = data["id_num"]
         new_prop.number_bedrooms = data["number_bedrooms"]
         new_prop.number_people = data["number_people"]
-        new_prop._is_dwelling_unit = data["_is_dwelling_unit"]
-        new_prop.number_dwelling_units = data["number_dwelling_units"]
+        new_prop.dwellings = PhDwellings.from_dict(data["dwellings"])
 
         return new_prop
 
+    def __eq__(self, other):
+        # type: (PeoplePhProperties) -> bool
+
+        if self.host != other.host:
+            return False
+        if self.id_num != other.id_num:
+            return False
+        if self.number_bedrooms != other.number_bedrooms:
+            return False
+        if self.number_people != other.number_people:
+            return False
+        if self.dwellings != other.dwellings:
+            return False
+        return True
+    
     def __str__(self):
         return "{}: id={}".format(self.__class__.__name__, self.id_num)
 
     def __repr__(self):
         return (
             "{!r}(id_num={!r}, number_bedrooms={!r}"
-            " number_people={!r}, number_dwelling_units={!r})".format(
+            " number_people={!r}, dwellings={!r})".format(
                 self.__class__.__name__,
                 self.id_num,
                 self.number_bedrooms,
                 self.number_people,
-                self.number_dwelling_units,
+                self.dwellings
             )
         )
 
