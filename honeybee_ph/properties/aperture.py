@@ -5,15 +5,9 @@
 
 
 try:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
 except ImportError:
-    # IronPython
-    pass
-
-try:
-    from typing import Optional
-except ImportError:
-    pass
+    pass # IronPython 2.7
 
 
 class ShadingDimensions(object):
@@ -47,7 +41,7 @@ class ShadingDimensions(object):
         return new_obj
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict[str, Any]
         d = {}
 
         d["d_hori"] = self.d_hori
@@ -61,7 +55,7 @@ class ShadingDimensions(object):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> ShadingDimensions
+        # type: (Dict) -> ShadingDimensions
         new_obj = cls()
 
         new_obj.d_hori = _input_dict["d_hori"]
@@ -78,11 +72,11 @@ class AperturePhProperties(object):
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
-        self.inset_dist = 0.1
         self.winter_shading_factor = 0.75
         self.summer_shading_factor = 0.75
         self.shading_dimensions = None  # type: Optional[ShadingDimensions]
         self.variant_type = '_unnamed_type_'
+        self.install_depth = 0.1016 #m
 
     @property
     def host(self):
@@ -93,7 +87,6 @@ class AperturePhProperties(object):
         _host = new_host or self._host
         new_properties_obj = AperturePhProperties(_host)
         new_properties_obj.id_num = self.id_num
-        new_properties_obj.inset_dist = self.inset_dist
 
         new_properties_obj.winter_shading_factor = self.winter_shading_factor
         new_properties_obj.summer_shading_factor = self.summer_shading_factor
@@ -101,6 +94,7 @@ class AperturePhProperties(object):
             new_properties_obj.shading_dimensions = self.shading_dimensions.duplicate(
                 self)
         new_properties_obj.variant_type = self.variant_type
+        new_properties_obj.install_depth = self.install_depth
 
         return new_properties_obj
 
@@ -111,31 +105,31 @@ class AperturePhProperties(object):
         return "HB-Aperture Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
-        # type: (bool) -> dict[str, dict]
+        # type: (bool) -> Dict[str, dict]
         d = {}
         d["type"] = "AperturePhProperties" if not abridged else "AperturePhPropertiesAbridged"
         d["id_num"] = self.id_num
-        d["inset_dist"] = self.inset_dist
         d["winter_shading_factor"] = self.winter_shading_factor
         d["summer_shading_factor"] = self.summer_shading_factor
         if self.shading_dimensions:
             d['shading_dims'] = self.shading_dimensions.to_dict()
         d["variant_type"] = self.variant_type
+        d["install_depth"] = self.install_depth
 
         return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
-        # type: (dict, Any) -> AperturePhProperties
+        # type: (Dict, Any) -> AperturePhProperties
         assert _input_dict["type"] == "AperturePhProperties", "Expected AperturePhProperties. Got {}.".format(
             _input_dict["type"])
 
         new_prop = cls(host)
         new_prop.id_num = _input_dict["id_num"]
-        new_prop.inset_dist = _input_dict["inset_dist"]
         new_prop.winter_shading_factor = _input_dict["winter_shading_factor"]
         new_prop.summer_shading_factor = _input_dict["summer_shading_factor"]
         new_prop.variant_type = _input_dict["variant_type"]
+        new_prop.install_depth = _input_dict["install_depth"]
 
         shading_dim_dict = _input_dict.get("shading_dims", None)
         if shading_dim_dict:
@@ -157,13 +151,14 @@ class AperturePhProperties(object):
             * None
         """
 
-        self.inset_dist = _aperture_prop_dict['inset_dist']
         self.winter_shading_factor = _aperture_prop_dict["winter_shading_factor"]
         self.summer_shading_factor = _aperture_prop_dict["summer_shading_factor"]
 
         shading_dim_dict = _aperture_prop_dict.get("shading_dims", None)
         if shading_dim_dict:
             self.shading_dimensions = ShadingDimensions.from_dict(shading_dim_dict)
+        
         self.variant_type = _aperture_prop_dict["variant_type"]
+        self.install_depth = _aperture_prop_dict['install_depth']
 
         return None
