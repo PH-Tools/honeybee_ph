@@ -4,7 +4,7 @@ from honeybee_energy_ph.properties.load import people
 
 def test_ph_dwellings_set_num():
     obj1 = people.PhDwellings()
-    assert obj1.num_dwellings == 1
+    assert obj1.num_dwellings == 0
 
     obj2 = people.PhDwellings(12)
     assert obj2.num_dwellings == 12

@@ -24,7 +24,7 @@ class PhDwellings(object):
 
     _default = None # type: Optional[PhDwellings]
 
-    def __init__(self, _num_dwellings=1):
+    def __init__(self, _num_dwellings=0):
         # type: (int) -> None
         self.identifier = uuid4()
         self._num_dwellings = _num_dwellings
@@ -102,6 +102,23 @@ class PeoplePhProperties(object):
     @property
     def host(self):
         return self._host
+
+    @property
+    def is_residential(self):
+        # type: () -> bool
+        """Return True is this Load is for a 'Residential' zone."""
+        return self.dwellings.num_dwellings >= 1
+
+    @property
+    def is_dwelling_unit(self):
+        print("WARNING: The 'PeoplePhProperties' property 'is_dwelling_unit' is deprecated and should be replace with 'is_residential' from now on.")
+        return self.is_residential
+
+    @property
+    def number_dwelling_units(self):
+        """Return the total number of dwelling units on the Load."""
+        # type: () -> int
+        return self.dwellings.num_dwellings
 
     def to_dict(self, abridged=False):
         # type: (bool) -> Dict[str, dict]
