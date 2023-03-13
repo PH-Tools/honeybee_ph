@@ -44,6 +44,10 @@ class PhDwellings(object):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhDwellings
+        if not _input_dict:
+            print("No PH 'dwelling' data found? Please ensure your HBPH version is up to date.")
+            return cls()
+
         obj = cls(_input_dict["num_dwellings"])
         obj.identifier = _input_dict["identifier"]
         return obj
@@ -147,7 +151,9 @@ class PeoplePhProperties(object):
         new_prop.id_num = data["id_num"]
         new_prop.number_bedrooms = data["number_bedrooms"]
         new_prop.number_people = data["number_people"]
-        new_prop.dwellings = PhDwellings.from_dict(data["dwellings"])
+
+        # Use get to provide to provide backwards compatibility for now
+        new_prop.dwellings = PhDwellings.from_dict(data.get("dwellings", {}))
 
         return new_prop
 

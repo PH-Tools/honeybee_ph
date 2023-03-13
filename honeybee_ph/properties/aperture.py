@@ -129,7 +129,9 @@ class AperturePhProperties(object):
         new_prop.winter_shading_factor = _input_dict["winter_shading_factor"]
         new_prop.summer_shading_factor = _input_dict["summer_shading_factor"]
         new_prop.variant_type = _input_dict["variant_type"]
-        new_prop.install_depth = _input_dict["install_depth"]
+        
+        # Use get to ensure backwards compatibility for now
+        new_prop.install_depth = _input_dict.get("install_depth", 0.1)
 
         shading_dim_dict = _input_dict.get("shading_dims", None)
         if shading_dim_dict:
@@ -153,12 +155,13 @@ class AperturePhProperties(object):
 
         self.winter_shading_factor = _aperture_prop_dict["winter_shading_factor"]
         self.summer_shading_factor = _aperture_prop_dict["summer_shading_factor"]
+        self.variant_type = _aperture_prop_dict["variant_type"]
+
+        # Use get to ensure backwards compatibility for now
+        self.install_depth = _aperture_prop_dict.get('install_depth', 0.1016) # default = 4in.
 
         shading_dim_dict = _aperture_prop_dict.get("shading_dims", None)
         if shading_dim_dict:
             self.shading_dimensions = ShadingDimensions.from_dict(shading_dim_dict)
         
-        self.variant_type = _aperture_prop_dict["variant_type"]
-        self.install_depth = _aperture_prop_dict['install_depth']
-
         return None

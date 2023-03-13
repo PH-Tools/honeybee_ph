@@ -43,3 +43,24 @@ def test_people_duplicate():
     obj2 = obj1.duplicate()
 
     assert obj1 == obj2
+
+# -------------------------------------------------------
+# Backwards compatibility?
+
+def test_with_old_version_attributes():
+    fake_host = 1
+    obj = people.PeoplePhProperties(_host=fake_host)
+    d1 = obj.to_dict()
+
+    # remove the 'dwellings' from the dict
+    # in older versions this attribute was not there
+    # so make sure that dicts without it can still be 
+    # de-serialized and just use a default value
+    obj_dict = d1["ph"]
+    del obj_dict["dwellings"]
+    
+    # Even if that key doesn't exist, it should still de-serialize
+    # and just set the dwellings to 0
+    obj2 = people.PeoplePhProperties.from_dict(d1["ph"], fake_host)
+    assert hasattr(obj2, "dwellings")
+    assert obj2.dwellings.num_dwellings == 0
