@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass  # IronPython
 
-from honeybee_energy_ph.hvac import _base
+from honeybee_energy_ph.hvac import _base, ducting
 
 # -----------------------------------------------------------------------------
 
@@ -93,8 +93,8 @@ class PhVentilationSystem(_base._PhHVACBase):
         super(PhVentilationSystem, self).__init__()
         self.display_name = "_unnamed_ph_vent_system_"
         self.sys_type = 1  # '1-Balanced PH ventilation with HR'
-        self.duct_01 = None
-        self.duct_02 = None
+        self.duct_01 = ducting.PhDuctElement.default_supply_duct()
+        self.duct_02 = ducting.PhDuctElement.default_exhaust_duct()
         self._ventilation_unit = None  # type: Optional[Ventilator]
         self.id_num = 0
 
@@ -122,8 +122,8 @@ class PhVentilationSystem(_base._PhHVACBase):
         d["identifier"] = str(self.identifier)
         d["name"] = self.display_name
         d["sys_type"] = self.sys_type
-        d["duct_01"] = self.duct_01
-        d["duct_02"] = self.duct_02
+        d["duct_01"] = self.duct_01.to_dict()
+        d["duct_02"] = self.duct_02.to_dict()
         d["id_num"] = self.id_num
 
         if self.ventilation_unit:
@@ -139,8 +139,8 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj.identifier = _input_dict["identifier"]
         obj.display_name = _input_dict["name"]
         obj.sys_type = _input_dict["sys_type"]
-        obj.duct_01 = _input_dict["duct_01"]
-        obj.duct_02 = _input_dict["duct_02"]
+        obj.duct_01 = ducting.PhDuctElement.from_dict(_input_dict["duct_01"])
+        obj.duct_02 = ducting.PhDuctElement.from_dict(_input_dict["duct_02"])
         obj.id_num = _input_dict.get("id_num", 0)
 
         vent_unit_dict = _input_dict.get("ventilation_unit", None)

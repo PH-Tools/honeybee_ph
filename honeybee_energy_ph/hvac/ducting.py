@@ -1,0 +1,212 @@
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+"""Passive House HVAC Ducting Segment and Element Classes"""
+try:
+    from typing import Any, Union, List, Dict, Optional
+except ImportError:
+    pass  # IronPython
+
+from ladybug_geometry.geometry3d.polyline import LineSegment3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
+
+from honeybee_energy_ph.hvac import _base
+
+
+class PhDuctSegment(_base._PhHVACBase):
+    """A single duct segment (linear) with geometry and a attributes."""
+    
+    def __init__(self, 
+                 _geom,
+                 _insul_thickness=25.4,
+                 _insul_conductivity=0.04,
+                 _insul_refl=True,
+                 _diameter=160):
+        # type: (LineSegment3D, float, float, bool, float) -> None
+        super(PhDuctSegment, self).__init__()
+        self.geometry = _geom
+        self.insulation_thickness = _insul_thickness
+        self.insulation_conductivity = _insul_conductivity
+        self.insulation_reflective = _insul_refl
+        self.diameter = _diameter
+    
+    @property
+    def length(self):
+        # type: () -> float
+        return self.geometry.length
+
+    @classmethod
+    def default(cls):
+        # type: () -> PhDuctSegment
+        """Return a default Duct segment with a length of 1.0"""
+        
+        pt1 = Point3D(0,0,0)
+        pt2 = Point3D(1,0,0)
+        geom = LineSegment3D.from_end_points(pt1, pt2)
+        
+        return cls(geom)
+
+    def __copy__(self):
+        # type: () -> PhDuctSegment
+        new_obj = PhDuctSegment(self.geometry)
+
+        new_obj.geometry = self.geometry
+        new_obj.insulation_thickness = self.insulation_thickness
+        new_obj.insulation_conductivity = self.insulation_conductivity
+        new_obj.insulation_reflective = self.insulation_reflective
+        new_obj.diameter = self.diameter
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+
+        return self
+
+    def duplicate(self):
+        # type: () -> PhDuctSegment
+        return self.__copy__()
+
+    def to_dict(self):
+        # type: () -> Dict[str, Union[str, dict]]
+        d = {}
+
+        d['geometry'] = self.geometry.to_dict()
+        d['insulation_thickness'] = self.insulation_thickness
+        d['insulation_conductivity'] = self.insulation_conductivity
+        d['insulation_reflective'] = self.insulation_reflective
+        d['diameter'] = self.diameter
+        d['identifier'] = self.identifier
+        d['display_name'] = self.display_name
+        d['user_data'] = self.user_data
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict) -> PhDuctSegment
+        new_obj = cls(
+            _geom=LineSegment3D.from_dict(_input_dict['geometry'])
+        )
+        new_obj.insulation_thickness = _input_dict['insulation_thickness']
+        new_obj.insulation_conductivity = _input_dict['insulation_conductivity']
+        new_obj.insulation_reflective = _input_dict['insulation_reflective']
+        new_obj.diameter = _input_dict['diameter']
+        new_obj.identifier = _input_dict['identifier']
+        new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict['user_data']
+
+        return new_obj
+
+    def __str__(self):
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return self.__repr__()
+
+
+class PhDuctElement(_base._PhHVACBase):
+    """A Duct Element made up of one or more individual Duct Segments."""
+
+    def __init__(self, _display_name=None, _duct_type=1):
+        # type: (Optional[str], int) -> None
+        super(PhDuctElement, self).__init__()
+        self.display_name = _display_name or self.identifier_short
+        self.duct_type = _duct_type
+        self._segments = {}  # type: Dict[str, PhDuctSegment]
+
+    @property
+    def segments(self):
+        # type: () -> List[PhDuctSegment]
+        """Return a list of all the PhDuctSegments that make up the PhDuctElement."""
+        return list(self._segments.values())
+
+    @property
+    def length(self):
+        # type: () -> float
+        """Return the total duct length of all the PhDuctSegments."""
+        return sum(s.length for s in self.segments)
+
+    @classmethod
+    def default_supply_duct(cls):
+        # type: () -> PhDuctElement
+        """Returns a default PhDuctElement with a single segment and a length of 1.0"""
+
+        duct_element = cls()
+        duct_element.duct_type = 1
+        duct_element.add_segment(PhDuctSegment.default())
+        return duct_element
+    
+    @classmethod
+    def default_exhaust_duct(cls):
+        # type: () -> PhDuctElement
+        """Returns a default PhDuctElement with a single segment and a length of 1.0"""
+
+        duct_element = cls()
+        duct_element.duct_type = 2
+        duct_element.add_segment(PhDuctSegment.default())
+        return duct_element
+
+    def add_segment(self, _segment):
+        # type: (PhDuctSegment) -> None
+        """Add a new PhDuctSegment to the Duct Element."""
+        self._segments[_segment.identifier] = _segment
+
+    def __copy__(self):
+        # type: () -> PhDuctElement
+        new_obj = PhDuctElement()
+
+        for segment in self.segments:
+            new_obj.add_segment(segment.duplicate())
+
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.duct_type = self.duct_type
+        new_obj.user_data = self.user_data
+
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> PhDuctElement
+        return self.__copy__()
+
+    def to_dict(self):
+        # type: () -> Dict[str, Union[str, dict]]
+        d = {}
+
+        d['segments'] = {}
+        for segment in self.segments:
+            d['segments'][segment.identifier] = segment.to_dict()
+        d['identifier'] = self.identifier
+        d['display_name'] = self.display_name
+        d['duct_type'] = self.duct_type
+        d['user_data'] = self.user_data
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict) -> PhDuctElement
+        new_obj = cls()
+
+        for seg_dict in _input_dict['segments'].values():
+            new_obj._segments[seg_dict['identifier']] = PhDuctSegment.from_dict(seg_dict)
+        new_obj.identifier = _input_dict['identifier']
+        new_obj.display_name = _input_dict['display_name']
+        new_obj.duct_type = _input_dict['duct_type']
+        new_obj.user_data = _input_dict['user_data']
+
+        return new_obj
+
+    def __str__(self):
+        return "{}: (display_name={}, identifier={} ) [{} segments, len={:.3f}]".format(
+            self.__class__.__name__, self.display_name, 
+            self.identifier, len(self.segments), self.length)
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return self.__repr__()
+
