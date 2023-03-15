@@ -4,13 +4,20 @@
 """HB-PH Electric Equipment and Appliances."""
 
 try:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, Union
 except ImportError:
     pass  # IronPython
 
 import sys
 
+from honeybee import room
+
 from honeybee_energy_ph.load import _base
+try:
+    from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
+except ImportError:
+    pass
+
 from honeybee_ph_utils import enumerables
 from honeybee_ph_utils.input_tools import input_to_int
 
@@ -25,6 +32,7 @@ class PhDishwasherType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[int, str]) -> None
         super(PhDishwasherType, self).__init__(_value)
 
 
@@ -35,6 +43,7 @@ class PhClothesWasherType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[int, str]) -> None
         super(PhClothesWasherType, self).__init__(_value)
 
 
@@ -49,6 +58,7 @@ class PhClothesDryerType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[int, str]) -> None
         super(PhClothesDryerType, self).__init__(_value)
 
 
@@ -60,6 +70,7 @@ class PhCookingType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=1):
+        # type: (Union[int, str]) -> None
         super(PhCookingType, self).__init__(_value)
 
 
@@ -127,7 +138,7 @@ class PhEquipment(_base._Base):
         """
         for attr_name in vars(self).keys():
             try:
-                # Strip off underscore so it uses the propertry setters
+                # Strip off underscore so it uses the property setters
                 if attr_name.startswith('_'):
                     attr_name = attr_name[1:]
                 setattr(_obj, attr_name, _input_dict[attr_name])
@@ -282,7 +293,7 @@ class PhClothesDryer(PhEquipment):
     def __init__(self, _defaults={}):
         super(PhClothesDryer, self).__init__()
         self.display_name = "Laundry - dryer"
-        self._dryer_type = PhClothesDryerType("4-CONDENSATION DRYER")
+        self._dryer_type = PhClothesDryerType("5-ELECTRIC EXHAUST AIR DRYER")
         self.gas_consumption = 0
         self.gas_efficiency_factor = 2.67
         self.field_utilization_factor_type = 1
@@ -295,7 +306,7 @@ class PhClothesDryer(PhEquipment):
 
     @dryer_type.setter
     def dryer_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[int, str]]) -> None
         if _input:
             self._dryer_type = PhClothesDryerType(input_to_int(_input))
 

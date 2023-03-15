@@ -90,7 +90,7 @@ ph_default_equip = {
             'energy_demand': 0,
             'energy_demand_per_use': 0,
             'combined_energy_factor': 3.93,
-            'dryer_type': PhClothesDryerType("4-CONDENSATION DRYER"),
+            'dryer_type': PhClothesDryerType("5-ELECTRIC EXHAUST AIR DRYER"),
             'gas_consumption': 0,
             'gas_efficiency_factor': 2.67,
             'field_utilization_factor_type': 1,  # Timer controls
@@ -190,7 +190,7 @@ ph_default_equip = {
     'PhPhiusMEL': {
         'PHI': {
             'comment': 'default',
-            'reference_quantity': 3,  # Bedroooms
+            'reference_quantity': 3,  # Bedrooms
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Use
@@ -200,7 +200,7 @@ ph_default_equip = {
         },
         "PHIUS": {
             'comment': 'default',
-            'reference_quantity': 3,  # Bedroooms
+            'reference_quantity': 3,  # Bedrooms
             'quantity': 1,
             'in_conditioned_space': True,
             'reference_energy_norm': 1,  # Use

@@ -21,14 +21,18 @@ class PhDuctSegment(_base._PhHVACBase):
                  _insul_thickness=25.4,
                  _insul_conductivity=0.04,
                  _insul_refl=True,
-                 _diameter=160):
-        # type: (LineSegment3D, float, float, bool, float) -> None
+                 _diameter=160,
+                 _height=None,
+                 _width=None,):
+        # type: (LineSegment3D, float, float, bool, float, Optional[float], Optional[float]) -> None
         super(PhDuctSegment, self).__init__()
         self.geometry = _geom
         self.insulation_thickness = _insul_thickness
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
         self.diameter = _diameter
+        self.height = _height
+        self.width = _width
     
     @property
     def length(self):
@@ -55,11 +59,21 @@ class PhDuctSegment(_base._PhHVACBase):
         new_obj.insulation_conductivity = self.insulation_conductivity
         new_obj.insulation_reflective = self.insulation_reflective
         new_obj.diameter = self.diameter
+        new_obj.height = self.height
+        new_obj.width = self.width
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.user_data = self.user_data
 
         return self
+
+    @property
+    def shape_type(self):
+        # type: () -> int
+        if self.height and self.width:
+            return 2 # Rectangular Duct
+        else:
+            return 1 # Round Duct
 
     def duplicate(self):
         # type: () -> PhDuctSegment
@@ -74,6 +88,8 @@ class PhDuctSegment(_base._PhHVACBase):
         d['insulation_conductivity'] = self.insulation_conductivity
         d['insulation_reflective'] = self.insulation_reflective
         d['diameter'] = self.diameter
+        d['height'] = self.height
+        d['width'] = self.width
         d['identifier'] = self.identifier
         d['display_name'] = self.display_name
         d['user_data'] = self.user_data
@@ -90,6 +106,8 @@ class PhDuctSegment(_base._PhHVACBase):
         new_obj.insulation_conductivity = _input_dict['insulation_conductivity']
         new_obj.insulation_reflective = _input_dict['insulation_reflective']
         new_obj.diameter = _input_dict['diameter']
+        new_obj.height = _input_dict['height']
+        new_obj.width = _input_dict['width']
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
         new_obj.user_data = _input_dict['user_data']
@@ -128,6 +146,12 @@ class PhDuctElement(_base._PhHVACBase):
         """Return the total duct length of all the PhDuctSegments."""
         return sum(s.length for s in self.segments)
 
+    @property
+    def shape_type(self):
+        # type: () -> Optional[int]
+        for seg in self.segments:
+            return seg.shape_type
+
     @classmethod
     def default_supply_duct(cls):
         # type: () -> PhDuctElement
@@ -151,6 +175,12 @@ class PhDuctElement(_base._PhHVACBase):
     def add_segment(self, _segment):
         # type: (PhDuctSegment) -> None
         """Add a new PhDuctSegment to the Duct Element."""
+        # -- Check that the new segment is the right shape type
+        if len(self.segments) > 0:
+            if  not _segment.shape_type == self.shape_type:
+                msg = "Error: Cannot join round and rectangular duct segments."
+                raise Exception(msg)
+        
         self._segments[_segment.identifier] = _segment
 
     def __copy__(self):
