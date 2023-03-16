@@ -63,6 +63,7 @@ class BldgSegment(_base._Base):
         self.phius_certification = phius.PhiusCertification()
         self.phi_certification = phi.PhiCertification()
         self.set_points = SetPoints()
+        self.mech_room_temp = 20.0
         self.thermal_bridges = {}  # type: Dict[str, thermal_bridge.PhThermalBridge]
 
     def add_new_thermal_bridge(self, tb):
@@ -83,6 +84,7 @@ class BldgSegment(_base._Base):
         d["phius_certification"] = self.phius_certification.to_dict()
         d["phi_certification"] = self.phi_certification.to_dict()
         d["set_points"] = self.set_points.to_dict()
+        d["mech_room_temp"] = self.mech_room_temp
         d["thermal_bridges"] = {}
         for tb in self.thermal_bridges.values():
             d["thermal_bridges"][str(tb.identifier)] = tb.to_dict()
@@ -111,6 +113,7 @@ class BldgSegment(_base._Base):
             _dict.get("phi_certification", {})
         )
         obj.set_points = SetPoints.from_dict(_dict.get("set_points", {}))
+        obj.mech_room_temp = _dict["mech_room_temp"]
         for tb_dict in _dict["thermal_bridges"].values():
             tb_obj = thermal_bridge.PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
@@ -130,6 +133,7 @@ class BldgSegment(_base._Base):
         new_obj.phius_certification = self.phius_certification.duplicate()
         new_obj.phi_certification = self.phi_certification.duplicate()
         new_obj.set_points = self.set_points.duplicate()
+        new_obj.mech_room_temp = self.mech_room_temp
         new_obj.thermal_bridges = {}
         for tb_k, tb_v in self.thermal_bridges.items():
             new_obj.thermal_bridges[tb_k] = tb_v.duplicate()
