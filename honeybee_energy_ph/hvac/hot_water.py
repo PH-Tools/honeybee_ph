@@ -27,19 +27,26 @@ class UnknownPhHeaterTypeError(Exception):
 class PhPipeSegment(_base._PhHVACBase):
     """A single pipe segment (linear) with geometry and a diameter"""
 
-    def __init__(self, _geom, _diameter=0.0127, _insul_thickness=0.0, _insul_conductivity=0.04, _insul_refl=True, _insul_quality=None, _daily_period=24.0):
+    def __init__(self, 
+                 _geom, 
+                 _diameter_m=0.0127, 
+                 _insul_thickness_m=0.0127, 
+                 _insul_conductivity=0.04, 
+                 _insul_refl=True, 
+                 _insul_quality=None, 
+                 _daily_period=24.0):
         # type: (LineSegment3D, float, float, float, bool, None, float) -> None
         super(PhPipeSegment, self).__init__()
         self.geometry = _geom
-        self.diameter = _diameter
-        self.insulation_thickness = _insul_thickness
+        self.diameter_m = _diameter_m
+        self.insulation_thickness_m = _insul_thickness_m
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
         self.insulation_quality = _insul_quality
         self.daily_period = _daily_period
 
     @property
-    def length(self):
+    def length_m(self):
         # type: () -> float
         return self.geometry.length
 
@@ -47,8 +54,8 @@ class PhPipeSegment(_base._PhHVACBase):
         # type: () -> PhPipeSegment
         new_obj = PhPipeSegment(self.geometry)
 
-        new_obj.diameter = self.diameter
-        new_obj.insulation_thickness = self.insulation_thickness
+        new_obj.diameter_m = self.diameter_m
+        new_obj.insulation_thickness_m = self.insulation_thickness_m
         new_obj.insulation_conductivity = self.insulation_conductivity
         new_obj.insulation_reflective = self.insulation_reflective
         new_obj.insulation_quality = self.insulation_quality
@@ -68,8 +75,8 @@ class PhPipeSegment(_base._PhHVACBase):
         d = {}
 
         d['geometry'] = self.geometry.to_dict()
-        d['diameter'] = self.diameter
-        d['insulation_thickness'] = self.insulation_thickness
+        d['diameter_m'] = self.diameter_m
+        d['insulation_thickness_m'] = self.insulation_thickness_m
         d['insulation_conductivity'] = self.insulation_conductivity
         d['insulation_reflective'] = self.insulation_reflective
         d['insulation_quality'] = self.insulation_quality
@@ -86,8 +93,8 @@ class PhPipeSegment(_base._PhHVACBase):
         new_obj = cls(
             _geom=LineSegment3D.from_dict(_input_dict['geometry'])
         )
-        new_obj.diameter = _input_dict['diameter']
-        new_obj.insulation_thickness = _input_dict['insulation_thickness']
+        new_obj.diameter_m = _input_dict['diameter_m']
+        new_obj.insulation_thickness_m = _input_dict['insulation_thickness_m']
         new_obj.insulation_conductivity = _input_dict['insulation_conductivity']
         new_obj.insulation_reflective = _input_dict['insulation_reflective']
         new_obj.insulation_quality = _input_dict['insulation_quality']
@@ -99,7 +106,7 @@ class PhPipeSegment(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter_m, self.length_m)
 
     def __repr__(self):
         return str(self)
@@ -121,9 +128,9 @@ class PhPipeElement(_base._PhHVACBase):
         return list(self._segments.values())
 
     @property
-    def length(self):
+    def length_m(self):
         # type: () -> float
-        return sum(s.length for s in self.segments)
+        return sum(s.length_m for s in self.segments)
 
     def add_segment(self, _segment):
         # type: (PhPipeSegment) -> None
@@ -173,7 +180,7 @@ class PhPipeElement(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: (display_name={}, identifier={} ) [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, self.identifier, len(self.segments), self.length)
+        return "{}: (display_name={}, identifier={} ) [{} segments, len={:.3f}]".format(self.__class__.__name__, self.display_name, self.identifier, len(self.segments), self.length_m)
 
     def __repr__(self):
         return str(self)
