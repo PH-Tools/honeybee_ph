@@ -4,7 +4,7 @@
 """HB-Room Passive House (PH) Properties."""
 
 try:
-    from typing import Any, Optional, List
+    from typing import Any, Optional, List, Dict
 except ImportError:
     pass  # Python2.7
 
@@ -16,6 +16,7 @@ except ImportError as e:
 try:
     from honeybee_ph.bldg_segment import BldgSegment
     from honeybee_ph import space
+    from honeybee_ph.foundations import PhFoundation, PhFoundationFactory
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
@@ -26,6 +27,7 @@ class RoomPhProperties(object):
         self.id_num = 0
         self._spaces = list()
         self.ph_bldg_segment = BldgSegment()
+        self._ph_foundations = {} # type: Dict[str, PhFoundation]
 
     @property
     def spaces(self):
@@ -42,6 +44,11 @@ class RoomPhProperties(object):
     def host(self):
         return self._host
 
+    @property
+    def ph_foundations(self):
+        # type: () -> List[PhFoundation]
+        return list(self._ph_foundations.values())
+
     def duplicate(self, new_host=None, include_spaces=True):
         # type: (Any, bool) -> RoomPhProperties
         _host = new_host or self._host
@@ -53,6 +60,9 @@ class RoomPhProperties(object):
                 new_properties_obj._spaces.append(sp.duplicate(_host))
 
         new_properties_obj.ph_bldg_segment = self.ph_bldg_segment.duplicate()
+        
+        for f in self.ph_foundations:
+            new_properties_obj.add_foundation(f.duplicate())
 
         return new_properties_obj
 
@@ -63,7 +73,7 @@ class RoomPhProperties(object):
         return "{}: [host: {}]".format(self.__class__.__name__, self.host)
 
     def to_dict(self, abridged=False):
-        # type: (bool) -> dict[str, Any]
+        # type: (bool) -> Dict[str, Any]
         d = {}
 
         d["spaces"] = [sp.to_dict() for sp in self.spaces]
@@ -72,15 +82,17 @@ class RoomPhProperties(object):
             d["type"] = "RoomPhProperties"
             d["id_num"] = self.id_num
             d["ph_bldg_segment"] = self.ph_bldg_segment.to_dict()
+            d["ph_foundations"] = [f.to_dict() for f in self.ph_foundations]
         else:
             d["type"] = "RoomPhPropertiesAbridged"
             d["ph_bldg_segment_id"] = self.ph_bldg_segment.identifier
+            d["ph_foundations"] = [f.to_dict() for f in self.ph_foundations]
 
         return {"ph": d}
 
     @classmethod
     def from_dict(cls, _dict, host):
-        # type: (dict, Any) -> RoomPhProperties
+        # type: (Dict[str, Any], Any) -> RoomPhProperties
         assert (
             _dict["type"] == "RoomPhProperties"
         ), "Expected RoomPhProperties. Got {}.".format(_dict["type"])
@@ -98,10 +110,13 @@ class RoomPhProperties(object):
         for sp in (space.Space.from_dict(d, host) for d in _dict.get("spaces", [])):
             new_prop.add_new_space(sp)
 
+        for f_dict in _dict["ph_foundations"]:
+            new_prop.add_foundation(PhFoundationFactory.from_dict(f_dict))
+
         return new_prop
 
     def apply_properties_from_dict(self, room_prop_dict, bldg_segments):
-        # type: (dict[str, Any], dict[str, BldgSegment]) -> None
+        # type: (Dict[str, Any], Dict[str, BldgSegment]) -> None
         """Apply properties from a RoomPhPropertiesAbridged dictionary.
 
         Arguments:
@@ -110,6 +125,7 @@ class RoomPhProperties(object):
                 the room object itself. Unabridged. In Abridged form, this
                 dict will just include the 'ph_bldg_segment_id' reference instead of the
                 the entire properties data dict.
+
             * bldg_segments (dict[str: BldgSegment]): A dict of the BldgSegment
                 objects found at the Model level. Segment-id is used as the key.
 
@@ -125,8 +141,12 @@ class RoomPhProperties(object):
 
         # -- Rebuild the Spaces hosted on the room
         space_dicts = room_prop_dict.get("spaces", [])
+        
         for space_dict in space_dicts:
             self.add_new_space(space.Space.from_dict(space_dict, self.host))
+
+        for f_dict in room_prop_dict["ph_foundations"]:
+            self.add_foundation(PhFoundationFactory.from_dict(f_dict))
 
         return None
 
@@ -135,6 +155,12 @@ class RoomPhProperties(object):
         """Adds a new PH-Space to the RoomProperties collection."""
         if _new_space:
             self._spaces.append(_new_space)
+
+    def add_foundation(self, _ph_foundation):
+        # type: (PhFoundation) -> None
+        if not _ph_foundation:
+            return
+        self._ph_foundations[_ph_foundation.identifier] = _ph_foundation
 
     def merge_new_space(self, _new_space):
         # type: (space.Space) -> None
