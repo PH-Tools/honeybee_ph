@@ -635,6 +635,109 @@ class PhCustomAnnualMEL(PhEquipment):
     def annual_energy_kWh(self, _ref_room=None):
         return self.energy_demand
 
+# -- Elevator classes
+
+class PhElevatorHydraulic(PhEquipment):
+    
+    def __init__(self, _num_dwellings=1):
+        super(PhElevatorHydraulic, self).__init__()
+        self.display_name = "User defined - Misc electric loads"
+        self.comment = "Elevator - Hydraulic"
+        self.set_energy_demand(_num_dwellings)
+        self.quantity = 1
+    
+    def set_energy_demand(self, _num_dwellings):
+        """Set the annual energy demand (kWh) based on the number of dwelling units"""
+        if _num_dwellings <= 6:
+            self.energy_demand = 1910.0
+        elif _num_dwellings <= 20:
+            self.energy_demand = 2150.0
+        elif _num_dwellings <= 50:
+            self.energy_demand = 2940.0
+        else:
+            self.energy_demand = 4120.0
+
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        d = {}
+        d.update(super(PhElevatorHydraulic, self).to_dict())
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhElevatorHydraulic
+        new_obj = cls()
+        super(PhElevatorHydraulic, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        return new_obj
+
+
+class PhElevatorGearedTraction(PhEquipment):
+    
+    def __init__(self, _num_dwellings=1):
+        super(PhElevatorGearedTraction, self).__init__()
+        self.display_name = "User defined - Misc electric loads"
+        self.comment = "Elevator - Geared Traction"
+        self.set_energy_demand(_num_dwellings)
+        self.quantity = 1
+
+    def set_energy_demand(self, _num_dwellings):
+        """Set the annual energy demand (kWh) based on the number of dwelling units"""
+        if _num_dwellings <= 6:
+            self.energy_demand = 3150.0
+        elif _num_dwellings <= 20:
+            self.energy_demand = 3150.0
+        elif _num_dwellings <= 50:
+            self.energy_demand = 3150.0
+        else:
+            self.energy_demand = 4550.0
+
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        d = {}
+        d.update(super(PhElevatorGearedTraction, self).to_dict())
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhElevatorGearedTraction
+        new_obj = cls()
+        super(PhElevatorGearedTraction, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        return new_obj
+
+
+class PhElevatorGearlessTraction(PhEquipment):
+    
+    def __init__(self, _num_dwellings=1):
+        super(PhElevatorGearlessTraction, self).__init__()
+        self.display_name = "User defined - Misc electric loads"
+        self.comment = "Elevator - Gearless Traction"
+        self.set_energy_demand(_num_dwellings)
+        self.quantity = 1
+
+    def set_energy_demand(self, _num_dwellings):
+        """Set the annual energy demand (kWh) based on the number of dwelling units"""
+        if _num_dwellings <= 6:
+            self.energy_demand = 7570.0
+        elif _num_dwellings <= 20:
+            self.energy_demand = 7570.0
+        elif _num_dwellings <= 50:
+            self.energy_demand = 7570.0
+        else:
+            self.energy_demand = 7570.0
+
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        d = {}
+        d.update(super(PhElevatorGearlessTraction, self).to_dict())
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhElevatorGearlessTraction
+        new_obj = cls()
+        super(PhElevatorGearlessTraction, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        return new_obj
+
 
 # -----------------------------------------------------------------------------
 # Collections
