@@ -6,7 +6,7 @@
 import sys
 
 try:
-    from typing import Any, Optional, Union, Dict
+    from typing import Any, Optional, Dict, List
 except ImportError:
     pass  # IronPython
 
@@ -73,6 +73,25 @@ class Ventilator(_base._PhHVACBase):
 
         return obj
 
+    def duplicate(self):
+        # type: () -> Ventilator
+        new_obj = self.__class__()
+        new_obj.display_name = self.display_name
+        new_obj.identifier = self.identifier
+        new_obj.id_num = self.id_num
+        new_obj.quantity = self.quantity
+        new_obj.sensible_heat_recovery = self.sensible_heat_recovery
+        new_obj.latent_heat_recovery = self.latent_heat_recovery
+        new_obj.electric_efficiency = self.electric_efficiency
+        new_obj.frost_protection_reqd = self.frost_protection_reqd
+        new_obj.temperature_below_defrost_used = self.temperature_below_defrost_used
+        new_obj.in_conditioned_space = self.in_conditioned_space
+        return new_obj
+
+    def __copy__(self):
+        # type: () -> Ventilator
+        return self.duplicate()
+
     def __lt__(self, other):
         # type: (Ventilator) -> bool
         return self.identifier < other.identifier
@@ -93,8 +112,8 @@ class PhVentilationSystem(_base._PhHVACBase):
         super(PhVentilationSystem, self).__init__()
         self.display_name = "_unnamed_ph_vent_system_"
         self.sys_type = 1  # '1-Balanced PH ventilation with HR'
-        self.duct_01 = ducting.PhDuctElement.default_supply_duct()
-        self.duct_02 = ducting.PhDuctElement.default_exhaust_duct()
+        self.supply_ducting = [] # type: List[ducting.PhDuctElement]
+        self.exhaust_ducting = [] # type: List[ducting.PhDuctElement]
         self._ventilation_unit = None  # type: Optional[Ventilator]
         self.id_num = 0
 
@@ -118,12 +137,12 @@ class PhVentilationSystem(_base._PhHVACBase):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
-
+        print('writing to dict...')
         d["identifier"] = str(self.identifier)
-        d["name"] = self.display_name
+        d["display_name"] = self.display_name
         d["sys_type"] = self.sys_type
-        d["duct_01"] = self.duct_01.to_dict()
-        d["duct_02"] = self.duct_02.to_dict()
+        d["exhaust_ducting"] = [e_duct.to_dict() for e_duct in self.exhaust_ducting]
+        d["supply_ducting"] = [s_duct.to_dict() for s_duct in self.supply_ducting]
         d["id_num"] = self.id_num
 
         if self.ventilation_unit:
@@ -137,10 +156,10 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj = cls()
 
         obj.identifier = _input_dict["identifier"]
-        obj.display_name = _input_dict["name"]
+        obj.display_name = _input_dict["display_name"]
         obj.sys_type = _input_dict["sys_type"]
-        obj.duct_01 = ducting.PhDuctElement.from_dict(_input_dict["duct_01"])
-        obj.duct_02 = ducting.PhDuctElement.from_dict(_input_dict["duct_02"])
+        obj.supply_ducting = [ducting.PhDuctElement.from_dict(s_duct) for s_duct in  _input_dict["supply_ducting"]]
+        obj.exhaust_ducting = [ducting.PhDuctElement.from_dict(e_duct) for e_duct in  _input_dict["exhaust_ducting"]]
         obj.id_num = _input_dict.get("id_num", 0)
 
         vent_unit_dict = _input_dict.get("ventilation_unit", None)
@@ -148,6 +167,25 @@ class PhVentilationSystem(_base._PhHVACBase):
             obj.ventilation_unit = Ventilator.from_dict(vent_unit_dict)
 
         return obj
+
+    def duplicate(self):
+        # type: () -> PhVentilationSystem
+        new_obj = self.__class__()
+        new_obj.display_name = self.display_name
+        new_obj.identifier = self.identifier
+        new_obj.sys_type = self.sys_type
+        new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
+        new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
+        new_obj.id_num = self.id_num
+        
+        if self.ventilation_unit:
+            new_obj._ventilation_unit = self.ventilation_unit.duplicate()
+
+        return new_obj
+
+    def __copy__(self):
+        # type: () -> PhVentilationSystem
+        return self.duplicate()
 
     def __lt__(self, other):
         # type: (PhVentilationSystem) -> bool

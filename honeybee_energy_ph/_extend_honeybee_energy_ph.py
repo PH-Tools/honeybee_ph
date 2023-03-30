@@ -11,7 +11,7 @@ from honeybee_energy.properties.extension import OpaqueConstructionProperties, \
     WindowConstructionProperties, IdealAirSystemProperties, AllAirSystemProperties, \
     HeatCoolSystemProperties, DOASSystemProperties, \
     ServiceHotWaterProperties, SHWSystemProperties, ElectricEquipmentProperties,\
-    PeopleProperties, LightingProperties
+    PeopleProperties, LightingProperties, WindowConstructionShadeProperties
 
 
 # -- honeybee_energy_ph properties objects
@@ -21,6 +21,7 @@ from honeybee_energy_ph.properties.construction.opaque import OpaqueConstruction
 from honeybee_energy_ph.properties.materials.opaque import EnergyMaterialPhProperties, \
     EnergyMaterialNoMassPhProperties, EnergyMaterialVegetationPhProperties
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
+from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
 from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
 from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
@@ -40,6 +41,7 @@ setattr(EnergyMaterialProperties, '_ph', None)
 setattr(EnergyMaterialNoMassProperties, '_ph', None)
 setattr(EnergyMaterialVegetationProperties, '_ph', None)
 setattr(WindowConstructionProperties, '_ph', None)
+setattr(WindowConstructionShadeProperties, '_ph', None)
 setattr(ServiceHotWaterProperties, '_ph', None)
 setattr(SHWSystemProperties, '_ph', None)
 setattr(ElectricEquipmentProperties, '_ph', None)
@@ -93,6 +95,12 @@ def energy_material_vegetation_ph_properties(self):
 def window_construction_ph_properties(self):
     if self._ph is None:
         self._ph = WindowConstructionPhProperties(self.host)
+    return self._ph
+
+
+def window_construction_shade_ph_properties(self):
+    if self._ph is None:
+        self._ph = WindowConstructionShadePhProperties(self.host)
     return self._ph
 
 
@@ -156,6 +164,7 @@ setattr(SpaceProperties, 'energy', property(space_energy_properties))
 setattr(ScheduleRulesetProperties, 'ph', property(schedule_ruleset_ph_properties))
 setattr(OpaqueConstructionProperties, 'ph', property(opaque_construction_ph_properties))
 setattr(WindowConstructionProperties, 'ph', property(window_construction_ph_properties))
+setattr(WindowConstructionShadeProperties, 'ph', property(window_construction_shade_ph_properties))
 setattr(EnergyMaterialProperties, 'ph', property(energy_material_ph_properties))
 setattr(EnergyMaterialNoMassProperties, 'ph',
         property(energy_material_no_mass_ph_properties))

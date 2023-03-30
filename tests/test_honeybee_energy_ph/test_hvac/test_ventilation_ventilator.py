@@ -9,6 +9,13 @@ def test_default_ventilator():
     o2 = ventilation.Ventilator.from_dict(d)
     assert o2.to_dict() == d
 
+def test_duplicate_default_ventilator():
+    o1 = ventilation.Ventilator()
+    assert o1.ToString()
+
+    o2 = o1.duplicate()
+    assert o2.to_dict() == o1.to_dict()
+
 
 def test_custom_ventilator():
     o1 = ventilation.Ventilator()
