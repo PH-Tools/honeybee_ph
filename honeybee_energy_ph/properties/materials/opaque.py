@@ -14,7 +14,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import honeybee_energy:\n\t{}'.format(e))
 
 
-class EnergyMaterialPhProperties:
+class EnergyMaterialPhProperties(object):
     def __init__(self, _host=None):
         self._host = _host
         self.id_num = 0
@@ -83,7 +83,7 @@ class EnergyMaterialPhProperties:
         return str(self)
 
 
-class EnergyMaterialNoMassPhProperties:
+class EnergyMaterialNoMassPhProperties(object):
     def __init__(self, _host=None):
         self.host = _host
         self.id_num = 0
@@ -125,7 +125,7 @@ class EnergyMaterialNoMassPhProperties:
         return str(self)
 
 
-class EnergyMaterialVegetationPhProperties:
+class EnergyMaterialVegetationPhProperties(object):
     def __init__(self, _host=None):
         self.host = _host
         self.id_num = 0

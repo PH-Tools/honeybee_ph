@@ -81,7 +81,7 @@ class PhDuctSegment(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> Dict[str, Union[str, dict]]
-        d = {}
+        d = super(PhDuctSegment, self).to_dict()
 
         d['geometry'] = self.geometry.to_dict()
         d['insulation_thickness'] = self.insulation_thickness
@@ -90,9 +90,6 @@ class PhDuctSegment(_base._PhHVACBase):
         d['diameter'] = self.diameter
         d['height'] = self.height
         d['width'] = self.width
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
-        d['user_data'] = self.user_data
 
         return d
 
@@ -203,15 +200,12 @@ class PhDuctElement(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> Dict[str, Union[str, dict]]
-        d = {}
+        d = super(PhDuctElement, self).to_dict()
 
         d['segments'] = {}
         for segment in self.segments:
             d['segments'][segment.identifier] = segment.to_dict()
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
         d['duct_type'] = self.duct_type
-        d['user_data'] = self.user_data
 
         return d
 

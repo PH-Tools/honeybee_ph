@@ -3,6 +3,8 @@
 
 """PHI Certification Settings Class."""
 
+from copy import copy
+
 try:
     from typing import Optional, Union, Type, Any, Dict
 except ImportError:
@@ -265,6 +267,7 @@ class PHPPSettings9(_PHPPSettingsBase):
     enerphit_type = EnumProperty("enerphit_type", phpp_version)
     retrofit_type = EnumProperty("retrofit_type", phpp_version)
 
+
     def __init__(self):
         # -- Setup the enum defaults
         super(PHPPSettings9, self).__init__()
@@ -308,6 +311,7 @@ class PhiCertification(_base._Base):
         d = {}
         d['phpp_version'] = self.phpp_version
         d['attributes'] = self.attributes.to_dict()
+        d['user_data'] = self.user_data
         return d
 
     @classmethod
@@ -319,6 +323,8 @@ class PhiCertification(_base._Base):
             new_obj.attributes = PHPPSettings10.from_dict(attr_dict)
         else:
             new_obj.attributes = PHPPSettings9.from_dict(attr_dict)
+        new_obj.user_data = _input_dict.get("user_data", {})
+        
         return new_obj
 
     def __copy__(self):
@@ -327,6 +333,7 @@ class PhiCertification(_base._Base):
         obj.phpp_version = self.phpp_version
         obj.set_base_attrs_from_source(self)
         obj.attributes = self.attributes.duplicate()
+        obj.user_data = self.user_data
 
         return obj
 

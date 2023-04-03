@@ -4,7 +4,12 @@
 """HBE-PH HVAC Base Class"""
 
 import uuid
+from copy import copy
 
+try:
+    from typing import Any, Dict
+except ImportError:
+    pass  # IronPython 2.7
 
 class _PhHVACBase(object):
     """Base class for any HB-Energy-PH HVAC Objects"""
@@ -38,6 +43,7 @@ class _PhHVACBase(object):
 
     @property
     def identifier_short(self):
+        # type: () -> str
         return str(self.identifier).split("-")[0]
 
     @property
@@ -57,3 +63,32 @@ class _PhHVACBase(object):
         return "{}(identifier={!r}, user_data={!r})".format(
             self.__class__.__name__, self.identifier_short, self.user_data
         )
+    
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        d = {}
+        d["identifier"] = copy(self.identifier)
+        d["display_name"] = copy(self.display_name)
+        d["user_data"] = copy(self.user_data)
+        return d
+    
+    def from_dict(self, _input_dict):
+        # type: (Dict[str, Any]) -> _PhHVACBase
+        obj = self.__class__()
+        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.user_data = _input_dict["user_data"]
+        return obj
+
+    def __copy__(self):
+        return self.duplicate()
+    
+    def duplicate(self):
+        # type: () -> _PhHVACBase
+        obj = self.__class__()
+
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+
+        return obj

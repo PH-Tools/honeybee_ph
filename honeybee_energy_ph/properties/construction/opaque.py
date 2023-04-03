@@ -4,7 +4,7 @@
 """Passive House properties for honeybee_energy.construction.opaque.OpaqueConstruction Objects"""
 
 
-class OpaqueConstructionPhProperties:
+class OpaqueConstructionPhProperties(object):
     def __init__(self):
         self.id_num = 0
 

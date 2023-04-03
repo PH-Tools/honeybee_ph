@@ -3,8 +3,10 @@
 
 """Building 'Segment' Level Data Attributes"""
 
+from copy import copy
+
 try:
-    from typing import Any, Dict
+    from typing import Any, Dict, Union
 except ImportError:
     pass  # Python2.7
 
@@ -25,16 +27,18 @@ class SetPoints(_base._Base):
 
         d["winter"] = self.winter
         d["summer"] = self.summer
+        d["user_data"] = copy(self.user_data)
 
         return d
 
     @classmethod
     def from_dict(cls, _dict):
-        # type: (Dict[str, float]) -> SetPoints
+        # type: (Dict[str, Any]) -> SetPoints
         obj = cls()
 
         obj.winter = _dict.get("winter", 20.0)
         obj.summer = _dict.get("summer", 25.0)
+        obj.user_data = _dict.get("user_data", {})
 
         return obj
 
@@ -44,6 +48,8 @@ class SetPoints(_base._Base):
         obj.set_base_attrs_from_source(self)
         obj.winter = self.winter
         obj.summer = self.summer
+        obj.user_data = self.user_data
+
         return obj
 
     def duplicate(self):
@@ -88,6 +94,7 @@ class BldgSegment(_base._Base):
         d["thermal_bridges"] = {}
         for tb in self.thermal_bridges.values():
             d["thermal_bridges"][str(tb.identifier)] = tb.to_dict()
+        d['user_data'] = self.user_data
         return d
 
     @classmethod
@@ -117,6 +124,7 @@ class BldgSegment(_base._Base):
         for tb_dict in _dict["thermal_bridges"].values():
             tb_obj = thermal_bridge.PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
+        obj.user_data = _dict.get("user_data", {})
         return obj
 
     def __copy__(self):
@@ -137,6 +145,7 @@ class BldgSegment(_base._Base):
         new_obj.thermal_bridges = {}
         for tb_k, tb_v in self.thermal_bridges.items():
             new_obj.thermal_bridges[tb_k] = tb_v.duplicate()
+        new_obj.user_data = self.user_data
 
         return new_obj
 

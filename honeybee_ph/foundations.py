@@ -3,6 +3,8 @@
 
 """PH Foundation Objects."""
 
+from copy import copy
+
 try:
     from typing import Any, Dict, Union, List
 except ImportError:
@@ -63,6 +65,7 @@ class PhFoundation(_base._Base):
         new_obj.identifier = self.identifier
         new_obj.user_data = self.user_data
         new_obj.foundation_type = PhFoundationType(self.foundation_type.value)
+        new_obj.user_data = self.user_data
         return new_obj
 
     def __copy__(self):
@@ -74,8 +77,9 @@ class PhFoundation(_base._Base):
 
         d["identifier"] = str(self.identifier)
         d["display_name"] = self.display_name
-        d["user_data"] = self.user_data
+        d["user_data"] = copy(self.user_data)
         d["foundation_type_value"] = self.foundation_type.value
+        d["user_data"] = copy(self.user_data)
         
         return d
 
@@ -86,8 +90,9 @@ class PhFoundation(_base._Base):
 
         new_obj.identifier = _input_dict["identifier"]
         new_obj.display_name = _input_dict["display_name"]
-        new_obj.user_data = _input_dict["user_data"]
+        new_obj.user_data = _input_dict.get("user_data", {})
         new_obj.foundation_type = PhFoundationType(_input_dict["foundation_type_value"])
+        new_obj.user_data = _input_dict.get("user_data", {})
         
         return new_obj
     

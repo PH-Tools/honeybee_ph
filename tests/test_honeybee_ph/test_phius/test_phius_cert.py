@@ -11,6 +11,7 @@ def test_phius_cert_serialization_default():
     d = phius_cert.to_dict()
     new_obj = honeybee_ph.phius.PhiusCertification.from_dict(d)
 
+    assert new_obj.user_data == {}
     assert new_obj.to_dict() == d
 
 
@@ -18,7 +19,7 @@ def test_phius_cert_serialization_customized():
     phius_cert = honeybee_ph.phius.PhiusCertification()
 
     # -- Customize / reset the attrs
-    phius_cert.certification_criteria = 3
+    phius_cert.certification_program = 3
     phius_cert.localization_selection_type = 2
 
     phius_cert.PHIUS2021_heating_demand = 446.7
@@ -36,7 +37,10 @@ def test_phius_cert_serialization_customized():
     phius_cert.int_gains_use_school_defaults = True
     phius_cert.int_gains_dhw_marginal_perf_ratio = None
 
+    phius_cert.user_data["test_key"] = "test_value"
+
     d = phius_cert.to_dict()
     new_obj = honeybee_ph.phius.PhiusCertification.from_dict(d)
 
+    assert "test_key" in new_obj.user_data
     assert new_obj.to_dict() == d

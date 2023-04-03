@@ -35,9 +35,7 @@ class PhCoolingSystem(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
-        d = {}
-        d["identifier"] = self.identifier
-        d["display_name"] = self.display_name
+        d = super(PhCoolingSystem, self).to_dict()
         d["cooling_class_name"] = self.cooling_class_name
         d["percent_coverage"] = self.percent_coverage
         return d
@@ -46,6 +44,7 @@ class PhCoolingSystem(_base._PhHVACBase):
         # type: (PhCoolingSystem, Dict[str, Any]) -> PhCoolingSystem
         self.identifier = _input_dict["identifier"]
         self.display_name = _input_dict["display_name"]
+        self.user_data = _input_dict.get("user_data", {})
         self.cooling_class_name = _input_dict["cooling_class_name"]
         self.percent_coverage = _input_dict["percent_coverage"]
         return self

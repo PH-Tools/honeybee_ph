@@ -19,6 +19,13 @@ def test_dict_roundtrip_direct_electric():
     s3 = heating.PhHeatingSystemBuilder.from_dict(d)
     assert s3.to_dict() == d
 
+    # -- User data
+    s3.user_data["test_key"] = "test_value"
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    
+    assert "test_key" in s4.user_data
+    assert s4.to_dict() == s3.to_dict()
 
 def test_dict_roundtrip_fossil_boiler():
     s1 = heating.PhHeatingFossilBoiler()
@@ -29,7 +36,14 @@ def test_dict_roundtrip_fossil_boiler():
 
     s3 = heating.PhHeatingSystemBuilder.from_dict(d)
     assert s3.to_dict() == d
-
+    
+    # -- User data
+    s3.user_data["test_key"] = "test_value"
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    
+    assert "test_key" in s4.user_data
+    assert s4.to_dict() == s3.to_dict()
 
 def test_dict_roundtrip_wood_boiler():
     s1 = heating.PhHeatingWoodBoiler()
@@ -40,7 +54,14 @@ def test_dict_roundtrip_wood_boiler():
 
     s3 = heating.PhHeatingSystemBuilder.from_dict(d)
     assert s3.to_dict() == d
-
+    
+    # -- User data
+    s3.user_data["test_key"] = "test_value"
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    
+    assert "test_key" in s4.user_data
+    assert s4.to_dict() == s3.to_dict()
 
 def test_dict_roundtrip_heat_pump_annual():
     s1 = heating.PhHeatingHeatPumpAnnual()
@@ -52,6 +73,13 @@ def test_dict_roundtrip_heat_pump_annual():
     s3 = heating.PhHeatingSystemBuilder.from_dict(d)
     assert s3.to_dict() == d
 
+    # -- User data
+    s3.user_data["test_key"] = "test_value"
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    
+    assert "test_key" in s4.user_data
+    assert s4.to_dict() == s3.to_dict()
 
 def test_dict_roundtrip_heat_pump_monthly():
     s1 = heating.PhHeatingHeatPumpRatedMonthly()
@@ -62,3 +90,11 @@ def test_dict_roundtrip_heat_pump_monthly():
 
     s3 = heating.PhHeatingSystemBuilder.from_dict(d)
     assert s3.to_dict() == d
+    
+    # -- User data
+    s3.user_data["test_key"] = "test_value"
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    
+    assert "test_key" in s4.user_data
+    assert s4.to_dict() == s3.to_dict()

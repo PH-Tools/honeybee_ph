@@ -165,6 +165,12 @@ def test_Space_serialize(floor_segment_geometry):
 
     assert d1 == d2
 
+    # -- Add User Data
+    sp.user_data["test_key"] = "test_value"
+    d3 = sp.to_dict()
+    o2 = space.Space.from_dict(d3, sp.host)
+    d4 = o2.to_dict()
+    assert d3 == d4
 
 # -- Duplicate --
 

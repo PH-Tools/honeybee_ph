@@ -4,6 +4,7 @@
 """Passive House HVAC Equipment Classes"""
 
 import sys
+from copy import copy
 
 try:
     from typing import Any, Optional, Dict, List
@@ -44,9 +45,7 @@ class Ventilator(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> dict[str, Any]
-        d = {}
-
-        d["display_name"] = self.display_name
+        d = super(Ventilator, self).to_dict()
         d["quantity"] = self.quantity
         d["sensible_heat_recovery"] = self.sensible_heat_recovery
         d["latent_heat_recovery"] = self.latent_heat_recovery
@@ -54,15 +53,15 @@ class Ventilator(_base._PhHVACBase):
         d["frost_protection_reqd"] = self.frost_protection_reqd
         d["temperature_below_defrost_used"] = self.temperature_below_defrost_used
         d["in_conditioned_space"] = self.in_conditioned_space
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict[str, Any]) -> Ventilator
         obj = cls()
-
         obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
         obj.quantity = _input_dict["quantity"]
         obj.sensible_heat_recovery = _input_dict["sensible_heat_recovery"]
         obj.latent_heat_recovery = _input_dict["latent_heat_recovery"]
@@ -70,7 +69,6 @@ class Ventilator(_base._PhHVACBase):
         obj.frost_protection_reqd = _input_dict["frost_protection_reqd"]
         obj.temperature_below_defrost_used = _input_dict["temperature_below_defrost_used"]
         obj.in_conditioned_space = _input_dict["in_conditioned_space"]
-
         return obj
 
     def duplicate(self):
@@ -78,6 +76,7 @@ class Ventilator(_base._PhHVACBase):
         new_obj = self.__class__()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
+        new_obj.user_data = copy(self.user_data)
         new_obj.id_num = self.id_num
         new_obj.quantity = self.quantity
         new_obj.sensible_heat_recovery = self.sensible_heat_recovery
@@ -136,18 +135,13 @@ class PhVentilationSystem(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> dict[str, Any]
-        d = {}
-        print('writing to dict...')
-        d["identifier"] = str(self.identifier)
-        d["display_name"] = self.display_name
+        d = super(PhVentilationSystem, self).to_dict()
         d["sys_type"] = self.sys_type
         d["exhaust_ducting"] = [e_duct.to_dict() for e_duct in self.exhaust_ducting]
         d["supply_ducting"] = [s_duct.to_dict() for s_duct in self.supply_ducting]
         d["id_num"] = self.id_num
-
         if self.ventilation_unit:
             d["ventilation_unit"] = self.ventilation_unit.to_dict()
-
         return d
 
     @classmethod
@@ -157,6 +151,7 @@ class PhVentilationSystem(_base._PhHVACBase):
 
         obj.identifier = _input_dict["identifier"]
         obj.display_name = _input_dict["display_name"]
+        obj.user_data = _input_dict.get("user_data", {})
         obj.sys_type = _input_dict["sys_type"]
         obj.supply_ducting = [ducting.PhDuctElement.from_dict(s_duct) for s_duct in  _input_dict["supply_ducting"]]
         obj.exhaust_ducting = [ducting.PhDuctElement.from_dict(e_duct) for e_duct in  _input_dict["exhaust_ducting"]]
@@ -173,6 +168,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         new_obj = self.__class__()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
+        new_obj.user_data = copy(self.user_data)
         new_obj.sys_type = self.sys_type
         new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
         new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
@@ -216,29 +212,24 @@ class _ExhaustVentilatorBase(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
-        d = {}
-
+        d = super(_ExhaustVentilatorBase, self).to_dict()
         d["device_class_name"] = self.device_class_name
-        d["display_name"] = self.display_name
-        d["identifier"] = self.identifier
         d["quantity"] = self.quantity
         d["annual_runtime_minutes"] = self.annual_runtime_minutes
         d["exhaust_flow_rate_m3s"] = self.exhaust_flow_rate_m3s
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> _ExhaustVentilatorBase
         new_obj = cls()
-
-        new_obj.device_class_name = _input_dict["device_class_name"]
         new_obj.display_name = _input_dict["display_name"]
-        new_obj.quantity = _input_dict["quantity"]
         new_obj.identifier = _input_dict["identifier"]
+        new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.device_class_name = _input_dict["device_class_name"]
+        new_obj.quantity = _input_dict["quantity"]
         new_obj.annual_runtime_minutes = _input_dict["annual_runtime_minutes"]
         new_obj.exhaust_flow_rate_m3s = _input_dict["exhaust_flow_rate_m3s"]
-
         return new_obj
 
     def __lt__(self, other):

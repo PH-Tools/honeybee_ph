@@ -27,6 +27,15 @@ def test_climate_monthly_collection_serialization_empty():
 
     assert new_obj.to_dict() == d
 
+def test_climate_monthly_collection_serialization_with_user_data():
+    monthly_climate_collection = site.Climate_MonthlyValueSet()
+    monthly_climate_collection.user_data["test_key"] = "test_value"
+    d = monthly_climate_collection.to_dict()
+    new_obj = site.Climate_MonthlyValueSet.from_dict(d)
+
+    assert "test_key" in new_obj.user_data
+    assert new_obj.to_dict() == d
+
 
 def test_climate_monthly_collection_serialization_with_values():
     monthly_climate_collection = site.Climate_MonthlyValueSet()

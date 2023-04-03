@@ -32,7 +32,7 @@ def test_default_bdg_segment_round_trip():
     d1 = o1.to_dict()
     o2 = BldgSegment.from_dict(d1)
 
-    assert o2.to_dict() == d1
+    assert o2.to_dict() == o1.to_dict()
 
 
 def test_bdg_segment_round_trip_w_tbs():
@@ -46,7 +46,19 @@ def test_bdg_segment_round_trip_w_tbs():
     d1 = o1.to_dict()
     o2 = BldgSegment.from_dict(d1)
 
-    assert o2.to_dict() == d1
+    assert o2.to_dict() == o1.to_dict()
+
+def test_bdg_segment_round_trip_w_user_data():
+    o1 = BldgSegment()
+
+    # -- Add user-data
+    o1.user_data["test_key"] = "test_value"
+
+    d1 = o1.to_dict()
+    o2 = BldgSegment.from_dict(d1)
+
+    assert "test_key" in o2.user_data
+    assert o2.to_dict() == o1.to_dict()
 
 
 def test_default_bdg_segment_duplicate():
@@ -66,4 +78,15 @@ def test_bdg_segment_w_tbs_duplicate():
 
     o2 = o1.duplicate()
 
+    assert o1.to_dict() == o2.to_dict()
+
+def test_bdg_segment_w_user_data_duplicate():
+    o1 = BldgSegment()
+
+    # -- Add a new TB
+    o1.user_data["test_key"] = "test_value"
+
+    o2 = o1.duplicate()
+
+    assert "test_key" in o2.user_data
     assert o1.to_dict() == o2.to_dict()

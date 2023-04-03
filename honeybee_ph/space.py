@@ -57,6 +57,10 @@ class SpaceFloorSegment(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
+        d["identifier"] = self.identifier
+        d["display_name"] = self.display_name
+        d["user_data"] = copy(self.user_data)
+
         d["weighting_factor"] = self.weighting_factor
         if self.geometry:
             d["geometry"] = self.geometry.to_dict()
@@ -69,6 +73,10 @@ class SpaceFloorSegment(_base._Base):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> SpaceFloorSegment
         new_obj = cls()
+
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.user_data = _input_dict["user_data"]
 
         new_obj.weighting_factor = _input_dict.get("weighting_factor", 1.0)
 
@@ -85,6 +93,10 @@ class SpaceFloorSegment(_base._Base):
     def duplicate(self):
         # type: () -> SpaceFloorSegment
         new_obj = SpaceFloorSegment()
+        
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
 
         if self.geometry:
             new_obj.geometry = self.duplicate_geometry()
@@ -195,6 +207,11 @@ class SpaceFloor(_base._Base):
     def duplicate(self):
         # type: () -> SpaceFloor
         new_floor = SpaceFloor()
+
+        new_floor.identifier = self.identifier
+        new_floor.display_name = self.display_name
+        new_floor.user_data = self.user_data
+
         if self.geometry:
             new_floor.geometry = self.geometry.duplicate()
         for seg in self.floor_segments:
@@ -215,6 +232,10 @@ class SpaceFloor(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
+        d["identifier"] = self.identifier
+        d["display_name"] = self.display_name
+        d["user_data"] = copy(self.user_data)
+
         d["floor_segments"] = [seg.to_dict() for seg in self.floor_segments]
         d["geometry"] = self.geometry.to_dict() if self.geometry else None
 
@@ -224,6 +245,10 @@ class SpaceFloor(_base._Base):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> SpaceFloor
         new_obj = cls()
+
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.user_data = _input_dict["user_data"]
 
         geom_dict = _input_dict.get("geometry", None)
         if geom_dict:
@@ -310,6 +335,11 @@ class SpaceVolume(_base._Base):
     def duplicate(self):
         # type: () -> SpaceVolume
         new_volume = SpaceVolume()
+
+        new_volume.identifier = self.identifier
+        new_volume.display_name = self.display_name
+        new_volume.user_data = self.user_data
+
         new_volume.avg_ceiling_height = self.avg_ceiling_height
         new_volume.floor = self.floor.duplicate()
         if self.geometry:
@@ -319,6 +349,10 @@ class SpaceVolume(_base._Base):
     def to_dict(self):
         # type: () -> Dict[str, Any]
         d = {}
+
+        d["identifier"] = self.identifier
+        d["display_name"] = self.display_name
+        d["user_data"] = copy(self.user_data)
 
         d["avg_ceiling_height"] = self.avg_ceiling_height
         d["floor"] = self.floor.to_dict()
@@ -330,6 +364,10 @@ class SpaceVolume(_base._Base):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> SpaceVolume
         new_obj = cls()
+
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.user_data = _input_dict["user_data"]
 
         new_obj.avg_ceiling_height = _input_dict.get("avg_ceiling_height")
         new_obj.floor = SpaceFloor.from_dict(_input_dict.get("floor", {}))
@@ -471,6 +509,10 @@ class Space(_base._Base):
     def duplicate(self, _host=None):
         # type: (Any) -> Space
         new_space = Space()
+
+        new_space.identifier = self.identifier
+        new_space.user_data = self.user_data
+
         if _host:
             new_space.host = _host
         else:
@@ -489,6 +531,9 @@ class Space(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["quantity"] = self.quantity
         d["wufi_type"] = self.wufi_type
         d["name"] = self.name
@@ -502,6 +547,9 @@ class Space(_base._Base):
     def from_dict(cls, _input_dict, _host):
         # type: (Dict[str, Any], Any) -> Space
         new_obj = cls(_host)
+
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.user_data = _input_dict["user_data"]
 
         new_obj.quantity = _input_dict["quantity"]
         new_obj.wufi_type = _input_dict["wufi_type"]

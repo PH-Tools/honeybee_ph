@@ -3,6 +3,8 @@
 
 """Passive House Service Hot Water Objects"""
 
+from copy import copy
+
 try:
     from typing import Any, Union, List, Dict
 except ImportError:
@@ -62,7 +64,7 @@ class PhPipeSegment(_base._PhHVACBase):
         new_obj.daily_period = self.daily_period
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
-        new_obj.user_data = self.user_data
+        new_obj.user_data = copy(self.user_data)
 
         return self
 
@@ -72,8 +74,7 @@ class PhPipeSegment(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> dict[str, Union[str, dict]]
-        d = {}
-
+        d = super(PhPipeSegment, self).to_dict()
         d['geometry'] = self.geometry.to_dict()
         d['diameter_m'] = self.diameter_m
         d['insulation_thickness_m'] = self.insulation_thickness_m
@@ -81,10 +82,6 @@ class PhPipeSegment(_base._PhHVACBase):
         d['insulation_reflective'] = self.insulation_reflective
         d['insulation_quality'] = self.insulation_quality
         d['daily_period'] = self.daily_period
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
-        d['user_data'] = self.user_data
-
         return d
 
     @classmethod
@@ -155,15 +152,10 @@ class PhPipeElement(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> dict[str, Union[str, dict]]
-        d = {}
-
+        d = super(PhPipeElement, self).to_dict()
         d['segments'] = {}
         for segment in self.segments:
             d['segments'][segment.identifier] = segment.to_dict()
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
-        d['user_data'] = self.user_data
-
         return d
 
     @classmethod
@@ -236,7 +228,7 @@ class PhSHWTank(_base._PhHVACBase):
 
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
-        new_obj.user_data = self.user_data
+        new_obj.user_data = copy(self.user_data)
         new_obj.quantity = self.quantity
         new_obj._tank_type = self._tank_type
         new_obj.in_conditioned_space = self.in_conditioned_space
@@ -257,11 +249,7 @@ class PhSHWTank(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> dict[str, Any]
-        d = {}
-
-        d['display_name'] = self.display_name
-        d['identifier'] = self.identifier
-        d['user_data'] = self.user_data
+        d = super(PhSHWTank, self).to_dict()
         d['quantity'] = self.quantity
         d['_tank_type'] = self._tank_type.to_dict()
         d['in_conditioned_space'] = self.in_conditioned_space
@@ -321,13 +309,16 @@ class PhHotWaterHeater(_base._PhHVACBase):
 
     def to_dict(self):
         # type: () -> dict
-        d = {}
+        d = super(PhHotWaterHeater, self).to_dict()
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> PhHotWaterHeater
+        # type: (Dict[str, Any]) -> PhHotWaterHeater
         new_obj = cls()
+        new_obj.identifier = _input_dict['identifier']
+        new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict.get('user_data', {})
         return new_obj
 
     def __str__(self):
@@ -345,27 +336,22 @@ class PhSHWHeaterElectric(PhHotWaterHeater):
         super(PhSHWHeaterElectric, self).__init__()
 
     def to_dict(self):
-        # type: () -> dict
-        d = {}
-
+        # type: () -> Dict[str, Any]
+        d = super(PhSHWHeaterElectric, self).to_dict()
         d['heater_type'] = self.__class__.__name__
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
         d['percent_coverage'] = self.percent_coverage
         d['in_conditioned_space'] = self.in_conditioned_space
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> PhSHWHeaterElectric
+        # type: (Dict[str, Any]) -> PhSHWHeaterElectric
         new_obj = cls()
-
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict.get('user_data', {})
         new_obj.percent_coverage = _input_dict['percent_coverage']
         new_obj.in_conditioned_space = _input_dict['in_conditioned_space']
-
         return new_obj
 
 
@@ -383,14 +369,10 @@ class PhSHWHeaterBoiler(PhHotWaterHeater):
 
     def to_dict(self):
         # type: () -> dict
-        d = {}
-
+        d = super(PhSHWHeaterBoiler, self).to_dict()
         d['heater_type'] = self.__class__.__name__
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
         d['percent_coverage'] = self.percent_coverage
         d['in_conditioned_space'] = self.in_conditioned_space
-
         d['fuel'] = self.fuel
         d['condensing'] = self.condensing
         d['effic_at_30_perc_load'] = self.effic_at_30_perc_load
@@ -399,19 +381,17 @@ class PhSHWHeaterBoiler(PhHotWaterHeater):
         d['avg_boiler_temp_at_70_55'] = self.avg_boiler_temp_at_70_55
         d['avg_boiler_temp_at_55_45'] = self.avg_boiler_temp_at_55_45
         d['avg_boiler_temp_at_35_28'] = self.avg_boiler_temp_at_35_28
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhSHWHeaterBoiler
         new_obj = cls()
-
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict.get('user_data', {})
         new_obj.percent_coverage = _input_dict['percent_coverage']
         new_obj.in_conditioned_space = _input_dict['in_conditioned_space']
-
         new_obj.fuel = _input_dict['fuel']
         new_obj.condensing = _input_dict['condensing']
         new_obj.effic_at_30_perc_load = _input_dict['effic_at_30_perc_load']
@@ -420,7 +400,6 @@ class PhSHWHeaterBoiler(PhHotWaterHeater):
         new_obj.avg_boiler_temp_at_70_55 = _input_dict['avg_boiler_temp_at_70_55']
         new_obj.avg_boiler_temp_at_55_45 = _input_dict['avg_boiler_temp_at_55_45']
         new_obj.avg_boiler_temp_at_35_28 = _input_dict['avg_boiler_temp_at_35_28']
-
         return new_obj
 
 
@@ -434,38 +413,32 @@ class PhSHWHeaterBoilerWood(PhHotWaterHeater):
         self.on_off_temp_diff = 30
 
     def to_dict(self):
-        # type: () -> dict
-        d = {}
-
+        # type: () -> Dict[str, Any]
+        d = super(PhSHWHeaterBoilerWood, self).to_dict()
         d['heater_type'] = self.__class__.__name__
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
         d['percent_coverage'] = self.percent_coverage
         d['in_conditioned_space'] = self.in_conditioned_space
-
         d['fuel'] = self.fuel
         d['effic_in_basic_cycle'] = self.effic_in_basic_cycle
         d['effic_in_const_operation'] = self.effic_in_const_operation
         d['avg_frac_heat_released'] = self.avg_frac_heat_released
         d['on_off_temp_diff'] = self.on_off_temp_diff
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhSHWHeaterBoilerWood
         new_obj = cls()
-
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict.get('user_data', {})
         new_obj.percent_coverage = _input_dict['percent_coverage']
         new_obj.in_conditioned_space = _input_dict['in_conditioned_space']
-
         new_obj.fuel = _input_dict['fuel']
         new_obj.effic_in_basic_cycle = _input_dict['effic_in_basic_cycle']
         new_obj.effic_in_const_operation = _input_dict['effic_in_const_operation']
         new_obj.avg_frac_heat_released = _input_dict['avg_frac_heat_released']
         new_obj.on_off_temp_diff = _input_dict['on_off_temp_diff']
-
         return new_obj
 
 
@@ -477,19 +450,14 @@ class PhSHWHeaterDistrict(PhHotWaterHeater):
         self.util_fact_heat_transfer = 1
 
     def to_dict(self):
-        # type: () -> dict
-        d = {}
-
+        # type: () -> Dict[str, Any]
+        d = super(PhSHWHeaterDistrict, self).to_dict()
         d['heater_type'] = self.__class__.__name__
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
         d['percent_coverage'] = self.percent_coverage
         d['in_conditioned_space'] = self.in_conditioned_space
-
         d['energy_carrier'] = self.energy_carrier
         d['solar_fraction'] = self.solar_fraction
         d['util_fact_heat_transfer'] = self.util_fact_heat_transfer
-
         return d
 
     @classmethod
@@ -516,34 +484,28 @@ class PhSHWHeaterHeatPump(PhHotWaterHeater):
         self.annual_energy_factor = None
 
     def to_dict(self):
-        # type: () -> dict
-        d = {}
-
+        # type: () -> Dict[str, Any]
+        d = super(PhSHWHeaterHeatPump, self).to_dict()
         d['heater_type'] = self.__class__.__name__
-        d['identifier'] = self.identifier
-        d['display_name'] = self.display_name
         d['percent_coverage'] = self.percent_coverage
         d['in_conditioned_space'] = self.in_conditioned_space
-
         d['annual_COP'] = self.annual_COP
         d['annual_system_perf_ratio'] = self.annual_system_perf_ratio
         d['annual_energy_factor'] = self.annual_energy_factor
-
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhSHWHeaterHeatPump
         new_obj = cls()
-
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
+        new_obj.user_data = _input_dict.get("user_data", {})
         new_obj.percent_coverage = _input_dict['percent_coverage']
         new_obj.in_conditioned_space = _input_dict['in_conditioned_space']
-
         new_obj.annual_COP = _input_dict['annual_COP']
         new_obj.annual_system_perf_ratio = _input_dict['annual_system_perf_ratio']
         new_obj.annual_energy_factor = _input_dict['annual_energy_factor']
-
         return new_obj
 
 

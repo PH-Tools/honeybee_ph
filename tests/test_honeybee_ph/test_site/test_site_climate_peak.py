@@ -21,6 +21,15 @@ def test_collection_serialization_empty():
 
     assert new_obj.to_dict() == d
 
+def test_collection_serialization_with_user_data():
+    collection = site.Climate_PeakLoadCollection()
+    collection.user_data["test_key"] = "test_value"
+    d = collection.to_dict()
+    new_obj = site.Climate_PeakLoadCollection.from_dict(d)
+
+    assert "test_key" in new_obj.user_data
+    assert new_obj.to_dict() == d
+
 
 def test_collection_serialization_with_values():
     collection = site.Climate_PeakLoadCollection()

@@ -3,6 +3,8 @@
 
 """Passive-House Style Monthly Climate Data"""
 
+from copy import copy
+
 try:
     from itertools import izip as zip  # type: ignore
 except ImportError:
@@ -59,6 +61,10 @@ class Climate_MonthlyValueSet(_base._Base):
         # type: () -> Dict[str, float]
         d = {}
 
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         for month in self.months:
             d[month] = getattr(self, month)
 
@@ -68,6 +74,9 @@ class Climate_MonthlyValueSet(_base._Base):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, float]) -> Climate_MonthlyValueSet
         obj = cls()
+        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.user_data = _input_dict.get("user_data", {})
 
         for month in cls.months:
             setattr(obj, month, _input_dict.get(month))
@@ -95,8 +104,10 @@ class Climate_MonthlyTempCollection(_base._Base):
         # type: () -> Dict[str, Dict[str, float]]
         d = {}
 
-        d["identifier"] = self.identifier
         d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["air_temps"] = self.air_temps.to_dict()
         d["dewpoints"] = self.dewpoints.to_dict()
         d["sky_temps"] = self.sky_temps.to_dict()
@@ -107,16 +118,17 @@ class Climate_MonthlyTempCollection(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Dict[str, float]]) -> Climate_MonthlyTempCollection
-        new_obj = cls(
+        obj = cls(
             _air=Climate_MonthlyValueSet.from_dict(_input_dict["air_temps"]),
             _dewpoint=Climate_MonthlyValueSet.from_dict(_input_dict["dewpoints"]),
             _sky=Climate_MonthlyValueSet.from_dict(_input_dict["sky_temps"]),
             _ground=Climate_MonthlyValueSet.from_dict(_input_dict["ground_temps"]),
         )
-        new_obj.identifier = _input_dict["identifier"]
-        new_obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        return new_obj
+        return obj
 
 
 class Climate_MonthlyRadiationCollection(_base._Base):
@@ -138,9 +150,10 @@ class Climate_MonthlyRadiationCollection(_base._Base):
     def to_dict(self):
         # type: () -> Dict[str, Dict[str, float]]
         d = {}
-
-        d["identifier"] = self.identifier
         d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["north"] = self.north.to_dict()
         d["east"] = self.east.to_dict()
         d["south"] = self.south.to_dict()
@@ -152,17 +165,18 @@ class Climate_MonthlyRadiationCollection(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Dict[str, float]]) -> Climate_MonthlyRadiationCollection
-        new_obj = cls(
+        obj = cls(
             _north=Climate_MonthlyValueSet.from_dict(_input_dict["north"]),
             _east=Climate_MonthlyValueSet.from_dict(_input_dict["east"]),
             _south=Climate_MonthlyValueSet.from_dict(_input_dict["south"]),
             _west=Climate_MonthlyValueSet.from_dict(_input_dict["west"]),
             _glob=Climate_MonthlyValueSet.from_dict(_input_dict["glob"]),
         )
-        new_obj.identifier = _input_dict["identifier"]
-        new_obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        return new_obj
+        return obj
 
 
 class Climate_PeakLoadValueSet(_base._Base):
@@ -195,6 +209,10 @@ class Climate_PeakLoadValueSet(_base._Base):
         # type: () -> Dict[str, float]
         d = {}
 
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d['temp'] = self.temp
         d['rad_north'] = self.rad_north
         d['rad_east'] = self.rad_east
@@ -204,29 +222,29 @@ class Climate_PeakLoadValueSet(_base._Base):
         d["dewpoint"] = self.dewpoint
         d["sky_temp"] = self.sky_temp
         d["ground_temp"] = self.ground_temp
-        d["display_name"] = self.display_name
-        d["identifier"] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, float]) -> Climate_PeakLoadValueSet
-        new_obj = cls()
+        obj = cls()
 
-        new_obj.temp = _input_dict["temp"]
-        new_obj.rad_north = _input_dict["rad_north"]
-        new_obj.rad_east = _input_dict["rad_east"]
-        new_obj.rad_south = _input_dict["rad_south"]
-        new_obj.rad_west = _input_dict["rad_west"]
-        new_obj.rad_global = _input_dict["rad_global"]
-        new_obj.dewpoint = _input_dict["dewpoint"]
-        new_obj.sky_temp = _input_dict["sky_temp"]
-        new_obj.ground_temp = _input_dict["ground_temp"]
-        new_obj.display_name = _input_dict["display_name"]
-        new_obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        return new_obj
+        obj.temp = _input_dict["temp"]
+        obj.rad_north = _input_dict["rad_north"]
+        obj.rad_east = _input_dict["rad_east"]
+        obj.rad_south = _input_dict["rad_south"]
+        obj.rad_west = _input_dict["rad_west"]
+        obj.rad_global = _input_dict["rad_global"]
+        obj.dewpoint = _input_dict["dewpoint"]
+        obj.sky_temp = _input_dict["sky_temp"]
+        obj.ground_temp = _input_dict["ground_temp"]
+
+        return obj
 
 
 class Climate_PeakLoadCollection(_base._Base):
@@ -249,28 +267,32 @@ class Climate_PeakLoadCollection(_base._Base):
         # type: () -> Dict[str, Union[Dict[str, float], str]]
         d = {}
 
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["heat_load_1"] = self.heat_load_1.to_dict()
         d["heat_load_2"] = self.heat_load_2.to_dict()
         d["cooling_load_1"] = self.cooling_load_1.to_dict()
         d["cooling_load_2"] = self.cooling_load_2.to_dict()
         d["display_name"] = self.display_name
-        d["identifier"] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate_PeakLoadCollection
-        new_obj = cls(
+        obj = cls(
             Climate_PeakLoadValueSet.from_dict(_input_dict["heat_load_1"]),
             Climate_PeakLoadValueSet.from_dict(_input_dict["heat_load_2"]),
             Climate_PeakLoadValueSet.from_dict(_input_dict["cooling_load_1"]),
             Climate_PeakLoadValueSet.from_dict(_input_dict["cooling_load_2"]),
         )
-        new_obj.display_name = _input_dict["display_name"]
-        new_obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        return new_obj
+        return obj
 
 
 class Climate_Ground(_base._Base):
@@ -287,6 +309,10 @@ class Climate_Ground(_base._Base):
         # type: () -> Dict
         d = {}
 
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["ground_thermal_conductivity"] = self.ground_thermal_conductivity
         d["ground_heat_capacity"] = self.ground_heat_capacity
         d["ground_density"] = self.ground_density
@@ -298,18 +324,21 @@ class Climate_Ground(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate_Ground
-        new_obj = cls()
+        obj = cls()
+        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        new_obj.ground_thermal_conductivity = _input_dict.get(
+        obj.ground_thermal_conductivity = _input_dict.get(
             "ground_thermal_conductivity")
-        new_obj.ground_heat_capacity = _input_dict.get(
+        obj.ground_heat_capacity = _input_dict.get(
             "ground_heat_capacity")
-        new_obj.ground_density = _input_dict.get("ground_density")
-        new_obj.depth_groundwater = _input_dict.get("depth_groundwater")
-        new_obj.flow_rate_groundwater = _input_dict.get(
+        obj.ground_density = _input_dict.get("ground_density")
+        obj.depth_groundwater = _input_dict.get("depth_groundwater")
+        obj.flow_rate_groundwater = _input_dict.get(
             "flow_rate_groundwater")
 
-        return new_obj
+        return obj
 
 
 class Climate(_base._Base):
@@ -340,12 +369,12 @@ class Climate(_base._Base):
 
         d["display_name"] = self.display_name
         d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["station_elevation"] = self.station_elevation
         d["summer_daily_temperature_swing"] = self.summer_daily_temperature_swing
         d["average_wind_speed"] = self.average_wind_speed
-
         d["ground"] = self.ground.to_dict()
-
         d["monthly_temps"] = self.monthly_temps.to_dict()
         d["monthly_radiation"] = self.monthly_radiation.to_dict()
         d["peak_loads"] = self.peak_loads.to_dict()
@@ -355,24 +384,26 @@ class Climate(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate
-        new_obj = cls()
+        obj = cls()
 
-        new_obj.display_name = _input_dict["display_name"]
-        new_obj.identifier = _input_dict["identifier"]
-        new_obj.station_elevation = _input_dict["station_elevation"]
-        new_obj.summer_daily_temperature_swing = _input_dict["summer_daily_temperature_swing"]
-        new_obj.average_wind_speed = _input_dict["average_wind_speed"]
+        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        new_obj.ground = Climate_Ground.from_dict(
+        obj.station_elevation = _input_dict["station_elevation"]
+        obj.summer_daily_temperature_swing = _input_dict["summer_daily_temperature_swing"]
+        obj.average_wind_speed = _input_dict["average_wind_speed"]
+
+        obj.ground = Climate_Ground.from_dict(
             _input_dict.get("ground", {}))
-        new_obj.monthly_temps = Climate_MonthlyTempCollection.from_dict(
+        obj.monthly_temps = Climate_MonthlyTempCollection.from_dict(
             _input_dict.get("monthly_temps", {}))
-        new_obj.monthly_radiation = Climate_MonthlyRadiationCollection.from_dict(
+        obj.monthly_radiation = Climate_MonthlyRadiationCollection.from_dict(
             _input_dict.get("monthly_radiation", {}))
-        new_obj.peak_loads = Climate_PeakLoadCollection.from_dict(
+        obj.peak_loads = Climate_PeakLoadCollection.from_dict(
             _input_dict.get("peak_loads", {}))
 
-        return new_obj
+        return obj
 
     def __copy__(self):
         # type: () -> Climate
@@ -380,6 +411,7 @@ class Climate(_base._Base):
         obj.set_base_attrs_from_source(self)
         for attr_nm, attr_val in vars(self).items():
             setattr(obj, attr_nm, attr_val)
+        
         return obj
 
     def duplicate(self):
@@ -409,30 +441,33 @@ class Location(_base._Base):
         # type: () -> Dict
         d = {}
 
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+
         d["latitude"] = self.latitude
         d["longitude"] = self.longitude
         d["site_elevation"] = self.site_elevation
         d["climate_zone"] = self.climate_zone
         d["hours_from_UTC"] = self.hours_from_UTC
-        d["display_name"] = self.display_name
-        d["identifier"] = self.identifier
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> Location
-        new_obj = cls(
+        obj = cls(
             _input_dict["latitude"],
             _input_dict["longitude"],
             _input_dict["site_elevation"],
             _input_dict["climate_zone"],
             _input_dict["hours_from_UTC"],
         )
-        new_obj.display_name = _input_dict["display_name"]
-        new_obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
 
-        return new_obj
+        return obj
 
     def __copy__(self):
         # type: () -> Location
@@ -475,6 +510,7 @@ class PHPPCodes(_base._Base):
         d["dataset_name"] = self.dataset_name
         d["display_name"] = self.dataset_name
         d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
 
         return d
 
@@ -488,6 +524,8 @@ class PHPPCodes(_base._Base):
         )
         obj.display_name = _input_dict["display_name"]
         obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
+
         return obj
 
     def __copy__(self):
@@ -498,6 +536,7 @@ class PHPPCodes(_base._Base):
             self.dataset_name,
         )
         obj.set_base_attrs_from_source(self)
+
         return obj
 
     def duplicate(self):
@@ -528,6 +567,7 @@ class Site(_base._Base):
         d['phpp_library_codes'] = self.phpp_library_codes.to_dict()
         d['display_name'] = self.display_name
         d['identifier'] = self.identifier
+        d["user_data"] = copy(self.user_data)
 
         return d
 
@@ -541,6 +581,7 @@ class Site(_base._Base):
         )
         obj.display_name = _input_dict["display_name"]
         obj.identifier = _input_dict["identifier"]
+        obj.user_data = _input_dict.get("user_data", {})
 
         return obj
 
