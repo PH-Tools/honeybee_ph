@@ -8,7 +8,15 @@ try:
 except:
     pass  # IronPython
 
-from honeybee_energy_ph.hvac import ventilation, heating, cooling
+try:
+    from honeybee_energy_ph.hvac import ventilation, heating, cooling
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
+
+try:
+    from ladybug_geometry.geometry3d.pointvector import Point3D
+except ImportError as e:
+    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
 
 class IdealAirSystemPhProperties_FromDictError(Exception):

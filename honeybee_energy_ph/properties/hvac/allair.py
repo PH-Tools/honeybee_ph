@@ -12,7 +12,8 @@ except:
 class AllAirSystemPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type)
+            _expected_types, _input_type
+        )
         super(AllAirSystemPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -31,28 +32,25 @@ class AllAirSystemPhProperties(object):
         # type: (bool) -> dict[str, dict]
         d = {}
         if abridged:
-            d['type'] = 'AllAirSystemPhPropertiesAbridged'
+            d["type"] = "AllAirSystemPhPropertiesAbridged"
         else:
-            d['type'] = 'AllAirSystemPhProperties'
+            d["type"] = "AllAirSystemPhProperties"
 
-        d['id_num'] = self.id_num
-        return {'ph': d}
+        d["id_num"] = self.id_num
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
         # type: (dict, Any) -> AllAirSystemPhProperties
-        valid_types = ('AllAirSystemPhProperties',
-                       'AllAirSystemPhPropertiesAbridged')
-        if _input_dict['type'] not in valid_types:
-            raise AllAirSystemPhProperties_FromDictError(
-                valid_types, _input_dict['type'])
+        valid_types = ("AllAirSystemPhProperties", "AllAirSystemPhPropertiesAbridged")
+        if _input_dict["type"] not in valid_types:
+            raise AllAirSystemPhProperties_FromDictError(valid_types, _input_dict["type"])
 
         new_prop = cls(host)
-        new_prop.id_num = _input_dict['id_num']
+        new_prop.id_num = _input_dict["id_num"]
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
-
         return
 
     def ToString(self):
@@ -61,4 +59,4 @@ class AllAirSystemPhProperties(object):
 
     def __repr__(self):
         """Properties representation."""
-        return '{}'.format(self.__class__.__name__)
+        return "{}".format(self.__class__.__name__)

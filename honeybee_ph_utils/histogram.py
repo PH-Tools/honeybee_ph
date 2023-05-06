@@ -8,7 +8,7 @@ try:
 except:
     pass  # IronPython
 
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 
 
 def generate_histogram(_data, _num_bins):
@@ -22,7 +22,7 @@ def generate_histogram(_data, _num_bins):
 
     Returns:
     --------
-        * dict[int, dict[str, float]]: ie: 
+        * dict[int, dict[str, float]]: ie:
             {
                 0: {'average_value'=12.0, 'frequency'=0.25},
                 1: {'average_value'=6.0, 'frequency'=0.34},
@@ -49,8 +49,8 @@ def generate_histogram(_data, _num_bins):
     output = {}
     for k, v in binned_data.items():
         output[k] = {
-            'average_value': (sum(v) / len(v)) if len(v) > 0 else 0,
-            'frequency': len(v) / len(_data)
+            "average_value": (sum(v) / len(v)) if len(v) > 0 else 0,
+            "frequency": len(v) / len(_data),
         }
 
     return output

@@ -74,8 +74,8 @@ class Climate_MonthlyValueSet(_base._Base):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, float]) -> Climate_MonthlyValueSet
         obj = cls()
-        obj.identifier = _input_dict["identifier"]
-        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.user_data = _input_dict.get("user_data", {})
 
         for month in cls.months:
@@ -124,8 +124,8 @@ class Climate_MonthlyTempCollection(_base._Base):
             _sky=Climate_MonthlyValueSet.from_dict(_input_dict["sky_temps"]),
             _ground=Climate_MonthlyValueSet.from_dict(_input_dict["ground_temps"]),
         )
-        obj.identifier = _input_dict["identifier"]
-        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.user_data = _input_dict.get("user_data", {})
 
         return obj
@@ -172,8 +172,8 @@ class Climate_MonthlyRadiationCollection(_base._Base):
             _west=Climate_MonthlyValueSet.from_dict(_input_dict["west"]),
             _glob=Climate_MonthlyValueSet.from_dict(_input_dict["glob"]),
         )
-        obj.identifier = _input_dict["identifier"]
-        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.user_data = _input_dict.get("user_data", {})
 
         return obj
@@ -230,8 +230,8 @@ class Climate_PeakLoadValueSet(_base._Base):
         # type: (Dict[str, float]) -> Climate_PeakLoadValueSet
         obj = cls()
 
-        obj.display_name = _input_dict["display_name"]
-        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.user_data = _input_dict.get("user_data", {})
 
         obj.temp = _input_dict["temp"]
@@ -288,8 +288,8 @@ class Climate_PeakLoadCollection(_base._Base):
             Climate_PeakLoadValueSet.from_dict(_input_dict["cooling_load_1"]),
             Climate_PeakLoadValueSet.from_dict(_input_dict["cooling_load_2"]),
         )
-        obj.display_name = _input_dict["display_name"]
-        obj.identifier = _input_dict["identifier"]
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.user_data = _input_dict.get("user_data", {})
 
         return obj
@@ -325,18 +325,18 @@ class Climate_Ground(_base._Base):
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate_Ground
         obj = cls()
-        obj.identifier = _input_dict["identifier"]
-        obj.display_name = _input_dict["display_name"]
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.user_data = _input_dict.get("user_data", {})
 
         obj.ground_thermal_conductivity = _input_dict.get(
-            "ground_thermal_conductivity")
+            "ground_thermal_conductivity", obj.ground_thermal_conductivity)
         obj.ground_heat_capacity = _input_dict.get(
-            "ground_heat_capacity")
-        obj.ground_density = _input_dict.get("ground_density")
-        obj.depth_groundwater = _input_dict.get("depth_groundwater")
+            "ground_heat_capacity", obj.ground_heat_capacity)
+        obj.ground_density = _input_dict.get("ground_density", obj.ground_density)
+        obj.depth_groundwater = _input_dict.get("depth_groundwater", obj.depth_groundwater)
         obj.flow_rate_groundwater = _input_dict.get(
-            "flow_rate_groundwater")
+            "flow_rate_groundwater", obj.flow_rate_groundwater)
 
         return obj
 
@@ -386,8 +386,8 @@ class Climate(_base._Base):
         # type: (Dict) -> Climate
         obj = cls()
 
-        obj.display_name = _input_dict["display_name"]
-        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.user_data = _input_dict.get("user_data", {})
 
         obj.station_elevation = _input_dict["station_elevation"]
@@ -463,8 +463,8 @@ class Location(_base._Base):
             _input_dict["climate_zone"],
             _input_dict["hours_from_UTC"],
         )
-        obj.display_name = _input_dict["display_name"]
-        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.user_data = _input_dict.get("user_data", {})
 
         return obj
@@ -522,8 +522,8 @@ class PHPPCodes(_base._Base):
             _input_dict["region_code"],
             _input_dict["dataset_name"],
         )
-        obj.display_name = _input_dict["display_name"]
-        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.user_data = _input_dict.get("user_data", {})
 
         return obj
@@ -579,8 +579,8 @@ class Site(_base._Base):
             Climate.from_dict(_input_dict['climate']),
             PHPPCodes.from_dict(_input_dict['phpp_library_codes']),
         )
-        obj.display_name = _input_dict["display_name"]
-        obj.identifier = _input_dict["identifier"]
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.user_data = _input_dict.get("user_data", {})
 
         return obj

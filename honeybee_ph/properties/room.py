@@ -50,7 +50,7 @@ class RoomPhProperties(object):
         self.id_num = 0
         self._spaces = list()
         self.ph_bldg_segment = BldgSegment()
-        self._ph_foundations = {} # type: Dict[str, PhFoundation]
+        self._ph_foundations = {}  # type: Dict[str, PhFoundation]
         self.specific_heat_capacity = PhSpecificHeatCapacity("1-LIGHTWEIGHT")
 
     @property
@@ -78,14 +78,16 @@ class RoomPhProperties(object):
         _host = new_host or self._host
         new_obj = RoomPhProperties(_host)
         new_obj.id_num = self.id_num
-        new_obj.specific_heat_capacity = PhSpecificHeatCapacity(self.specific_heat_capacity.value)
+        new_obj.specific_heat_capacity = PhSpecificHeatCapacity(
+            self.specific_heat_capacity.value
+        )
 
         if include_spaces:
             for sp in self._spaces:
                 new_obj._spaces.append(sp.duplicate(_host))
 
         new_obj.ph_bldg_segment = self.ph_bldg_segment.duplicate()
-        
+
         for f in self.ph_foundations:
             new_obj.add_foundation(f.duplicate())
 
@@ -125,7 +127,11 @@ class RoomPhProperties(object):
 
         new_prop = cls(host)
         new_prop.id_num = _input_dict.get("id_num", 0)
-        new_prop.specific_heat_capacity = PhSpecificHeatCapacity(_input_dict["specific_heat_capacity"])
+        new_prop.specific_heat_capacity = PhSpecificHeatCapacity(
+            _input_dict.get(
+                "specific_heat_capacity", new_prop.specific_heat_capacity.value
+            )
+        )
 
         if "ph_bldg_segment" in _input_dict.keys():
             new_prop.ph_bldg_segment = BldgSegment.from_dict(
@@ -161,7 +167,11 @@ class RoomPhProperties(object):
             * None
         """
 
-        self.specific_heat_capacity = PhSpecificHeatCapacity(room_prop_dict["specific_heat_capacity"])
+        self.specific_heat_capacity = PhSpecificHeatCapacity(
+            room_prop_dict.get(
+                "specific_heat_capacity", self.specific_heat_capacity.value
+            )
+        )
 
         # -- Set the bldg-segment attributes from the values stored at the 'Model' level
         room_ph_bldg_segment_id = room_prop_dict.get("ph_bldg_segment_id", None)
@@ -170,7 +180,7 @@ class RoomPhProperties(object):
 
         # -- Rebuild the Spaces hosted on the room
         space_dicts = room_prop_dict.get("spaces", [])
-        
+
         for space_dict in space_dicts:
             self.add_new_space(space.Space.from_dict(space_dict, self.host))
 
