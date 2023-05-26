@@ -48,6 +48,7 @@ def test_bdg_segment_round_trip_w_tbs():
 
     assert o2.to_dict() == o1.to_dict()
 
+
 def test_bdg_segment_round_trip_w_user_data():
     o1 = BldgSegment()
 
@@ -79,6 +80,7 @@ def test_bdg_segment_w_tbs_duplicate():
     o2 = o1.duplicate()
 
     assert o1.to_dict() == o2.to_dict()
+
 
 def test_bdg_segment_w_user_data_duplicate():
     o1 = BldgSegment()
