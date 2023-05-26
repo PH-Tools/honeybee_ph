@@ -4,31 +4,28 @@
 """HB-Model Passive House (PH) Properties."""
 
 try:
-    from typing import Any, Optional
+    from typing import Any, Dict, Tuple
 except ImportError:
     pass  # Python 2.7
 
 try:
-    from itertools import izip as zip
+    from itertools import izip as zip  # type: ignore
 except ImportError:
     pass  # Python3
 
 try:
-    from ladybug_geometry.geometry3d.pointvector import Point3D
-except ImportError as e:
-    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
-
-try:
     from honeybee import extensionutil
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
+
 try:
     from honeybee import extensionutil
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
 try:
-    from honeybee_ph import bldg_segment
+    from honeybee_ph.bldg_segment import BldgSegment
+    from honeybee_ph.team import ProjectTeam
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
@@ -37,6 +34,7 @@ class ModelPhProperties(object):
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
+        self.team = ProjectTeam()
 
     @property
     def host(self):
@@ -47,6 +45,7 @@ class ModelPhProperties(object):
         _host = new_host or self._host
         new_properties_obj = ModelPhProperties(_host)
         new_properties_obj.id_num = self.id_num
+        new_properties_obj.team = self.team.duplicate()
 
         return new_properties_obj
 
@@ -88,10 +87,12 @@ class ModelPhProperties(object):
             d["type"] = "ModelPhPropertiesAbridged"
             d["id_num"] = self.id_num
             d["bldg_segments"] = self._get_bldg_segment_dicts()
+            d["team"] = self.team.to_dict()
         else:
-            d["type"] = "ModelPHProperties"
+            d["type"] = "ModelPhProperties"
             d["id_num"] = self.id_num
             d["bldg_segments"] = []
+            d["team"] = self.team.to_dict()
 
         return {"ph": d}
 
@@ -104,15 +105,16 @@ class ModelPhProperties(object):
 
         new_prop = cls(host)
         new_prop.id_num = _dict.get("id_num", 0)
+        new_prop.team = ProjectTeam.from_dict(_dict.get("team", {}))
 
         return new_prop
 
     @staticmethod
     def load_properties_from_dict(data):
-        # type: (dict[str, dict]) -> dict
+        # type: (Dict[str, Dict]) -> Tuple[Dict, ProjectTeam]
         """Load the HB-Model .ph properties from an HB-Model dictionary as Python objects.
 
-        Loaded objects include: BldgSegment.......
+        Loaded objects include: BldgSegment, Team, ...
 
         The function is called when re-serializing an HB-Model object from a
         dictionary. It will load honeybee_ph entities as Python objects and returns
@@ -139,14 +141,16 @@ class ModelPhProperties(object):
             "ph" in data["properties"]
         ), "HB-Model Dictionary possesses no ModelPhProperties?"
 
-        bldg_segments = {}
+        bldg_segments_ = {}
         for seg in data["properties"]["ph"]["bldg_segments"]:
-            bldg_segments[seg["identifier"]] = bldg_segment.BldgSegment.from_dict(seg)
+            bldg_segments_[seg["identifier"]] = BldgSegment.from_dict(seg)
 
-        return bldg_segments
+        team = ProjectTeam.from_dict(data["properties"]["ph"]["team"])
+
+        return bldg_segments_, team
 
     def apply_properties_from_dict(self, data):
-        # type: (dict[str, Any]) -> None
+        # type: (Dict[str, Any]) -> None
         """Apply the .ph properties of a dictionary to the host Model of this object.
 
         This method is called when the HB-Model is de-serialized from a dict back into
@@ -174,9 +178,6 @@ class ModelPhProperties(object):
         """
         assert "ph" in data["properties"], "Dictionary possesses no ModelPhProperties?"
 
-        # re-build all of the .ph property objects from the HB-Model dict as python objects
-        bldg_segments = self.load_properties_from_dict(data)
-
         # collect lists of .ph property dictionaries at the sub-model level (room, face, etc)
         (
             room_ph_dicts,
@@ -185,6 +186,9 @@ class ModelPhProperties(object):
             ap_ph_dicts,
             dr_ph_dicts,
         ) = extensionutil.model_extension_dicts(data, "ph", [], [], [], [], [])
+
+        # re-build all of the .ph property objects from the HB-Model dict as python objects
+        bldg_segments, self.team = self.load_properties_from_dict(data)
 
         # apply the .ph properties to all the sub-model objects in the HB-Model
         for room, room_dict in zip(self.host.rooms, room_ph_dicts):
