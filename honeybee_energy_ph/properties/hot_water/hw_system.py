@@ -14,7 +14,8 @@ from honeybee_energy_ph.hvac import hot_water
 class SHWSystemPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type)
+            _expected_types, _input_type
+        )
         super(SHWSystemPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -25,10 +26,10 @@ class SHWSystemPhProperties(object):
         self._host = _host
         self.id_num = 0
 
-        self.tank_1 = None  # Optional[hot_water.PhSHWTank]
-        self.tank_2 = None  # Optional[hot_water.PhSHWTank]
-        self.tank_buffer = None  # Optional[hot_water.PhSHWTank]
-        self.tank_solar = None  # Optional[hot_water.PhSHWTank]
+        self.tank_1 = None  # type: Optional[hot_water.PhSHWTank]
+        self.tank_2 = None  # type: Optional[hot_water.PhSHWTank]
+        self.tank_buffer = None  # type: Optional[hot_water.PhSHWTank]
+        self.tank_solar = None  # type: Optional[hot_water.PhSHWTank]
 
         self._heaters = {}  # type: Dict[str, hot_water.PhHotWaterHeater]
         self._branch_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
@@ -36,8 +37,39 @@ class SHWSystemPhProperties(object):
 
         self._number_tap_points = None  # type: Optional[int]
 
-        self.recirc_temp = 60.0  # type: float
-        self.recirc_hours = 24  # type: int
+    @property
+    def total_branch_pipe_length(self):
+        # type: () -> float
+        """Returns the total length of all branch piping."""
+        return sum([v.length_m for v in self._branch_piping.values()])
+
+    @property
+    def total_recirc_pipe_length(self):
+        # type: () -> float
+        """Returns the total length of all recirculation piping."""
+        return sum([v.length_m for v in self._recirc_piping.values()])
+
+    @property
+    def recirc_temp(self):
+        # type: () -> float
+        """Return the length weighted average of recirculation piping temperatures"""
+        if not self._recirc_piping or self.total_recirc_pipe_length == 0:
+            return 60.0
+        return (
+            sum([v.water_temp * v.length_m for v in self._recirc_piping.values()])
+            / self.total_recirc_pipe_length
+        )
+
+    @property
+    def recirc_hours(self):
+        # type: () -> int
+        """Return the length-weighted average of recirculation piping hours."""
+        if not self._recirc_piping or self.total_recirc_pipe_length == 0:
+            return 24
+        return int(
+            sum([v.daily_period * v.length_m for v in self._recirc_piping.values()])
+            / self.total_recirc_pipe_length
+        )
 
     @property
     def number_tap_points(self):
@@ -70,7 +102,8 @@ class SHWSystemPhProperties(object):
             return
 
         assert hasattr(
-            _h, 'to_dict'), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
+            _h, "to_dict"
+        ), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
         self._heaters[_h.identifier] = _h
 
     def add_branch_piping(self, _branch_piping):
@@ -107,82 +140,81 @@ class SHWSystemPhProperties(object):
     def tanks(self):
         # type: () -> list[hot_water.PhSHWTank | None]
         """Return a list of the system tanks in order (1, 2, buffer, solar)."""
-        return [self.tank_1, self.tank_2,  self.tank_buffer, self.tank_solar]
+        return [self.tank_1, self.tank_2, self.tank_buffer, self.tank_solar]
 
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
         d = {}
         if abridged:
-            d['type'] = 'SHWSystemPhPropertiesAbridged'
+            d["type"] = "SHWSystemPhPropertiesAbridged"
         else:
-            d['type'] = 'SHWSystemPhProperties'
+            d["type"] = "SHWSystemPhProperties"
 
-        d['id_num'] = self.id_num
+        d["id_num"] = self.id_num
         if self.tank_1:
-            d['tank_1'] = self.tank_1.to_dict()
+            d["tank_1"] = self.tank_1.to_dict()
         if self.tank_2:
-            d['tank_2'] = self.tank_2.to_dict()
+            d["tank_2"] = self.tank_2.to_dict()
         if self.tank_buffer:
-            d['tank_buffer'] = self.tank_buffer.to_dict()
+            d["tank_buffer"] = self.tank_buffer.to_dict()
         if self.tank_solar:
-            d['tank_solar'] = self.tank_solar.to_dict()
+            d["tank_solar"] = self.tank_solar.to_dict()
 
-        d['heaters'] = {}
+        d["heaters"] = {}
         for heater in self.heaters:
-            d['heaters'][id(heater)] = heater.to_dict()
+            d["heaters"][id(heater)] = heater.to_dict()
 
-        d['branch_piping'] = {}
+        d["branch_piping"] = {}
         for branch_piping in self.branch_piping:
-            d['branch_piping'][branch_piping.identifier] = branch_piping.to_dict()
+            d["branch_piping"][branch_piping.identifier] = branch_piping.to_dict()
 
-        d['recirc_piping'] = {}
+        d["recirc_piping"] = {}
         for recirc_piping in self.recirc_piping:
-            d['recirc_piping'][recirc_piping.identifier] = recirc_piping.to_dict()
+            d["recirc_piping"][recirc_piping.identifier] = recirc_piping.to_dict()
 
-        d['number_tap_points'] = self._number_tap_points
-        d['recirc_temp'] = self.recirc_temp
-        d['recirc_hours'] = self.recirc_hours
+        d["number_tap_points"] = self._number_tap_points
+        d["recirc_temp"] = self.recirc_temp
+        d["recirc_hours"] = self.recirc_hours
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, _host):
         # type: (dict, Any) -> SHWSystemPhProperties
-        valid_types = ('SHWSystemPhProperties',
-                       'SHWSystemPhPropertiesAbridged')
-        if _input_dict['type'] not in valid_types:
-            raise SHWSystemPhProperties_FromDictError(valid_types, _input_dict['type'])
+        valid_types = ("SHWSystemPhProperties", "SHWSystemPhPropertiesAbridged")
+        if _input_dict["type"] not in valid_types:
+            raise SHWSystemPhProperties_FromDictError(valid_types, _input_dict["type"])
 
         new_prop = cls(_host)
-        new_prop.id_num = _input_dict['id_num']
+        new_prop.id_num = _input_dict["id_num"]
 
-        if _input_dict.get('tank_1', None):
-            new_prop.tank_1 = hot_water.PhSHWTank.from_dict(
-                _input_dict['tank_1'])
-        if _input_dict.get('tank_2', None):
-            new_prop.tank_2 = hot_water.PhSHWTank.from_dict(
-                _input_dict['tank_2'])
-        if _input_dict.get('tank_buffer', None):
+        if _input_dict.get("tank_1", None):
+            new_prop.tank_1 = hot_water.PhSHWTank.from_dict(_input_dict["tank_1"])
+        if _input_dict.get("tank_2", None):
+            new_prop.tank_2 = hot_water.PhSHWTank.from_dict(_input_dict["tank_2"])
+        if _input_dict.get("tank_buffer", None):
             new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(
-                _input_dict['tank_buffer'])
-        if _input_dict.get('tank_buffer', None):
+                _input_dict["tank_buffer"]
+            )
+        if _input_dict.get("tank_buffer", None):
             new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(
-                _input_dict['tank_buffer'])
+                _input_dict["tank_buffer"]
+            )
 
-        for heater_dict in _input_dict['heaters'].values():
+        for heater_dict in _input_dict["heaters"].values():
             new_prop.add_heater(hot_water.PhSHWHeaterBuilder.from_dict(heater_dict))
 
-        for branch_piping_dict in _input_dict['branch_piping'].values():
+        for branch_piping_dict in _input_dict["branch_piping"].values():
             new_prop.add_branch_piping(
-                hot_water.PhPipeElement.from_dict(branch_piping_dict))
+                hot_water.PhPipeElement.from_dict(branch_piping_dict)
+            )
 
-        for recirc_piping_dict in _input_dict['recirc_piping'].values():
+        for recirc_piping_dict in _input_dict["recirc_piping"].values():
             new_prop.add_recirc_piping(
-                hot_water.PhPipeElement.from_dict(recirc_piping_dict))
+                hot_water.PhPipeElement.from_dict(recirc_piping_dict)
+            )
 
-        new_prop._number_tap_points = _input_dict['number_tap_points']
-        new_prop.recirc_temp = _input_dict['recirc_temp']
-        new_prop.recirc_hours = _input_dict['recirc_hours']
+        new_prop._number_tap_points = _input_dict["number_tap_points"]
 
         return new_prop
 
@@ -214,8 +246,6 @@ class SHWSystemPhProperties(object):
             new_obj._recirc_piping[k] = v.duplicate()
 
         new_obj._number_tap_points = self._number_tap_points
-        new_obj.recirc_temp = self.recirc_temp
-        new_obj.recirc_hours = self.recirc_hours
 
         return new_obj
 
@@ -224,12 +254,18 @@ class SHWSystemPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return '{}: id={}'.format(self.__class__.__name__, self.id_num)
+        return "{}: id={}".format(self.__class__.__name__, self.id_num)
 
     def __repr__(self):
         """Properties representation."""
-        return '{!r}(id_num={!r}, tank_1={!r}, tank_2={!r}, tank_buffer={!r}, tank_solar={!r})'.format(
-            self.__class__.__name__, self.id_num, self.tank_1, self.tank_2, self.tank_buffer, self.tank_solar)
+        return "{!r}(id_num={!r}, tank_1={!r}, tank_2={!r}, tank_buffer={!r}, tank_solar={!r})".format(
+            self.__class__.__name__,
+            self.id_num,
+            self.tank_1,
+            self.tank_2,
+            self.tank_buffer,
+            self.tank_solar,
+        )
 
     def ToString(self):
         """Overwrite .NET ToString."""
