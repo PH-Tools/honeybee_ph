@@ -92,3 +92,12 @@ class _PhHVACBase(object):
         obj.user_data = copy(self.user_data)
 
         return obj
+    
+    def __eq__(self, other):
+        # type: (_PhHVACBase) -> bool
+        for k, v in self.__dict__.items():
+            if v != getattr(other, k):
+                if str(v) != str(getattr(other, k)): # Handle UUID Identifier
+                    return False
+        return True
+    

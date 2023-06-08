@@ -25,16 +25,19 @@ class SHWSystemPhProperties(object):
         self._host = _host
         self.id_num = 0
 
-        self.tank_1 = None  # Optional[PhSHWTank]
-        self.tank_2 = None  # Optional[PhSHWTank]
-        self.tank_buffer = None  # Optional[PhSHWTank]
-        self.tank_solar = None  # Optional[PhSHWTank]
+        self.tank_1 = None  # Optional[hot_water.PhSHWTank]
+        self.tank_2 = None  # Optional[hot_water.PhSHWTank]
+        self.tank_buffer = None  # Optional[hot_water.PhSHWTank]
+        self.tank_solar = None  # Optional[hot_water.PhSHWTank]
 
         self._heaters = {}  # type: Dict[str, hot_water.PhHotWaterHeater]
         self._branch_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
         self._recirc_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
 
         self._number_tap_points = None  # type: Optional[int]
+
+        self.recirc_temp = 60.0  # type: float
+        self.recirc_hours = 24  # type: int
 
     @property
     def number_tap_points(self):
@@ -137,6 +140,8 @@ class SHWSystemPhProperties(object):
             d['recirc_piping'][recirc_piping.identifier] = recirc_piping.to_dict()
 
         d['number_tap_points'] = self._number_tap_points
+        d['recirc_temp'] = self.recirc_temp
+        d['recirc_hours'] = self.recirc_hours
 
         return {'ph': d}
 
@@ -176,6 +181,8 @@ class SHWSystemPhProperties(object):
                 hot_water.PhPipeElement.from_dict(recirc_piping_dict))
 
         new_prop._number_tap_points = _input_dict['number_tap_points']
+        new_prop.recirc_temp = _input_dict['recirc_temp']
+        new_prop.recirc_hours = _input_dict['recirc_hours']
 
         return new_prop
 
@@ -207,6 +214,8 @@ class SHWSystemPhProperties(object):
             new_obj._recirc_piping[k] = v.duplicate()
 
         new_obj._number_tap_points = self._number_tap_points
+        new_obj.recirc_temp = self.recirc_temp
+        new_obj.recirc_hours = self.recirc_hours
 
         return new_obj
 

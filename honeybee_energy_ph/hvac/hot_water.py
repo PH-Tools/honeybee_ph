@@ -36,8 +36,10 @@ class PhPipeSegment(_base._PhHVACBase):
                  _insul_conductivity=0.04, 
                  _insul_refl=True, 
                  _insul_quality=None, 
-                 _daily_period=24.0):
-        # type: (LineSegment3D, float, float, float, bool, None, float) -> None
+                 _daily_period=24,
+                 _water_temp=60.0,
+                 *args, **kwargs):
+        # type: (LineSegment3D, float, float, float, bool, None, float, float, *Any, **Any) -> None
         super(PhPipeSegment, self).__init__()
         self.geometry = _geom
         self.diameter_m = _diameter_m
@@ -46,6 +48,7 @@ class PhPipeSegment(_base._PhHVACBase):
         self.insulation_reflective = _insul_refl
         self.insulation_quality = _insul_quality
         self.daily_period = _daily_period
+        self.water_temp = _water_temp
 
     @property
     def length_m(self):
@@ -62,6 +65,7 @@ class PhPipeSegment(_base._PhHVACBase):
         new_obj.insulation_reflective = self.insulation_reflective
         new_obj.insulation_quality = self.insulation_quality
         new_obj.daily_period = self.daily_period
+        new_obj.water_temp = self.water_temp
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.user_data = copy(self.user_data)
@@ -82,6 +86,7 @@ class PhPipeSegment(_base._PhHVACBase):
         d['insulation_reflective'] = self.insulation_reflective
         d['insulation_quality'] = self.insulation_quality
         d['daily_period'] = self.daily_period
+        d['water_temp'] = self.water_temp
         return d
 
     @classmethod
@@ -96,6 +101,7 @@ class PhPipeSegment(_base._PhHVACBase):
         new_obj.insulation_reflective = _input_dict['insulation_reflective']
         new_obj.insulation_quality = _input_dict['insulation_quality']
         new_obj.daily_period = _input_dict['daily_period']
+        new_obj.water_temp = _input_dict['water_temp']
         new_obj.identifier = _input_dict['identifier']
         new_obj.display_name = _input_dict['display_name']
         new_obj.user_data = _input_dict['user_data']
@@ -128,6 +134,16 @@ class PhPipeElement(_base._PhHVACBase):
     def length_m(self):
         # type: () -> float
         return sum(s.length_m for s in self.segments)
+
+    @property
+    def water_temp(self):
+        # Return the length-weighted average water temperature of all the pipe segments
+        return sum(s.length_m * s.water_temp for s in self.segments) / self.length_m
+
+    @property
+    def daily_period(self):
+        # Return the length-weighted average daily period of all the pipe segments
+        return sum(s.length_m * s.daily_period for s in self.segments) / self.length_m
 
     def add_segment(self, _segment):
         # type: (PhPipeSegment) -> None
@@ -295,7 +311,7 @@ class PhSHWTank(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-
+    
 # -- Heaters ------------------------------------------------------------------
 
 
