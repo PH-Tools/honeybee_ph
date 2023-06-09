@@ -124,8 +124,8 @@ class PhDuctSegment(_base._PhHVACBase):
 class PhDuctElement(_base._PhHVACBase):
     """A Duct Element made up of one or more individual Duct Segments."""
 
-    def __init__(self, _display_name=None, _duct_type=1):
-        # type: (Optional[str], int) -> None
+    def __init__(self, _display_name=None, _duct_type=1, *args, **kwargs):
+        # type: (Optional[str], int, *Any, **Any) -> None
         super(PhDuctElement, self).__init__()
         self.display_name = _display_name or self.identifier_short
         self.duct_type = _duct_type
@@ -150,21 +150,21 @@ class PhDuctElement(_base._PhHVACBase):
             return seg.shape_type
 
     @classmethod
-    def default_supply_duct(cls):
-        # type: () -> PhDuctElement
+    def default_supply_duct(cls, *args, **kwargs):
+        # type: (*Any, **Any) -> PhDuctElement
         """Returns a default PhDuctElement with a single segment and a length of 1.0"""
 
-        duct_element = cls()
+        duct_element = cls(*args, **kwargs)
         duct_element.duct_type = 1
         duct_element.add_segment(PhDuctSegment.default())
         return duct_element
     
     @classmethod
-    def default_exhaust_duct(cls):
-        # type: () -> PhDuctElement
+    def default_exhaust_duct(cls, *args, **kwargs):
+        # type: (*Any, **Any) -> PhDuctElement
         """Returns a default PhDuctElement with a single segment and a length of 1.0"""
 
-        duct_element = cls()
+        duct_element = cls(*args, **kwargs)
         duct_element.duct_type = 2
         duct_element.add_segment(PhDuctSegment.default())
         return duct_element

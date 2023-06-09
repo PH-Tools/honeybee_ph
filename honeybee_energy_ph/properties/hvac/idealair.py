@@ -10,6 +10,7 @@ except:
 
 try:
     from honeybee_energy_ph.hvac import ventilation, heating, cooling
+    from honeybee_energy_ph.hvac.supportive_device import PhSupportiveDevice
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
 
@@ -37,6 +38,7 @@ class IdealAirSystemPhProperties(object):
         self.heating_systems = set()  # type: set[heating.PhHeatingSystem]
         self.cooling_systems = set()  # type: set[cooling.PhCoolingSystem]
         self.exhaust_vent_devices = set()  # type: set[ventilation._ExhaustVentilatorBase]
+        self.supportive_devices = set()  # type: set[PhSupportiveDevice]
 
     @property
     def host(self):
@@ -72,6 +74,11 @@ class IdealAirSystemPhProperties(object):
             for sys in sorted([_ for _ in self.exhaust_vent_devices if _ is not None])
         ]
 
+        d["supportive_devies"] = [
+            device.to_dict()
+            for device in sorted([_ for _ in self.supportive_devices if _ is not None])
+        ]
+
         return {"ph": d}
 
     @classmethod
@@ -105,6 +112,12 @@ class IdealAirSystemPhProperties(object):
             )
             new_prop.exhaust_vent_devices.add(exhaust_device)
 
+        for supportive_device_dict in _input_dict.get("supportive_devies", []):
+            supportive_device = PhSupportiveDevice.from_dict(
+                supportive_device_dict
+            )
+            new_prop.supportive_devices.add(supportive_device)
+
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
@@ -130,6 +143,9 @@ class IdealAirSystemPhProperties(object):
 
         for exhaust_device in self.exhaust_vent_devices:
             new_obj.exhaust_vent_devices.add(exhaust_device)
+
+        for supportive_device in self.supportive_devices:
+            new_obj.supportive_devices.add(supportive_device)
 
         return new_obj
 

@@ -1,5 +1,5 @@
 from honeybee_energy_ph.properties.hvac import idealair
-from honeybee_energy_ph.hvac import ventilation, heating, cooling
+from honeybee_energy_ph.hvac import ventilation, heating, cooling, supportive_device
 
 
 def test_default_empty_system_dict_roundtrip():
@@ -74,6 +74,29 @@ def test_duplicate_system_with_vent_sys():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)
     s1 = ventilation.PhVentilationSystem()
     p1.ventilation_system = s1
+
+    p2 = p1.duplicate()
+    assert p2.to_dict() == p1.to_dict()
+
+
+# -----------------------------------------------------------------------------
+# -- Supportive Devices
+
+
+def test_system_with_supportive_device_dict_roundtrip():
+    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    d1 = supportive_device.PhSupportiveDevice()
+    p1.supportive_devices.add(d1)
+
+    d = p1.to_dict()
+    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    assert p2.to_dict() == d
+
+
+def test_system_with_supportive_device_dict_ducplicate():
+    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    d1 = supportive_device.PhSupportiveDevice()
+    p1.supportive_devices.add(d1)
 
     p2 = p1.duplicate()
     assert p2.to_dict() == p1.to_dict()
