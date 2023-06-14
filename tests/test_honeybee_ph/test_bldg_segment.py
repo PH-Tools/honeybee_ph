@@ -1,5 +1,5 @@
 from ladybug_geometry.geometry3d import Point3D, LineSegment3D
-from honeybee_ph.bldg_segment import SetPoints, BldgSegment
+from honeybee_ph.bldg_segment import SetPoints, BldgSegment, PhVentilationSummerBypassMode
 from honeybee_energy_ph.construction.thermal_bridge import PhThermalBridge
 
 
@@ -92,3 +92,20 @@ def test_bdg_segment_w_user_data_duplicate():
 
     assert "test_key" in o2.user_data
     assert o1.to_dict() == o2.to_dict()
+
+
+def test_set_summer_bypass_mode_roundtrip():
+    seg1 = BldgSegment()
+    seg1.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(2)
+
+    d1 = seg1.to_dict()
+    seg2 = BldgSegment.from_dict(d1)
+    assert seg2.summer_hrv_bypass_mode == seg1.summer_hrv_bypass_mode
+
+
+def test_set_summer_bypass_mode_duplicate():
+    seg1 = BldgSegment()
+    seg1.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(2)
+
+    seg2 = seg1.duplicate()
+    assert seg2.summer_hrv_bypass_mode == seg1.summer_hrv_bypass_mode

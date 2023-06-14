@@ -11,15 +11,16 @@ except ImportError:
 
 class ValueNotAllowedError(Exception):
     def __init__(self, _in, _enum):
-        self.message = 'Value: {} not allowed for enum {}.\nValid input: {} '.format(
-            str(_in), _enum.__class__.__name__, _enum.allowed)
+        self.message = "Value: {} not allowed for enum {}.\nValid input: {} ".format(
+            str(_in), _enum.__class__.__name__, _enum.allowed
+        )
         super(ValueNotAllowedError, self).__init__(self.message)
 
 
 class CustomEnum(object):
     allowed = []  # type: list[str]
 
-    def __init__(self, _value='', _index_offset=-1):
+    def __init__(self, _value="", _index_offset=-1):
         # type: (Union[str, int], int) -> None
 
         # Standard offset is 1 since most listings start at 1 (but not all)
@@ -41,9 +42,9 @@ class CustomEnum(object):
     @value.setter
     def value(self, _in):
         # type: (Union[str, int]) -> None
-        """Allows the user to set the .value as one of the allowed values. If an 
-            integer is passed in, will attempt to find the corresponding value from the 
-            allowed-values list (1-based, ie: user-input '1' -> self.allowed.index(0) ).
+        """Allows the user to set the .value as one of the allowed values. If an
+        integer is passed in, will attempt to find the corresponding value from the
+        allowed-values list (1-based, ie: user-input '1' -> self.allowed.index(0) ).
         """
 
         if str(_in).upper() in self.allowed_upper:
@@ -62,7 +63,9 @@ class CustomEnum(object):
         return self.allowed_upper.index(self.value) - self.index_offset
 
     def __str__(self):
-        return "{}(_value={} [number={}])".format(self.__class__.__name__, self.value, self.number)
+        return "{}(_value={} [number={}])".format(
+            self.__class__.__name__, self.value, self.number
+        )
 
     def __repr__(self):
         return str(self)
@@ -73,11 +76,15 @@ class CustomEnum(object):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = {}
-        d['value'] = self.value
+        d["value"] = self.value
         return d
 
     @classmethod
     def from_dict(cls, _dict):
         # type: (dict[str, Any]) -> CustomEnum
-        obj = cls(_dict.get('value', 1))
+        obj = cls(_dict.get("value", 1))
         return obj
+
+    def __eq__(self, other):
+        # type: (CustomEnum) -> bool
+        return self.value == other.value and self.__class__ == other.__class__

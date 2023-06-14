@@ -13,6 +13,15 @@ except ImportError:
 from honeybee_ph import _base, phius, phi, site
 from honeybee_ph_standards.sourcefactors import factors
 from honeybee_energy_ph.construction import thermal_bridge
+from honeybee_ph_utils import enumerables
+
+
+class PhVentilationSummerBypassMode(enumerables.CustomEnum):
+    allowed = ["1-None", "2-Temperatur Controlled", "3-Enthalpy Controlled", "4-Always"]
+
+    def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
+        super(PhVentilationSummerBypassMode, self).__init__(_value)
 
 
 class SetPoints(_base._Base):
@@ -72,6 +81,7 @@ class BldgSegment(_base._Base):
         self.mech_room_temp = 20.0
         self.non_combustible_materials = False
         self.thermal_bridges = {}  # type: Dict[str, thermal_bridge.PhThermalBridge]
+        self.summer_hrv_bypass_mode = PhVentilationSummerBypassMode("4-Always")
 
     def add_new_thermal_bridge(self, tb):
         # type: (thermal_bridge.PhThermalBridge) -> None
@@ -97,6 +107,7 @@ class BldgSegment(_base._Base):
         for tb in self.thermal_bridges.values():
             d["thermal_bridges"][str(tb.identifier)] = tb.to_dict()
         d["user_data"] = self.user_data
+        d["summer_hrv_bypass_mode"] = self.summer_hrv_bypass_mode.to_dict()
         return d
 
     @classmethod
@@ -128,6 +139,9 @@ class BldgSegment(_base._Base):
             tb_obj = thermal_bridge.PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
         obj.user_data = _dict.get("user_data", {})
+        obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode.from_dict(
+            _dict.get("summer_hrv_bypass_mode", {})
+        )
         return obj
 
     def __copy__(self):
@@ -150,7 +164,9 @@ class BldgSegment(_base._Base):
         for tb_k, tb_v in self.thermal_bridges.items():
             new_obj.thermal_bridges[tb_k] = tb_v.duplicate()
         new_obj.user_data = self.user_data
-
+        new_obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(
+            self.summer_hrv_bypass_mode.value
+        )
         return new_obj
 
     def duplicate(self):
