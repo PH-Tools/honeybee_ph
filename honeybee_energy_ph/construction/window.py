@@ -25,23 +25,23 @@ class PhWindowFrameElement(_base._Base):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhWindowFrameElement, self).to_dict()
-        d['width'] = self.width
-        d['u_factor'] = self.u_factor
-        d['psi_glazing'] = self.psi_glazing
-        d['psi_install'] = self.psi_install
-        d['chi_value'] = self.chi_value
+        d["width"] = self.width
+        d["u_factor"] = self.u_factor
+        d["psi_glazing"] = self.psi_glazing
+        d["psi_install"] = self.psi_install
+        d["chi_value"] = self.chi_value
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhWindowFrameElement
-        new_obj = cls(_input_dict['identifier'])
+        new_obj = cls(_input_dict["identifier"])
         new_obj.set_base_attrs_from_dict(_input_dict)
-        new_obj.width = _input_dict['width']
-        new_obj.u_factor = _input_dict['u_factor']
-        new_obj.psi_glazing = _input_dict['psi_glazing']
-        new_obj.psi_install = _input_dict['psi_install']
-        new_obj.chi_value = _input_dict['chi_value']
+        new_obj.width = _input_dict["width"]
+        new_obj.u_factor = _input_dict["u_factor"]
+        new_obj.psi_glazing = _input_dict["psi_glazing"]
+        new_obj.psi_install = _input_dict["psi_install"]
+        new_obj.chi_value = _input_dict["chi_value"]
         return new_obj
 
     def duplicate(self):
@@ -60,8 +60,14 @@ class PhWindowFrameElement(_base._Base):
         return new_obj
 
     def __str__(self):
-        return '{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f}, chi_value={:.3f})'.format(
-            self.__class__.__name__, self.width, self.u_factor, self.psi_glazing, self.psi_install, self.chi_value)
+        return "{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f}, chi_value={:.3f})".format(
+            self.__class__.__name__,
+            self.width,
+            self.u_factor,
+            self.psi_glazing,
+            self.psi_install,
+            self.chi_value,
+        )
 
     def __repr__(self):
         return str(self)
@@ -75,10 +81,10 @@ class PhWindowFrame(_base._Base):
 
     def __init__(self, _identifier):
         super(PhWindowFrame, self).__init__(_identifier)
-        self.top = PhWindowFrameElement('PhWindowFrameElement')
-        self.right = PhWindowFrameElement('PhWindowFrameElement')
-        self.bottom = PhWindowFrameElement('PhWindowFrameElement')
-        self.left = PhWindowFrameElement('PhWindowFrameElement')
+        self.top = PhWindowFrameElement("PhWindowFrameElement")
+        self.right = PhWindowFrameElement("PhWindowFrameElement")
+        self.bottom = PhWindowFrameElement("PhWindowFrameElement")
+        self.left = PhWindowFrameElement("PhWindowFrameElement")
 
     @property
     def elements(self):
@@ -89,21 +95,21 @@ class PhWindowFrame(_base._Base):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhWindowFrame, self).to_dict()
-        d['top'] = self.top.to_dict()
-        d['right'] = self.right.to_dict()
-        d['bottom'] = self.bottom.to_dict()
-        d['left'] = self.left.to_dict()
+        d["top"] = self.top.to_dict()
+        d["right"] = self.right.to_dict()
+        d["bottom"] = self.bottom.to_dict()
+        d["left"] = self.left.to_dict()
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhWindowFrame
-        new_obj = cls(_input_dict['identifier'])
+        new_obj = cls(_input_dict["identifier"])
         new_obj.set_base_attrs_from_dict(_input_dict)
-        new_obj.top = PhWindowFrameElement.from_dict(_input_dict['top'])
-        new_obj.right = PhWindowFrameElement.from_dict(_input_dict['right'])
-        new_obj.bottom = PhWindowFrameElement.from_dict(_input_dict['bottom'])
-        new_obj.left = PhWindowFrameElement.from_dict(_input_dict['left'])
+        new_obj.top = PhWindowFrameElement.from_dict(_input_dict["top"])
+        new_obj.right = PhWindowFrameElement.from_dict(_input_dict["right"])
+        new_obj.bottom = PhWindowFrameElement.from_dict(_input_dict["bottom"])
+        new_obj.left = PhWindowFrameElement.from_dict(_input_dict["left"])
         return new_obj
 
     def duplicate(self):
@@ -121,8 +127,9 @@ class PhWindowFrame(_base._Base):
         return new_obj
 
     def __str__(self):
-        return '{}(top={!r}, right={!r}, bottom={!r}, left={!r})'.format(
-            self.__class__.__name__, self.top, self.right, self.bottom, self.left)
+        return "{}(top={!r}, right={!r}, bottom={!r}, left={!r})".format(
+            self.__class__.__name__, self.top, self.right, self.bottom, self.left
+        )
 
     def __repr__(self):
         return str(self)
@@ -140,17 +147,17 @@ class PhWindowGlazing(_base._Base):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhWindowGlazing, self).to_dict()
-        d['u_factor'] = self.u_factor
-        d['g_value'] = self.g_value
+        d["u_factor"] = self.u_factor
+        d["g_value"] = self.g_value
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhWindowGlazing
-        new_obj = cls(_input_dict['identifier'])
+        new_obj = cls(_input_dict["identifier"])
         new_obj.set_base_attrs_from_dict(_input_dict)
-        new_obj.u_factor = _input_dict['u_factor']
-        new_obj.g_value = _input_dict['g_value']
+        new_obj.u_factor = _input_dict["u_factor"]
+        new_obj.g_value = _input_dict["g_value"]
         return new_obj
 
     def duplicate(self):
@@ -166,8 +173,9 @@ class PhWindowGlazing(_base._Base):
         return new_obj
 
     def __str__(self):
-        return '{}(u_factor={:.3f}, g_value={:.3f})'.format(
-            self.__class__.__name__, self.u_factor, self.g_value)
+        return "{}(u_factor={:.3f}, g_value={:.3f})".format(
+            self.__class__.__name__, self.u_factor, self.g_value
+        )
 
     def __repr__(self):
         return str(self)

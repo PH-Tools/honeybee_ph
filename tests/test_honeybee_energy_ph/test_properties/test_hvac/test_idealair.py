@@ -1,5 +1,11 @@
 from honeybee_energy_ph.properties.hvac import idealair
-from honeybee_energy_ph.hvac import ventilation, heating, cooling, supportive_device
+from honeybee_energy_ph.hvac import (
+    ventilation,
+    heating,
+    cooling,
+    supportive_device,
+)
+from honeybee_energy_ph.hvac.renewable_devices import PhPhotovoltaicDevice
 
 
 def test_default_empty_system_dict_roundtrip():
@@ -186,6 +192,51 @@ def test_duplicate_system_with_single_cooling_sys():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)
     s1 = cooling.PhCoolingRecirculation()
     p1.cooling_systems.add(s1)
+    assert p1.ToString()
+
+    p2 = p1.duplicate()
+    assert p2.to_dict() == p1.to_dict()
+
+
+# -----------------------------------------------------------------------------
+# -- Renewable Devices
+
+
+def test_system_with_single_renewable_device_dict_roundtrip():
+    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    d1 = PhPhotovoltaicDevice()
+    p1.renewable_devices.add(d1)
+    p1.renewable_devices.add(None)
+    assert p1.ToString()
+
+    d = p1.to_dict()
+    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    assert p2.to_dict() == d
+
+
+def test_system_with_multiple_renewable_devices_dict_roundtrip():
+    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    d1 = PhPhotovoltaicDevice()
+    d2 = PhPhotovoltaicDevice()
+    d3 = PhPhotovoltaicDevice()
+    p1.renewable_devices.add(d1)
+    p1.renewable_devices.add(d2)
+    p1.renewable_devices.add(d3)
+    assert p1.ToString()
+
+    d = p1.to_dict()
+    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    assert p2.to_dict() == d
+
+
+def test_duplicate_system_with_multiple_renewable_devices():
+    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    d1 = PhPhotovoltaicDevice()
+    d2 = PhPhotovoltaicDevice()
+    d3 = PhPhotovoltaicDevice()
+    p1.renewable_devices.add(d1)
+    p1.renewable_devices.add(d2)
+    p1.renewable_devices.add(d3)
     assert p1.ToString()
 
     p2 = p1.duplicate()

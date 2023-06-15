@@ -347,12 +347,11 @@ class PhHeatingSystemBuilder(object):
     def from_dict(cls, _input_dict):
         # type: (dict[str, Any]) -> PhHeatingSystem
         """Find the right appliance constructor class from the module based on the 'type' name."""
-        heating_type = _input_dict.get("heating_type")
-
         valid_class_types = [
             nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")
         ]
 
+        heating_type = _input_dict["heating_type"]
         if heating_type not in valid_class_types:
             raise UnknownPhHeatingTypeError(valid_class_types, heating_type)
         heating_class = getattr(sys.modules[__name__], heating_type)
