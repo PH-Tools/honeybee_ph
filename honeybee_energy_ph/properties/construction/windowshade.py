@@ -4,16 +4,19 @@
 """Passive House properties for honeybee_energy.construction.window.WindowConstructionShade Objects"""
 
 try:
-    from typing import Any, Dict, Collection
+    from typing import Any, Dict, Collection, Optional
 except ImportError:
     pass  # Python 2.7
+
+from honeybee_energy_ph.construction import window
 
 
 class WindowConstructionShadePhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        #type: (Collection[str], Dict[str, Any]) -> None
+        # type: (Collection[str], Dict[str, Any]) -> None
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type)
+            _expected_types, _input_type
+        )
         super(WindowConstructionShadePhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -22,6 +25,8 @@ class WindowConstructionShadePhProperties(object):
         # type: (Any) -> None
         self._host = _host
         self.id_num = 0
+        self.ph_frame = None  # type: Optional[window.PhWindowFrame]
+        self.ph_glazing = None  # type: Optional[window.PhWindowGlazing]
 
     @property
     def host(self):
@@ -37,6 +42,10 @@ class WindowConstructionShadePhProperties(object):
 
         new_obj = self.__class__(host)
         new_obj.id_num = self.id_num
+        if self.ph_frame:
+            new_obj.ph_frame = self.ph_frame.duplicate()
+        if self.ph_glazing:
+            new_obj.ph_glazing = self.ph_glazing.duplicate()
 
         return new_obj
 
@@ -45,29 +54,44 @@ class WindowConstructionShadePhProperties(object):
         d = {}
 
         if abridged:
-            d['type'] = 'WindowConstructionShadePhPropertiesAbridged'
+            d["type"] = "WindowConstructionShadePhPropertiesAbridged"
         else:
-            d['type'] = 'WindowConstructionShadePhProperties'
+            d["type"] = "WindowConstructionShadePhProperties"
 
-        d['id_num'] = self.id_num
+        d["id_num"] = self.id_num
+        if self.ph_frame:
+            d["ph_frame"] = self.ph_frame.to_dict()
+        if self.ph_glazing:
+            d["ph_glazing"] = self.ph_glazing.to_dict()
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
         # type: (Dict[str, Any], Any) -> WindowConstructionShadePhProperties
-        valid_types = ('WindowConstructionShadePhProperties',
-                       'WindowConstructionShadePhPropertiesAbridged')
-        if _input_dict['type'] not in valid_types:
+        valid_types = (
+            "WindowConstructionShadePhProperties",
+            "WindowConstructionShadePhPropertiesAbridged",
+        )
+        if _input_dict["type"] not in valid_types:
             raise WindowConstructionShadePhProperties_FromDictError(
-                valid_types, _input_dict['type'])
+                valid_types, _input_dict["type"]
+            )
 
         new_obj = cls(host)
-        new_obj.id_num = _input_dict['id_num']
+        new_obj.id_num = _input_dict["id_num"]
+        if "ph_frame" in _input_dict:
+            new_obj.ph_frame = window.PhWindowFrame.from_dict(_input_dict["ph_frame"])
+        if "ph_glazing" in _input_dict:
+            new_obj.ph_glazing = window.PhWindowGlazing.from_dict(
+                _input_dict["ph_glazing"]
+            )
         return new_obj
 
     def __str__(self):
-        return '{}(id_num={!r})'.format(self.__class__.__name__, self.id_num)
+        return "{}(frame={!r}, glazing={!r})".format(
+            self.__class__.__name__, self.ph_frame, self.ph_glazing
+        )
 
     def __repr__(self):
         return str(self)
