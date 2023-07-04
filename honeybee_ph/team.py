@@ -4,7 +4,7 @@
 """Project Team-Member Classes."""
 
 try:
-    from typing import Dict, Any
+    from typing import Dict, Any, Optional
 except ImportError:
     pass  # Python 2.7
 
@@ -12,15 +12,15 @@ except ImportError:
 class ProjectTeamMember:
     def __init__(
         self,
-        _name="",
-        _street="",
-        _city="",
-        _post_code="",
-        _telephone="",
-        _email="",
-        _license_number="",
+        _name=None,
+        _street=None,
+        _city=None,
+        _post_code=None,
+        _telephone=None,
+        _email=None,
+        _license_number=None,
     ):
-        # type: (str, str, str, str, str, str, str) -> None
+        # type: (Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]) -> None
         self.name = _name
         self.street = _street
         self.city = _city
