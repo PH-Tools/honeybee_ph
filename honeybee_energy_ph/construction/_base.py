@@ -8,11 +8,13 @@ try:
 except ImportError:
     pass  # Python 2.7
 
-from honeybee.typing import valid_ep_string
+from honeybee.typing import (
+    valid_ep_string,
+    clean_ep_string,
+)
 
 
 class _Base(object):
-
     def __init__(self, _identifier):
         self.id_num = 0
         self._identifier = _identifier  # type: str
@@ -26,7 +28,9 @@ class _Base(object):
 
     @identifier.setter
     def identifier(self, identifier):
-        self._identifier = valid_ep_string(str(identifier), 'construction identifier')
+        self._identifier = valid_ep_string(
+            clean_ep_string(str(identifier)), "construction identifier"
+        )
 
     @property
     def display_name(self):
@@ -60,27 +64,29 @@ class _Base(object):
     def user_data(self, value):
         # type: (dict) -> None
         if value is not None:
-            assert isinstance(value, dict), 'Expected dictionary for honeybee_energy_ph' \
-                'object user_data. Got {}.'.format(type(value))
+            assert isinstance(value, dict), (
+                "Expected dictionary for honeybee_energy_ph"
+                "object user_data. Got {}.".format(type(value))
+            )
         self._user_data = value
 
     def to_dict(self):
         # type: () -> dict
         """Return all the base attribute values as a dict."""
         d = {}
-        d['id_num'] = self.id_num
-        d['identifier'] = str(self.identifier)
-        d['display_name'] = self.display_name
-        d['user_data'] = self.user_data
+        d["id_num"] = self.id_num
+        d["identifier"] = str(self.identifier)
+        d["display_name"] = self.display_name
+        d["user_data"] = self.user_data
         return d
 
     def set_base_attrs_from_dict(self, _input_dict):
         # type: (dict[str, Any]) -> None
         """Set all the Base attribute values from an input dict."""
-        self.id_num = _input_dict['id_num']
-        self.identifier = _input_dict['identifier']
-        self.display_name = _input_dict['display_name']
-        self.user_data = _input_dict['user_data']
+        self.id_num = _input_dict["id_num"]
+        self.identifier = _input_dict["identifier"]
+        self.display_name = _input_dict["display_name"]
+        self.user_data = _input_dict["user_data"]
         return None
 
     def set_base_attrs_from_obj(self, other):
@@ -93,7 +99,7 @@ class _Base(object):
         return None
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)
