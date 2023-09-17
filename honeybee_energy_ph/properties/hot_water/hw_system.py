@@ -4,7 +4,7 @@
 """PH-Properties classes for SHWSystem (System / Equipment) objects."""
 
 try:
-    from typing import Any, ValuesView, Dict, Optional
+    from typing import Any, ValuesView, Dict, Optional, Union
 except:
     pass  # IronPython
 
@@ -32,22 +32,37 @@ class SHWSystemPhProperties(object):
         self.tank_solar = None  # type: Optional[hot_water.PhSHWTank]
 
         self._heaters = {}  # type: Dict[str, hot_water.PhHotWaterHeater]
-        self._branch_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
+        self._distribution_piping = {}  # type: Dict[str, hot_water.PhPipeTrunk]
         self._recirc_piping = {}  # type: Dict[str, hot_water.PhPipeElement]
 
         self._number_tap_points = None  # type: Optional[int]
 
     @property
-    def total_branch_pipe_length(self):
+    def total_distribution_pipe_length(self):
         # type: () -> float
-        """Returns the total length of all branch piping."""
-        return sum([v.length_m for v in self._branch_piping.values()])
+        """Returns the total length of all trunk, branch, and fixture piping."""
+        return sum(_.total_length_m for _ in self._distribution_piping.values())
+
+    @property
+    def total_home_run_fixture_pipe_length(self):
+        # type: () -> float
+        """Returns the total length of all fixture piping from end to end.
+
+        NOTE: This method will count the branch and trunk lengths for EACH of
+        the fixture pipes. The result will be a total hot-water transport length
+        as if all the pipes were 'home-run' style. This value is used for the
+        PHPP calculations and is not a true representation of the piping in the
+        model.
+        """
+        return sum(
+            _.total_home_run_fixture_length for _ in self._distribution_piping.values()
+        )
 
     @property
     def total_recirc_pipe_length(self):
         # type: () -> float
         """Returns the total length of all recirculation piping."""
-        return sum([v.length_m for v in self._recirc_piping.values()])
+        return sum(_.length_m for _ in self._recirc_piping.values())
 
     @property
     def recirc_temp(self):
@@ -78,7 +93,7 @@ class SHWSystemPhProperties(object):
         if self._number_tap_points:
             return self._number_tap_points
         else:
-            return len(self._branch_piping)
+            return sum(br.num_fixtures for br in self._distribution_piping.values())
 
     @number_tap_points.setter
     def number_tap_points(self, _input):
@@ -106,18 +121,45 @@ class SHWSystemPhProperties(object):
         ), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
         self._heaters[_h.identifier] = _h
 
-    def add_branch_piping(self, _branch_piping):
-        # type: (hot_water.PhPipeElement) -> None
-        self._branch_piping[_branch_piping.identifier] = _branch_piping
+    def add_distribution_piping(self, _distribution_piping):
+        # type: (Union[hot_water.PhPipeTrunk, hot_water.PhPipeBranch, hot_water.PhPipeElement]) -> None
+        """Add a new distribution (branch, trunk, fixture) to the system.
 
-    def clear_branch_piping(self):
-        self._branch_piping = {}
+        If a branch or fixture pipe is passed, a 0-length trunk will be created and the
+        branch or fixture will be added to it before adding to the system.
+        """
+
+        if isinstance(_distribution_piping, hot_water.PhPipeTrunk):
+            # -- Add the trunk to the collection
+            new_trunk = _distribution_piping
+        elif isinstance(_distribution_piping, hot_water.PhPipeBranch):
+            # -- Build a new Trunk and add the branch to it
+            new_trunk = hot_water.PhPipeTrunk()
+            new_trunk.add_branch(_distribution_piping)
+        elif isinstance(_distribution_piping, hot_water.PhPipeElement):
+            # -- Build a new Trunk and Branch, add the fixture to it
+            new_branch = hot_water.PhPipeBranch()
+            new_branch.add_fixture(_distribution_piping)
+            new_trunk = hot_water.PhPipeTrunk()
+            new_trunk.add_branch(new_branch)
+        else:
+            raise ValueError(
+                'Error: Expected type of "PhPipeTrunk", "PhPipeBranch", or "PhPipeElement". Got: {}'.format(
+                    type(_distribution_piping)
+                )
+            )
+
+        self._distribution_piping[new_trunk.identifier] = new_trunk
+
+    def clear_distribution_piping(self):
+        """Clear all distribution piping (Trunks) from the system."""
+        self._distribution_piping = {}
 
     @property
-    def branch_piping(self):
-        # type: () -> ValuesView[hot_water.PhPipeElement]
-        """Returns a list of all the branch-piping objects in the system."""
-        return self._branch_piping.values()
+    def distribution_piping(self):
+        # type: () -> ValuesView[hot_water.PhPipeTrunk]
+        """Returns a list of all the distribution-piping (Trunks) in the system."""
+        return self._distribution_piping.values()
 
     def add_recirc_piping(self, _recirc_piping):
         # type: (hot_water.PhPipeElement) -> None
@@ -164,9 +206,11 @@ class SHWSystemPhProperties(object):
         for heater in self.heaters:
             d["heaters"][id(heater)] = heater.to_dict()
 
-        d["branch_piping"] = {}
-        for branch_piping in self.branch_piping:
-            d["branch_piping"][branch_piping.identifier] = branch_piping.to_dict()
+        d["distribution_piping"] = {}
+        for distribution_piping in self.distribution_piping:
+            d["distribution_piping"][
+                distribution_piping.identifier
+            ] = distribution_piping.to_dict()
 
         d["recirc_piping"] = {}
         for recirc_piping in self.recirc_piping:
@@ -204,9 +248,9 @@ class SHWSystemPhProperties(object):
         for heater_dict in _input_dict["heaters"].values():
             new_prop.add_heater(hot_water.PhSHWHeaterBuilder.from_dict(heater_dict))
 
-        for branch_piping_dict in _input_dict["branch_piping"].values():
-            new_prop.add_branch_piping(
-                hot_water.PhPipeElement.from_dict(branch_piping_dict)
+        for distribution_piping_dict in _input_dict["distribution_piping"].values():
+            new_prop.add_distribution_piping(
+                hot_water.PhPipeTrunk.from_dict(distribution_piping_dict)
             )
 
         for recirc_piping_dict in _input_dict["recirc_piping"].values():
@@ -237,13 +281,13 @@ class SHWSystemPhProperties(object):
             new_obj.tank_solar = self.tank_solar.duplicate()
 
         for k, v in self._heaters.items():
-            new_obj._heaters[k] = v
+            new_obj.add_heater(v)
 
-        for k, v in self._branch_piping.items():
-            new_obj._branch_piping[k] = v.duplicate()
+        for k, v in self._distribution_piping.items():
+            new_obj.add_distribution_piping(v.duplicate())
 
         for k, v in self._recirc_piping.items():
-            new_obj._recirc_piping[k] = v.duplicate()
+            new_obj.add_recirc_piping(v.duplicate())
 
         new_obj._number_tap_points = self._number_tap_points
 
@@ -280,10 +324,10 @@ class SHWSystemPhProperties(object):
         for heater in other.heaters:
             new_obj.add_heater(heater)
 
-        for branch_pipe in self.branch_piping:
-            new_obj.add_branch_piping(branch_pipe)
-        for branch_pipe in other.branch_piping:
-            new_obj.add_branch_piping(branch_pipe)
+        for distribution_pipe in self.distribution_piping:
+            new_obj.add_distribution_piping(distribution_pipe)
+        for distribution_pipe in other.distribution_piping:
+            new_obj.add_distribution_piping(distribution_pipe)
 
         for recirc_pipe in self.recirc_piping:
             new_obj.add_recirc_piping(recirc_pipe)
