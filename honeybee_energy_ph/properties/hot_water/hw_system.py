@@ -121,8 +121,8 @@ class SHWSystemPhProperties(object):
         ), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
         self._heaters[_h.identifier] = _h
 
-    def add_distribution_piping(self, _distribution_piping):
-        # type: (Union[hot_water.PhPipeTrunk, hot_water.PhPipeBranch, hot_water.PhPipeElement]) -> None
+    def add_distribution_piping(self, _distribution_piping, _key=None):
+        # type: (Union[hot_water.PhPipeTrunk, hot_water.PhPipeBranch, hot_water.PhPipeElement], Optional[str]) -> None
         """Add a new distribution (branch, trunk, fixture) to the system.
 
         If a branch or fixture pipe is passed, a 0-length trunk will be created and the
@@ -149,7 +149,7 @@ class SHWSystemPhProperties(object):
                 )
             )
 
-        self._distribution_piping[new_trunk.identifier] = new_trunk
+        self._distribution_piping[_key or new_trunk.identifier] = new_trunk
 
     def clear_distribution_piping(self):
         """Clear all distribution piping (Trunks) from the system."""
@@ -161,9 +161,9 @@ class SHWSystemPhProperties(object):
         """Returns a list of all the distribution-piping (Trunks) in the system."""
         return self._distribution_piping.values()
 
-    def add_recirc_piping(self, _recirc_piping):
-        # type: (hot_water.PhPipeElement) -> None
-        self._recirc_piping[_recirc_piping.identifier] = _recirc_piping
+    def add_recirc_piping(self, _recirc_piping, _key=None):
+        # type: (hot_water.PhPipeElement, Optional[str]) -> None
+        self._recirc_piping[_key or _recirc_piping.identifier] = _recirc_piping
 
     def clear_recirc_piping(self):
         self._recirc_piping = {}
@@ -284,10 +284,10 @@ class SHWSystemPhProperties(object):
             new_obj.add_heater(v)
 
         for k, v in self._distribution_piping.items():
-            new_obj.add_distribution_piping(v.duplicate())
+            new_obj.add_distribution_piping(v.duplicate(), _key=k)
 
         for k, v in self._recirc_piping.items():
-            new_obj.add_recirc_piping(v.duplicate())
+            new_obj.add_recirc_piping(v.duplicate(), _key=k)
 
         new_obj._number_tap_points = self._number_tap_points
 

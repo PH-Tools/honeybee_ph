@@ -369,9 +369,7 @@ class PhPipeBranch(_base._PhHVACBase):
 class PhPipeTrunk(_base._PhHVACBase):
     """A 'Trunk' Pipe which has geometry, and serves one or more 'Branches'."""
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         # type: () -> None
         super(PhPipeTrunk, self).__init__()
         self.pipe_element = PhPipeElement()

@@ -1,5 +1,5 @@
 from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
-from honeybee_energy_ph.hvac.hot_water import PhSHWTank, PhPipeElement
+from honeybee_energy_ph.hvac.hot_water import PhSHWTank, PhPipeTrunk, PhPipeElement
 
 
 def test_basic_SHWSystemPhProperties_round_trip():
@@ -18,8 +18,8 @@ def test_SHWSystemPhProperties_copy():
     system.tank_solar = PhSHWTank()
     system._heaters = {}
     system._distribution_piping = {
-        "branch_1": PhPipeElement(),
-        "branch_2": PhPipeElement(),
+        "trunk_1": PhPipeTrunk(),
+        "trunk_2": PhPipeTrunk(),
     }
     system._recirc_piping = {"recirc_1": PhPipeElement(), "recirc_2": PhPipeElement()}
     system._number_tap_points = 2
