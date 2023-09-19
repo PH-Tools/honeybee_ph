@@ -8,8 +8,8 @@ def test_PhPipeSegment_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
     pipe1 = hot_water.PhPipeSegment(geom)
-    d1 = pipe1.to_dict()
-    pipe2 = hot_water.PhPipeSegment.from_dict(d1)
+    d_1 = pipe1.to_dict()
+    pipe2 = hot_water.PhPipeSegment.from_dict(d_1)
 
     assert pipe2.to_dict() == pipe1.to_dict()
 
