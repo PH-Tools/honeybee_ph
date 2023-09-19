@@ -373,6 +373,7 @@ class PhPipeTrunk(_base._PhHVACBase):
         # type: () -> None
         super(PhPipeTrunk, self).__init__()
         self.pipe_element = PhPipeElement()
+        self.multiplier = 1  # type: int
         self.branches = []  # type: (List[PhPipeBranch])
 
     @property
@@ -435,6 +436,7 @@ class PhPipeTrunk(_base._PhHVACBase):
         new_obj.display_name = self.display_name
         new_obj.user_data = self.user_data
         new_obj.pipe_element = self.pipe_element.duplicate()
+        new_obj.multiplier = self.multiplier
         for branch in self.branches:
             new_obj.add_branch(branch.duplicate())
 
@@ -448,6 +450,7 @@ class PhPipeTrunk(_base._PhHVACBase):
         # type: () -> Dict[str, Union[str, Dict]]
         d = super(PhPipeTrunk, self).to_dict()
         d["pipe_element"] = self.pipe_element.to_dict()
+        d["multiplier"] = self.multiplier
         d["branches"] = {}
         for branch in self.branches:
             d["branches"][branch.identifier] = branch.to_dict()
@@ -462,6 +465,7 @@ class PhPipeTrunk(_base._PhHVACBase):
         new_obj.display_name = _input_dict["display_name"]
         new_obj.user_data = _input_dict["user_data"]
         new_obj.pipe_element = PhPipeElement.from_dict(_input_dict["pipe_element"])
+        new_obj.multiplier = _input_dict["multiplier"]
         for branch_dict in _input_dict["branches"].values():
             new_obj.add_branch(PhPipeBranch.from_dict(branch_dict))
 
@@ -469,10 +473,11 @@ class PhPipeTrunk(_base._PhHVACBase):
 
     def __str__(self):
         # type: () -> str
-        return "{}: (display_name={}, identifier={} ) [{} segments, len={:.1f}, {} branches connected]".format(
+        return "{}: (display_name={}, identifier={} multiplier={}) [{} segments, len={:.1f}, {} branches connected]".format(
             self.__class__.__name__,
             self.display_name,
             self.identifier_short,
+            self.multiplier,
             len(self.segments),
             float(self.length_m),
             len(self.branches),
