@@ -5,7 +5,9 @@
 
 
 try:
-    from typing import Any
+    from typing import Any, List, TypeVar, Optional
+
+    T = TypeVar("T")
 except ImportError:
     pass  # Python 3
 
@@ -35,13 +37,20 @@ def input_to_int(_input_value, _default=None):
     try:
         return int(result.group(0))
     except ValueError:
-        msg = 'Input Error: Cannot use input "{}" [{}].\n' "Please check the allowable input options.".format(
-            _input_value, type(_input_value))
+        msg = (
+            'Input Error: Cannot use input "{}" [{}].\n'
+            "Please check the allowable input options.".format(
+                _input_value, type(_input_value)
+            )
+        )
         raise Exception(msg)
     except AttributeError as e:
         # If no 'group', ie: no int part supplied in the string
-        msg = 'Error trying to find the integer input part of input: "{}", type: {}'.format(
-            _input_value, type(_input_value))
+        msg = (
+            'Error trying to find the integer input part of input: "{}", type: {}'.format(
+                _input_value, type(_input_value)
+            )
+        )
         raise Exception(msg)
 
 
@@ -56,8 +65,8 @@ def clean_tree_get(_tree, _i, _default=None):
 
 
 def clean_get(_list, _i, _default=None):
-    # type: (list[Any], int, Any) -> Any
-    """Get list item cleanly based on index pos. If IndexError, try getting list[0]
+    # type: (List[T], int, Optional[T]) -> Optional[T]
+    """Get list item cleanly based on index pos. If IndexError, will try getting _list[0] instead.
 
     This is useful for gh-components with multiple list inputs which are sometimes
     the same length, and sometimes not the same length.
@@ -65,8 +74,8 @@ def clean_get(_list, _i, _default=None):
     Arguments:
     ---------
         * _list: Any iterable to get the item from.
-        * _i (int): The index position to try and get
-        * _default (Any): The optional default value to use if _list[0] fails.
+        * _i: The index position to try and get
+        * _default: The optional default value to use if _list[0] fails.
 
     Returns:
     --------
@@ -93,7 +102,7 @@ def memoize(func):
     >>> def fibonacci(n):
     >>>     if n < 2: return n
     >>>    return fibonacci(n - 1) + fibonacci(n - 2)
-    >>> 
+    >>>
     >>> fibonacci(25)
     """
 
