@@ -327,6 +327,11 @@ class SpaceVolume(_base._Base):
         # type: () -> List[Optional[geometry3d.face.Face3D]]
         return [flr_seg.geometry for flr_seg in self.floor.floor_segments]
 
+    @property
+    def floor_segments(self):
+        # type: () -> List[SpaceFloorSegment]
+        return self.floor.floor_segments
+
     def clear_volume_geometry(self):
         # type: () -> None
         """Delete all the geometry from the SpaceVolume."""
@@ -487,6 +492,11 @@ class Space(_base._Base):
     def floor_segment_surfaces(self):
         # type: () -> List[List[Optional[geometry3d.face.Face3D]]]
         return [v.floor_segment_surfaces for v in self.volumes]
+
+    @property
+    def floor_segments(self):
+        # type: () -> List[SpaceFloorSegment]
+        return [f for v in self.volumes for f in v.floor_segments]
 
     def add_new_volumes(self, _new_volumes):
         # type: (Union[SpaceVolume, list[SpaceVolume]]) -> None
