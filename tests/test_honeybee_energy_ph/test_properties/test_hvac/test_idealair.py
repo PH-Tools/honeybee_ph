@@ -1,8 +1,8 @@
 from honeybee_energy_ph.properties.hvac import idealair
 from honeybee_energy_ph.hvac import (
+    heat_pumps,
     ventilation,
     heating,
-    cooling,
     supportive_device,
 )
 from honeybee_energy_ph.hvac.renewable_devices import PhPhotovoltaicDevice
@@ -129,15 +129,11 @@ def test_system_with_multiple_heating_sys_dict_roundtrip():
     s1 = heating.PhHeatingDirectElectric()
     s2 = heating.PhHeatingDistrict()
     s3 = heating.PhHeatingFossilBoiler()
-    s4 = heating.PhHeatingHeatPumpAnnual()
-    s5 = heating.PhHeatingHeatPumpRatedMonthly()
-    s6 = heating.PhHeatingWoodBoiler()
+    s4 = heating.PhHeatingWoodBoiler()
     p1.heating_systems.add(s1)
     p1.heating_systems.add(s2)
     p1.heating_systems.add(s3)
     p1.heating_systems.add(s4)
-    p1.heating_systems.add(s5)
-    p1.heating_systems.add(s6)
     assert p1.ToString()
 
     d = p1.to_dict()
@@ -156,14 +152,15 @@ def test_duplicate_system_with_single_heating_sys():
 
 
 # -----------------------------------------------------------------------------
-# -- Cooling Systems
+# -- Heat Pump (Heating + Cooling) Systems
 
-
-def test_system_with_single_cooling_sys_dict_roundtrip():
+def test_system_with_multiple_heat_pump_sys_dict_roundtrip():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)
-    s1 = cooling.PhCoolingRecirculation()
-    p1.cooling_systems.add(s1)
-    p1.cooling_systems.add(None)
+
+    s1 = heat_pumps.PhHeatPumpAnnual()
+    s2 = heat_pumps.PhHeatPumpRatedMonthly()
+    p1.heat_pump_systems.add(s1)
+    p1.heat_pump_systems.add(s2)
     assert p1.ToString()
 
     d = p1.to_dict()
@@ -171,27 +168,21 @@ def test_system_with_single_cooling_sys_dict_roundtrip():
     assert p2.to_dict() == d
 
 
-def test_system_with_multiple_cooling_sys_dict_roundtrip():
+def test_system_with_single_heat_pump_sys_dict_roundtrip():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)
-    s1 = cooling.PhCoolingRecirculation()
-    s2 = cooling.PhCoolingPanel()
-    s3 = cooling.PhCoolingDehumidification()
-    s4 = cooling.PhCoolingVentilation()
-    p1.cooling_systems.add(s1)
-    p1.cooling_systems.add(s2)
-    p1.cooling_systems.add(s3)
-    p1.cooling_systems.add(s4)
+    s1 = heat_pumps.PhHeatPumpAnnual()
+    p1.heat_pump_systems.add(s1)
+    p1.heat_pump_systems.add(None)
     assert p1.ToString()
 
     d = p1.to_dict()
     p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
     assert p2.to_dict() == d
-
 
 def test_duplicate_system_with_single_cooling_sys():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)
-    s1 = cooling.PhCoolingRecirculation()
-    p1.cooling_systems.add(s1)
+    s1 = heat_pumps.PhHeatPumpCoolingParams_Recirculation()
+    p1.heat_pump_systems.add(s1)
     assert p1.ToString()
 
     p2 = p1.duplicate()

@@ -3,13 +3,16 @@
 
 """Properties class for PH-HVAC IdealAir Systems"""
 
+from honeybee_energy_ph.hvac import heat_pumps
+
+
 try:
     from typing import Any, Optional, Dict
 except:
     pass  # IronPython
 
 try:
-    from honeybee_energy_ph.hvac import ventilation, heating, cooling
+    from honeybee_energy_ph.hvac import ventilation, heating
     from honeybee_energy_ph.hvac.supportive_device import PhSupportiveDevice
     from honeybee_energy_ph.hvac.renewable_devices import (
         PhRenewableEnergyDevice,
@@ -35,7 +38,7 @@ class IdealAirSystemPhProperties(object):
         self.id_num = 0
         self.ventilation_system = None  # type: Optional[ventilation.PhVentilationSystem]
         self.heating_systems = set()  # type: set[heating.PhHeatingSystem]
-        self.cooling_systems = set()  # type: set[cooling.PhCoolingSystem]
+        self.heat_pump_systems = set()  # type: set[heat_pumps.PhHeatPumpSystem]
         self.exhaust_vent_devices = set()  # type: set[ventilation._ExhaustVentilatorBase]
         self.supportive_devices = set()  # type: set[PhSupportiveDevice]
         self.renewable_devices = set()  # type: set[PhRenewableEnergyDevice]
@@ -64,9 +67,9 @@ class IdealAirSystemPhProperties(object):
             for sys in sorted([_ for _ in self.heating_systems if _ is not None])
         ]
 
-        d["cooling_systems"] = [
+        d["heat_pump_systems"] = [
             sys.to_dict()
-            for sys in sorted([_ for _ in self.cooling_systems if _ is not None])
+            for sys in sorted([_ for _ in self.heat_pump_systems if _ is not None])
         ]
 
         d["exhaust_vent_devices"] = [
@@ -74,7 +77,7 @@ class IdealAirSystemPhProperties(object):
             for sys in sorted([_ for _ in self.exhaust_vent_devices if _ is not None])
         ]
 
-        d["supportive_devies"] = [
+        d["supportive_devices"] = [
             device.to_dict()
             for device in sorted([_ for _ in self.supportive_devices if _ is not None])
         ]
@@ -107,9 +110,9 @@ class IdealAirSystemPhProperties(object):
             htg_sys = heating.PhHeatingSystemBuilder.from_dict(htg_sys_dict)
             new_prop.heating_systems.add(htg_sys)
 
-        for cooling_sys_dict in _input_dict.get("cooling_systems", []):
-            cooling_sys = cooling.PhCoolingSystemBuilder.from_dict(cooling_sys_dict)
-            new_prop.cooling_systems.add(cooling_sys)
+        for heat_pump_sys_dict in _input_dict.get("heat_pump_systems", []):
+            heat_pump_sys = heat_pumps.PhHeatPumpSystemBuilder.from_dict(heat_pump_sys_dict)
+            new_prop.heat_pump_systems.add(heat_pump_sys)
 
         for exhaust_vent_device_dict in _input_dict.get("exhaust_vent_devices", []):
             exhaust_device = ventilation.PhExhaustDeviceBuilder.from_dict(
@@ -117,7 +120,7 @@ class IdealAirSystemPhProperties(object):
             )
             new_prop.exhaust_vent_devices.add(exhaust_device)
 
-        for supportive_device_dict in _input_dict.get("supportive_devies", []):
+        for supportive_device_dict in _input_dict.get("supportive_devices", []):
             supportive_device = PhSupportiveDevice.from_dict(supportive_device_dict)
             new_prop.supportive_devices.add(supportive_device)
 
@@ -147,8 +150,8 @@ class IdealAirSystemPhProperties(object):
         for htg_sys in self.heating_systems:
             new_obj.heating_systems.add(htg_sys)
 
-        for clg_sys in self.cooling_systems:
-            new_obj.cooling_systems.add(clg_sys)
+        for heat_pump_sys in self.heat_pump_systems:
+            new_obj.heat_pump_systems.add(heat_pump_sys)
 
         for exhaust_device in self.exhaust_vent_devices:
             new_obj.exhaust_vent_devices.add(exhaust_device)

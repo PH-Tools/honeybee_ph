@@ -6,7 +6,7 @@
 import sys
 
 try:
-    from typing import Any, Optional, Sequence
+    from typing import Any, Optional
 except ImportError:
     pass  # IronPython 2.7
 
@@ -245,96 +245,6 @@ class PhHeatingDistrict(PhHeatingSystem):
         ]
         return new_obj
 
-
-class PhHeatingHeatPumpAnnual(PhHeatingSystem):
-    def __init__(self):
-        super(PhHeatingHeatPumpAnnual, self).__init__()
-        self.annual_COP = 2.5
-        self.total_system_perf_ratio = 0.4
-
-    def to_dict(self):
-        # type: () -> dict
-        d = super(PhHeatingHeatPumpAnnual, self).to_dict()
-        d["annual_COP"] = self.annual_COP
-        d["total_system_perf_ratio"] = self.total_system_perf_ratio
-        return d
-
-    @classmethod
-    def from_dict(cls, _input_dict):
-        # type: (dict) -> PhHeatingHeatPumpAnnual
-        new_obj = cls()
-        new_obj.check_dict_type(_input_dict)
-        new_obj.base_attrs_from_dict(_input_dict)
-
-        new_obj.annual_COP = _input_dict["annual_COP"]
-        new_obj.total_system_perf_ratio = _input_dict["total_system_perf_ratio"]
-        return new_obj
-
-
-class PhHeatingHeatPumpRatedMonthly(PhHeatingSystem):
-    """Heating via electric heat-pump."""
-
-    def __init__(self):
-        super(PhHeatingHeatPumpRatedMonthly, self).__init__()
-        self.COP_1 = 2.5
-        self.ambient_temp_1 = -8.333  # =17F
-        self.COP_2 = 2.5
-        self.ambient_temp_2 = 8.333  # =47F
-
-    @property
-    def monthly_COPS(self):
-        return [self.COP_1, self.COP_2]
-
-    @monthly_COPS.setter
-    def monthly_COPS(self, _cops):
-        # type: (Sequence[float]) -> None
-        self.COP_1 = _cops[0]
-        try:
-            self.COP_2 = _cops[1]
-        except IndexError:
-            self.COP_2 = _cops[0]
-        return
-
-    @property
-    def monthly_temps(self):
-        return [self.ambient_temp_1, self.ambient_temp_2]
-
-    @monthly_temps.setter
-    def monthly_temps(self, _cops):
-        # type: (Sequence[float]) -> None
-        self.ambient_temp_1 = _cops[0]
-        try:
-            self.ambient_temp_2 = _cops[1]
-        except IndexError:
-            self.ambient_temp_2 = _cops[0]
-        return
-
-    def to_dict(self):
-        # type: () -> dict[str, Any]
-        d = super(PhHeatingHeatPumpRatedMonthly, self).to_dict()
-        d["COP_1"] = self.COP_1
-        d["ambient_temp_1"] = self.ambient_temp_1
-        d["COP_2"] = self.COP_2
-        d["ambient_temp_2"] = self.ambient_temp_2
-        return d
-
-    @classmethod
-    def from_dict(cls, _input_dict):
-        # type: (dict[str, Any]) -> PhHeatingHeatPumpRatedMonthly
-        new_obj = cls()
-        new_obj.check_dict_type(_input_dict)
-        new_obj.base_attrs_from_dict(_input_dict)
-
-        new_obj.COP_1 = _input_dict["COP_1"]
-        new_obj.ambient_temp_1 = _input_dict["ambient_temp_1"]
-        new_obj.COP_2 = _input_dict["COP_2"]
-        new_obj.ambient_temp_2 = _input_dict["ambient_temp_2"]
-        return new_obj
-
-
-class PhHeatingHeatPumpCombined(PhHeatingSystem):
-    def __init__(self):
-        raise NotImplementedError()
 
 
 # -----------------------------------------------------------------------------

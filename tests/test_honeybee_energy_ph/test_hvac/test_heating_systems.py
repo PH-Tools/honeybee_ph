@@ -62,39 +62,3 @@ def test_dict_roundtrip_wood_boiler():
     
     assert "test_key" in s4.user_data
     assert s4.to_dict() == s3.to_dict()
-
-def test_dict_roundtrip_heat_pump_annual():
-    s1 = heating.PhHeatingHeatPumpAnnual()
-    d = s1.to_dict()
-
-    s2 = heating.PhHeatingHeatPumpAnnual.from_dict(d)
-    assert s2.to_dict() == d
-
-    s3 = heating.PhHeatingSystemBuilder.from_dict(d)
-    assert s3.to_dict() == d
-
-    # -- User data
-    s3.user_data["test_key"] = "test_value"
-    d1 = s3.to_dict()
-    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
-    
-    assert "test_key" in s4.user_data
-    assert s4.to_dict() == s3.to_dict()
-
-def test_dict_roundtrip_heat_pump_monthly():
-    s1 = heating.PhHeatingHeatPumpRatedMonthly()
-    d = s1.to_dict()
-
-    s2 = heating.PhHeatingHeatPumpRatedMonthly.from_dict(d)
-    assert s2.to_dict() == d
-
-    s3 = heating.PhHeatingSystemBuilder.from_dict(d)
-    assert s3.to_dict() == d
-    
-    # -- User data
-    s3.user_data["test_key"] = "test_value"
-    d1 = s3.to_dict()
-    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
-    
-    assert "test_key" in s4.user_data
-    assert s4.to_dict() == s3.to_dict()

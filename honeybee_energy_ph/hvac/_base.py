@@ -96,8 +96,11 @@ class _PhHVACBase(object):
     def __eq__(self, other):
         # type: (_PhHVACBase) -> bool
         for k, v in self.__dict__.items():
-            if v != getattr(other, k):
-                if str(v) != str(getattr(other, k)): # Handle UUID Identifier
-                    return False
+            try:
+                if v != getattr(other, k):
+                    if str(v) != str(getattr(other, k)): # Handle UUID Identifier
+                        return False
+            except AttributeError:
+                return False
         return True
     
