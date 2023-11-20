@@ -74,6 +74,7 @@ def test_PhPhiusLightingExterior_round_trip():
     e2 = ph_equipment.PhEquipmentBuilder.from_dict(d1)
 
     assert e2.to_dict() == d1
+    assert e2.in_conditioned_space == False
 
 def test_PhPhiusLightingGarage_round_trip():
     e1 = ph_equipment.PhPhiusLightingGarage()
@@ -81,6 +82,7 @@ def test_PhPhiusLightingGarage_round_trip():
     e2 = ph_equipment.PhEquipmentBuilder.from_dict(d1)
 
     assert e2.to_dict() == d1
+    assert e2.in_conditioned_space == False
 
 def test_PhCustomAnnualElectric_round_trip():
     e1 = ph_equipment.PhCustomAnnualElectric()

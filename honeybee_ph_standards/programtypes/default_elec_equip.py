@@ -238,7 +238,7 @@ ph_default_equip = {
             'comment': 'default',
             'reference_quantity': 6,  # PH case floor area
             'quantity': 1,
-            'in_conditioned_space': True,
+            'in_conditioned_space': False,
             'reference_energy_norm': 1,  # Use
             'energy_demand': 0,
             'energy_demand_per_use': 0,
@@ -249,7 +249,7 @@ ph_default_equip = {
             'comment': 'default',
             'reference_quantity': 6,  # PH case floor area
             'quantity': 1,
-            'in_conditioned_space': True,
+            'in_conditioned_space': False,
             'reference_energy_norm': 1,  # Use
             'energy_demand': 0,
             'energy_demand_per_use': 0,
@@ -262,7 +262,7 @@ ph_default_equip = {
             'comment': 'default',
             'reference_quantity': 2,
             'quantity': 0,
-            'in_conditioned_space': True,
+            'in_conditioned_space': False,
             'reference_energy_norm': 2,
             'energy_demand': 100,
             'energy_demand_per_use': 100,
@@ -273,7 +273,7 @@ ph_default_equip = {
             'comment': 'default',
             'reference_quantity': 2,
             'quantity': 0,
-            'in_conditioned_space': True,
+            'in_conditioned_space': False,
             'reference_energy_norm': 2,
             'energy_demand': 100,
             'energy_demand_per_use': 100,

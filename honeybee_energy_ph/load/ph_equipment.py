@@ -94,7 +94,7 @@ class PhEquipment(_base._Base):
         self.combined_energy_factor = 0.0  # CEF
 
     def apply_default_attr_values(self, _defaults={}):
-        # type: (Dict) -> None
+        # type: (Dict[str, Any]) -> None
         """Sets all the object attributes to default values, as specified in a "defaults" dict."""
 
         if not _defaults:
@@ -104,7 +104,7 @@ class PhEquipment(_base._Base):
             setattr(self, k, v)
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict[str, Any]
         d = {}
 
         d['display_name'] = self.display_name
@@ -124,7 +124,7 @@ class PhEquipment(_base._Base):
         return d
 
     def base_attrs_from_dict(self, _obj, _input_dict):
-        # type: (PhEquipment, dict) -> None
+        # type: (PhEquipment, Dict[str, Any]) -> None
         """Set the base object attributes from a dictionary
 
         Arguments:
@@ -511,13 +511,15 @@ class PhPhiusLightingInterior(PhEquipment):
 class PhPhiusLightingExterior(PhEquipment):
 
     def __init__(self, _defaults={}):
+        # type: (Dict[str, Any]) -> None
         super(PhPhiusLightingExterior, self).__init__()
         self.display_name = "PHIUS+ Exterior Lighting"
         self.frac_high_efficiency = 1  # CEF
+        self.in_conditioned_space = False
         self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict[str, Any]
         d = {}
         d.update(super(PhPhiusLightingExterior, self).to_dict())
         d['frac_high_efficiency'] = self.frac_high_efficiency
@@ -525,7 +527,7 @@ class PhPhiusLightingExterior(PhEquipment):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> PhPhiusLightingExterior
+        # type: (Dict[str, Any]) -> PhPhiusLightingExterior
         new_obj = cls()
         super(PhPhiusLightingExterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
@@ -539,10 +541,11 @@ class PhPhiusLightingGarage(PhEquipment):
         super(PhPhiusLightingGarage, self).__init__()
         self.display_name = "PHIUS+ Garage Lighting"
         self.frac_high_efficiency = 1  # CEF
+        self.in_conditioned_space = False
         self.apply_default_attr_values(_defaults)
 
     def to_dict(self):
-        # type: () -> dict
+        # type: () -> Dict[str, Any]
         d = {}
         d.update(super(PhPhiusLightingGarage, self).to_dict())
         d['frac_high_efficiency'] = self.frac_high_efficiency
@@ -550,7 +553,7 @@ class PhPhiusLightingGarage(PhEquipment):
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> PhPhiusLightingGarage
+        # type: (Dict[str, Any]) -> PhPhiusLightingGarage
         new_obj = cls()
         super(PhPhiusLightingGarage, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
