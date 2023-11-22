@@ -4,6 +4,11 @@
 """Find Phius program data and build HBE-Programs."""
 
 try:
+    from typing import Dict, List
+except ImportError:
+    pass # -- IronPython 2.7
+
+try:
     from honeybee.typing import clean_ep_string
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
@@ -51,7 +56,7 @@ def _clean_str(_str):
 
 
 def load_data_from_Phius_standards(_search_key, _search_field="name", _protocol=""):
-    # type: (str, str, str) -> list[dict[str, dict]]
+    # type: (str, str, str) -> List[Dict[str, Dict]]
     """Returns a list of Phius program data as dicts.
 
     Arguments:
@@ -67,7 +72,7 @@ def load_data_from_Phius_standards(_search_key, _search_field="name", _protocol=
     if not _search_key:
         return []
 
-    prog_data = []
+    prog_data = [] # type: List[Dict[str, Dict]]
     _search_key = _clean_str(_search_key)
     _protocol = _clean_str(_protocol)
     for data in PHIUS_programs.PHIUS_library.values():
@@ -80,6 +85,18 @@ def load_data_from_Phius_standards(_search_key, _search_field="name", _protocol=
                 prog_data.append(data)
 
     return prog_data
+
+
+def get_all_valid_protocol_names():
+    # type: () -> List[str]
+    """Returns a list of all valid Phius protocols."""
+    return list(set([data["protocol"] for data in PHIUS_programs.PHIUS_library.values()]))
+
+
+def get_all_valid_program_names_of_protocol(_protocol_name):
+    # type: (str) -> List[str]
+    """Returns a list of all valid Phius program names for a given protocol."""
+    return list(set([data["name"] for data in PHIUS_programs.PHIUS_library.values() if _protocol_name in data["protocol"]]))
 
 
 def build_hb_people_from_Phius_data(_data):

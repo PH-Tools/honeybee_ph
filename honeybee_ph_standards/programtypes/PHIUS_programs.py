@@ -3,6 +3,12 @@
 
 """Phius Program Data Library"""
 
+try:
+    from typing import Dict, Any
+except ImportError:
+    pass # IronPython 2.7
+
+
 # Programs from:
 # - PHIUS Guidebook, Table N-10, v3.02 | July 2021
 # - Honeybee ASHRAE 90.1 2019 | IECC 2021
@@ -12,7 +18,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::Courthouse::Courtroom",
         "protocol": "PHIUS_NonRes",
         "description": "Fair/Congress building",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::Courthouse::Courtroom"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::Courthouse::Courtroom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Assembly",
@@ -112,7 +121,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::QuickServiceRestaurant::Dining",
         "protocol": "PHIUS_NonRes",
         "description": "2021::PHIUS_NR::Canteen",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::QuickServiceRestaurant::Dining"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::QuickServiceRestaurant::Dining",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Canteen",
@@ -162,7 +174,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::MidriseApartment::Corridor",
         "protocol": "PHIUS_NonRes",
         "description": "Traffic / Circulation Areas",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::MidriseApartment::Corridor"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::MidriseApartment::Corridor",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Hallway",
@@ -212,7 +227,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::PrimarySchool::Classroom",
         "protocol": "PHIUS_NonRes",
         "description": "Classroom (school and nursery school)",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::PrimarySchool::Classroom"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::PrimarySchool::Classroom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Classroom",
@@ -262,7 +280,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::Courthouse::Parking",
         "protocol": "PHIUS_NonRes",
         "description": "Garage buildings for offices and private use",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::Courthouse::Parking"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::Courthouse::Parking",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Garage_Private",
@@ -312,7 +333,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::Courthouse::Parking",
         "protocol": "PHIUS_NonRes",
         "description": "Garage buildings for public use",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::Courthouse::Parking"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::Courthouse::Parking",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Garage_Public",
@@ -362,7 +386,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::SmallHotel::Exercise",
         "protocol": "PHIUS_NonRes",
         "description": "Sports hall (without public viewing area)",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::SmallHotel::Exercise"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::SmallHotel::Exercise",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Gym",
@@ -462,7 +489,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::LargeHotel::GuestRoom",
         "protocol": "PHIUS_NonRes",
         "description": "Hotel bedroom",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::LargeHotel::GuestRoom"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::LargeHotel::GuestRoom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Hotel_Bedroom",
@@ -512,7 +542,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::FullServiceRestaurant::Kitchen",
         "protocol": "PHIUS_NonRes",
         "description": "Kitchen in non-residential buildings",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::FullServiceRestaurant::Kitchen"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::FullServiceRestaurant::Kitchen",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Kitchen_Commercial_Cooking",
@@ -662,7 +695,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::SecondarySchool::Library",
         "protocol": "PHIUS_NonRes",
         "description": "Library - reading rooms",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::SecondarySchool::Library"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::SecondarySchool::Library",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Library_Reading_Room",
@@ -862,7 +898,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::MediumOffice::Elec/MechRoom",
         "protocol": "PHIUS_NonRes",
         "description": "Server room, computer center",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::MediumOffice::Elec/MechRoom"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::MediumOffice::Elec/MechRoom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Server_Room",
@@ -912,7 +951,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::Laboratory::Open lab",
         "protocol": "PHIUS_NonRes",
         "description": "Workshop, assembly,manufacturing",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::Laboratory::Open lab"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::Laboratory::Open lab",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Manufacturing_Workshop",
@@ -962,7 +1004,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::LargeOffice::Conference",
         "protocol": "PHIUS_NonRes",
         "description": "Meeting conference and seminar room",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::LargeOffice::Conference"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::LargeOffice::Conference",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Office_Meeting_Room",
@@ -1012,7 +1057,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::LargeOffice::OpenOffice",
         "protocol": "PHIUS_NonRes",
         "description": "Landscaped office (seven or more workplaces)",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::LargeOffice::OpenOffice"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::LargeOffice::OpenOffice",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Office_Workspace_Open",
@@ -1062,7 +1110,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::LargeOffice::ClosedOffice",
         "protocol": "PHIUS_NonRes",
         "description": "Workgroup Office (2-6 workplaces)",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::LargeOffice::ClosedOffice"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::LargeOffice::ClosedOffice",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Office_Workspace_Semiopen",
@@ -1162,7 +1213,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::LargeOffice::OpenOffice",
         "protocol": "PHIUS_NonRes",
         "description": "Other Habitable Room",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::LargeOffice::OpenOffice"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::LargeOffice::OpenOffice",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Other_Habitable",
@@ -1212,7 +1266,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::LargeOffice::Storage",
         "protocol": "PHIUS_NonRes",
         "description": "Auxiliary spaces without habitable rooms",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::LargeOffice::Storage"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::LargeOffice::Storage",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Other_Non_Habitable",
@@ -1262,7 +1319,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::FullServiceRestaurant::Dining",
         "protocol": "PHIUS_NonRes",
         "description": "2021::PHIUS_NR::Restaurant",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::FullServiceRestaurant::Dining"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::FullServiceRestaurant::Dining",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Restaurant",
@@ -1312,7 +1372,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::MediumOffice::Restroom",
         "protocol": "PHIUS_NonRes",
         "description": "Toilets and sanitary facilities in non residential buildings",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::MediumOffice::Restroom"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::MediumOffice::Restroom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Restroom_Public",
@@ -1362,7 +1425,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::Retail::Core_Retail",
         "protocol": "PHIUS_NonRes",
         "description": "Retail shop/Department store",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::Retail::Core_Retail"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::Retail::Core_Retail",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Department_Store",
@@ -1513,7 +1579,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::SecondarySchool::Auditorium",
         "protocol": "PHIUS_NonRes",
         "description": "Lecture room, auditorium",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::SecondarySchool::Auditorium"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::SecondarySchool::Auditorium",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::School_Auditorium",
@@ -1563,7 +1632,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::Courthouse::Courtroom",
         "protocol": "PHIUS_NonRes",
         "description": "Spectators and audience area of theaters and event locations",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::Courthouse::Courtroom"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::Courthouse::Courtroom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Theater_Seating",
@@ -1613,7 +1685,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::MediumOffice::Lobby",
         "protocol": "PHIUS_NonRes",
         "description": "Foyer (theaters and event locations)",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::MediumOffice::Lobby"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::MediumOffice::Lobby",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Theater_Lobby",
@@ -1663,7 +1738,10 @@ PHIUS_Non_Res = {
         "hb_base_program": "2019::MediumOffice::OpenOffice",
         "protocol": "PHIUS_NonRes",
         "description": "Stage (theaters and event locations)",
-        "source": ["PHIUS_Certification_Guidebook_v3.02_N10", "2019::MediumOffice::OpenOffice"],
+        "source": [
+            "PHIUS_Certification_Guidebook_v3.02_N10",
+            "2019::MediumOffice::OpenOffice",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_NR::Theater_Stage",
@@ -1718,7 +1796,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::SmallHotel::PublicRestroom",
         "protocol": "PHIUS_MultiFamily",
         "description": "Central Restroom",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::SmallHotel::PublicRestroom"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::SmallHotel::PublicRestroom",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Central_Restroom",
@@ -1768,7 +1849,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::SmallHotel::Laundry",
         "protocol": "PHIUS_MultiFamily",
         "description": "Common Laundry",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::SmallHotel::Laundry"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::SmallHotel::Laundry",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Common_Laundry",
@@ -1818,7 +1902,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::MediumOffice::Lobby",
         "protocol": "PHIUS_MultiFamily",
         "description": "Common Mail",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::MediumOffice::Lobby"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::MediumOffice::Lobby",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Common_Mail",
@@ -1868,7 +1955,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::MidriseApartment::Office",
         "protocol": "PHIUS_MultiFamily",
         "description": "Common Office",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::MidriseApartment::Office"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::MidriseApartment::Office",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Common_Office",
@@ -1918,7 +2008,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::LargeOffice::Storage",
         "protocol": "PHIUS_MultiFamily",
         "description": "Storage / Equipment",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::LargeOffice::Storage"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::LargeOffice::Storage",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Storage_or_Equip",
@@ -1968,7 +2061,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::LargeOffice::Elevator Shaft",
         "protocol": "PHIUS_MultiFamily",
         "description": "Elevator",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::LargeOffice::Elevator Shaft"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::LargeOffice::Elevator Shaft",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Elevator",
@@ -2018,7 +2114,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::MidriseApartment::Corridor",
         "protocol": "PHIUS_MultiFamily",
         "description": "Indoor Corridor",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::MidriseApartment::Corridor"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::MidriseApartment::Corridor",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Corridor",
@@ -2068,7 +2167,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::SmallHotel::Meeting",
         "protocol": "PHIUS_MultiFamily",
         "description": "Multi-Purpose / Community",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::SmallHotel::Meeting"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::SmallHotel::Meeting",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Multi_Purpose",
@@ -2118,7 +2220,10 @@ PHIUS_MF_Calculator = {
         "hb_base_program": "2019::PrimarySchool::Gym",
         "protocol": "PHIUS_MultiFamily",
         "description": "Workout",
-        "source": ["PHIUS_Multi-Family_Calculator- 021.03.23.xls", "2019::PrimarySchool::Gym"],
+        "source": [
+            "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
+            "2019::PrimarySchool::Gym",
+        ],
         "people": {
             "schedule": {
                 "name": "2021::PHIUS_MF::Workout",
@@ -2163,9 +2268,59 @@ PHIUS_MF_Calculator = {
             },
         },
     },
+    "2021::PHIUS_MF::Stair": {
+        "name": "Indoor Stair",
+        "hb_base_program": "2019::MediumOffice::Stair",
+        "protocol": "PHIUS_MultiFamily",
+        "description": "Indoor Stairwell",
+        "source": ["2019::MediumOffice::Stair"],
+        "people": {
+            "schedule": {
+                "name": "2021::PHIUS_MF::Stair",
+                "identifier": "2021::PHIUS_MF::Stair",
+                "start_hour": 0,
+                "end_hour": 24,
+                "annual_utilization_days": 365,
+                "relative_utilization_factor": 0.0,
+            },
+            "loads": {
+                "identifier": "2021::PHIUS_MF::Stair",
+                "name": "2021::PHIUS_MF::Stair",
+                "people_per_area": 0.0,
+            },
+        },
+        "lighting": {
+            "schedule": {
+                "identifier": "2021::PHIUS_MF::Stair",
+                "name": "2021::PHIUS_MF::Stair",
+                "daily_operating_hours": 24,
+                "annual_utilization_days": 365,
+                "relative_utilization_factor": 0.305919,
+            },
+            "loads": {
+                "identifier": "2021::PHIUS_MF::Stair",
+                "name": "2021::PHIUS_MF::Stair",
+                "target_lux": 300,
+                "target_lux_height": 0.8,
+                "watts_per_m2": 5.274311,
+            },
+        },
+        "elec_equipment": {
+            "schedule": {
+                "identifier": "2021::PHIUS_MF::Stair",
+                "name": "2021::PHIUS_MF::Stair",
+                "annual_utilization_factor": 1.0,
+            },
+            "loads": {
+                "identifier": "2021::PHIUS_MF::Stair",
+                "name": "2021::PHIUS_MF::Stair",
+                "watts_per_m2": 0.0,
+            },
+        },
+    },
 }
 
 # -- Full Library
-PHIUS_library = {}
+PHIUS_library = {} # type: Dict[str, Dict]
 PHIUS_library.update(PHIUS_Non_Res)
 PHIUS_library.update(PHIUS_MF_Calculator)
