@@ -14,7 +14,7 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
 try:
-    from honeybee_energy.load import lighting, people, equipment
+    from honeybee_energy.load import lighting, people, equipment, ventilation, hotwater
     from honeybee_energy.schedule.ruleset import ScheduleRuleset
     from honeybee_energy.programtype import ProgramType
     from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identifier
@@ -292,11 +292,36 @@ def build_hb_program_from_Phius_data(_data):
         _data["elec_equipment"]
     )
 
+    # -- Ensure that that there is a HBE ventilation object
+    if program.ventilation == None:
+        program.ventilation = ventilation.Ventilation(
+            identifier="No Ventilation",
+            flow_per_person=0,
+            flow_per_area=0,
+            flow_per_zone=0,
+            air_changes_per_hour=0,
+            schedule=ScheduleRuleset.from_constant_value(
+                identifier="No_Ventilation::EMPTY",
+                value=0.0,
+                schedule_type_limit=schedule_type_limit_by_identifier("Fractional"),
+            ),
+        )
+
+    # -- Ensure that that there is an HBE Service Hot Water object
+    if program.service_hot_water == None:
+        program.service_hot_water = hotwater.ServiceHotWater(
+            identifier="No Service Hot Water",
+            flow_per_area=0,
+            schedule=ScheduleRuleset.from_constant_value(
+                identifier="ServiceHotWater::EMPTY",
+                value=0.0,
+                schedule_type_limit=schedule_type_limit_by_identifier("Fractional"),
+            ),
+        )
+
     # -- Inherit the rest from the base-program
     # program.gas_equipment = _gas_equip_
-    # program.service_hot_water = _hot_water_
     # program.infiltration = _infiltration_
-    # program.ventilation = _ventilation_
     # program.setpoint = _setpoint_
 
     return program
