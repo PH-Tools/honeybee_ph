@@ -246,7 +246,6 @@ class PhHeatingDistrict(PhHeatingSystem):
         return new_obj
 
 
-
 # -----------------------------------------------------------------------------
 
 

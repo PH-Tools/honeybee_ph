@@ -10,9 +10,9 @@ try:
 except ImportError:
     pass  # Python2.7
 
-from honeybee_ph import _base, phius, phi, site
-from honeybee_ph_standards.sourcefactors import factors
 from honeybee_energy_ph.construction import thermal_bridge
+from honeybee_ph import _base, phi, phius, site
+from honeybee_ph_standards.sourcefactors import factors
 from honeybee_ph_utils import enumerables
 
 

@@ -1,5 +1,7 @@
 import pytest
+
 from honeybee_energy_ph.hvac import ventilation
+
 
 # -----------------------------------------------------------------------------
 # --- Default Objects

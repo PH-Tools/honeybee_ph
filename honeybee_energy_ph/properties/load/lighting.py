@@ -13,7 +13,8 @@ except ImportError:
 class LightingPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type)
+            _expected_types, _input_type
+        )
         super(LightingPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -42,7 +43,7 @@ class LightingPhProperties(object):
         return self._host
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)
@@ -55,27 +56,26 @@ class LightingPhProperties(object):
         d = {}
 
         if abridged:
-            d['type'] = 'LightingPhPropertiesAbridged'
+            d["type"] = "LightingPhPropertiesAbridged"
         else:
-            d['type'] = 'LightingPhProperties'
+            d["type"] = "LightingPhProperties"
 
-        d['id_num'] = self.id_num
-        d['target_lux'] = self.target_lux
-        d['target_lux_height'] = self.target_lux_height
+        d["id_num"] = self.id_num
+        d["target_lux"] = self.target_lux
+        d["target_lux_height"] = self.target_lux_height
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> LightingPhProperties
-        valid_types = ('LightingPhProperties',
-                       'LightingPhPropertiesAbridged')
-        if data['type'] not in valid_types:
-            raise LightingPhProperties_FromDictError(valid_types, data['type'])
+        valid_types = ("LightingPhProperties", "LightingPhPropertiesAbridged")
+        if data["type"] not in valid_types:
+            raise LightingPhProperties_FromDictError(valid_types, data["type"])
 
         new_prop = cls(host)
-        new_prop.id_num = data['id_num']
-        new_prop.target_lux = data['target_lux']
-        new_prop.target_lux_height = data['target_lux_height']
+        new_prop.id_num = data["id_num"]
+        new_prop.target_lux = data["target_lux"]
+        new_prop.target_lux_height = data["target_lux_height"]
 
         return new_prop

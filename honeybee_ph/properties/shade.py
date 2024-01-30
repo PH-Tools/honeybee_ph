@@ -9,7 +9,6 @@ except ImportError:
 
 
 class ShadePhProperties(object):
-
     def __init__(self, _host):
         self._host = _host
         self.id_num = 0
@@ -35,20 +34,20 @@ class ShadePhProperties(object):
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
         d = {}
-        t = 'ShadePhProperties' if not \
-            abridged else 'ShadePhPropertiesAbridged'
-        d.update({'type': t})
-        d.update({'id_num': self.id_num})
+        t = "ShadePhProperties" if not abridged else "ShadePhPropertiesAbridged"
+        d.update({"type": t})
+        d.update({"id_num": self.id_num})
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> ShadePhProperties
-        assert data['type'] == 'ShadePhProperties', \
-            'Expected ShadePhProperties. Got {}.'.format(data['type'])
+        assert (
+            data["type"] == "ShadePhProperties"
+        ), "Expected ShadePhProperties. Got {}.".format(data["type"])
 
         new_prop = cls(host)
-        new_prop.id_num = data.get('id_num', 0)
+        new_prop.id_num = data.get("id_num", 0)
 
         return new_prop

@@ -14,7 +14,8 @@ from honeybee_energy_ph.construction import window
 class WindowConstructionPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type)
+            _expected_types, _input_type
+        )
         super(WindowConstructionPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -52,39 +53,43 @@ class WindowConstructionPhProperties(object):
         d = {}
 
         if abridged:
-            d['type'] = 'WindowConstructionPhPropertiesAbridged'
+            d["type"] = "WindowConstructionPhPropertiesAbridged"
         else:
-            d['type'] = 'WindowConstructionPhProperties'
+            d["type"] = "WindowConstructionPhProperties"
 
-        d['id_num'] = self.id_num
+        d["id_num"] = self.id_num
         if self.ph_frame:
-            d['ph_frame'] = self.ph_frame.to_dict()
+            d["ph_frame"] = self.ph_frame.to_dict()
         if self.ph_glazing:
-            d['ph_glazing'] = self.ph_glazing.to_dict()
-        return {'ph': d}
+            d["ph_glazing"] = self.ph_glazing.to_dict()
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
         # type: (dict[str, Any], Any) -> WindowConstructionPhProperties
-        valid_types = ('WindowConstructionPhProperties',
-                       'WindowConstructionPhPropertiesAbridged')
-        if _input_dict['type'] not in valid_types:
+        valid_types = (
+            "WindowConstructionPhProperties",
+            "WindowConstructionPhPropertiesAbridged",
+        )
+        if _input_dict["type"] not in valid_types:
             raise WindowConstructionPhProperties_FromDictError(
-                valid_types, _input_dict['type'])
+                valid_types, _input_dict["type"]
+            )
 
         new_obj = cls(host)
-        new_obj.id_num = _input_dict['id_num']
-        if 'ph_frame' in _input_dict:
-            new_obj.ph_frame = window.PhWindowFrame.from_dict(
-                _input_dict['ph_frame'])
-        if 'ph_glazing' in _input_dict:
+        new_obj.id_num = _input_dict["id_num"]
+        if "ph_frame" in _input_dict:
+            new_obj.ph_frame = window.PhWindowFrame.from_dict(_input_dict["ph_frame"])
+        if "ph_glazing" in _input_dict:
             new_obj.ph_glazing = window.PhWindowGlazing.from_dict(
-                _input_dict['ph_glazing'])
+                _input_dict["ph_glazing"]
+            )
         return new_obj
 
     def __str__(self):
-        return '{}(frame={!r}, glazing={!r})'.format(
-            self.__class__.__name__, self.ph_frame, self.ph_glazing)
+        return "{}(frame={!r}, glazing={!r})".format(
+            self.__class__.__name__, self.ph_frame, self.ph_glazing
+        )
 
     def __repr__(self):
         return str(self)

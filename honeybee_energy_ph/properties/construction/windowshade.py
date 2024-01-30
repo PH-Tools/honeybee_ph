@@ -4,7 +4,7 @@
 """Passive House properties for honeybee_energy.construction.window.WindowConstructionShade Objects"""
 
 try:
-    from typing import Any, Dict, Collection, Optional
+    from typing import Any, Collection, Dict, Optional
 except ImportError:
     pass  # Python 2.7
 

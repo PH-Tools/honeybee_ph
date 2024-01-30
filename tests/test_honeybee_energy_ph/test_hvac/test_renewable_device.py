@@ -1,7 +1,7 @@
 from honeybee_energy_ph.hvac.renewable_devices import (
     PhPhotovoltaicDevice,
-    PhRenewableEnergyDeviceBuilder,
     PhRenewableEnergyDevice,
+    PhRenewableEnergyDeviceBuilder,
 )
 
 

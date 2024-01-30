@@ -4,12 +4,13 @@
 """Utility functions for working with Honeybee-Energy Ventilation Loads and Schedules."""
 
 from honeybee import room
+
 from honeybee_ph_utils import occupancy
 
 
 def hb_room_vent_flowrates(_hb_room):
     # type: (room.Room) -> tuple[float, float, float, float]
-    """Return the honeybee-Room's four ventilation flow rates in m3/s, or 0 if no ventilation 
+    """Return the honeybee-Room's four ventilation flow rates in m3/s, or 0 if no ventilation
         program is found on the room.
 
     Arguments:
@@ -18,7 +19,7 @@ def hb_room_vent_flowrates(_hb_room):
 
     Returns:
     --------
-        * tuple[float, float, float, float]: 
+        * tuple[float, float, float, float]:
             - [0] (m3s): The honeybee-Room's ventilation flow_per_person
             - [1] (m3s): The honeybee-Room's ventilation flow_per_area
             - [2] (m3s): The honeybee-Room's ventilation flow_by_air_changes_per_hour
@@ -38,7 +39,7 @@ def hb_room_vent_flowrates(_hb_room):
             vent_program.flow_per_person,
             vent_program.flow_per_area,
             vent_program.air_changes_per_hour * _hb_room.volume / 3600,
-            vent_program.flow_per_zone
+            vent_program.flow_per_zone,
         )
 
 
@@ -47,8 +48,8 @@ def hb_room_peak_ventilation_airflow_by_zone(_hb_room):
     """Return the Peak Ventilation Airflow (m3/s) for the 'Zone' related elements of a honeybee-Room.
 
     This will return a sum of the room's flow_per_zone, flow_per_area, and air_changes_per_hour
-    but will ignore any occupancy related flow-rates. To get the occupancy-related ventilation 
-    airflow, use the 'hb_room_peak_ventilation_airflow_by_occupancy' function and to get the 
+    but will ignore any occupancy related flow-rates. To get the occupancy-related ventilation
+    airflow, use the 'hb_room_peak_ventilation_airflow_by_occupancy' function and to get the
     total airflow (by-zone + by-occupancy) use the 'hb_room_peak_ventilation_airflow_total'
 
     Arguments:
@@ -73,9 +74,9 @@ def hb_room_peak_ventilation_airflow_by_occupancy(_hb_room):
     # type: (room.Room) -> float
     """Return the Peak Ventilation Airflow (m3/s) for the 'Occupancy' related elements of a honeybee-Room.
 
-    This will return the room's flow_per_person, but will ignore any 'zone' related flow-rates. 
-    such as flow_per_zone or flow_per_area, To get the zone-related ventilation 
-    airflow, use the 'hb_room_peak_ventilation_airflow_by_zone' function and to get the 
+    This will return the room's flow_per_person, but will ignore any 'zone' related flow-rates.
+    such as flow_per_zone or flow_per_area, To get the zone-related ventilation
+    airflow, use the 'hb_room_peak_ventilation_airflow_by_zone' function and to get the
     total airflow (by-zone + by-occupancy) use the 'hb_room_peak_ventilation_airflow_total'
 
     Arguments:

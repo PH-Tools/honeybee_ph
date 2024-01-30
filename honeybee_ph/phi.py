@@ -6,13 +6,12 @@
 from copy import copy
 
 try:
-    from typing import Optional, Union, Type, Any, Dict
+    from typing import Any, Dict, Optional, Type, Union
 except ImportError:
     pass  # IronPython 2.7
 
-from honeybee_ph_utils import enumerables
 from honeybee_ph import _base
-
+from honeybee_ph_utils import enumerables
 
 # -----------------------------------------------------------------------------
 

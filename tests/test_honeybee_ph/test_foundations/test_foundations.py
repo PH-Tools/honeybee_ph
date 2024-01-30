@@ -10,6 +10,7 @@ def test_default_foundation_round_trip():
     assert "test_key" in f2.user_data
     assert f2.to_dict() == d1
 
+
 def test_default_foundation_duplicate():
     f1 = foundations.PhFoundation()
     f1.user_data["test_key"] = "test_value"
@@ -17,6 +18,7 @@ def test_default_foundation_duplicate():
 
     assert "test_key" in f2.user_data
     assert f2.to_dict() == f1.to_dict()
+
 
 def test_default_heated_basement_round_trip():
     f1 = foundations.PhHeatedBasement()
@@ -27,6 +29,7 @@ def test_default_heated_basement_round_trip():
     assert "test_key" in f2.user_data
     assert f2.to_dict() == d1
 
+
 def test_default_heated_basement_duplicate():
     f1 = foundations.PhHeatedBasement()
     f1.user_data["test_key"] = "test_value"
@@ -34,6 +37,7 @@ def test_default_heated_basement_duplicate():
 
     assert "test_key" in f2.user_data
     assert f2.to_dict() == f1.to_dict()
+
 
 def test_default_unheated_basement_round_trip():
     f1 = foundations.PhUnheatedBasement()
@@ -44,6 +48,7 @@ def test_default_unheated_basement_round_trip():
     assert "test_key" in f2.user_data
     assert f2.to_dict() == d1
 
+
 def test_default_unheated_basement_duplicate():
     f1 = foundations.PhUnheatedBasement()
     f1.user_data["test_key"] = "test_value"
@@ -51,6 +56,7 @@ def test_default_unheated_basement_duplicate():
 
     assert "test_key" in f2.user_data
     assert f2.to_dict() == f1.to_dict()
+
 
 def test_default_slab_on_grade_round_trip():
     f1 = foundations.PhSlabOnGrade()
@@ -61,6 +67,7 @@ def test_default_slab_on_grade_round_trip():
     assert "test_key" in f2.user_data
     assert f2.to_dict() == d1
 
+
 def test_default_slab_on_grade_duplicate():
     f1 = foundations.PhSlabOnGrade()
     f1.user_data["test_key"] = "test_value"
@@ -68,6 +75,7 @@ def test_default_slab_on_grade_duplicate():
 
     assert "test_key" in f2.user_data
     assert f2.to_dict() == f1.to_dict()
+
 
 def test_default_crawlspace_round_trip():
     f1 = foundations.PhVentedCrawlspace()
@@ -77,6 +85,7 @@ def test_default_crawlspace_round_trip():
 
     assert "test_key" in f2.user_data
     assert f2.to_dict() == d1
+
 
 def test_default_crawlspace_duplicate():
     f1 = foundations.PhVentedCrawlspace()

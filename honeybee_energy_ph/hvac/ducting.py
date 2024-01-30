@@ -3,27 +3,29 @@
 
 """Passive House HVAC Ducting Segment and Element Classes"""
 try:
-    from typing import Any, Union, List, Dict, Optional
+    from typing import Any, Dict, List, Optional, Union
 except ImportError:
     pass  # IronPython
 
-from ladybug_geometry.geometry3d.polyline import LineSegment3D
 from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
 from honeybee_energy_ph.hvac import _base
 
 
 class PhDuctSegment(_base._PhHVACBase):
     """A single duct segment (linear) with geometry and a attributes."""
-    
-    def __init__(self, 
-                 _geom,
-                 _insul_thickness=25.4,
-                 _insul_conductivity=0.04,
-                 _insul_refl=True,
-                 _diameter=160,
-                 _height=None,
-                 _width=None,):
+
+    def __init__(
+        self,
+        _geom,
+        _insul_thickness=25.4,
+        _insul_conductivity=0.04,
+        _insul_refl=True,
+        _diameter=160,
+        _height=None,
+        _width=None,
+    ):
         # type: (LineSegment3D, float, float, bool, float, Optional[float], Optional[float]) -> None
         super(PhDuctSegment, self).__init__()
         self.geometry = _geom
@@ -33,7 +35,7 @@ class PhDuctSegment(_base._PhHVACBase):
         self.diameter = _diameter
         self.height = _height
         self.width = _width
-    
+
     @property
     def length(self):
         # type: () -> float
@@ -43,11 +45,11 @@ class PhDuctSegment(_base._PhHVACBase):
     def default(cls):
         # type: () -> PhDuctSegment
         """Return a default Duct segment with a length of 1.0"""
-        
-        pt1 = Point3D(0,0,0)
-        pt2 = Point3D(1,0,0)
+
+        pt1 = Point3D(0, 0, 0)
+        pt2 = Point3D(1, 0, 0)
         geom = LineSegment3D.from_end_points(pt1, pt2)
-        
+
         return cls(geom)
 
     def __copy__(self):
@@ -71,9 +73,9 @@ class PhDuctSegment(_base._PhHVACBase):
     def shape_type(self):
         # type: () -> int
         if self.height and self.width:
-            return 2 # Rectangular Duct
+            return 2  # Rectangular Duct
         else:
-            return 1 # Round Duct
+            return 1  # Round Duct
 
     def duplicate(self):
         # type: () -> PhDuctSegment
@@ -83,36 +85,36 @@ class PhDuctSegment(_base._PhHVACBase):
         # type: () -> Dict[str, Union[str, dict]]
         d = super(PhDuctSegment, self).to_dict()
 
-        d['geometry'] = self.geometry.to_dict()
-        d['insulation_thickness'] = self.insulation_thickness
-        d['insulation_conductivity'] = self.insulation_conductivity
-        d['insulation_reflective'] = self.insulation_reflective
-        d['diameter'] = self.diameter
-        d['height'] = self.height
-        d['width'] = self.width
+        d["geometry"] = self.geometry.to_dict()
+        d["insulation_thickness"] = self.insulation_thickness
+        d["insulation_conductivity"] = self.insulation_conductivity
+        d["insulation_reflective"] = self.insulation_reflective
+        d["diameter"] = self.diameter
+        d["height"] = self.height
+        d["width"] = self.width
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> PhDuctSegment
-        new_obj = cls(
-            _geom=LineSegment3D.from_dict(_input_dict['geometry'])
-        )
-        new_obj.insulation_thickness = _input_dict['insulation_thickness']
-        new_obj.insulation_conductivity = _input_dict['insulation_conductivity']
-        new_obj.insulation_reflective = _input_dict['insulation_reflective']
-        new_obj.diameter = _input_dict['diameter']
-        new_obj.height = _input_dict['height']
-        new_obj.width = _input_dict['width']
-        new_obj.identifier = _input_dict['identifier']
-        new_obj.display_name = _input_dict['display_name']
-        new_obj.user_data = _input_dict['user_data']
+        new_obj = cls(_geom=LineSegment3D.from_dict(_input_dict["geometry"]))
+        new_obj.insulation_thickness = _input_dict["insulation_thickness"]
+        new_obj.insulation_conductivity = _input_dict["insulation_conductivity"]
+        new_obj.insulation_reflective = _input_dict["insulation_reflective"]
+        new_obj.diameter = _input_dict["diameter"]
+        new_obj.height = _input_dict["height"]
+        new_obj.width = _input_dict["width"]
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.user_data = _input_dict["user_data"]
 
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
+        return "{}: diam={}, length={:.3f}".format(
+            self.__class__.__name__, self.diameter, self.length
+        )
 
     def __repr__(self):
         return str(self)
@@ -158,7 +160,7 @@ class PhDuctElement(_base._PhHVACBase):
         duct_element.duct_type = 1
         duct_element.add_segment(PhDuctSegment.default())
         return duct_element
-    
+
     @classmethod
     def default_exhaust_duct(cls, *args, **kwargs):
         # type: (*Any, **Any) -> PhDuctElement
@@ -174,10 +176,10 @@ class PhDuctElement(_base._PhHVACBase):
         """Add a new PhDuctSegment to the Duct Element."""
         # -- Check that the new segment is the right shape type
         if len(self.segments) > 0:
-            if  not _segment.shape_type == self.shape_type:
+            if not _segment.shape_type == self.shape_type:
                 msg = "Error: Cannot join round and rectangular duct segments."
                 raise Exception(msg)
-        
+
         self._segments[_segment.identifier] = _segment
 
     def __copy__(self):
@@ -202,10 +204,10 @@ class PhDuctElement(_base._PhHVACBase):
         # type: () -> Dict[str, Union[str, dict]]
         d = super(PhDuctElement, self).to_dict()
 
-        d['segments'] = {}
+        d["segments"] = {}
         for segment in self.segments:
-            d['segments'][segment.identifier] = segment.to_dict()
-        d['duct_type'] = self.duct_type
+            d["segments"][segment.identifier] = segment.to_dict()
+        d["duct_type"] = self.duct_type
 
         return d
 
@@ -214,23 +216,26 @@ class PhDuctElement(_base._PhHVACBase):
         # type: (Dict) -> PhDuctElement
         new_obj = cls()
 
-        for seg_dict in _input_dict['segments'].values():
-            new_obj._segments[seg_dict['identifier']] = PhDuctSegment.from_dict(seg_dict)
-        new_obj.identifier = _input_dict['identifier']
-        new_obj.display_name = _input_dict['display_name']
-        new_obj.duct_type = _input_dict['duct_type']
-        new_obj.user_data = _input_dict['user_data']
+        for seg_dict in _input_dict["segments"].values():
+            new_obj._segments[seg_dict["identifier"]] = PhDuctSegment.from_dict(seg_dict)
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.duct_type = _input_dict["duct_type"]
+        new_obj.user_data = _input_dict["user_data"]
 
         return new_obj
 
     def __str__(self):
         return "{}: (display_name={}, identifier={} ) [{} segments, len={:.3f}]".format(
-            self.__class__.__name__, self.display_name, 
-            self.identifier, len(self.segments), self.length)
+            self.__class__.__name__,
+            self.display_name,
+            self.identifier,
+            len(self.segments),
+            self.length,
+        )
 
     def __repr__(self):
         return str(self)
 
     def ToString(self):
         return self.__repr__()
-

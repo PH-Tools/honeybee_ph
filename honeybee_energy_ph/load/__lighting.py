@@ -36,20 +36,25 @@ class LightingPhProperties(object):
         return self._host
 
     def __repr__(self):
-        return "LBT-Point3D Passive House Properties: [host: {}]".format(self.host.display_name)
+        return "LBT-Point3D Passive House Properties: [host: {}]".format(
+            self.host.display_name
+        )
 
     def to_dict(self, abridged=False):
         # type: (LightingPhProperties, bool) -> dict[str, dict]
         base = {"_PH": {}}
-        base["_PH"]["type"] = "LightingPhProperties" if not abridged else "LightingPhPropertiesAbridged"
+        base["_PH"]["type"] = (
+            "LightingPhProperties" if not abridged else "LightingPhPropertiesAbridged"
+        )
 
         return base
 
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> LightingPhProperties
-        assert data["type"] == "LightingPhProperties", "Expected LightingPhProperties. Got {}.".format(
-            data["type"])
+        assert (
+            data["type"] == "LightingPhProperties"
+        ), "Expected LightingPhProperties. Got {}.".format(data["type"])
 
         new_prop = cls(host)
         new_prop.id_num = data.get("id_num", 0)
@@ -72,8 +77,11 @@ class LightingProperties(properties._Properties):
                 object should be returned (False) or just an abridged version (True).
                 Default: False.
         """
-        base = {'type': 'LightingProperties'} if not abridged else \
-            {'type': 'LightingPropertiesAbridged'}
+        base = (
+            {"type": "LightingProperties"}
+            if not abridged
+            else {"type": "LightingPropertiesAbridged"}
+        )
 
         return base
 
@@ -105,9 +113,9 @@ class PH_Lighting(lighting.Lighting):
 
     def __setattr__(self, attr_name, value):
         # type: (PH_Lighting, str, Any) -> None
-        """Override in order to intercept any attribute setting on the 
-        base LBT object. Use the following syntax to catch any calls and 
-        pass them to the PH .properties as approprate. Be sure to include the 
+        """Override in order to intercept any attribute setting on the
+        base LBT object. Use the following syntax to catch any calls and
+        pass them to the PH .properties as approprate. Be sure to include the
         super() at the end to also set the attr on the base LBT object.
 
         > if attr_name == "watts_per_area":

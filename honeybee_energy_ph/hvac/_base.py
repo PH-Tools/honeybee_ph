@@ -11,6 +11,7 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
+
 class _PhHVACBase(object):
     """Base class for any HB-Energy-PH HVAC Objects"""
 
@@ -63,7 +64,7 @@ class _PhHVACBase(object):
         return "{}(identifier={!r}, user_data={!r})".format(
             self.__class__.__name__, self.identifier_short, self.user_data
         )
-    
+
     def to_dict(self):
         # type: () -> Dict[str, Any]
         d = {}
@@ -71,7 +72,7 @@ class _PhHVACBase(object):
         d["display_name"] = copy(self.display_name)
         d["user_data"] = copy(self.user_data)
         return d
-    
+
     def from_dict(self, _input_dict):
         # type: (Dict[str, Any]) -> _PhHVACBase
         obj = self.__class__()
@@ -82,7 +83,7 @@ class _PhHVACBase(object):
 
     def __copy__(self):
         return self.duplicate()
-    
+
     def duplicate(self):
         # type: () -> _PhHVACBase
         obj = self.__class__()
@@ -92,15 +93,14 @@ class _PhHVACBase(object):
         obj.user_data = copy(self.user_data)
 
         return obj
-    
+
     def __eq__(self, other):
         # type: (_PhHVACBase) -> bool
         for k, v in self.__dict__.items():
             try:
                 if v != getattr(other, k):
-                    if str(v) != str(getattr(other, k)): # Handle UUID Identifier
+                    if str(v) != str(getattr(other, k)):  # Handle UUID Identifier
                         return False
             except AttributeError:
                 return False
         return True
-    

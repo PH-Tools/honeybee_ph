@@ -9,6 +9,7 @@ def test_default_ventilator():
     o2 = ventilation.Ventilator.from_dict(d)
     assert o2.to_dict() == o1.to_dict()
 
+
 def test_dict_round_trip_default_ventilator():
     o1 = ventilation.Ventilator()
     d1 = o1.to_dict()
@@ -22,6 +23,7 @@ def test_dict_round_trip_default_ventilator():
     o3 = ventilation.Ventilator.from_dict(d2)
     assert o2.to_dict() == o3.to_dict()
 
+
 def test_duplicate_default_ventilator():
     o1 = ventilation.Ventilator()
     assert o1.ToString()
@@ -33,7 +35,7 @@ def test_duplicate_default_ventilator():
     o2.user_data["test_key"] = "test_value"
     assert "test_key" not in o1.user_data
     assert "test_key" in o2.user_data
-    
+
 
 def test_custom_ventilator():
     o1 = ventilation.Ventilator()

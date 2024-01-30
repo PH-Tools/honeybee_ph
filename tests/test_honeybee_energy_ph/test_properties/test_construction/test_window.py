@@ -1,6 +1,7 @@
 import pytest
-from honeybee_energy_ph.properties.construction import window
+
 from honeybee_energy_ph.construction.window import PhWindowFrame, PhWindowGlazing
+from honeybee_energy_ph.properties.construction import window
 
 
 def test_default_window_construction_shade_properties_dict_round_trip():

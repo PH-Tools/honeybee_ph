@@ -5,6 +5,7 @@ def test_base_class():
     sys = hot_water.PhHotWaterHeater()
     assert sys.ToString()
 
+
 # -----------------------------------------------------------------------------
 
 
@@ -21,6 +22,7 @@ def test_dict_roundtrip_PhSHWHeaterElectric():
     assert "test_key" not in s1.user_data
     assert s1.to_dict() != s2.to_dict()
 
+
 def test_dict_roundtrip_PhSHWHeaterBoiler():
     s1 = hot_water.PhSHWHeaterBoiler()
     d = s1.to_dict()
@@ -33,6 +35,7 @@ def test_dict_roundtrip_PhSHWHeaterBoiler():
     assert "test_key" in s2.user_data
     assert "test_key" not in s1.user_data
     assert s1.to_dict() != s2.to_dict()
+
 
 def test_dict_roundtrip_PhSHWHeaterBoilerWood():
     s1 = hot_water.PhSHWHeaterBoilerWood()
@@ -47,6 +50,7 @@ def test_dict_roundtrip_PhSHWHeaterBoilerWood():
     assert "test_key" not in s1.user_data
     assert s1.to_dict() != s2.to_dict()
 
+
 def test_dict_roundtrip_PhSHWHeaterDistrict():
     s1 = hot_water.PhSHWHeaterDistrict()
     d = s1.to_dict()
@@ -59,6 +63,7 @@ def test_dict_roundtrip_PhSHWHeaterDistrict():
     assert "test_key" in s2.user_data
     assert "test_key" not in s1.user_data
     assert s1.to_dict() != s2.to_dict()
+
 
 def test_dict_roundtrip_PhSHWHeaterHeatPump():
     s1 = hot_water.PhSHWHeaterHeatPump()
@@ -83,23 +88,27 @@ def test_hw_builder_PhSHWHeaterElectric():
     s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
 
+
 def test_hw_builder_PhSHWHeaterBoiler():
     s1 = hot_water.PhSHWHeaterBoiler()
     d1 = s1.to_dict()
     s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
 
+
 def test_hw_builder_PhSHWHeaterBoilerWood():
     s1 = hot_water.PhSHWHeaterBoilerWood()
     d1 = s1.to_dict()
     s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
-    
+
+
 def test_hw_builder_PhSHWHeaterDistrict():
     s1 = hot_water.PhSHWHeaterDistrict()
     d1 = s1.to_dict()
     s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
+
 
 def test_hw_builder_PhSHWHeaterHeatPump():
     s1 = hot_water.PhSHWHeaterHeatPump()

@@ -1,4 +1,5 @@
 import pytest
+
 from honeybee_ph import space
 
 
@@ -171,6 +172,7 @@ def test_Space_serialize(floor_segment_geometry):
     o2 = space.Space.from_dict(d3, sp.host)
     d4 = o2.to_dict()
     assert d3 == d4
+
 
 # -- Duplicate --
 

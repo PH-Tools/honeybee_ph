@@ -1,5 +1,6 @@
-from honeybee_energy_ph.load.phius_mf import PhiusResidentialStory
 from pytest import approx
+
+from honeybee_energy_ph.load.phius_mf import PhiusResidentialStory
 
 
 def test_phius_residential_story():

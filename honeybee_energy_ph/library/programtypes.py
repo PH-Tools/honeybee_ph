@@ -14,14 +14,14 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
 try:
-    from honeybee_energy.load import lighting, people, equipment, ventilation, hotwater
-    from honeybee_energy.schedule.ruleset import ScheduleRuleset
-    from honeybee_energy.programtype import ProgramType
-    from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identifier
     from honeybee_energy.lib.programtypes import (
-        program_type_by_identifier,
-        building_program_type_by_identifier,
-    )
+        building_program_type_by_identifier, program_type_by_identifier)
+    from honeybee_energy.lib.scheduletypelimits import \
+        schedule_type_limit_by_identifier
+    from honeybee_energy.load import (equipment, hotwater, lighting, people,
+                                      ventilation)
+    from honeybee_energy.programtype import ProgramType
+    from honeybee_energy.schedule.ruleset import ScheduleRuleset
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy:\n\t{}".format(e))
 
@@ -33,7 +33,8 @@ except ImportError as e:
 
 try:
     from honeybee_energy_ph.properties import ruleset
-    from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
+    from honeybee_energy_ph.properties.load.lighting import \
+        LightingPhProperties
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
 

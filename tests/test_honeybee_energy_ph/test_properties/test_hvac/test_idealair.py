@@ -1,11 +1,6 @@
-from honeybee_energy_ph.properties.hvac import idealair
-from honeybee_energy_ph.hvac import (
-    heat_pumps,
-    ventilation,
-    heating,
-    supportive_device,
-)
+from honeybee_energy_ph.hvac import heat_pumps, heating, supportive_device, ventilation
 from honeybee_energy_ph.hvac.renewable_devices import PhPhotovoltaicDevice
+from honeybee_energy_ph.properties.hvac import idealair
 
 
 def test_default_empty_system_dict_roundtrip():
@@ -154,6 +149,7 @@ def test_duplicate_system_with_single_heating_sys():
 # -----------------------------------------------------------------------------
 # -- Heat Pump (Heating + Cooling) Systems
 
+
 def test_system_with_multiple_heat_pump_sys_dict_roundtrip():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)
 
@@ -178,6 +174,7 @@ def test_system_with_single_heat_pump_sys_dict_roundtrip():
     d = p1.to_dict()
     p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
     assert p2.to_dict() == d
+
 
 def test_duplicate_system_with_single_cooling_sys():
     p1 = idealair.IdealAirSystemPhProperties(_host=None)

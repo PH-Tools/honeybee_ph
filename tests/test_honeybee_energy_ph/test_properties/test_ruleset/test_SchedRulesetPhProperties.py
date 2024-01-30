@@ -1,5 +1,6 @@
-from honeybee_energy_ph.properties import ruleset
 import pytest
+
+from honeybee_energy_ph.properties import ruleset
 
 
 def test_empty_daily_periods():

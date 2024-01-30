@@ -1,5 +1,6 @@
-from honeybee_energy_ph.properties import ruleset
 import pytest
+
+from honeybee_energy_ph.properties import ruleset
 
 # -- Daily Operating Periods
 
@@ -54,6 +55,7 @@ def op_period_12_hour_factor_1() -> ruleset.DailyOperationPeriod:
     op_period.operation_fraction = 1.0
     return op_period
 
+
 # -- Daily Operating Period Collections
 
 
@@ -67,12 +69,10 @@ def op_period_collection_full() -> ruleset.DailyOperatingPeriodCollection:
     coll = ruleset.DailyOperatingPeriodCollection()
 
     coll.add_period_to_collection(
-        ruleset.DailyOperationPeriod.from_start_end_hours(
-            0, 1, 1, 'period 1')
+        ruleset.DailyOperationPeriod.from_start_end_hours(0, 1, 1, "period 1")
     )
     coll.add_period_to_collection(
-        ruleset.DailyOperationPeriod.from_start_end_hours(
-            0, 23, 1, 'period 2')
+        ruleset.DailyOperationPeriod.from_start_end_hours(0, 23, 1, "period 2")
     )
 
     return coll

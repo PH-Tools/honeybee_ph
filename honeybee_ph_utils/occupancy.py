@@ -3,15 +3,16 @@
 
 """Utility functions for working with Honeybee-Energy Occupancy Loads and Schedules"""
 
-from honeybee import room
 import statistics
+
+from honeybee import room
 
 
 def hb_room_ppl_per_area(_hb_room):
     # type: (room.Room) -> float
     """Returns a honeybee-Room's occupancy load (people_per_area).
 
-    Note all  honeybee-Rooms have an occupancy (stairs, etc) and so if there is 
+    Note all  honeybee-Rooms have an occupancy (stairs, etc) and so if there is
     no energy.pepple found, will return 0
 
     Arguments:
@@ -30,9 +31,9 @@ def hb_room_ppl_per_area(_hb_room):
 
 def hb_room_peak_occupancy(_hb_room):
     # type: (room.Room) ->  float
-    """Returns a peak occupancy (# ppl) of a honeybee-Room. 
+    """Returns a peak occupancy (# ppl) of a honeybee-Room.
 
-    Not all honeybee rooms have an occupancy (stairs, etc..) and so if there is 
+    Not all honeybee rooms have an occupancy (stairs, etc..) and so if there is
     no energy.people found, will return 0.
 
     Arguments:
@@ -55,7 +56,7 @@ def hb_room_annual_avg_occupancy(_hb_room):
     # type: (room.Room) -> float
     """Returns the annual average occupancy (# ppl) of a honeybee-Room.
 
-    Will return the 'mean_occupancy' if there is one on the Schedule. Otherwise 
+    Will return the 'mean_occupancy' if there is one on the Schedule. Otherwise
     will calculate the value.
 
     Arguments:
@@ -69,9 +70,12 @@ def hb_room_annual_avg_occupancy(_hb_room):
 
     peak_occupancy = hb_room_peak_occupancy(_hb_room)
     try:
-        mean_occupancy = _hb_room.properties.energy.people.occupancy_schedule.mean_occupancy
+        mean_occupancy = (
+            _hb_room.properties.energy.people.occupancy_schedule.mean_occupancy
+        )
     except AttributeError:
         mean_occupancy = statistics.mean(
-            _hb_room.properties.energy.people.occupancy_schedule.values())
+            _hb_room.properties.energy.people.occupancy_schedule.values()
+        )
 
     return peak_occupancy * mean_occupancy

@@ -6,7 +6,7 @@
 from copy import copy
 
 try:
-    from typing import Any, Union, List, Dict
+    from typing import Any, Dict, List, Union
 except ImportError:
     pass  # IronPython
 

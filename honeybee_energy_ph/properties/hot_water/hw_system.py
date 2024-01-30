@@ -4,7 +4,7 @@
 """PH-Properties classes for SHWSystem (System / Equipment) objects."""
 
 try:
-    from typing import Any, ValuesView, Dict, Optional, Union
+    from typing import Any, Dict, Optional, Union, ValuesView
 except:
     pass  # IronPython
 

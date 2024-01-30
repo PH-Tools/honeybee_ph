@@ -13,6 +13,7 @@ import sys
 from honeybee import room
 
 from honeybee_energy_ph.load import _base
+
 try:
     from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
 except ImportError:
@@ -21,9 +22,9 @@ except ImportError:
 from honeybee_ph_utils import enumerables
 from honeybee_ph_utils.input_tools import input_to_int
 
-
 # -----------------------------------------------------------------------------
 # - Type Enums
+
 
 class PhDishwasherType(enumerables.CustomEnum):
     allowed = [
@@ -77,13 +78,14 @@ class PhCookingType(enumerables.CustomEnum):
 # -----------------------------------------------------------------------------
 # - Appliance Base
 
+
 class PhEquipment(_base._Base):
     """Base for PH Equipment / Appliances with the common attributes."""
 
     def __init__(self):
         super(PhEquipment, self).__init__()
         self.equipment_type = self.__class__.__name__
-        self.display_name = '_unnamed_equipment_'
+        self.display_name = "_unnamed_equipment_"
         self.comment = ""
         self.reference_quantity = 2  # Zone Occupants
         self.quantity = 0
@@ -107,19 +109,19 @@ class PhEquipment(_base._Base):
         # type: () -> Dict[str, Any]
         d = {}
 
-        d['display_name'] = self.display_name
-        d['identifier'] = self.identifier
-        d['user_data'] = self.user_data
+        d["display_name"] = self.display_name
+        d["identifier"] = self.identifier
+        d["user_data"] = self.user_data
 
-        d['equipment_type'] = self.__class__.__name__
-        d['comment'] = self.comment
-        d['reference_quantity'] = self.reference_quantity
-        d['quantity'] = self.quantity  # = 0
-        d['in_conditioned_space'] = self.in_conditioned_space
-        d['reference_energy_norm'] = self.reference_energy_norm
-        d['energy_demand'] = self.energy_demand
-        d['energy_demand_per_use'] = self.energy_demand_per_use
-        d['combined_energy_factor'] = self.combined_energy_factor
+        d["equipment_type"] = self.__class__.__name__
+        d["comment"] = self.comment
+        d["reference_quantity"] = self.reference_quantity
+        d["quantity"] = self.quantity  # = 0
+        d["in_conditioned_space"] = self.in_conditioned_space
+        d["reference_energy_norm"] = self.reference_energy_norm
+        d["energy_demand"] = self.energy_demand
+        d["energy_demand_per_use"] = self.energy_demand_per_use
+        d["combined_energy_factor"] = self.combined_energy_factor
 
         return d
 
@@ -139,7 +141,7 @@ class PhEquipment(_base._Base):
         for attr_name in vars(self).keys():
             try:
                 # Strip off underscore so it uses the property setters
-                if attr_name.startswith('_'):
+                if attr_name.startswith("_"):
                     attr_name = attr_name[1:]
                 setattr(_obj, attr_name, _input_dict[attr_name])
             except KeyError:
@@ -148,7 +150,7 @@ class PhEquipment(_base._Base):
 
     def merge(self, other, weighting_1=1.0, weighting_2=1.0):
         # type: (PhEquipment, float, float) -> PhEquipment
-        """"Merge together two pieces of PhEquipment.
+        """ "Merge together two pieces of PhEquipment.
 
         Arguments:
         ----------
@@ -163,7 +165,8 @@ class PhEquipment(_base._Base):
 
         if self.equipment_type != other.equipment_type:
             msg = 'Error: Cannot merge PhEquipment with type: "{}" to PhEquipment with type: "{}"'.format(
-                self.equipment_type, other.equipment_type)
+                self.equipment_type, other.equipment_type
+            )
             raise Exception(msg)
 
         self.quantity += other.quantity
@@ -188,17 +191,21 @@ class PhEquipment(_base._Base):
         return (self.annual_energy_kWh(_ref_room) * 1000) / 8760
 
     def __str__(self):
-        return "{}(name={}, {})".format(self.__class__.__name__, self.display_name, ", ".join(["{}={}".format(str(k), str(v)) for k, v, in vars(self).items()]))
+        return "{}(name={}, {})".format(
+            self.__class__.__name__,
+            self.display_name,
+            ", ".join(["{}={}".format(str(k), str(v)) for k, v, in vars(self).items()]),
+        )
 
     def __repr__(self):
         return str(self)
+
 
 # -----------------------------------------------------------------------------
 # - Appliances
 
 
 class PhDishwasher(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhDishwasher, self).__init__()
         self.display_name = "Kitchen dishwasher"
@@ -221,9 +228,9 @@ class PhDishwasher(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhDishwasher, self).to_dict())
-        d['capacity_type'] = self.capacity_type
-        d['capacity'] = self.capacity
-        d['_water_connection'] = self._water_connection.to_dict()
+        d["capacity_type"] = self.capacity_type
+        d["capacity"] = self.capacity
+        d["_water_connection"] = self._water_connection.to_dict()
         return d
 
     @classmethod
@@ -231,10 +238,11 @@ class PhDishwasher(PhEquipment):
         # type: (dict) -> PhDishwasher
         new_obj = cls()
         super(PhDishwasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.capacity_type = _input_dict['capacity_type']
-        new_obj.capacity = _input_dict['capacity']
+        new_obj.capacity_type = _input_dict["capacity_type"]
+        new_obj.capacity = _input_dict["capacity"]
         new_obj._water_connection = PhDishwasherType.from_dict(
-            _input_dict['_water_connection'])
+            _input_dict["_water_connection"]
+        )
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -242,7 +250,6 @@ class PhDishwasher(PhEquipment):
 
 
 class PhClothesWasher(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhClothesWasher, self).__init__()
         self.display_name = "Laundry - washer"
@@ -266,10 +273,10 @@ class PhClothesWasher(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhClothesWasher, self).to_dict())
-        d['capacity'] = self.capacity
-        d['modified_energy_factor'] = self.modified_energy_factor
-        d['_water_connection'] = self._water_connection.to_dict()
-        d['utilization_factor'] = self.utilization_factor
+        d["capacity"] = self.capacity
+        d["modified_energy_factor"] = self.modified_energy_factor
+        d["_water_connection"] = self._water_connection.to_dict()
+        d["utilization_factor"] = self.utilization_factor
         return d
 
     @classmethod
@@ -277,11 +284,12 @@ class PhClothesWasher(PhEquipment):
         # type: (dict) -> PhClothesWasher
         new_obj = cls()
         super(PhClothesWasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.capacity = _input_dict['capacity']
-        new_obj.modified_energy_factor = _input_dict['modified_energy_factor']
+        new_obj.capacity = _input_dict["capacity"]
+        new_obj.modified_energy_factor = _input_dict["modified_energy_factor"]
         new_obj._water_connection = PhClothesWasherType.from_dict(
-            _input_dict['_water_connection'])
-        new_obj.utilization_factor = _input_dict['utilization_factor']
+            _input_dict["_water_connection"]
+        )
+        new_obj.utilization_factor = _input_dict["utilization_factor"]
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -289,7 +297,6 @@ class PhClothesWasher(PhEquipment):
 
 
 class PhClothesDryer(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhClothesDryer, self).__init__()
         self.display_name = "Laundry - dryer"
@@ -314,11 +321,11 @@ class PhClothesDryer(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhClothesDryer, self).to_dict())
-        d['_dryer_type'] = self._dryer_type.to_dict()
-        d['gas_consumption'] = self.gas_consumption
-        d['gas_efficiency_factor'] = self.gas_efficiency_factor
-        d['field_utilization_factor_type'] = self.field_utilization_factor_type
-        d['field_utilization_factor'] = self.field_utilization_factor
+        d["_dryer_type"] = self._dryer_type.to_dict()
+        d["gas_consumption"] = self.gas_consumption
+        d["gas_efficiency_factor"] = self.gas_efficiency_factor
+        d["field_utilization_factor_type"] = self.field_utilization_factor_type
+        d["field_utilization_factor"] = self.field_utilization_factor
         return d
 
     @classmethod
@@ -326,22 +333,22 @@ class PhClothesDryer(PhEquipment):
         # type: (dict) -> PhClothesDryer
         new_obj = cls()
         super(PhClothesDryer, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj._dryer_type = PhClothesDryerType.from_dict(_input_dict['_dryer_type'])
-        new_obj.gas_consumption = _input_dict['gas_consumption']
-        new_obj.gas_efficiency_factor = _input_dict['gas_efficiency_factor']
-        new_obj.field_utilization_factor_type = _input_dict['field_utilization_factor_type']
-        new_obj.field_utilization_factor = _input_dict['field_utilization_factor']
+        new_obj._dryer_type = PhClothesDryerType.from_dict(_input_dict["_dryer_type"])
+        new_obj.gas_consumption = _input_dict["gas_consumption"]
+        new_obj.gas_efficiency_factor = _input_dict["gas_efficiency_factor"]
+        new_obj.field_utilization_factor_type = _input_dict[
+            "field_utilization_factor_type"
+        ]
+        new_obj.field_utilization_factor = _input_dict["field_utilization_factor"]
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
-
         # TODO: Figure out how they calculate dryer energy? ANSI/Resnet?
 
         return 0.0
 
 
 class PhRefrigerator(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhRefrigerator, self).__init__()
         self.display_name = "Kitchen refrigerator"
@@ -367,7 +374,6 @@ class PhRefrigerator(PhEquipment):
 
 
 class PhFreezer(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhFreezer, self).__init__()
         self.display_name = "Kitchen freezer"
@@ -393,7 +399,6 @@ class PhFreezer(PhEquipment):
 
 
 class PhFridgeFreezer(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhFridgeFreezer, self).__init__()
         self.display_name = "Kitchen fridge/freeze combo"
@@ -419,7 +424,6 @@ class PhFridgeFreezer(PhEquipment):
 
 
 class PhCooktop(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhCooktop, self).__init__()
         self.display_name = "Kitchen cooking"
@@ -440,7 +444,7 @@ class PhCooktop(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhCooktop, self).to_dict())
-        d['_cooktop_type'] = self._cooktop_type.to_dict()
+        d["_cooktop_type"] = self._cooktop_type.to_dict()
         return d
 
     @classmethod
@@ -448,19 +452,20 @@ class PhCooktop(PhEquipment):
         # type: (dict) -> PhCooktop
         new_obj = cls()
         super(PhCooktop, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj._cooktop_type = PhCookingType.from_dict(_input_dict['_cooktop_type'])
+        new_obj._cooktop_type = PhCookingType.from_dict(_input_dict["_cooktop_type"])
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
         # Num. Meals as per Phius Guidebook V3.02, pg 73 footnote #31
         annual_meals_per_occupant = 500
-        num_meals = _ref_room.properties.energy.people.properties.ph.number_people * \
-            annual_meals_per_occupant
+        num_meals = (
+            _ref_room.properties.energy.people.properties.ph.number_people
+            * annual_meals_per_occupant
+        )
         return self.energy_demand * num_meals
 
 
 class PhPhiusMEL(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhPhiusMEL, self).__init__()
         self.display_name = "PHIUS+ MELS"
@@ -480,11 +485,11 @@ class PhPhiusMEL(PhEquipment):
         super(PhPhiusMEL, new_obj).base_attrs_from_dict(new_obj, _input_dict)
 
         return new_obj
+
     # TODO: annual_avg_wattage
 
 
 class PhPhiusLightingInterior(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhPhiusLightingInterior, self).__init__()
         self.display_name = "PHIUS+ Interior Lighting"
@@ -495,7 +500,7 @@ class PhPhiusLightingInterior(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhPhiusLightingInterior, self).to_dict())
-        d['frac_high_efficiency'] = self.frac_high_efficiency
+        d["frac_high_efficiency"] = self.frac_high_efficiency
         return d
 
     @classmethod
@@ -503,13 +508,13 @@ class PhPhiusLightingInterior(PhEquipment):
         # type: (dict) -> PhPhiusLightingInterior
         new_obj = cls()
         super(PhPhiusLightingInterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
+        new_obj.frac_high_efficiency = _input_dict["frac_high_efficiency"]
         return new_obj
+
     # TODO: annual_avg_wattage
 
 
 class PhPhiusLightingExterior(PhEquipment):
-
     def __init__(self, _defaults={}):
         # type: (Dict[str, Any]) -> None
         super(PhPhiusLightingExterior, self).__init__()
@@ -522,7 +527,7 @@ class PhPhiusLightingExterior(PhEquipment):
         # type: () -> Dict[str, Any]
         d = {}
         d.update(super(PhPhiusLightingExterior, self).to_dict())
-        d['frac_high_efficiency'] = self.frac_high_efficiency
+        d["frac_high_efficiency"] = self.frac_high_efficiency
         return d
 
     @classmethod
@@ -530,13 +535,13 @@ class PhPhiusLightingExterior(PhEquipment):
         # type: (Dict[str, Any]) -> PhPhiusLightingExterior
         new_obj = cls()
         super(PhPhiusLightingExterior, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
+        new_obj.frac_high_efficiency = _input_dict["frac_high_efficiency"]
         return new_obj
+
     # TODO: annual_avg_wattage
 
 
 class PhPhiusLightingGarage(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhPhiusLightingGarage, self).__init__()
         self.display_name = "PHIUS+ Garage Lighting"
@@ -548,7 +553,7 @@ class PhPhiusLightingGarage(PhEquipment):
         # type: () -> Dict[str, Any]
         d = {}
         d.update(super(PhPhiusLightingGarage, self).to_dict())
-        d['frac_high_efficiency'] = self.frac_high_efficiency
+        d["frac_high_efficiency"] = self.frac_high_efficiency
         return d
 
     @classmethod
@@ -556,13 +561,13 @@ class PhPhiusLightingGarage(PhEquipment):
         # type: (Dict[str, Any]) -> PhPhiusLightingGarage
         new_obj = cls()
         super(PhPhiusLightingGarage, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.frac_high_efficiency = _input_dict['frac_high_efficiency']
+        new_obj.frac_high_efficiency = _input_dict["frac_high_efficiency"]
         return new_obj
+
     # TODO:  annual_avg_wattage
 
 
 class PhCustomAnnualElectric(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhCustomAnnualElectric, self).__init__()
         self.display_name = "User defined"
@@ -572,7 +577,7 @@ class PhCustomAnnualElectric(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhCustomAnnualElectric, self).to_dict())
-        d['energy_demand'] = self.energy_demand
+        d["energy_demand"] = self.energy_demand
         return d
 
     @classmethod
@@ -580,7 +585,7 @@ class PhCustomAnnualElectric(PhEquipment):
         # type: (dict) -> PhCustomAnnualElectric
         new_obj = cls()
         super(PhCustomAnnualElectric, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.energy_demand = _input_dict['energy_demand']
+        new_obj.energy_demand = _input_dict["energy_demand"]
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -588,7 +593,6 @@ class PhCustomAnnualElectric(PhEquipment):
 
 
 class PhCustomAnnualLighting(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhCustomAnnualLighting, self).__init__()
         self.display_name = "User defined - lighting"
@@ -598,7 +602,7 @@ class PhCustomAnnualLighting(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhCustomAnnualLighting, self).to_dict())
-        d['energy_demand'] = self.energy_demand
+        d["energy_demand"] = self.energy_demand
         return d
 
     @classmethod
@@ -606,7 +610,7 @@ class PhCustomAnnualLighting(PhEquipment):
         # type: (dict) -> PhCustomAnnualLighting
         new_obj = cls()
         super(PhCustomAnnualLighting, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.energy_demand = _input_dict['energy_demand']
+        new_obj.energy_demand = _input_dict["energy_demand"]
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -614,7 +618,6 @@ class PhCustomAnnualLighting(PhEquipment):
 
 
 class PhCustomAnnualMEL(PhEquipment):
-
     def __init__(self, _defaults={}):
         super(PhCustomAnnualMEL, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -624,7 +627,7 @@ class PhCustomAnnualMEL(PhEquipment):
         # type: () -> dict
         d = {}
         d.update(super(PhCustomAnnualMEL, self).to_dict())
-        d['energy_demand'] = self.energy_demand
+        d["energy_demand"] = self.energy_demand
         return d
 
     @classmethod
@@ -632,23 +635,24 @@ class PhCustomAnnualMEL(PhEquipment):
         # type: (dict) -> PhCustomAnnualMEL
         new_obj = cls()
         super(PhCustomAnnualMEL, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.energy_demand = _input_dict['energy_demand']
+        new_obj.energy_demand = _input_dict["energy_demand"]
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
         return self.energy_demand
 
+
 # -- Elevator classes
 
+
 class PhElevatorHydraulic(PhEquipment):
-    
     def __init__(self, _num_dwellings=1):
         super(PhElevatorHydraulic, self).__init__()
         self.display_name = "User defined - Misc electric loads"
         self.comment = "Elevator - Hydraulic"
         self.set_energy_demand(_num_dwellings)
         self.quantity = 1
-    
+
     def set_energy_demand(self, _num_dwellings):
         """Set the annual energy demand (kWh) based on the number of dwelling units"""
         if _num_dwellings <= 6:
@@ -675,7 +679,6 @@ class PhElevatorHydraulic(PhEquipment):
 
 
 class PhElevatorGearedTraction(PhEquipment):
-    
     def __init__(self, _num_dwellings=1):
         super(PhElevatorGearedTraction, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -704,12 +707,13 @@ class PhElevatorGearedTraction(PhEquipment):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhElevatorGearedTraction
         new_obj = cls()
-        super(PhElevatorGearedTraction, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        super(PhElevatorGearedTraction, new_obj).base_attrs_from_dict(
+            new_obj, _input_dict
+        )
         return new_obj
 
 
 class PhElevatorGearlessTraction(PhEquipment):
-    
     def __init__(self, _num_dwellings=1):
         super(PhElevatorGearlessTraction, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -738,7 +742,9 @@ class PhElevatorGearlessTraction(PhEquipment):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhElevatorGearlessTraction
         new_obj = cls()
-        super(PhElevatorGearlessTraction, new_obj).base_attrs_from_dict(new_obj, _input_dict)
+        super(PhElevatorGearlessTraction, new_obj).base_attrs_from_dict(
+            new_obj, _input_dict
+        )
         return new_obj
 
 
@@ -754,12 +760,14 @@ class PhEquipmentBuilder(object):
         # type: (dict) -> PhEquipment
         """Find the right appliance constructor class from the module based on the 'type' name."""
 
-        equipment_type = _input_dict.get('equipment_type')
-        valid_class_types = [nm for nm in dir(
-            sys.modules[__name__]) if nm.startswith('Ph')]
+        equipment_type = _input_dict.get("equipment_type")
+        valid_class_types = [
+            nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")
+        ]
         if equipment_type not in valid_class_types:
             msg = 'Error: Unknown PH Equipment type? Got: "{}" but only types: {} are allowed?'.format(
-                valid_class_types, equipment_type)
+                valid_class_types, equipment_type
+            )
             raise Exception(msg)
 
         equipment_class = getattr(sys.modules[__name__], equipment_type)
@@ -768,7 +776,7 @@ class PhEquipmentBuilder(object):
         return new_equipment
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)
@@ -853,9 +861,9 @@ class PhEquipmentCollection(object):
         # type: () -> dict
         d = {}
 
-        d['equipment_set'] = {}
+        d["equipment_set"] = {}
         for key, device in self._equipment_set.items():
-            d['equipment_set'][key] = device.to_dict()
+            d["equipment_set"][key] = device.to_dict()
 
         return d
 
@@ -864,7 +872,7 @@ class PhEquipmentCollection(object):
         # type: (dict, Any) -> PhEquipmentCollection
         new_obj = cls(_host)
 
-        for k, device in _input_dict['equipment_set'].items():
+        for k, device in _input_dict["equipment_set"].items():
             if k not in new_obj._equipment_set.keys():
                 new_obj.add_equipment(PhEquipmentBuilder.from_dict(device), k)
 
@@ -891,7 +899,9 @@ class PhEquipmentCollection(object):
         return new_obj
 
     def __str__(self):
-        return '{}({} pieces of equipment)'.format(self.__class__.__name__, len(self._equipment_set.keys()))
+        return "{}({} pieces of equipment)".format(
+            self.__class__.__name__, len(self._equipment_set.keys())
+        )
 
     def __repr__(self):
         return str(self)

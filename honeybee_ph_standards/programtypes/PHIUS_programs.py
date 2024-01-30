@@ -4,9 +4,9 @@
 """Phius Program Data Library"""
 
 try:
-    from typing import Dict, Any
+    from typing import Any, Dict
 except ImportError:
-    pass # IronPython 2.7
+    pass  # IronPython 2.7
 
 
 # Programs from:
@@ -2321,6 +2321,6 @@ PHIUS_MF_Calculator = {
 }
 
 # -- Full Library
-PHIUS_library = {} # type: Dict[str, Dict]
+PHIUS_library = {}  # type: Dict[str, Dict]
 PHIUS_library.update(PHIUS_Non_Res)
 PHIUS_library.update(PHIUS_MF_Calculator)

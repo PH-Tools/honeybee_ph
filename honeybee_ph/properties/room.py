@@ -4,7 +4,7 @@
 """HB-Room Passive House (PH) Properties."""
 
 try:
-    from typing import Any, Optional, List, Dict, Union
+    from typing import Any, Dict, List, Optional, Union
 except ImportError:
     pass  # Python2.7
 
@@ -14,8 +14,8 @@ except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
 try:
-    from honeybee_ph.bldg_segment import BldgSegment
     from honeybee_ph import space
+    from honeybee_ph.bldg_segment import BldgSegment
     from honeybee_ph.foundations import PhFoundation, PhFoundationFactory
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))

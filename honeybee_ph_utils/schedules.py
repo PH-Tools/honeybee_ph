@@ -4,7 +4,8 @@
 """Utility functions for converting Honeybee schedules into WUFI schedules."""
 
 from honeybee import room
-from honeybee_ph_utils import ventilation, histogram
+
+from honeybee_ph_utils import histogram, ventilation
 
 
 class SchedItem:
@@ -14,7 +15,9 @@ class SchedItem:
         self.period_operating_hours = _fr
 
     def __str__(self):
-        return '{}(average_value={!r}, frequency={!r})'.format(self.__class__.__name__, self.period_speed, self.period_operating_hours)
+        return "{}(average_value={!r}, frequency={!r})".format(
+            self.__class__.__name__, self.period_speed, self.period_operating_hours
+        )
 
     def __repr__(self):
         return str(self)
@@ -29,7 +32,9 @@ class FourPartSched:
         self.minimum = _m
 
     def __str__(self):
-        return '{}({!r}, {!r}, {!r}, {!r})'.format(self.__class__.__name__, self.high, self.standard, self.basic, self.minimum)
+        return "{}({!r}, {!r}, {!r}, {!r})".format(
+            self.__class__.__name__, self.high, self.standard, self.basic, self.minimum
+        )
 
     def __repr__(self):
         return str(self)
@@ -97,7 +102,7 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
             SchedItem(1.0, 1.0),
             SchedItem(0.0, 0.0),
             SchedItem(0.0, 0.0),
-            SchedItem(0.0, 0.0)
+            SchedItem(0.0, 0.0),
         )
 
     hourly_total_vent_percentage_rate = [
@@ -115,21 +120,21 @@ def calc_four_part_vent_sched_values_from_hb_room(_hb_room, _use_dcv=True):
     # --- Organize Output
     output = FourPartSched(
         SchedItem(
-            four_part_sched_dict.get(0, {}).get('average_value', 0),
-            four_part_sched_dict.get(0, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(0, {}).get("average_value", 0),
+            four_part_sched_dict.get(0, {}).get("frequency", 0) * 24,
         ),
         SchedItem(
-            four_part_sched_dict.get(1, {}).get('average_value', 0),
-            four_part_sched_dict.get(1, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(1, {}).get("average_value", 0),
+            four_part_sched_dict.get(1, {}).get("frequency", 0) * 24,
         ),
         SchedItem(
-            four_part_sched_dict.get(2, {}).get('average_value', 0),
-            four_part_sched_dict.get(2, {}).get('frequency', 0) * 24,
+            four_part_sched_dict.get(2, {}).get("average_value", 0),
+            four_part_sched_dict.get(2, {}).get("frequency", 0) * 24,
         ),
         SchedItem(
-            four_part_sched_dict.get(3, {}).get('average_value', 0),
-            four_part_sched_dict.get(3, {}).get('frequency', 0) * 24,
-        )
+            four_part_sched_dict.get(3, {}).get("average_value", 0),
+            four_part_sched_dict.get(3, {}).get("frequency", 0) * 24,
+        ),
     )
 
     return output

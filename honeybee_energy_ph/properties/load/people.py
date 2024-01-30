@@ -6,7 +6,7 @@
 from uuid import uuid4
 
 try:
-    from typing import Any, Optional, Dict
+    from typing import Any, Dict, Optional
 except ImportError:
     pass  # Python 2.7
 

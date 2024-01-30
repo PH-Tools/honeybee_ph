@@ -5,19 +5,18 @@
 
 from honeybee_energy_ph.hvac import heat_pumps
 
-
 try:
-    from typing import Any, Optional, Dict
+    from typing import Any, Dict, Optional
 except:
     pass  # IronPython
 
 try:
-    from honeybee_energy_ph.hvac import ventilation, heating
-    from honeybee_energy_ph.hvac.supportive_device import PhSupportiveDevice
+    from honeybee_energy_ph.hvac import heating, ventilation
     from honeybee_energy_ph.hvac.renewable_devices import (
         PhRenewableEnergyDevice,
         PhRenewableEnergyDeviceBuilder,
     )
+    from honeybee_energy_ph.hvac.supportive_device import PhSupportiveDevice
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
 
@@ -111,7 +110,9 @@ class IdealAirSystemPhProperties(object):
             new_prop.heating_systems.add(htg_sys)
 
         for heat_pump_sys_dict in _input_dict.get("heat_pump_systems", []):
-            heat_pump_sys = heat_pumps.PhHeatPumpSystemBuilder.from_dict(heat_pump_sys_dict)
+            heat_pump_sys = heat_pumps.PhHeatPumpSystemBuilder.from_dict(
+                heat_pump_sys_dict
+            )
             new_prop.heat_pump_systems.add(heat_pump_sys)
 
         for exhaust_vent_device_dict in _input_dict.get("exhaust_vent_devices", []):

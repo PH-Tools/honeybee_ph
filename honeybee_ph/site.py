@@ -11,7 +11,7 @@ except ImportError:
     pass  # Python3
 
 try:
-    from typing import Dict, List, Collection, Any, Union, Optional
+    from typing import Any, Collection, Dict, List, Optional, Union
 except ImportError:
     pass  # IronPython 2.7
 

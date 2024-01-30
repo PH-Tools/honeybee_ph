@@ -4,7 +4,7 @@
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)."""
 
 try:
-    from typing import Any, Optional, List, Dict, Union
+    from typing import Any, Dict, List, Optional, Union
 except:
     pass  # IronPython
 
@@ -93,7 +93,7 @@ class SpaceFloorSegment(_base._Base):
     def duplicate(self):
         # type: () -> SpaceFloorSegment
         new_obj = SpaceFloorSegment()
-        
+
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.user_data = self.user_data

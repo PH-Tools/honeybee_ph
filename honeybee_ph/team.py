@@ -4,7 +4,7 @@
 """Project Team-Member Classes."""
 
 try:
-    from typing import Dict, Any, Optional
+    from typing import Any, Dict, Optional
 except ImportError:
     pass  # Python 2.7
 

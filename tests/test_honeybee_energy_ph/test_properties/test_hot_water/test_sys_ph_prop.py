@@ -1,5 +1,5 @@
+from honeybee_energy_ph.hvac.hot_water import PhPipeElement, PhPipeTrunk, PhSHWTank
 from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
-from honeybee_energy_ph.hvac.hot_water import PhSHWTank, PhPipeTrunk, PhPipeElement
 
 
 def test_basic_SHWSystemPhProperties_round_trip():

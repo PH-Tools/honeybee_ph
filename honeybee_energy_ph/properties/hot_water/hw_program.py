@@ -36,11 +36,11 @@ class ServiceHotWaterPhProperties(object):
         return
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         """Properties representation."""
-        return '{}'.format(self.__class__.__name__)
+        return "{}".format(self.__class__.__name__)
 
     def ToString(self):
         """Overwrite .NET ToString."""

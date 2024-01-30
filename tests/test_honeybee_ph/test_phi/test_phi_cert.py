@@ -12,7 +12,8 @@ def test_phi_cert_serialization_default():
     new_obj = phi.PhiCertification.from_dict(d)
 
     assert new_obj.to_dict() == d
-    
+
+
 def test_phi_cert_serialization_with_user_data():
     phi_cert = phi.PhiCertification()
     phi_cert.user_data["test_key"] = "test_value"
@@ -26,7 +27,7 @@ def test_phi_cert_serialization_with_user_data():
 def test_phi_cert_serialization_customized():
     phi_cert = phi.PhiCertification(phpp_version=9)
 
-    phi_cert_attributes = phi_cert.attributes # type: phi.PHPPSettings9
+    phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings9
     phi_cert_attributes.building_category_type = "1"
 
     d = phi_cert.to_dict()

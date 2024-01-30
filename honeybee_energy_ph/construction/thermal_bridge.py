@@ -8,9 +8,10 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
+from ladybug_geometry.geometry3d.polyline import LineSegment3D, Polyline3D
+
 from honeybee_energy_ph.construction import _base
 from honeybee_ph_utils import enumerables
-from ladybug_geometry.geometry3d.polyline import Polyline3D, LineSegment3D
 
 
 class PhThermalBridgeType(enumerables.CustomEnum):
@@ -32,7 +33,7 @@ class PhThermalBridgeType(enumerables.CustomEnum):
         "",
         "15-Ambient",
         "16-Perimeter",
-        "17-FS/BC"
+        "17-FS/BC",
     ]
 
     def __init__(self, _value=15, _index_offset=0):
@@ -70,12 +71,12 @@ class PhThermalBridge(_base._Base):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhThermalBridge, self).to_dict()
-        d['display_name'] = self.display_name
-        d['quantity'] = self.quantity
-        d['_group_type'] = self._group_type.to_dict()
-        d['psi_value'] = self.psi_value
-        d['fRsi_value'] = self.fRsi_value
-        d['geometry'] = self.geometry.to_dict()
+        d["display_name"] = self.display_name
+        d["quantity"] = self.quantity
+        d["_group_type"] = self._group_type.to_dict()
+        d["psi_value"] = self.psi_value
+        d["fRsi_value"] = self.fRsi_value
+        d["geometry"] = self.geometry.to_dict()
 
         return d
 
@@ -85,21 +86,24 @@ class PhThermalBridge(_base._Base):
 
         # -- Geom might be either type
         try:
-            geom = Polyline3D.from_dict(_input_dict['geometry'])
+            geom = Polyline3D.from_dict(_input_dict["geometry"])
         except:
             try:
-                geom = LineSegment3D.from_dict(_input_dict['geometry'])
+                geom = LineSegment3D.from_dict(_input_dict["geometry"])
             except:
-                raise Exception("Thermal Bridge geometry dict: '{}' is not LineSegment3D or Polyline3D?".format(
-                    _input_dict['type']))
+                raise Exception(
+                    "Thermal Bridge geometry dict: '{}' is not LineSegment3D or Polyline3D?".format(
+                        _input_dict["type"]
+                    )
+                )
 
-        new_obj = cls(_input_dict['identifier'], geom)
+        new_obj = cls(_input_dict["identifier"], geom)
         new_obj.set_base_attrs_from_dict(_input_dict)
-        new_obj.display_name = _input_dict['display_name']
-        new_obj.quantity = _input_dict['quantity']
-        new_obj._group_type = PhThermalBridgeType.from_dict(_input_dict['_group_type'])
-        new_obj.psi_value = _input_dict['psi_value']
-        new_obj.fRsi_value = _input_dict['fRsi_value']
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.quantity = _input_dict["quantity"]
+        new_obj._group_type = PhThermalBridgeType.from_dict(_input_dict["_group_type"])
+        new_obj.psi_value = _input_dict["psi_value"]
+        new_obj.fRsi_value = _input_dict["fRsi_value"]
         return new_obj
 
     def duplicate(self):
@@ -118,8 +122,15 @@ class PhThermalBridge(_base._Base):
         return new_obj
 
     def __str__(self):
-        return '{}(geometry={}, length={}, display_name={}, psi_value={:.3f}, fRsi_value={:.3f}, length={:.3f})'.format(
-            self.__class__.__name__, self.geometry, self.length, self.display_name, self.psi_value, self.fRsi_value, self.length)
+        return "{}(geometry={}, length={}, display_name={}, psi_value={:.3f}, fRsi_value={:.3f}, length={:.3f})".format(
+            self.__class__.__name__,
+            self.geometry,
+            self.length,
+            self.display_name,
+            self.psi_value,
+            self.fRsi_value,
+            self.length,
+        )
 
     def __repr__(self):
         return str(self)

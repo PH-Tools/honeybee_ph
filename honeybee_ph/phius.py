@@ -10,8 +10,8 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
-from honeybee_ph_utils import enumerables
 from honeybee_ph import _base
+from honeybee_ph_utils import enumerables
 
 # -----------------------------------------------------------------------------
 

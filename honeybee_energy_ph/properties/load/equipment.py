@@ -14,7 +14,8 @@ from honeybee_energy_ph.load import ph_equipment
 class ElectricEquipmentPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type)
+            _expected_types, _input_type
+        )
         super(ElectricEquipmentPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -32,27 +33,31 @@ class ElectricEquipmentPhProperties(object):
         d = {}
 
         if abridged:
-            d['type'] = 'ElectricEquipmentPhPropertiesAbridged'
+            d["type"] = "ElectricEquipmentPhPropertiesAbridged"
         else:
-            d['type'] = 'ElectricEquipmentPhProperties'
+            d["type"] = "ElectricEquipmentPhProperties"
 
-        d['equipment_collection'] = self.equipment_collection.to_dict()
+        d["equipment_collection"] = self.equipment_collection.to_dict()
 
-        return {'ph': d}
+        return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, _host):
         # type: (dict, Any) -> ElectricEquipmentPhProperties
-        valid_types = ('ElectricEquipmentPhProperties',
-                       'ElectricEquipmentPhPropertiesAbridged')
-        if _input_dict['type'] not in valid_types:
+        valid_types = (
+            "ElectricEquipmentPhProperties",
+            "ElectricEquipmentPhPropertiesAbridged",
+        )
+        if _input_dict["type"] not in valid_types:
             raise ElectricEquipmentPhProperties_FromDictError(
-                valid_types, _input_dict['type'])
+                valid_types, _input_dict["type"]
+            )
 
         new_prop = cls(_host)
 
         new_prop.equipment_collection = ph_equipment.PhEquipmentCollection.from_dict(
-            _input_dict['equipment_collection'], _host=new_prop)
+            _input_dict["equipment_collection"], _host=new_prop
+        )
 
         return new_prop
 
@@ -71,7 +76,9 @@ class ElectricEquipmentPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return '{}(equipment_collection={})'.format(self.__class__.__name__, self.equipment_collection)
+        return "{}(equipment_collection={})".format(
+            self.__class__.__name__, self.equipment_collection
+        )
 
     def __repr__(self):
         return str(self)

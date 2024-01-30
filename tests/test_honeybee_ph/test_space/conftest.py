@@ -1,12 +1,11 @@
 from dataclasses import dataclass
+
 import pytest
-from ladybug_geometry.geometry3d import Face3D, Point3D, Plane
-from dataclasses import dataclass
+from ladybug_geometry.geometry3d import Face3D, Plane, Point3D
 
 
 @pytest.fixture
 def floor_segment_geometry():
-
     @dataclass
     class Data:
         flr_segment_1: Face3D
@@ -30,7 +29,4 @@ def floor_segment_geometry():
     plane_2 = Plane()
     face_2 = Face3D(boundary_2, plane_2)
 
-    return Data(
-        face_1,
-        face_2
-    )
+    return Data(face_1, face_2)

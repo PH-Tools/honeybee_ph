@@ -5,7 +5,7 @@
 
 
 try:
-    from typing import Any, List, TypeVar, Optional
+    from typing import Any, List, Optional, TypeVar
 
     T = TypeVar("T")
 except ImportError:

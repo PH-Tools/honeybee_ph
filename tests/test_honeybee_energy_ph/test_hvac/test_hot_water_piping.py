@@ -1,5 +1,5 @@
-from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.line import LineSegment3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
 
 from honeybee_energy_ph.hvac import hot_water
 

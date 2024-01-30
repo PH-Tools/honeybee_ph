@@ -4,14 +4,11 @@
 """HBPH Base class for all Constructions"""
 
 try:
-    from typing import Optional, Any
+    from typing import Any, Optional
 except ImportError:
     pass  # Python 2.7
 
-from honeybee.typing import (
-    valid_ep_string,
-    clean_ep_string,
-)
+from honeybee.typing import clean_ep_string, valid_ep_string
 
 
 class _Base(object):

@@ -4,14 +4,14 @@
 """Classes for calculating Phius Multifamily Elec. Energy as per Phius Multifamily Calculator (v4.2)"""
 
 try:
-    from typing import ValuesView, List, Any
+    from typing import Any, List, ValuesView
 except ImportError:
     pass  # IronPython 2.7
 
 from honeybee import room
+from honeybee_energy.load import equipment
 from honeybee_energy.properties.room import RoomEnergyProperties
 from honeybee_energy.schedule import ruleset
-from honeybee_energy.load import equipment
 
 from honeybee_ph import space
 

@@ -28,6 +28,7 @@ def test_vent_system_with_ventilator():
     o2 = ventilation.PhVentilationSystem.from_dict(d)
     assert o2.to_dict() == d
 
+
 def test_duplicate_vent_system_with_ventilator():
     o1 = ventilation.PhVentilationSystem()
     v1 = ventilation.Ventilator()
@@ -36,7 +37,6 @@ def test_duplicate_vent_system_with_ventilator():
 
     o2 = o1.duplicate()
     assert o2.to_dict() == o1.to_dict()
-
 
 
 def test_add_none_ventilator():

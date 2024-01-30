@@ -4,14 +4,13 @@
 """HBPH Cooling Objects"""
 
 try:
-    from typing import Any, List, Dict, Sequence
+    from typing import Any, Dict, List, Sequence
 except ImportError:
     pass  # IronPython 2.7
 
 import sys
 
 from honeybee_energy_ph.hvac import _base
-
 
 # -----------------------------------------------------------------------------
 # Heat Pump Base
@@ -55,10 +54,8 @@ class PhHeatPumpSystem(_base._PhHVACBase):
         # type: (Dict[str, Any]) -> None
         """Check that the input dict type is correct for the Heat Pump System being constructed."""
         heat_pump_class_name = _input_dict["heat_pump_class_name"]
-        msg = (
-            "Error creating Heat Pump System from dict. Expected '{}' but got '{}'".format(
-                self.__class__.__name__, heat_pump_class_name
-            )
+        msg = "Error creating Heat Pump System from dict. Expected '{}' but got '{}'".format(
+            self.__class__.__name__, heat_pump_class_name
         )
         assert heat_pump_class_name == str(self.__class__.__name__), msg
         return None
@@ -100,7 +97,9 @@ class PhHeatPumpCoolingParams_Base(_base._PhHVACBase):
 
     @classmethod
     def from_dict(cls, input_dict):
-        raise NotImplementedError("Error: from_dict() called from PhHeatPumpCoolingParams_Base?")
+        raise NotImplementedError(
+            "Error: from_dict() called from PhHeatPumpCoolingParams_Base?"
+        )
 
     def __str__(self):
         # type: () -> str
@@ -224,7 +223,7 @@ class PhHeatPumpCoolingParams_Panel(PhHeatPumpCoolingParams_Base):
 
 class PhHeatPumpCoolingParams:
     """A Collection of Cooling Parameters for various types of systems."""
-    
+
     def __init__(self):
         self.percent_coverage = 1.0
         self.ventilation = PhHeatPumpCoolingParams_Ventilation()
@@ -247,12 +246,18 @@ class PhHeatPumpCoolingParams:
         # type: (Dict[str, Any]) -> PhHeatPumpCoolingParams
         new_obj = cls()
         new_obj.percent_coverage = _input_dict["percent_coverage"]
-        new_obj.ventilation = PhHeatPumpCoolingParams_Ventilation.from_dict(_input_dict["ventilation"])
-        new_obj.recirculation = PhHeatPumpCoolingParams_Recirculation.from_dict(_input_dict["recirculation"])
-        new_obj.dehumidification = PhHeatPumpCoolingParams_Dehumidification.from_dict(_input_dict["dehumidification"])
+        new_obj.ventilation = PhHeatPumpCoolingParams_Ventilation.from_dict(
+            _input_dict["ventilation"]
+        )
+        new_obj.recirculation = PhHeatPumpCoolingParams_Recirculation.from_dict(
+            _input_dict["recirculation"]
+        )
+        new_obj.dehumidification = PhHeatPumpCoolingParams_Dehumidification.from_dict(
+            _input_dict["dehumidification"]
+        )
         new_obj.panel = PhHeatPumpCoolingParams_Panel.from_dict(_input_dict["panel"])
         return new_obj
-    
+
     def __str__(self):
         # type: () -> str
         return "{}(percent_coverage={}, ventilation={}, recirculation={}, dehumidification={}, panel={})".format(
@@ -261,9 +266,9 @@ class PhHeatPumpCoolingParams:
             self.ventilation.used,
             self.recirculation.used,
             self.dehumidification.used,
-            self.panel.used
+            self.panel.used,
         )
-    
+
     def ToString(self):
         # type: () -> str
         return str(self)
@@ -297,7 +302,9 @@ class PhHeatPumpAnnual(PhHeatPumpSystem):
         new_obj.base_attrs_from_dict(_input_dict)
         new_obj.annual_COP = _input_dict["annual_COP"]
         new_obj.total_system_perf_ratio = _input_dict["total_system_perf_ratio"]
-        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(_input_dict["cooling_params"])
+        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(
+            _input_dict["cooling_params"]
+        )
         return new_obj
 
 
@@ -359,7 +366,9 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
         new_obj.ambient_temp_1 = _input_dict["ambient_temp_1"]
         new_obj.COP_2 = _input_dict["COP_2"]
         new_obj.ambient_temp_2 = _input_dict["ambient_temp_2"]
-        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(_input_dict["cooling_params"])
+        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(
+            _input_dict["cooling_params"]
+        )
         return new_obj
 
 
@@ -399,5 +408,3 @@ class PhHeatPumpSystemBuilder(object):
 
     def ToString(self):
         return str(self)
-
-

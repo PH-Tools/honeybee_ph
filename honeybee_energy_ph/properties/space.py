@@ -34,27 +34,28 @@ class SpaceEnergyProperties(properties._Properties):
         d = {}
 
         if abridged:
-            d['type'] = 'SpaceEnergyPropertiesAbridged'
+            d["type"] = "SpaceEnergyPropertiesAbridged"
         else:
-            d['type'] = 'SpaceEnergyProperties'
+            d["type"] = "SpaceEnergyProperties"
 
-        d['id_num'] = self.id_num
+        d["id_num"] = self.id_num
 
-        return {'energy': d}
+        return {"energy": d}
 
     @classmethod
     def from_dict(cls, _input_dict, _host):
         # type: (dict, Any) -> SpaceEnergyProperties
-        assert 'SpaceEnergyProperties' in _input_dict['type'], \
-            'Expected SpaceEnergyProperties. Got {}.'.format(_input_dict['type'])
+        assert (
+            "SpaceEnergyProperties" in _input_dict["type"]
+        ), "Expected SpaceEnergyProperties. Got {}.".format(_input_dict["type"])
 
         new_prop = cls(_host)
-        new_prop.id_num = _input_dict.get('id_num', 0)
+        new_prop.id_num = _input_dict.get("id_num", 0)
 
         return new_prop
 
     def __str__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)

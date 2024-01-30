@@ -8,7 +8,7 @@ import uuid
 
 def object_preview(_obj, _full=False, _level=1):
     # type: (object, bool, int) ->  None
-    """"Recursively print all of an object's attributes and child-objects (and attributes).
+    """ "Recursively print all of an object's attributes and child-objects (and attributes).
 
     Arguments:
     ----------

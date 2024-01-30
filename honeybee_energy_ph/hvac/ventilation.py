@@ -7,7 +7,7 @@ import sys
 from copy import copy
 
 try:
-    from typing import Any, Optional, Dict, List
+    from typing import Any, Dict, List, Optional
 except ImportError:
     pass  # IronPython
 
@@ -111,8 +111,8 @@ class PhVentilationSystem(_base._PhHVACBase):
         super(PhVentilationSystem, self).__init__()
         self.display_name = "_unnamed_ph_vent_system_"
         self.sys_type = 1  # '1-Balanced PH ventilation with HR'
-        self.supply_ducting = [] # type: List[ducting.PhDuctElement]
-        self.exhaust_ducting = [] # type: List[ducting.PhDuctElement]
+        self.supply_ducting = []  # type: List[ducting.PhDuctElement]
+        self.exhaust_ducting = []  # type: List[ducting.PhDuctElement]
         self._ventilation_unit = None  # type: Optional[Ventilator]
         self.id_num = 0
 
@@ -153,8 +153,14 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj.display_name = _input_dict["display_name"]
         obj.user_data = _input_dict.get("user_data", {})
         obj.sys_type = _input_dict["sys_type"]
-        obj.supply_ducting = [ducting.PhDuctElement.from_dict(s_duct) for s_duct in  _input_dict["supply_ducting"]]
-        obj.exhaust_ducting = [ducting.PhDuctElement.from_dict(e_duct) for e_duct in  _input_dict["exhaust_ducting"]]
+        obj.supply_ducting = [
+            ducting.PhDuctElement.from_dict(s_duct)
+            for s_duct in _input_dict["supply_ducting"]
+        ]
+        obj.exhaust_ducting = [
+            ducting.PhDuctElement.from_dict(e_duct)
+            for e_duct in _input_dict["exhaust_ducting"]
+        ]
         obj.id_num = _input_dict.get("id_num", 0)
 
         vent_unit_dict = _input_dict.get("ventilation_unit", None)
@@ -173,7 +179,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
         new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
         new_obj.id_num = self.id_num
-        
+
         if self.ventilation_unit:
             new_obj._ventilation_unit = self.ventilation_unit.duplicate()
 

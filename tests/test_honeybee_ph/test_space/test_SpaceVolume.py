@@ -1,5 +1,7 @@
 import pytest
+
 from honeybee_ph import space
+
 
 def test_volume(floor_segment_geometry):
     # -- Seg
@@ -19,7 +21,9 @@ def test_volume(floor_segment_geometry):
     assert vol1.floor_area == 100
     assert vol1.weighted_floor_area == 100
 
+
 # -- Serialization --
+
 
 def test_volume_serialize(floor_segment_geometry):
     # -- Seg
@@ -39,10 +43,12 @@ def test_volume_serialize(floor_segment_geometry):
     d1 = vol1.to_dict()
     o = space.SpaceVolume.from_dict(d1)
     d2 = o.to_dict()
-    
+
     assert d1 == d2
 
-# -- Scale -- 
+
+# -- Scale --
+
 
 def test_volume_scale(floor_segment_geometry):
     # -- Seg
@@ -64,14 +70,16 @@ def test_volume_scale(floor_segment_geometry):
     assert vol1.avg_ceiling_height == 2.5
     assert vol1.net_volume == 250
 
-    vol1.scale(3.28084) # M --> FOOT
+    vol1.scale(3.28084)  # M --> FOOT
 
     assert vol1.floor_area == pytest.approx(1_076.39111056)
     assert vol1.weighted_floor_area == pytest.approx(1_076.39111056)
     assert vol1.avg_ceiling_height == pytest.approx(8.2021)
     assert vol1.net_volume == pytest.approx(8_828.67)
 
-# -- Duplication -- 
+
+# -- Duplication --
+
 
 def test_volume_duplicate(floor_segment_geometry):
     # -- Seg
