@@ -3,17 +3,75 @@
 
 """Calculate Window U-w as per ISO-10077-2:2006"""
 
+try:
+    from ladybug_geometry.geometry3d import LineSegment3D
+except ImportError as e:
+    raise ImportError("Failed to import ladybug_geometry from ladybug_geometry.")
+
+
+try:
+    from honeybee.aperture import Aperture
+except ImportError as e:
+    raise ImportError("Failed to import honeybee from honeybee.")
+
 from honeybee_energy_ph.construction import window
 
 
-class StandardWindow:
-    """Temporary class to bundle calculation behavior for a standard side window."""
+def get_honeybee_aperture_width_and_height(_hb_aperture):
+    # type: (Aperture) -> tuple[float, float]
+    """Get the width and height of a rectangular honeybee.aperture.Aperture object.
+    
+    If a non-rectangular object with more than 4 vertices is passed, a ValueError is raised.
+    """
+
+    if len(_hb_aperture.geometry.vertices) != 4:
+        raise ValueError("The Aperture '{}' has {} vertices. Only use rectangular faces with 4 vertices.".format(
+            _hb_aperture.display_name, len(_hb_aperture.geometry.vertices)
+        ))
+
+    vertix_upper_left, vertix_upper_right, vertix_lower_right, vertix_lower_left =_hb_aperture.geometry.upper_left_counter_clockwise_vertices
+    horizontal_edge = LineSegment3D.from_end_points(vertix_upper_left, vertix_upper_right)
+    vertical_edge = LineSegment3D.from_end_points(vertix_upper_right, vertix_lower_right)
+
+    height = horizontal_edge.length
+    width = vertical_edge.length
+    
+    return width, height
+
+
+class ISO100771Data:
+    """Wrapper class used to calculate the ISO-10077-1 heat-loss values."""
 
     def __init__(self, _win_width, _win_height, _frame, _glazing):
+        # type: (float, float, window.PhWindowFrame, window.PhWindowGlazing) -> None
         self.win_width = _win_width
         self.win_height = _win_height
         self.frame = _frame
         self.glazing = _glazing
+
+    @classmethod
+    def from_hb_aperture(cls, _hb_aperture):
+        # type: (Aperture) -> ISO100771Data
+        """Create an ISO100771Data object from a honeybee.aperture.Aperture object."""
+
+        hbe_prop = _hb_aperture.properties.energy # type: ignore
+
+        try:
+            ph_frame = hbe_prop.construction.properties.ph.ph_frame
+        except Exception as e:
+            raise Exception("The Aperture does not have a PH-Style frame.", e)
+
+        try:
+            ph_glazing = hbe_prop.construction.properties.ph.ph_glazing
+        except Exception as e:
+            raise Exception("The Aperture does not have a PH-Style glazing.", e)
+        
+        w, h, = get_honeybee_aperture_width_and_height(_hb_aperture)
+        return cls(
+            w, h,
+            ph_frame,
+            ph_glazing,
+        )
 
     @property
     def area_window(self):
@@ -90,11 +148,11 @@ class StandardWindow:
 
 
 def build_standard_window(_frame, _glazing):
-    # type: (window.PhWindowFrame, window.PhWindowGlazing) -> StandardWindow
+    # type: (window.PhWindowFrame, window.PhWindowGlazing) -> ISO100771Data
     # As per Annex F (2006)
     width = 1.23  # M
     height = 1.48  # M
-    return StandardWindow(width, height, _frame, _glazing)
+    return ISO100771Data(width, height, _frame, _glazing)
 
 
 def calculate_window_frame_factor(_frame, _glazing):
@@ -105,6 +163,8 @@ def calculate_window_frame_factor(_frame, _glazing):
 
 def calculate_window_uw(_frame, _glazing):
     # type: (window.PhWindowFrame, window.PhWindowGlazing) -> float
+    """Calculate U-w for a standard-size window as per ISO 10077-2:2006"""
+    
     window = build_standard_window(_frame, _glazing)
 
     heat_loss_frame = sum(
@@ -141,5 +201,50 @@ def calculate_window_uw(_frame, _glazing):
         + heat_loss_psi_glazing
         + heat_loss_psi_install
     ) / window.area_window
+
+    return uw
+
+
+def calculate_hb_aperture_uw(_hb_aperture):
+    # type: (Aperture) -> float
+    """Calculate U-W (W/m2k) for a 'honeybee.aperture.Aperture' with PH-Style frame and glazing as per ISO 10077-2:2006
+    
+    This value includes the impact of the frame, glazing, glazing-spacers, and the psi-install heat loss.
+    """
+    calculator = ISO100771Data.from_hb_aperture(_hb_aperture)
+    heat_loss_frame = sum(
+        [
+            calculator.side_frame_heat_loss("top"),
+            calculator.side_frame_heat_loss("right"),
+            calculator.side_frame_heat_loss("bottom"),
+            calculator.side_frame_heat_loss("left"),
+        ]
+    )
+
+    heat_loss_psi_glazing = sum(
+        [
+            calculator.side_psi_glazing_heat_lost("top"),
+            calculator.side_psi_glazing_heat_lost("right"),
+            calculator.side_psi_glazing_heat_lost("bottom"),
+            calculator.side_psi_glazing_heat_lost("left"),
+        ]
+    )
+
+    heat_loss_psi_install = sum(
+        [
+            calculator.side_psi_install_heat_lost("top"),
+            calculator.side_psi_install_heat_lost("right"),
+            calculator.side_psi_install_heat_lost("bottom"),
+            calculator.side_psi_install_heat_lost("left"),
+        ]
+    )
+    heat_loss_glazing = calculator.area_glazing * calculator.glazing.u_factor
+
+    uw = (
+        heat_loss_glazing
+        + heat_loss_frame
+        + heat_loss_psi_glazing
+        + heat_loss_psi_install
+    ) / calculator.area_window
 
     return uw
