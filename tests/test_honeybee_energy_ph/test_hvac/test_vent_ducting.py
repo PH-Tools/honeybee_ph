@@ -1,5 +1,7 @@
 from typing import List
 
+import pytest
+
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
@@ -57,6 +59,66 @@ def test_custom_segment_duplicate():
     assert o2.to_dict() == o1.to_dict()
 
 
+def test_round_segment_shape_type():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+
+    assert o1.shape_type == 1
+
+
+def test_is_round():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+
+    assert o1.is_round_duct == True
+
+
+def test_rectangular_segment_shape_type():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+    o1.width = 100
+    o1.height = 200
+
+    assert o1.shape_type == 2
+
+
+def test_is_not_round():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+    o1.width = 100
+    o1.height = 200
+
+    assert o1.is_round_duct == False
+
+
+def test_shape_type_description_round():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+
+    assert o1.shape_type_description == "160.00mm Θ"
+
+
+def test_shape_type_description_rectangular():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+    o1.width = 100
+    o1.height = 200
+
+    assert o1.shape_type_description == "100mm x 200mm"
+
+
 # -- PhDuctElement ---
 
 
@@ -101,3 +163,78 @@ def test_custom_element_duplicate():
     ele2 = ele1.duplicate()
 
     assert ele1.to_dict() == ele2.to_dict()
+
+
+def test_element_is_round():
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment.default())
+
+    assert ele1.is_round_duct == True
+
+
+def test_single_round_element_shape_type_description():
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment.default())
+
+    assert ele1.shape_type_description == "160.00mm Θ"
+
+
+def test_multiple_round_element_shape_type_description():
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment.default())
+    ele1.add_segment(PhDuctSegment.default())
+
+    assert ele1.shape_type_description == "160.00mm Θ"
+
+
+def test_multiple_round_elements_with_different_shape_type_description_raises_error():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment(_geom=geom, _diameter=160))
+    ele1.add_segment(PhDuctSegment(_geom=geom, _diameter=150))
+
+    with pytest.raises(ValueError):
+        assert ele1.shape_type_description == "160.00mm Θ"
+
+
+def test_element_is_not_round():
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment.default())
+    ele1.segments[0].width = 100
+    ele1.segments[0].height = 200
+
+    assert ele1.is_round_duct == False
+
+
+def test_single_rectangular_element_shape_type_description():
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment.default())
+    ele1.segments[0].width = 100
+    ele1.segments[0].height = 200
+
+    assert ele1.shape_type_description == "100mm x 200mm"
+
+
+def test_multiple_rectangular_with_same_shape_shape_type_description():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment(geom, _width=100, _height=200))
+    ele1.add_segment(PhDuctSegment(geom, _width=100, _height=200))
+
+    assert ele1.shape_type_description == "100mm x 200mm"
+
+
+def test_multiple_rectangular_with_different_shape_shape_type_description_raises_error():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    ele1 = PhDuctElement()
+    ele1.add_segment(PhDuctSegment(geom, _width=100, _height=200))
+    ele1.add_segment(PhDuctSegment(geom, _width=150, _height=200))
+
+    with pytest.raises(ValueError):
+        assert ele1.shape_type_description == "100mm x 200mm"

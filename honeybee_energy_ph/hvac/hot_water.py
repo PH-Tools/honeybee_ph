@@ -43,6 +43,18 @@ class PhPipeDiameter(enumerables.CustomEnum):
         # type: (Union[str, int]) -> None
         super(PhPipeDiameter, self).__init__(_value)
 
+    def __eq__(self, other):
+        # type: (PhPipeDiameter) -> bool
+        return self.value == other.value
+    
+    def __ne__(self, other):
+        # type: (PhPipeDiameter) -> bool
+        return self.value != other.value
+    
+    def __hash__(self):
+        # type: () -> int
+        return hash(self.value)
+
 
 class PhPipeMaterial(enumerables.CustomEnum):
     allowed = [
@@ -59,6 +71,18 @@ class PhPipeMaterial(enumerables.CustomEnum):
     def __init__(self, _value=2):
         # type: (Union[str, int]) -> None
         super(PhPipeMaterial, self).__init__(_value)
+
+    def __eq__(self, other):
+        # type: (PhPipeMaterial) -> bool
+        return self.value == other.value
+    
+    def __ne__(self, other):
+        # type: (PhPipeMaterial) -> bool
+        return self.value != other.value
+    
+    def __hash__(self):
+        # type: () -> int
+        return hash(self.value)
 
 
 class PhPipeSegment(_base._PhHVACBase):
@@ -188,6 +212,36 @@ class PhPipeElement(_base._PhHVACBase):
         # Return the length-weighted average daily period of all the pipe segments
         return sum(s.length_m * s.daily_period for s in self.segments) / self.length_m
 
+    @property
+    def segment_names(self):
+        # type: () -> List[str]
+        """Return a list of the names of all the PipeSegments in the PipeElement."""
+        return [s.display_name for s in self.segments]
+
+    @property
+    def material_name(self):
+        # type: () -> str
+        materials = {s.material for s in self.segments}
+        if len(materials) == 0:
+            return PhPipeMaterial.allowed[0]
+        elif len(materials) == 1:
+            mat = materials.pop()
+            return mat.value
+        else:
+            raise ValueError("Pipe segments: {} have different materials.".format(self.segment_names))
+
+    @property
+    def diameter_name(self):
+        # type: () -> str
+        diameters = {s.diameter for s in self.segments}
+        if len(diameters) == 0:
+            return PhPipeDiameter.allowed[0]
+        elif len(diameters) == 1:
+            diam = diameters.pop()
+            return diam.value
+        else:
+            raise ValueError("Pipe segments: {} have different diameters.".format(self.segment_names))
+
     def add_segment(self, _segment):
         # type: (PhPipeSegment) -> None
         self._segments[_segment.identifier] = _segment
@@ -256,6 +310,24 @@ class PhPipeBranch(_base._PhHVACBase):
         super(PhPipeBranch, self).__init__()
         self.pipe_element = PhPipeElement()
         self.fixtures = []  # type: (List[PhPipeElement])
+    
+    @property
+    def material_name(self):
+        # type: () -> str
+        """Return the material name of the pipe element."""
+        return self.pipe_element.material_name
+    
+    @property
+    def diameter_name(self):
+        # type: () -> str
+        """Return the diameter name of the pipe element."""
+        return self.pipe_element.diameter_name
+
+    @property
+    def twigs(self):
+        # type () -> List[PhPipeElement]
+        """Alias for the 'fixtures' to better match Phius terminology."""
+        return self.fixtures
 
     @property
     def segments(self):
@@ -265,6 +337,9 @@ class PhPipeBranch(_base._PhHVACBase):
     @property
     def length_m(self):
         # type: () -> float
+        """Return the total length of the branch itself. 
+        For the total length of the Branch PLUS all fixtures, use 'total_length_m'.
+        """
         return float(self.pipe_element.length_m)
 
     @property
@@ -375,6 +450,16 @@ class PhPipeTrunk(_base._PhHVACBase):
         self.pipe_element = PhPipeElement()
         self.multiplier = 1  # type: int
         self.branches = []  # type: (List[PhPipeBranch])
+
+    @property
+    def material_name(self):
+        # type: () -> str
+        return self.pipe_element.material_name
+    
+    @property
+    def diameter_name(self):
+        # type: () -> str
+        return self.pipe_element.diameter_name
 
     @property
     def segments(self):

@@ -29,17 +29,43 @@ class PhDuctSegment(_base._PhHVACBase):
         # type: (LineSegment3D, float, float, bool, float, Optional[float], Optional[float]) -> None
         super(PhDuctSegment, self).__init__()
         self.geometry = _geom
-        self.insulation_thickness = _insul_thickness
+        self.insulation_thickness = _insul_thickness # MM
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
-        self.diameter = _diameter
-        self.height = _height
-        self.width = _width
+        self.diameter = _diameter # MM
+        self.height = _height # MM
+        self.width = _width # MM
 
     @property
     def length(self):
         # type: () -> float
+        """Return the length of the duct segment (M)."""
         return self.geometry.length
+
+    @property
+    def shape_type(self):
+        # type: () -> int
+        if (self.height is not None) and (self.width is not None):
+            return 2  # Rectangular Duct
+        else:
+            return 1  # Round Duct
+
+    @property
+    def is_round_duct(self):
+        # type: () -> bool
+        return self.shape_type == 1
+
+    @property
+    def shape_type_description(self):
+        # type: () -> str
+        """Return a string description of the shape of the duct segment."""
+        if self.is_round_duct:
+            return "{:.2f}mm Θ".format(float(self.diameter))
+        else:
+            return "{:.0f}mm x {:.0f}mm".format( 
+                self.width or 0.0,
+                self.height or 0.0
+            )
 
     @classmethod
     def default(cls):
@@ -68,14 +94,6 @@ class PhDuctSegment(_base._PhHVACBase):
         new_obj.user_data = self.user_data
 
         return self
-
-    @property
-    def shape_type(self):
-        # type: () -> int
-        if self.height and self.width:
-            return 2  # Rectangular Duct
-        else:
-            return 1  # Round Duct
 
     def duplicate(self):
         # type: () -> PhDuctSegment
@@ -142,14 +160,35 @@ class PhDuctElement(_base._PhHVACBase):
     @property
     def length(self):
         # type: () -> float
-        """Return the total duct length of all the PhDuctSegments."""
+        """Return the total duct length of all the PhDuctSegments (M)."""
         return sum(s.length for s in self.segments)
+
+    @property
+    def is_round_duct(self):
+        # type: () -> bool
+        return self.shape_type == 1
 
     @property
     def shape_type(self):
         # type: () -> Optional[int]
-        for seg in self.segments:
-            return seg.shape_type
+        segment_types = {s.shape_type for s in self.segments}
+        if len(segment_types) == 0:
+            return None
+        elif len(segment_types) == 1:
+            return segment_types.pop()
+        else:
+            raise ValueError("Mixed shape-types in duct segments.")
+
+    @property
+    def shape_type_description(self):
+        # type: () -> Optional[str]
+        descriptions = {s.shape_type_description for s in self.segments}
+        if len(descriptions) == 0:
+            return None
+        elif len(descriptions) == 1:
+            return descriptions.pop()
+        else:
+            raise ValueError("Mixed shapes/sizes in duct segments.")
 
     @classmethod
     def default_supply_duct(cls, *args, **kwargs):

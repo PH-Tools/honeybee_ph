@@ -133,6 +133,52 @@ class PhVentilationSystem(_base._PhHVACBase):
             self._ventilation_unit.display_name = self.display_name
         return None
 
+    def add_supply_duct_element(self, _duct_element):
+        # type: (ducting.PhDuctElement) -> None
+        """Add a supply-air duct element to the ventilation system."""
+        self.supply_ducting.append(_duct_element)
+
+    def add_exhaust_duct_element(self, _duct_element):
+        # type: (ducting.PhDuctElement) -> None
+        """Add an exhaust-air duct element to the ventilation system."""
+        self.exhaust_ducting.append(_duct_element)
+
+    @property
+    def supply_ducting_total_length(self):
+        # type: () -> float
+        """Return the total length of all supply-air ducting."""
+        return sum(duct.length for duct in self.supply_ducting)
+
+    @property
+    def exhaust_ducting_total_length(self):
+        # type: () -> float
+        """Return the total length of all exhaust-air ducting."""
+        return sum(duct.length for duct in self.exhaust_ducting)
+
+    @property
+    def supply_ducting_size_description(self):
+        # type: () -> Optional[str]
+        """Return the size of the supply-air ducting."""
+        descriptions = {s.shape_type_description for s in self.supply_ducting}
+        if len(descriptions) == 0:
+            return None
+        elif len(descriptions) == 1:
+            return descriptions.pop()
+        else:
+            raise ValueError("Mixed shape-types in supply-air duct segments.")
+
+    @property
+    def exhaust_ducting_size_description(self):
+        # type: () -> Optional[str]
+        """Return the size of the exhaust-air ducting."""
+        descriptions = {s.shape_type_description for s in self.exhaust_ducting}
+        if len(descriptions) == 0:
+            return None
+        elif len(descriptions) == 1:
+            return descriptions.pop()
+        else:
+            raise ValueError("Mixed shape-types in exhaust-air duct segments.")
+  
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhVentilationSystem, self).to_dict()
