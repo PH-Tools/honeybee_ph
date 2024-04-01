@@ -15,11 +15,10 @@ except ImportError:
 try:
     T = TypeVar("T", bound="Union[face.Face, shade.Shade]")
 except Exception:
-    pass # IronPython 2.7
+    pass  # IronPython 2.7
 
 try:
-    from honeybee import face
-    from honeybee import shade
+    from honeybee import face, shade
 except ImportError as e:
     raise ImportError("Failed to import honeybee")
 

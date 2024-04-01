@@ -29,12 +29,12 @@ class PhDuctSegment(_base._PhHVACBase):
         # type: (LineSegment3D, float, float, bool, float, Optional[float], Optional[float]) -> None
         super(PhDuctSegment, self).__init__()
         self.geometry = _geom
-        self.insulation_thickness = _insul_thickness # MM
+        self.insulation_thickness = _insul_thickness  # MM
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
-        self.diameter = _diameter # MM
-        self.height = _height # MM
-        self.width = _width # MM
+        self.diameter = _diameter  # MM
+        self.height = _height  # MM
+        self.width = _width  # MM
 
     @property
     def length(self):
@@ -62,10 +62,7 @@ class PhDuctSegment(_base._PhHVACBase):
         if self.is_round_duct:
             return "{:.2f}mm Θ".format(float(self.diameter))
         else:
-            return "{:.0f}mm x {:.0f}mm".format( 
-                self.width or 0.0,
-                self.height or 0.0
-            )
+            return "{:.0f}mm x {:.0f}mm".format(self.width or 0.0, self.height or 0.0)
 
     @classmethod
     def default(cls):

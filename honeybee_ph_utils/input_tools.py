@@ -12,7 +12,7 @@ except ImportError:
     pass  # Python 3
 
 try:
-    from scriptcontext import sticky # type: ignore
+    from scriptcontext import sticky  # type: ignore
 except ImportError:
     pass  # Not in Rhino Grasshopper
 
@@ -32,9 +32,9 @@ def input_to_int(_input_value, _default=None):
 
     if not _input_value:
         return _default
-    
+
     # "\d" is a special character in regular expressions that matches any digit from 0 to 9.
-    # "+" is a quantifier that specifies that the preceding pattern (in this case, \d) should match one or more times.        
+    # "+" is a quantifier that specifies that the preceding pattern (in this case, \d) should match one or more times.
     # So the regular expression "\d+" will match one or more consecutive digits in a string.
     result = re.search(r"\d+", str(_input_value))
     try:

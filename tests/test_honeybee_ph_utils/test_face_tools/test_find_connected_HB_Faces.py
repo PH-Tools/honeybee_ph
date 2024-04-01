@@ -1,4 +1,5 @@
 from honeybee.face import Face
+
 from honeybee_ph_utils.face_tools import find_connected_HB_Faces
 
 
@@ -26,9 +27,7 @@ def test_find_connected_HB_Faces_three_faces():
     face3 = Face.from_vertices("f3", [(0, 0, 0), (0, 0, 1), (1, 0, 1), (1, 0, 0)])
 
     # Check that the function returns a single component containing all three faces
-    assert find_connected_HB_Faces([face1, face2, face3], 0.01) == [
-        [face1, face2, face3]
-    ]
+    assert find_connected_HB_Faces([face1, face2, face3], 0.01) == [[face1, face2, face3]]
 
 
 def test_find_connected_HB_Faces_two_connected_faces():

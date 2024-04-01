@@ -4,7 +4,7 @@
 """Energy conversion factor (CO2, Source) functions"""
 
 try:
-    from typing import Any, Generator, List, Optional
+    from typing import Dict, Generator, List, Optional, Union
 except ImportError:
     pass  # IronPython 2.7
 
@@ -20,21 +20,26 @@ class FuelNotAllowedError(Exception):
 def clean_input(input):
     # type: (Optional[str]) -> Optional[str]
     """Returns a clean/standardized string with no spaces, all upper-case"""
-    if not input:
+    if input is None:
         return None
     return str(input).lstrip().rstrip().replace(" ", "_").upper()
 
 
 def build_factors_from_library(_factor_dict):
-    # type: (dict[str, dict[str, Any]]) -> List[Factor]
-    """Returns a list of factors based on an input data dict. from the library."""
+    # type: (Dict[str, Dict[str, Union[float, str]]]) -> List[Factor]
+    """Returns a list of factors based on an input data dict from the library."""
 
     factor_list = []
     for item, item_dict in _factor_dict.items():
         new_factor = Factor()
-        new_factor.fuel_name = clean_input(item)
-        new_factor.value = item_dict["value"]
-        new_factor.unit = item_dict["unit"]
+
+        fuel_name = clean_input(item)
+        if fuel_name is None:
+            raise ValueError("No fuel name provided.")
+
+        new_factor.fuel_name = fuel_name
+        new_factor.value = float(item_dict["value"])
+        new_factor.unit = str(item_dict["unit"])
         factor_list.append(new_factor)
 
     return factor_list
@@ -43,12 +48,12 @@ def build_factors_from_library(_factor_dict):
 class Factor(_base._Base):
     """Dataclass for site->other conversion factor"""
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self, fuel_name="", value=0.0, unit=""):
+        # type: (str, float, str) -> None
         super(Factor, self).__init__()
-        self.fuel_name = ""
-        self.value = 0.0
-        self.unit = ""
+        self.fuel_name = clean_input(fuel_name) or ""
+        self.value = value
+        self.unit = clean_input(unit) or ""
 
     def to_dict(self):
         # type: () -> dict
@@ -105,6 +110,14 @@ class FactorCollection(_base._Base):
                 return None
         self.factors.append(_new_factor)
         return None
+
+    def get_factor(self, _fuel_name):
+        # type: (str) -> Factor
+        """Get a factor by fuel name."""
+        for factor in self.factors:
+            if factor.fuel_name == _fuel_name:
+                return factor
+        raise ValueError("No factor found for fuel: '{}'".format(_fuel_name))
 
     def validate_fuel_types(self, _allowed_fuels):
         for factor in self.factors:

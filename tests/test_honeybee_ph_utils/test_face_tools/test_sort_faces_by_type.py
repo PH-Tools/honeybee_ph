@@ -1,7 +1,8 @@
+from honeybee.boundarycondition import Ground, Outdoors
+from honeybee.face import Face, Face3D
+from honeybee.facetype import AirBoundary, Floor, RoofCeiling, Wall
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
-from honeybee.face import Face3D, Face
-from honeybee.facetype import Wall, RoofCeiling, Floor, AirBoundary
-from honeybee.boundarycondition import Outdoors, Ground
+
 from honeybee_ph_utils.face_tools import sort_hb_faces_by_type
 
 
@@ -16,43 +17,43 @@ def faces_are_same(f1, f2):
 
 def test_sort_hb_faces_by_type():
     f1 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(1, 0, 0), Point3D(1, 1, 0)]),
         type=RoofCeiling(),
         boundary_condition=Outdoors(),
     )
     f2 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(1, 0, 0), Point3D(1, 1, 0)]),
         type=Wall(),
         boundary_condition=Outdoors(),
     )
     f3 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(1, 0, 0), Point3D(1, 1, 0)]),
         type=Floor(),
         boundary_condition=Outdoors(),
     )
     f4 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(1, 0, 0), Point3D(1, 1, 0)]),
         type=AirBoundary(),
         boundary_condition=Outdoors(),
     )
     f5 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(1, 0, 0), Point3D(1, 1, 0)]),
         type=AirBoundary(),
         boundary_condition=Outdoors(),
     )
     f6 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(1, 0, 0), Point3D(1, 1, 0)]),
         type=AirBoundary(),
         boundary_condition=Outdoors(),
     )
     f7 = Face(
-        identifier='test',
+        identifier="test",
         geometry=Face3D(boundary=[Point3D(0, 0, 0), Point3D(0, 1, 0), Point3D(1, 1, 0)]),
         type=AirBoundary(),
         boundary_condition=Outdoors(),

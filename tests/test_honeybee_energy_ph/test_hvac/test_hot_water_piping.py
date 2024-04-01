@@ -1,12 +1,11 @@
 import pytest
-
 from ladybug_geometry.geometry3d.line import LineSegment3D
 from ladybug_geometry.geometry3d.pointvector import Point3D
 
 from honeybee_energy_ph.hvac import hot_water
 
-
 # -- Segment
+
 
 def test_PhPipeSegment_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
@@ -25,6 +24,7 @@ def test_PhPipeSegment_dict_round_trip():
 
 
 # -- Element
+
 
 def test_PhPipeElement_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
@@ -122,6 +122,7 @@ def test_PhPipeElement_with_two_same_segments_diameter_name():
 
     assert ele1.diameter_name == "2-1/2IN"
 
+
 def test_PhPipeElement_with_two_different_segments_diameter_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
@@ -134,7 +135,9 @@ def test_PhPipeElement_with_two_different_segments_diameter_name():
     with pytest.raises(ValueError):
         assert ele1.diameter_name == "2-1/2IN"
 
+
 # --- Branch
+
 
 def test_PhPipeBranch_dict_round_trip():
     # -- Build the Pipe Element
@@ -164,6 +167,7 @@ def test_PhPipeBranch_dict_round_trip():
 
 # -- Trunk
 
+
 def test_PhPipeTrunk_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
@@ -190,4 +194,3 @@ def test_PhPipeTrunk_dict_round_trip():
     assert "test_key" in trunk2.user_data
     assert "test_key" not in trunk1.user_data
     assert trunk2.to_dict() != trunk1.to_dict()
-

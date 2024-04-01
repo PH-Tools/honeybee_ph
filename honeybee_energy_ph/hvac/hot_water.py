@@ -46,11 +46,11 @@ class PhPipeDiameter(enumerables.CustomEnum):
     def __eq__(self, other):
         # type: (PhPipeDiameter) -> bool
         return self.value == other.value
-    
+
     def __ne__(self, other):
         # type: (PhPipeDiameter) -> bool
         return self.value != other.value
-    
+
     def __hash__(self):
         # type: () -> int
         return hash(self.value)
@@ -75,11 +75,11 @@ class PhPipeMaterial(enumerables.CustomEnum):
     def __eq__(self, other):
         # type: (PhPipeMaterial) -> bool
         return self.value == other.value
-    
+
     def __ne__(self, other):
         # type: (PhPipeMaterial) -> bool
         return self.value != other.value
-    
+
     def __hash__(self):
         # type: () -> int
         return hash(self.value)
@@ -228,7 +228,9 @@ class PhPipeElement(_base._PhHVACBase):
             mat = materials.pop()
             return mat.value
         else:
-            raise ValueError("Pipe segments: {} have different materials.".format(self.segment_names))
+            raise ValueError(
+                "Pipe segments: {} have different materials.".format(self.segment_names)
+            )
 
     @property
     def diameter_name(self):
@@ -240,7 +242,9 @@ class PhPipeElement(_base._PhHVACBase):
             diam = diameters.pop()
             return diam.value
         else:
-            raise ValueError("Pipe segments: {} have different diameters.".format(self.segment_names))
+            raise ValueError(
+                "Pipe segments: {} have different diameters.".format(self.segment_names)
+            )
 
     def add_segment(self, _segment):
         # type: (PhPipeSegment) -> None
@@ -310,13 +314,13 @@ class PhPipeBranch(_base._PhHVACBase):
         super(PhPipeBranch, self).__init__()
         self.pipe_element = PhPipeElement()
         self.fixtures = []  # type: (List[PhPipeElement])
-    
+
     @property
     def material_name(self):
         # type: () -> str
         """Return the material name of the pipe element."""
         return self.pipe_element.material_name
-    
+
     @property
     def diameter_name(self):
         # type: () -> str
@@ -337,7 +341,7 @@ class PhPipeBranch(_base._PhHVACBase):
     @property
     def length_m(self):
         # type: () -> float
-        """Return the total length of the branch itself. 
+        """Return the total length of the branch itself.
         For the total length of the Branch PLUS all fixtures, use 'total_length_m'.
         """
         return float(self.pipe_element.length_m)
@@ -455,7 +459,7 @@ class PhPipeTrunk(_base._PhHVACBase):
     def material_name(self):
         # type: () -> str
         return self.pipe_element.material_name
-    
+
     @property
     def diameter_name(self):
         # type: () -> str

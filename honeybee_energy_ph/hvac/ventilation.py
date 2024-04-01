@@ -178,7 +178,7 @@ class PhVentilationSystem(_base._PhHVACBase):
             return descriptions.pop()
         else:
             raise ValueError("Mixed shape-types in exhaust-air duct segments.")
-  
+
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhVentilationSystem, self).to_dict()

@@ -1,5 +1,7 @@
 from math import radians
+
 from honeybee.face import Face
+
 from honeybee_ph_utils.face_tools import sort_hb_faces_by_co_planar
 
 

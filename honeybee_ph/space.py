@@ -443,6 +443,7 @@ class Space(_base._Base):
     @property
     def net_volume(self):
         # type: () -> float
+        """The total volume (m3) of all Volumes in the Space."""
         return sum([vol.net_volume for vol in self.volumes])
 
     @property

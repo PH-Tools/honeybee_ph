@@ -1,5 +1,7 @@
 from honeybee.face import Face
+
 from honeybee_ph_utils import face_tools
+
 
 def test_are_touching_true():
     # Define two touching faces

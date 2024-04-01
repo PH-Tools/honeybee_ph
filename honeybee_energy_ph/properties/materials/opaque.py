@@ -25,16 +25,16 @@ class EnergyMaterialPhProperties(object):
         self.id_num = 0
         self.percentage_of_assembly = 1.0
         self.base_materials = []  # type: List[opaque.EnergyMaterial]
-        self._ph_color = None # type: Optional[PhColor]
-    
+        self._ph_color = None  # type: Optional[PhColor]
+
     @property
     def ph_color(self):
         # type: () -> Optional[PhColor]
         return self._ph_color
-    
+
     @ph_color.setter
     def ph_color(self, _input_color):
-        #type: (Optional[PhColor]) -> None
+        # type: (Optional[PhColor]) -> None
         self._ph_color = _input_color
 
     def add_base_material(self, _hb_material):
@@ -55,7 +55,7 @@ class EnergyMaterialPhProperties(object):
         for mat in self.base_materials:
             base_mat_dict[mat.display_name] = mat.to_dict()
         d["base_material_dict"] = base_mat_dict
-        
+
         if self.ph_color:
             d["ph_color"] = self.ph_color.to_dict()
 
@@ -71,9 +71,9 @@ class EnergyMaterialPhProperties(object):
         base_mat_dict = _input_dict["base_material_dict"]
         for mat_dict in base_mat_dict.values():
             new_prop.add_base_material(opaque.EnergyMaterial.from_dict(mat_dict))
-        
+
         new_prop._ph_color = PhColor.from_dict(_input_dict.get("ph_color", None))
-            
+
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
@@ -98,7 +98,10 @@ class EnergyMaterialPhProperties(object):
 
     def __str__(self):
         return "{}(id_num={!r}, percentage_of_assembly={}, ph_color={!r})".format(
-            self.__class__.__name__, self.id_num, self.percentage_of_assembly, self.ph_color
+            self.__class__.__name__,
+            self.id_num,
+            self.percentage_of_assembly,
+            self.ph_color,
         )
 
     def __repr__(self):
@@ -112,16 +115,16 @@ class EnergyMaterialNoMassPhProperties(object):
     def __init__(self, _host=None):
         self.host = _host
         self.id_num = 0
-        self._ph_color = None # type: Optional[PhColor]
-    
+        self._ph_color = None  # type: Optional[PhColor]
+
     @property
     def ph_color(self):
         # type: () -> Optional[PhColor]
         return self._ph_color
-    
+
     @ph_color.setter
     def ph_color(self, _input_color):
-        #type: (Optional[PhColor]) -> None
+        # type: (Optional[PhColor]) -> None
         self._ph_color = _input_color
 
     def to_dict(self, abridged=False):
@@ -159,7 +162,9 @@ class EnergyMaterialNoMassPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return "{}(id_num={!r}, ph_color={!r})".format(self.__class__.__name__, self.id_num, self.ph_color)
+        return "{}(id_num={!r}, ph_color={!r})".format(
+            self.__class__.__name__, self.id_num, self.ph_color
+        )
 
     def __repr__(self):
         return str(self)
@@ -172,16 +177,16 @@ class EnergyMaterialVegetationPhProperties(object):
     def __init__(self, _host=None):
         self.host = _host
         self.id_num = 0
-        self._ph_color = None # type: Optional[PhColor]
-    
+        self._ph_color = None  # type: Optional[PhColor]
+
     @property
     def ph_color(self):
         # type: () -> Optional[PhColor]
         return self._ph_color
-    
+
     @ph_color.setter
     def ph_color(self, _input_color):
-        #type: (Optional[PhColor]) -> None
+        # type: (Optional[PhColor]) -> None
         self._ph_color = _input_color
 
     def to_dict(self, abridged=False):
@@ -219,7 +224,9 @@ class EnergyMaterialVegetationPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return "{}(id_num={!r}, ph_color={!r})".format(self.__class__.__name__, self.id_num, self.ph_color)
+        return "{}(id_num={!r}, ph_color={!r})".format(
+            self.__class__.__name__, self.id_num, self.ph_color
+        )
 
     def __repr__(self):
         return str(self)

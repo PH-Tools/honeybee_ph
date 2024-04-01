@@ -1,7 +1,6 @@
 from typing import List
 
 import pytest
-
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
