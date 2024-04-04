@@ -4,13 +4,7 @@ import pytest
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 
-from honeybee_ph_utils.vector3d_tools import (
-    angle_between_2D_vectors,
-    cross_product,
-    dot_product,
-    magnitude,
-    normalize,
-)
+from honeybee_ph_utils.vector3d_tools import angle_between_2D_vectors, cross_product, dot_product, magnitude, normalize
 
 
 def test_cross_product() -> None:
@@ -123,9 +117,7 @@ def test_normalize() -> None:
     # Test case 3: Normalize a vector with negative values
     vector = Vector3D(-1, -2, -3)
     result = normalize(vector)
-    expected_result = Vector3D(
-        -0.2672612419124244, -0.5345224838248488, -0.8017837257372732  # type: ignore
-    )
+    expected_result = Vector3D(-0.2672612419124244, -0.5345224838248488, -0.8017837257372732)  # type: ignore
     assert result == expected_result
 
 

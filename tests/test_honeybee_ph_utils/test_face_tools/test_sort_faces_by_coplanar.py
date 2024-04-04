@@ -16,9 +16,7 @@ def test_sort_two_planar_faces_by_co_planar():
     face3 = Face.from_vertices("face_3", [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
 
     # # Sort the faces by co-planarity
-    sorted_faces = sort_hb_faces_by_co_planar(
-        [face1, face2, face3], tolerance, angle_tolerance_radians
-    )
+    sorted_faces = sort_hb_faces_by_co_planar([face1, face2, face3], tolerance, angle_tolerance_radians)
 
     # Check that the faces are in the same group
     assert len(sorted_faces) == 1
@@ -45,9 +43,7 @@ def test_sort_two_non_planar_faces_by_co_planar():
     )
 
     # # Sort the faces by co-planarity
-    sorted_faces = sort_hb_faces_by_co_planar(
-        [face1, face2, face3], tolerance, angle_tolerance_radians
-    )
+    sorted_faces = sort_hb_faces_by_co_planar([face1, face2, face3], tolerance, angle_tolerance_radians)
 
     # Check that the faces are in the same group
     assert len(sorted_faces) == 2

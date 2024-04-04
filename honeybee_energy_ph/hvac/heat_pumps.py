@@ -97,9 +97,7 @@ class PhHeatPumpCoolingParams_Base(_base._PhHVACBase):
 
     @classmethod
     def from_dict(cls, input_dict):
-        raise NotImplementedError(
-            "Error: from_dict() called from PhHeatPumpCoolingParams_Base?"
-        )
+        raise NotImplementedError("Error: from_dict() called from PhHeatPumpCoolingParams_Base?")
 
     def __str__(self):
         # type: () -> str
@@ -246,15 +244,9 @@ class PhHeatPumpCoolingParams:
         # type: (Dict[str, Any]) -> PhHeatPumpCoolingParams
         new_obj = cls()
         new_obj.percent_coverage = _input_dict["percent_coverage"]
-        new_obj.ventilation = PhHeatPumpCoolingParams_Ventilation.from_dict(
-            _input_dict["ventilation"]
-        )
-        new_obj.recirculation = PhHeatPumpCoolingParams_Recirculation.from_dict(
-            _input_dict["recirculation"]
-        )
-        new_obj.dehumidification = PhHeatPumpCoolingParams_Dehumidification.from_dict(
-            _input_dict["dehumidification"]
-        )
+        new_obj.ventilation = PhHeatPumpCoolingParams_Ventilation.from_dict(_input_dict["ventilation"])
+        new_obj.recirculation = PhHeatPumpCoolingParams_Recirculation.from_dict(_input_dict["recirculation"])
+        new_obj.dehumidification = PhHeatPumpCoolingParams_Dehumidification.from_dict(_input_dict["dehumidification"])
         new_obj.panel = PhHeatPumpCoolingParams_Panel.from_dict(_input_dict["panel"])
         return new_obj
 
@@ -302,9 +294,7 @@ class PhHeatPumpAnnual(PhHeatPumpSystem):
         new_obj.base_attrs_from_dict(_input_dict)
         new_obj.annual_COP = _input_dict["annual_COP"]
         new_obj.total_system_perf_ratio = _input_dict["total_system_perf_ratio"]
-        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(
-            _input_dict["cooling_params"]
-        )
+        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(_input_dict["cooling_params"])
         return new_obj
 
 
@@ -366,9 +356,7 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
         new_obj.ambient_temp_1 = _input_dict["ambient_temp_1"]
         new_obj.COP_2 = _input_dict["COP_2"]
         new_obj.ambient_temp_2 = _input_dict["ambient_temp_2"]
-        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(
-            _input_dict["cooling_params"]
-        )
+        new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(_input_dict["cooling_params"])
         return new_obj
 
 
@@ -389,9 +377,7 @@ class PhHeatPumpSystemBuilder(object):
         # type: (Dict[str, Any]) -> PhHeatPumpSystem
         """Find the right heat-pump constructor class from the module based on the 'type' name."""
 
-        valid_class_type_names = [
-            nm for nm in dir(sys.modules[__name__]) if nm.startswith("PhHeatPump")
-        ]
+        valid_class_type_names = [nm for nm in dir(sys.modules[__name__]) if nm.startswith("PhHeatPump")]
 
         heat_pump_class_name = _input_dict["heat_pump_class_name"]
         if heat_pump_class_name not in valid_class_type_names:

@@ -45,9 +45,9 @@ class SpaceEnergyProperties(properties._Properties):
     @classmethod
     def from_dict(cls, _input_dict, _host):
         # type: (dict, Any) -> SpaceEnergyProperties
-        assert (
-            "SpaceEnergyProperties" in _input_dict["type"]
-        ), "Expected SpaceEnergyProperties. Got {}.".format(_input_dict["type"])
+        assert "SpaceEnergyProperties" in _input_dict["type"], "Expected SpaceEnergyProperties. Got {}.".format(
+            _input_dict["type"]
+        )
 
         new_prop = cls(_host)
         new_prop.id_num = _input_dict.get("id_num", 0)

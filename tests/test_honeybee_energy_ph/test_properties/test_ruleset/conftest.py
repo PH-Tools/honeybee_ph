@@ -68,11 +68,7 @@ def op_period_collection_empty() -> ruleset.DailyOperatingPeriodCollection:
 def op_period_collection_full() -> ruleset.DailyOperatingPeriodCollection:
     coll = ruleset.DailyOperatingPeriodCollection()
 
-    coll.add_period_to_collection(
-        ruleset.DailyOperationPeriod.from_start_end_hours(0, 1, 1, "period 1")
-    )
-    coll.add_period_to_collection(
-        ruleset.DailyOperationPeriod.from_start_end_hours(0, 23, 1, "period 2")
-    )
+    coll.add_period_to_collection(ruleset.DailyOperationPeriod.from_start_end_hours(0, 1, 1, "period 1"))
+    coll.add_period_to_collection(ruleset.DailyOperationPeriod.from_start_end_hours(0, 23, 1, "period 2"))
 
     return coll

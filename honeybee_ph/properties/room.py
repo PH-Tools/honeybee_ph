@@ -78,9 +78,7 @@ class RoomPhProperties(object):
         _host = new_host or self._host
         new_obj = RoomPhProperties(_host)
         new_obj.id_num = self.id_num
-        new_obj.specific_heat_capacity = PhSpecificHeatCapacity(
-            self.specific_heat_capacity.value
-        )
+        new_obj.specific_heat_capacity = PhSpecificHeatCapacity(self.specific_heat_capacity.value)
 
         if include_spaces:
             for sp in self._spaces:
@@ -121,22 +119,18 @@ class RoomPhProperties(object):
     @classmethod
     def from_dict(cls, _input_dict, host):
         # type: (Dict[str, Any], Any) -> RoomPhProperties
-        assert (
-            _input_dict["type"] == "RoomPhProperties"
-        ), "Expected RoomPhProperties. Got {}.".format(_input_dict["type"])
+        assert _input_dict["type"] == "RoomPhProperties", "Expected RoomPhProperties. Got {}.".format(
+            _input_dict["type"]
+        )
 
         new_prop = cls(host)
         new_prop.id_num = _input_dict.get("id_num", 0)
         new_prop.specific_heat_capacity = PhSpecificHeatCapacity(
-            _input_dict.get(
-                "specific_heat_capacity", new_prop.specific_heat_capacity.value
-            )
+            _input_dict.get("specific_heat_capacity", new_prop.specific_heat_capacity.value)
         )
 
         if "ph_bldg_segment" in _input_dict.keys():
-            new_prop.ph_bldg_segment = BldgSegment.from_dict(
-                _input_dict.get("ph_bldg_segment", {})
-            )
+            new_prop.ph_bldg_segment = BldgSegment.from_dict(_input_dict.get("ph_bldg_segment", {}))
         else:
             new_prop.ph_bldg_segment = None
 
@@ -168,9 +162,7 @@ class RoomPhProperties(object):
         """
 
         self.specific_heat_capacity = PhSpecificHeatCapacity(
-            room_prop_dict.get(
-                "specific_heat_capacity", self.specific_heat_capacity.value
-            )
+            room_prop_dict.get("specific_heat_capacity", self.specific_heat_capacity.value)
         )
 
         # -- Set the bldg-segment attributes from the values stored at the 'Model' level

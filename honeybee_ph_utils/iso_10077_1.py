@@ -238,10 +238,7 @@ class ISO100771Data:
     def uw(self):
         # type: () -> float
         return (
-            self.heat_loss_glazing
-            + self.heat_loss_frame
-            + self.heat_loss_psi_glazing
-            + self.heat_loss_psi_install
+            self.heat_loss_glazing + self.heat_loss_frame + self.heat_loss_psi_glazing + self.heat_loss_psi_install
         ) / self.area_window
 
 

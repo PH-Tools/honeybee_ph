@@ -3,13 +3,7 @@
 
 """This is called during __init__ and extends the base honeybee class Properties with a new ._ph slot"""
 
-from honeybee.properties import (
-    ApertureProperties,
-    FaceProperties,
-    ModelProperties,
-    RoomProperties,
-    ShadeProperties,
-)
+from honeybee.properties import ApertureProperties, FaceProperties, ModelProperties, RoomProperties, ShadeProperties
 
 from .properties.aperture import AperturePhProperties
 from .properties.face import FacePhProperties

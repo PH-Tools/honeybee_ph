@@ -27,4 +27,4 @@ fail_under = 100
 directory = "_coverage_html"
 
 [tool.black]
-line-length = 90
+line-length = 120

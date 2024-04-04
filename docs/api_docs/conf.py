@@ -180,9 +180,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, "honeybee energy", "honeybee energy Documentation", [author], 1)
-]
+man_pages = [(master_doc, "honeybee energy", "honeybee energy Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -358,9 +356,7 @@ def get_cli_data(project_folder):
 
     # Check in hash table for a command line tool name that is different
     # from its library name beyond the underscore(_) to dash(-) difference.
-    tool_name = (
-        ht_lib_tool[lib_name] if lib_name in ht_lib_tool else lib_name.replace("_", "-")
-    )
+    tool_name = ht_lib_tool[lib_name] if lib_name in ht_lib_tool else lib_name.replace("_", "-")
 
     lib_path = os.path.abspath(os.path.join(repo_path, lib_name))
     if not os.path.isdir(lib_path):
@@ -394,11 +390,7 @@ def get_cli_groups(cli_path):
         A dictionary with module file names and the corresponding
         group names found.
     """
-    module_names = [
-        os.path.splitext(file)[0]
-        for file in os.listdir(cli_path)
-        if os.path.splitext(file)[1] == ".py"
-    ]
+    module_names = [os.path.splitext(file)[0] for file in os.listdir(cli_path) if os.path.splitext(file)[1] == ".py"]
 
     # Remove files that aren't a cli module
     # discard_names = ["__init__"]
@@ -468,11 +460,7 @@ def write_cli_files(ht_cli_data, lib_name, tool_name, doc_folder):
 
     # Creating missing CLI reST files
     group_filenames = ht_cli_data.keys()
-    print(
-        "[CLI files]: Creating ({}) CLI rst files: {}...".format(
-            len(group_filenames), list(group_filenames)
-        )
-    )
+    print("[CLI files]: Creating ({}) CLI rst files: {}...".format(len(group_filenames), list(group_filenames)))
 
     # Write sphinx-click directive with options for each CLI group
     for file in group_filenames:
@@ -515,9 +503,7 @@ def update_cli_index(index_path, group_filenames):
     if os.path.isfile(index_path):
         with open(index_path, "r") as index_file:
             lines = index_file.readlines()
-        cli_content = (
-            lines[: lines.index("Commands\n")] if "Commands\n" in lines else lines
-        )
+        cli_content = lines[: lines.index("Commands\n")] if "Commands\n" in lines else lines
         print("[CLI cli\\index]: Updating index.rst file...")
     else:
         # Otherwise create a "CLI" heading

@@ -92,9 +92,7 @@ class PhThermalBridge(_base._Base):
                 geom = LineSegment3D.from_dict(_input_dict["geometry"])
             except:
                 raise Exception(
-                    "Thermal Bridge geometry dict: '{}' is not LineSegment3D or Polyline3D?".format(
-                        _input_dict["type"]
-                    )
+                    "Thermal Bridge geometry dict: '{}' is not LineSegment3D or Polyline3D?".format(_input_dict["type"])
                 )
 
         new_obj = cls(_input_dict["identifier"], geom)

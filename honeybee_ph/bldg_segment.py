@@ -120,18 +120,10 @@ class BldgSegment(_base._Base):
         obj.num_floor_levels = _dict.get("num_floor_levels")
         obj.num_dwelling_units = _dict.get("num_dwelling_units")
         obj.site = site.Site.from_dict(_dict.get("site", {}))
-        obj.source_energy_factors = factors.FactorCollection.from_dict(
-            _dict.get("source_energy_factors", {})
-        )
-        obj.co2e_factors = factors.FactorCollection.from_dict(
-            _dict.get("co2e_factors", {})
-        )
-        obj.phius_certification = phius.PhiusCertification.from_dict(
-            _dict.get("phius_certification", {})
-        )
-        obj.phi_certification = phi.PhiCertification.from_dict(
-            _dict.get("phi_certification", {})
-        )
+        obj.source_energy_factors = factors.FactorCollection.from_dict(_dict.get("source_energy_factors", {}))
+        obj.co2e_factors = factors.FactorCollection.from_dict(_dict.get("co2e_factors", {}))
+        obj.phius_certification = phius.PhiusCertification.from_dict(_dict.get("phius_certification", {}))
+        obj.phi_certification = phi.PhiCertification.from_dict(_dict.get("phi_certification", {}))
         obj.set_points = SetPoints.from_dict(_dict.get("set_points", {}))
         obj.mech_room_temp = _dict["mech_room_temp"]
         obj.non_combustible_materials = _dict.get("non_combustible_materials", False)
@@ -139,9 +131,7 @@ class BldgSegment(_base._Base):
             tb_obj = thermal_bridge.PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
         obj.user_data = _dict.get("user_data", {})
-        obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode.from_dict(
-            _dict.get("summer_hrv_bypass_mode", {})
-        )
+        obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_hrv_bypass_mode", {}))
         return obj
 
     def __copy__(self):
@@ -164,9 +154,7 @@ class BldgSegment(_base._Base):
         for tb_k, tb_v in self.thermal_bridges.items():
             new_obj.thermal_bridges[tb_k] = tb_v.duplicate()
         new_obj.user_data = self.user_data
-        new_obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(
-            self.summer_hrv_bypass_mode.value
-        )
+        new_obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(self.summer_hrv_bypass_mode.value)
         return new_obj
 
     def duplicate(self):

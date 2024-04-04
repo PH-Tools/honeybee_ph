@@ -57,9 +57,7 @@ def test_PhSupportiveDevice_str():
     device.device_type = 20
     device.quantity = 2
 
-    expected_str = (
-        "PhSupportiveDevice(display_name='Test Device', device_type=20, quantity=2)"
-    )
+    expected_str = "PhSupportiveDevice(display_name='Test Device', device_type=20, quantity=2)"
 
     assert str(device) == expected_str
 

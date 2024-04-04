@@ -178,9 +178,7 @@ class PhHeatedBasement(PhFoundation):
         super(PhHeatedBasement, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.floor_slab_area_m2 = _input_dict["floor_slab_area_m2"]
         new_obj.floor_slab_u_value = _input_dict["floor_slab_u_value"]
-        new_obj.floor_slab_exposed_perimeter_m = _input_dict[
-            "floor_slab_exposed_perimeter_m"
-        ]
+        new_obj.floor_slab_exposed_perimeter_m = _input_dict["floor_slab_exposed_perimeter_m"]
         new_obj.slab_depth_below_grade_m = _input_dict["slab_depth_below_grade_m"]
         new_obj.basement_wall_u_value = _input_dict["basement_wall_u_value"]
         return new_obj
@@ -243,19 +241,11 @@ class PhUnheatedBasement(PhFoundation):
         super(PhUnheatedBasement, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.floor_ceiling_area_m2 = _input_dict["floor_ceiling_area_m2"]
         new_obj.ceiling_u_value = _input_dict["ceiling_u_value"]
-        new_obj.floor_slab_exposed_perimeter_m = _input_dict[
-            "floor_slab_exposed_perimeter_m"
-        ]
+        new_obj.floor_slab_exposed_perimeter_m = _input_dict["floor_slab_exposed_perimeter_m"]
         new_obj.slab_depth_below_grade_m = _input_dict["slab_depth_below_grade_m"]
-        new_obj.basement_wall_height_above_grade_m = _input_dict[
-            "basement_wall_height_above_grade_m"
-        ]
-        new_obj.basement_wall_uValue_below_grade = _input_dict[
-            "basement_wall_uValue_below_grade"
-        ]
-        new_obj.basement_wall_uValue_above_grade = _input_dict[
-            "basement_wall_uValue_above_grade"
-        ]
+        new_obj.basement_wall_height_above_grade_m = _input_dict["basement_wall_height_above_grade_m"]
+        new_obj.basement_wall_uValue_below_grade = _input_dict["basement_wall_uValue_below_grade"]
+        new_obj.basement_wall_uValue_above_grade = _input_dict["basement_wall_uValue_above_grade"]
         new_obj.floor_slab_u_value = _input_dict["floor_slab_u_value"]
         new_obj.basement_volume_m3 = _input_dict["basement_volume_m3"]
         new_obj.basement_ventilation_ach = _input_dict["basement_ventilation_ach"]
@@ -318,17 +308,11 @@ class PhSlabOnGrade(PhFoundation):
         super(PhSlabOnGrade, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.floor_slab_area_m2 = _input_dict["floor_slab_area_m2"]
         new_obj.floor_slab_u_value = _input_dict["floor_slab_u_value"]
-        new_obj.floor_slab_exposed_perimeter_m = _input_dict[
-            "floor_slab_exposed_perimeter_m"
-        ]
+        new_obj.floor_slab_exposed_perimeter_m = _input_dict["floor_slab_exposed_perimeter_m"]
         new_obj.perim_insulation_position = _input_dict["perim_insulation_position_value"]
-        new_obj.perim_insulation_width_or_depth_m = _input_dict[
-            "perim_insulation_width_or_depth_m"
-        ]
+        new_obj.perim_insulation_width_or_depth_m = _input_dict["perim_insulation_width_or_depth_m"]
         new_obj.perim_insulation_thickness_m = _input_dict["perim_insulation_thickness_m"]
-        new_obj.perim_insulation_conductivity = _input_dict[
-            "perim_insulation_conductivity"
-        ]
+        new_obj.perim_insulation_conductivity = _input_dict["perim_insulation_conductivity"]
         return new_obj
 
 
@@ -353,12 +337,8 @@ class PhVentedCrawlspace(PhFoundation):
         obj.foundation_type = self.foundation_type
         obj.crawlspace_floor_slab_area_m2 = self.crawlspace_floor_slab_area_m2
         obj.ceiling_above_crawlspace_u_value = self.ceiling_above_crawlspace_u_value
-        obj.crawlspace_floor_exposed_perimeter_m = (
-            self.crawlspace_floor_exposed_perimeter_m
-        )
-        obj.crawlspace_wall_height_above_grade_m = (
-            self.crawlspace_wall_height_above_grade_m
-        )
+        obj.crawlspace_floor_exposed_perimeter_m = self.crawlspace_floor_exposed_perimeter_m
+        obj.crawlspace_wall_height_above_grade_m = self.crawlspace_wall_height_above_grade_m
         obj.crawlspace_floor_u_value = self.crawlspace_floor_u_value
         obj.crawlspace_vent_opening_are_m2 = self.crawlspace_vent_opening_are_m2
         obj.crawlspace_wall_u_value = self.crawlspace_wall_u_value
@@ -370,12 +350,8 @@ class PhVentedCrawlspace(PhFoundation):
         d.update(super(PhVentedCrawlspace, self).to_dict())
         d["crawlspace_floor_slab_area_m2"] = self.crawlspace_floor_slab_area_m2
         d["ceiling_above_crawlspace_u_value"] = self.ceiling_above_crawlspace_u_value
-        d[
-            "crawlspace_floor_exposed_perimeter_m"
-        ] = self.crawlspace_floor_exposed_perimeter_m
-        d[
-            "crawlspace_wall_height_above_grade_m"
-        ] = self.crawlspace_wall_height_above_grade_m
+        d["crawlspace_floor_exposed_perimeter_m"] = self.crawlspace_floor_exposed_perimeter_m
+        d["crawlspace_wall_height_above_grade_m"] = self.crawlspace_wall_height_above_grade_m
         d["crawlspace_floor_u_value"] = self.crawlspace_floor_u_value
         d["crawlspace_vent_opening_are_m2"] = self.crawlspace_vent_opening_are_m2
         d["crawlspace_wall_u_value"] = self.crawlspace_wall_u_value
@@ -386,22 +362,12 @@ class PhVentedCrawlspace(PhFoundation):
         # type: (Dict[str, Any]) -> PhVentedCrawlspace
         new_obj = cls()
         super(PhVentedCrawlspace, new_obj).base_attrs_from_dict(new_obj, _input_dict)
-        new_obj.crawlspace_floor_slab_area_m2 = _input_dict[
-            "crawlspace_floor_slab_area_m2"
-        ]
-        new_obj.ceiling_above_crawlspace_u_value = _input_dict[
-            "ceiling_above_crawlspace_u_value"
-        ]
-        new_obj.crawlspace_floor_exposed_perimeter_m = _input_dict[
-            "crawlspace_floor_exposed_perimeter_m"
-        ]
-        new_obj.crawlspace_wall_height_above_grade_m = _input_dict[
-            "crawlspace_wall_height_above_grade_m"
-        ]
+        new_obj.crawlspace_floor_slab_area_m2 = _input_dict["crawlspace_floor_slab_area_m2"]
+        new_obj.ceiling_above_crawlspace_u_value = _input_dict["ceiling_above_crawlspace_u_value"]
+        new_obj.crawlspace_floor_exposed_perimeter_m = _input_dict["crawlspace_floor_exposed_perimeter_m"]
+        new_obj.crawlspace_wall_height_above_grade_m = _input_dict["crawlspace_wall_height_above_grade_m"]
         new_obj.crawlspace_floor_u_value = _input_dict["crawlspace_floor_u_value"]
-        new_obj.crawlspace_vent_opening_are_m2 = _input_dict[
-            "crawlspace_vent_opening_are_m2"
-        ]
+        new_obj.crawlspace_vent_opening_are_m2 = _input_dict["crawlspace_vent_opening_are_m2"]
         new_obj.crawlspace_wall_u_value = _input_dict["crawlspace_wall_u_value"]
         return new_obj
 

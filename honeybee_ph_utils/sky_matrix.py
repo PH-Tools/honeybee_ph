@@ -115,9 +115,7 @@ def parse_mtx_data(data_str, wea_duration, sky_density=1):
     patch_counter = 0
     for i, row_patch_count in enumerate(PATCHES_PER_ROW[sky_density]):
         row_slice = patch_lines[patch_counter : patch_counter + row_patch_count]
-        irr_vals = (
-            broadband_radiation(row, i, wea_duration, sky_density) for row in row_slice
-        )
+        irr_vals = (broadband_radiation(row, i, wea_duration, sky_density) for row in row_slice)
         broadband_irr.extend(irr_vals)
         patch_counter += row_patch_count
     return broadband_irr
@@ -167,11 +165,7 @@ def gen_matrix(_epw_file, _period, _north):
     # create the wea and write it to the default_epw_folder
     wea = Wea(_location, _direct_rad, _diffuse_rad)
     wea_duration = len(wea) / wea.timestep
-    wea_folder = (
-        _folder_
-        if _folder_ is not None
-        else os.path.join(lb_folders.default_epw_folder, "sky_matrices")
-    )
+    wea_folder = _folder_ if _folder_ is not None else os.path.join(lb_folders.default_epw_folder, "sky_matrices")
     metd = _direct_rad.header.metadata
     wea_basename = metd["city"].replace(" ", "_") if "city" in metd else "unnamed"
     wea_path = os.path.join(wea_folder, wea_basename)

@@ -40,19 +40,14 @@ def input_to_int(_input_value, _default=None):
     try:
         return int(result.group(0))
     except ValueError:
-        msg = (
-            'Input Error: Cannot use input "{}" [{}].\n'
-            "Please check the allowable input options.".format(
-                _input_value, type(_input_value)
-            )
+        msg = 'Input Error: Cannot use input "{}" [{}].\n' "Please check the allowable input options.".format(
+            _input_value, type(_input_value)
         )
         raise Exception(msg)
     except AttributeError as e:
         # If no 'group', ie: no int part supplied in the string
-        msg = (
-            'Error trying to find the integer input part of input: "{}", type: {}'.format(
-                _input_value, type(_input_value)
-            )
+        msg = 'Error trying to find the integer input part of input: "{}", type: {}'.format(
+            _input_value, type(_input_value)
         )
         raise Exception(msg)
 

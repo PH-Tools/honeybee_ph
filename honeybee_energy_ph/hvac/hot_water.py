@@ -174,9 +174,7 @@ class PhPipeSegment(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}, length={:.3f}".format(
-            self.__class__.__name__, self.diameter.value, self.length_m
-        )
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter.value, self.length_m)
 
     def __repr__(self):
         return str(self)
@@ -228,9 +226,7 @@ class PhPipeElement(_base._PhHVACBase):
             mat = materials.pop()
             return mat.value
         else:
-            raise ValueError(
-                "Pipe segments: {} have different materials.".format(self.segment_names)
-            )
+            raise ValueError("Pipe segments: {} have different materials.".format(self.segment_names))
 
     @property
     def diameter_name(self):
@@ -242,9 +238,7 @@ class PhPipeElement(_base._PhHVACBase):
             diam = diameters.pop()
             return diam.value
         else:
-            raise ValueError(
-                "Pipe segments: {} have different diameters.".format(self.segment_names)
-            )
+            raise ValueError("Pipe segments: {} have different diameters.".format(self.segment_names))
 
     def add_segment(self, _segment):
         # type: (PhPipeSegment) -> None
@@ -507,10 +501,7 @@ class PhPipeTrunk(_base._PhHVACBase):
         PHPP calculations and is not a true representation of the piping in the
         model.
         """
-        return sum(
-            self.length_m + branch.total_home_run_fixture_length
-            for branch in self.branches
-        )
+        return sum(self.length_m + branch.total_home_run_fixture_length for branch in self.branches)
 
     def add_branch(self, _branch):
         # type: (PhPipeBranch) -> None
@@ -683,9 +674,7 @@ class PhSHWTank(_base._PhHVACBase):
         return obj
 
     def __str__(self):
-        return "{}: {} {}".format(
-            self.__class__.__name__, self.tank_type, self.display_name
-        )
+        return "{}: {} {}".format(self.__class__.__name__, self.tank_type, self.display_name)
 
     def __repr__(self):
         return "{}: {}".format(self.__class__.__name__, self.display_name)
@@ -794,9 +783,7 @@ class PhSHWHeaterBoiler(PhHotWaterHeater):
         new_obj.condensing = _input_dict["condensing"]
         new_obj.effic_at_30_perc_load = _input_dict["effic_at_30_perc_load"]
         new_obj.effic_at_nominal_load = _input_dict["effic_at_nominal_load"]
-        new_obj.avg_return_temp_at_30_perc_load = _input_dict[
-            "avg_return_temp_at_30_perc_load"
-        ]
+        new_obj.avg_return_temp_at_30_perc_load = _input_dict["avg_return_temp_at_30_perc_load"]
         new_obj.avg_boiler_temp_at_70_55 = _input_dict["avg_boiler_temp_at_70_55"]
         new_obj.avg_boiler_temp_at_55_45 = _input_dict["avg_boiler_temp_at_55_45"]
         new_obj.avg_boiler_temp_at_35_28 = _input_dict["avg_boiler_temp_at_35_28"]

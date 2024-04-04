@@ -2,9 +2,7 @@ from honeybee_ph.team import ProjectTeam, ProjectTeamMember
 
 
 def test_ProjectTeamMember():
-    team_member = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team_member = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     assert team_member.name == "John Doe"
     assert team_member.street == "123 Main St."
     assert team_member.city == "Anytown"
@@ -16,9 +14,7 @@ def test_ProjectTeamMember():
 
 def test_ProjectTeam_customer():
     team = ProjectTeam()
-    team.customer = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team.customer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     assert team.customer.name == "John Doe"
     assert team.customer.street == "123 Main St."
     assert team.customer.city == "Anytown"
@@ -30,9 +26,7 @@ def test_ProjectTeam_customer():
 
 def test_ProjectTeam_owner():
     team = ProjectTeam()
-    team.owner = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team.owner = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     assert team.owner.name == "John Doe"
     assert team.owner.street == "123 Main St."
     assert team.owner.city == "Anytown"
@@ -44,9 +38,7 @@ def test_ProjectTeam_owner():
 
 def test_ProjectTeam_building():
     team = ProjectTeam()
-    team.building = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team.building = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     assert team.building.name == "John Doe"
     assert team.building.street == "123 Main St."
     assert team.building.city == "Anytown"
@@ -58,9 +50,7 @@ def test_ProjectTeam_building():
 
 def test_ProjectTeam_designer():
     team = ProjectTeam()
-    team.designer = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team.designer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     assert team.designer.name == "John Doe"
     assert team.designer.street == "123 Main St."
     assert team.designer.city == "Anytown"
@@ -72,18 +62,10 @@ def test_ProjectTeam_designer():
 
 def test_ProjectTeam_duplicate():
     team = ProjectTeam()
-    team.customer = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
-    team.owner = ProjectTeamMember(
-        "Jane Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
-    team.building = ProjectTeamMember(
-        "Joe Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
-    team.designer = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team.customer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.owner = ProjectTeamMember("Jane Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.building = ProjectTeamMember("Joe Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.designer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     team_dup = team.duplicate()
     assert team_dup.customer.name == "John Doe"
     assert team_dup.customer.street == "123 Main St."
@@ -117,18 +99,10 @@ def test_ProjectTeam_duplicate():
 
 def test_ProjectTeamMember_to_from_dict():
     team = ProjectTeam()
-    team.customer = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
-    team.owner = ProjectTeamMember(
-        "Jane Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
-    team.building = ProjectTeamMember(
-        "Joe Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
-    team.designer = ProjectTeamMember(
-        "John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None
-    )
+    team.customer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.owner = ProjectTeamMember("Jane Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.building = ProjectTeamMember("Joe Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.designer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
 
     team_dict = team.to_dict()
     team_dup = ProjectTeam.from_dict(team_dict)

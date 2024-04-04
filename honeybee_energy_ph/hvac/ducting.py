@@ -127,9 +127,7 @@ class PhDuctSegment(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}, length={:.3f}".format(
-            self.__class__.__name__, self.diameter, self.length
-        )
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter, self.length)
 
     def __repr__(self):
         return str(self)

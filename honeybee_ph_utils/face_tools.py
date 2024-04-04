@@ -63,9 +63,7 @@ def sort_hb_faces_by_co_planar(_faces, _tolerance, _angle_tolerance_radians):
     groups = {}
     for face in _faces:
         for group_plane, group_faces in groups.items():
-            if face.geometry.plane.is_coplanar_tolerance(
-                group_plane, _tolerance, _angle_tolerance_radians
-            ):
+            if face.geometry.plane.is_coplanar_tolerance(group_plane, _tolerance, _angle_tolerance_radians):
                 group_faces.append(face)
                 break
         else:
@@ -122,9 +120,7 @@ def find_connected_HB_Faces(_hb_faces, _tolerance):
         component.append(node)
 
         for _neighbor_face in _hb_faces:
-            if _neighbor_face not in visited and hb_faces_are_touching(
-                node, _neighbor_face, _tolerance
-            ):
+            if _neighbor_face not in visited and hb_faces_are_touching(node, _neighbor_face, _tolerance):
                 depth_first_search(_neighbor_face, component)
 
     """Loop over all the faces in the input list _hb_faces. If a face has not 
@@ -157,9 +153,7 @@ def group_hb_faces(_hb_faces, _tolerance, _angle_tolerance_degrees):
 
     face_groups_coplanar = []
     for face_group in face_groups_by_type:
-        face_groups_coplanar.extend(
-            sort_hb_faces_by_co_planar(face_group, _tolerance, angle_tolerance_radians)
-        )
+        face_groups_coplanar.extend(sort_hb_faces_by_co_planar(face_group, _tolerance, angle_tolerance_radians))
 
     face_groups_connected = []
     for face_group in face_groups_coplanar:

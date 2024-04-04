@@ -3,9 +3,7 @@ from honeybee_ph_standards.sourcefactors import factors, phius_source_energy_fac
 
 def test_load_phius_2018_library() -> None:
     # -- build the factors from the library
-    factor_list = factors.build_factors_from_library(
-        phius_source_energy_factors.factors_2018
-    )
+    factor_list = factors.build_factors_from_library(phius_source_energy_factors.factors_2018)
     assert len(factor_list) == 16
 
     # -- Add them to a collection
@@ -18,9 +16,7 @@ def test_load_phius_2018_library() -> None:
 
 def test_load_phius_2021_library() -> None:
     # -- build the factors from the library
-    factor_list = factors.build_factors_from_library(
-        phius_source_energy_factors.factors_2021
-    )
+    factor_list = factors.build_factors_from_library(phius_source_energy_factors.factors_2021)
     assert len(factor_list) == 16
 
     # -- Add them to a collection

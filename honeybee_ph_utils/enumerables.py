@@ -63,9 +63,7 @@ class CustomEnum(object):
         return self.allowed_upper.index(self.value) - self.index_offset
 
     def __str__(self):
-        return "{}(_value={} [number={}])".format(
-            self.__class__.__name__, self.value, self.number
-        )
+        return "{}(_value={} [number={}])".format(self.__class__.__name__, self.value, self.number)
 
     def __repr__(self):
         return str(self)

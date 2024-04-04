@@ -12,9 +12,7 @@ except ImportError:
 
 class LightingPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
         super(LightingPhProperties_FromDictError, self).__init__(self.msg)
 
 
