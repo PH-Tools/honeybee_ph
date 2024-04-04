@@ -59,6 +59,7 @@ class PhDivisionCell(object):
         # type: () -> PhDivisionCell
         return self.duplicate()
 
+
 class PhDivisionGrid(object):
     def __init__(self):
         # type: () -> None
@@ -256,7 +257,7 @@ class EnergyMaterialPhProperties(object):
 
     # -------------------------------------------------------------------------
     # ------------------ Deprecated [April 4, 2024] ---------------------------
-    # TODO: tests
+    
     @property
     def percentage_of_assembly(self):
         # type: () -> NoReturn
@@ -310,7 +311,6 @@ class EnergyMaterialPhProperties(object):
         # type: (Optional[PhColor]) -> None
         self._ph_color = _input_color
 
-    # TODO: Update tests
     def to_dict(self, abridged=False):
         # type: (bool) -> dict[str, dict]
         d = {}
@@ -323,7 +323,6 @@ class EnergyMaterialPhProperties(object):
 
         return {"ph": d}
 
-    # TODO: Update Tets
     @classmethod
     def from_dict(cls, _input_dict, _host):
         # type: (dict, Optional[opaque.EnergyMaterial]) -> EnergyMaterialPhProperties
@@ -338,7 +337,6 @@ class EnergyMaterialPhProperties(object):
         # type: (Any) -> None
         return None
 
-    # TODO: tests
     def __copy__(self, new_host=None):
         # type: (Optional[opaque.EnergyMaterial]) -> EnergyMaterialPhProperties
         _host = new_host or self._host
