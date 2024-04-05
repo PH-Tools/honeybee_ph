@@ -59,8 +59,33 @@ class PhDivisionCell(object):
         # type: () -> PhDivisionCell
         return self.duplicate()
 
+    def __str__(self):
+        return "{}(row={}, column={}, material={})".format(
+            self.__class__.__name__,
+            self.row,
+            self.column,
+            self.material.display_name,
+        )
+    
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
 
 class PhDivisionGrid(object):
+    """A grid of PhDivisionCell to support 'mixed' materials.
+
+    The Cell grid is ordered from top-left to bottom-right:
+
+    |    | C0  | C1  | C2  | ...
+    |:---|:---:|:---:|:---:|:---:
+    | R0 | 0,0 | 1,0 | 2,0 | ...
+    | R1 | 0,1 | 1,1 | 2,1 | ...
+    | R2 | 0,2 | 1,2 | 2,2 | ...
+    """
+
     def __init__(self):
         # type: () -> None
         self._row_heights = []  # type: List[float]
@@ -100,7 +125,7 @@ class PhDivisionGrid(object):
     @property
     def cells(self):
         # type: () -> List[PhDivisionCell]
-        """Return the list of cells in the grid."""
+        """Return the list of all the cells in the grid."""
         return self._cells
 
     def set_column_widths(self, _column_widths):
@@ -113,11 +138,11 @@ class PhDivisionGrid(object):
     def add_new_column(self, _column_width):
         # type: (float) -> None
         """Add a new COLUMN to the grid with the given width."""
-        self._column_widths.append(float(_column_width))
-
-        # -- Add a default Row
-        if len(self._row_heights) == 0:
-            self._row_heights.append(1.0)
+        if _column_width is None:
+            return
+        
+        if _column_width > 0:    
+            self._column_widths.append(float(_column_width))
 
     def set_row_heights(self, _row_heights):
         # type: (Iterable[float]) -> None
@@ -129,11 +154,11 @@ class PhDivisionGrid(object):
     def add_new_row(self, _row_height):
         # type: (float) -> None
         """Add a new ROW to the grid with the given height."""
-        self._row_heights.append(float(_row_height))
-
-        # -- Add a default Column
-        if len(self._column_widths) == 0:
-            self._column_widths.append(1.0)
+        if _row_height is None:
+            return
+        
+        if _row_height > 0:
+            self._row_heights.append(float(_row_height))
 
     def get_cell(self, _column, _row):
         # type: (int, int) -> Optional[PhDivisionCell]
@@ -246,6 +271,8 @@ class PhDivisionGrid(object):
 
 
 class EnergyMaterialPhProperties(object):
+    """Passive House properties for EnergyMaterial objects."""
+
     def __init__(self, _host=None):
         # type: (Optional[opaque.EnergyMaterial]) -> None
         self._host = _host
@@ -258,6 +285,7 @@ class EnergyMaterialPhProperties(object):
     # -------------------------------------------------------------------------
     # ------------------ Deprecated [April 4, 2024] ---------------------------
     
+
     @property
     def percentage_of_assembly(self):
         # type: () -> NoReturn
