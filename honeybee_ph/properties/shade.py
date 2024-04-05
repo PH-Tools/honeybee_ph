@@ -43,9 +43,7 @@ class ShadePhProperties(object):
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> ShadePhProperties
-        assert (
-            data["type"] == "ShadePhProperties"
-        ), "Expected ShadePhProperties. Got {}.".format(data["type"])
+        assert data["type"] == "ShadePhProperties", "Expected ShadePhProperties. Got {}.".format(data["type"])
 
         new_prop = cls(host)
         new_prop.id_num = data.get("id_num", 0)

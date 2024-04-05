@@ -77,9 +77,7 @@ class Factor(_base._Base):
         return new_obj
 
     def __str__(self):
-        return "{}(fuel={}, value={:.02f})".format(
-            self.__class__.__name__, self.fuel_name, float(self.value)
-        )
+        return "{}(fuel={}, value={:.02f})".format(self.__class__.__name__, self.fuel_name, float(self.value))
 
     def __repr__(self):
         return str(self)
@@ -164,9 +162,7 @@ class FactorCollection(_base._Base):
             yield factor
 
     def __str__(self):
-        return "{}(name={}, {} fuel factors)".format(
-            self.__class__.__name__, self.name, len(self.factors)
-        )
+        return "{}(name={}, {} fuel factors)".format(self.__class__.__name__, self.name, len(self.factors))
 
     def ToString(self):
         return str(self)

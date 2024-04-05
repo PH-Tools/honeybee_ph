@@ -53,10 +53,8 @@ class PhRenewableEnergyDevice(_base._PhHVACBase):
         # type: (dict) -> None
         """Check that the input dict type is correct for the Heating System being constructed."""
         device_type = _input_dict["device_typename"]
-        msg = (
-            "Error creating Heating System from dict. Expected '{}' but got '{}'".format(
-                self.__class__.__name__, device_type
-            )
+        msg = "Error creating Heating System from dict. Expected '{}' but got '{}'".format(
+            self.__class__.__name__, device_type
         )
         assert device_type == str(self.__class__.__name__), msg
         return None
@@ -99,9 +97,7 @@ class PhPhotovoltaicDevice(PhRenewableEnergyDevice):
         new_obj.check_dict_type(_input_dict)
         new_obj.base_attrs_from_dict(_input_dict)
 
-        new_obj.photovoltaic_renewable_energy = _input_dict[
-            "photovoltaic_renewable_energy"
-        ]
+        new_obj.photovoltaic_renewable_energy = _input_dict["photovoltaic_renewable_energy"]
         new_obj.array_size = _input_dict["array_size"]
         new_obj.utilization_factor = _input_dict["utilization_factor"]
 
@@ -118,18 +114,12 @@ class PhRenewableEnergyDeviceBuilder(object):
     def from_dict(cls, _input_dict):
         # type: (dict[str, Any]) -> PhRenewableEnergyDevice
         """Find the right device constructor class from the module based on the device_typename."""
-        valid_device_typenames = [
-            nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")
-        ]
+        valid_device_typenames = [nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")]
 
         device_typename = _input_dict["device_typename"]
         if device_typename not in valid_device_typenames:
-            raise UnknownPhRenewableEnergyTypeError(
-                valid_device_typenames, device_typename
-            )
-        device_class = getattr(
-            sys.modules[__name__], device_typename
-        )  # type: PhRenewableEnergyDevice
+            raise UnknownPhRenewableEnergyTypeError(valid_device_typenames, device_typename)
+        device_class = getattr(sys.modules[__name__], device_typename)  # type: PhRenewableEnergyDevice
         new_device = device_class.from_dict(_input_dict)
         return new_device
 

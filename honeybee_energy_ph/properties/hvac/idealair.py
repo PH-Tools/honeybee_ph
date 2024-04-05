@@ -12,10 +12,7 @@ except:
 
 try:
     from honeybee_energy_ph.hvac import heating, ventilation
-    from honeybee_energy_ph.hvac.renewable_devices import (
-        PhRenewableEnergyDevice,
-        PhRenewableEnergyDeviceBuilder,
-    )
+    from honeybee_energy_ph.hvac.renewable_devices import PhRenewableEnergyDevice, PhRenewableEnergyDeviceBuilder
     from honeybee_energy_ph.hvac.supportive_device import PhSupportiveDevice
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
@@ -23,9 +20,7 @@ except ImportError as e:
 
 class IdealAirSystemPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
         super(IdealAirSystemPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -61,29 +56,20 @@ class IdealAirSystemPhProperties(object):
         else:
             d["ventilation_system"] = None
 
-        d["heating_systems"] = [
-            sys.to_dict()
-            for sys in sorted([_ for _ in self.heating_systems if _ is not None])
-        ]
+        d["heating_systems"] = [sys.to_dict() for sys in sorted([_ for _ in self.heating_systems if _ is not None])]
 
-        d["heat_pump_systems"] = [
-            sys.to_dict()
-            for sys in sorted([_ for _ in self.heat_pump_systems if _ is not None])
-        ]
+        d["heat_pump_systems"] = [sys.to_dict() for sys in sorted([_ for _ in self.heat_pump_systems if _ is not None])]
 
         d["exhaust_vent_devices"] = [
-            sys.to_dict()
-            for sys in sorted([_ for _ in self.exhaust_vent_devices if _ is not None])
+            sys.to_dict() for sys in sorted([_ for _ in self.exhaust_vent_devices if _ is not None])
         ]
 
         d["supportive_devices"] = [
-            device.to_dict()
-            for device in sorted([_ for _ in self.supportive_devices if _ is not None])
+            device.to_dict() for device in sorted([_ for _ in self.supportive_devices if _ is not None])
         ]
 
         d["renewable_devices"] = [
-            device.to_dict()
-            for device in sorted([_ for _ in self.renewable_devices if _ is not None])
+            device.to_dict() for device in sorted([_ for _ in self.renewable_devices if _ is not None])
         ]
 
         return {"ph": d}
@@ -93,9 +79,7 @@ class IdealAirSystemPhProperties(object):
         # type: (Dict[str, Any], Any) -> IdealAirSystemPhProperties
         valid_types = ("IdealAirSystemPhProperties", "IdealAirSystemPhPropertiesAbridged")
         if _input_dict["type"] not in valid_types:
-            raise IdealAirSystemPhProperties_FromDictError(
-                valid_types, _input_dict["type"]
-            )
+            raise IdealAirSystemPhProperties_FromDictError(valid_types, _input_dict["type"])
 
         new_prop = cls(host)
         new_prop.id_num = _input_dict["id_num"]
@@ -110,15 +94,11 @@ class IdealAirSystemPhProperties(object):
             new_prop.heating_systems.add(htg_sys)
 
         for heat_pump_sys_dict in _input_dict.get("heat_pump_systems", []):
-            heat_pump_sys = heat_pumps.PhHeatPumpSystemBuilder.from_dict(
-                heat_pump_sys_dict
-            )
+            heat_pump_sys = heat_pumps.PhHeatPumpSystemBuilder.from_dict(heat_pump_sys_dict)
             new_prop.heat_pump_systems.add(heat_pump_sys)
 
         for exhaust_vent_device_dict in _input_dict.get("exhaust_vent_devices", []):
-            exhaust_device = ventilation.PhExhaustDeviceBuilder.from_dict(
-                exhaust_vent_device_dict
-            )
+            exhaust_device = ventilation.PhExhaustDeviceBuilder.from_dict(exhaust_vent_device_dict)
             new_prop.exhaust_vent_devices.add(exhaust_device)
 
         for supportive_device_dict in _input_dict.get("supportive_devices", []):
@@ -126,9 +106,7 @@ class IdealAirSystemPhProperties(object):
             new_prop.supportive_devices.add(supportive_device)
 
         for renewable_device_dict in _input_dict.get("renewable_devices", []):
-            renewable_device = PhRenewableEnergyDeviceBuilder.from_dict(
-                renewable_device_dict
-            )
+            renewable_device = PhRenewableEnergyDeviceBuilder.from_dict(renewable_device_dict)
             new_prop.renewable_devices.add(renewable_device)
 
         return new_prop

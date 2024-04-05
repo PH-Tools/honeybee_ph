@@ -13,9 +13,7 @@ from honeybee_energy_ph.load import ph_equipment
 
 class ElectricEquipmentPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
         super(ElectricEquipmentPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -49,9 +47,7 @@ class ElectricEquipmentPhProperties(object):
             "ElectricEquipmentPhPropertiesAbridged",
         )
         if _input_dict["type"] not in valid_types:
-            raise ElectricEquipmentPhProperties_FromDictError(
-                valid_types, _input_dict["type"]
-            )
+            raise ElectricEquipmentPhProperties_FromDictError(valid_types, _input_dict["type"])
 
         new_prop = cls(_host)
 
@@ -76,9 +72,7 @@ class ElectricEquipmentPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return "{}(equipment_collection={})".format(
-            self.__class__.__name__, self.equipment_collection
-        )
+        return "{}(equipment_collection={})".format(self.__class__.__name__, self.equipment_collection)
 
     def __repr__(self):
         return str(self)

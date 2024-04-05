@@ -92,14 +92,10 @@ class AperturePhProperties(object):
         new_properties_obj.winter_shading_factor = self.winter_shading_factor
         new_properties_obj.summer_shading_factor = self.summer_shading_factor
         if self.shading_dimensions:
-            new_properties_obj.shading_dimensions = self.shading_dimensions.duplicate(
-                self
-            )
+            new_properties_obj.shading_dimensions = self.shading_dimensions.duplicate(self)
         new_properties_obj.variant_type = self.variant_type
         new_properties_obj.install_depth = self.install_depth
-        new_properties_obj.default_monthly_shading_correction_factor = (
-            self.default_monthly_shading_correction_factor
-        )
+        new_properties_obj.default_monthly_shading_correction_factor = self.default_monthly_shading_correction_factor
 
         return new_properties_obj
 
@@ -107,16 +103,12 @@ class AperturePhProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return "HB-Aperture Passive House Properties: [host: {}]".format(
-            self.host.display_name
-        )
+        return "HB-Aperture Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
         # type: (bool) -> Dict[str, Dict[str, Any]]
         d = {}
-        d["type"] = (
-            "AperturePhProperties" if not abridged else "AperturePhPropertiesAbridged"
-        )
+        d["type"] = "AperturePhProperties" if not abridged else "AperturePhPropertiesAbridged"
         d["id_num"] = self.id_num
         d["winter_shading_factor"] = self.winter_shading_factor
         d["summer_shading_factor"] = self.summer_shading_factor
@@ -124,18 +116,16 @@ class AperturePhProperties(object):
             d["shading_dims"] = self.shading_dimensions.to_dict()
         d["variant_type"] = self.variant_type
         d["install_depth"] = self.install_depth
-        d[
-            "default_monthly_shading_correction_factor"
-        ] = self.default_monthly_shading_correction_factor
+        d["default_monthly_shading_correction_factor"] = self.default_monthly_shading_correction_factor
 
         return {"ph": d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
         # type: (Dict[str, Any], Any) -> AperturePhProperties
-        assert (
-            _input_dict["type"] == "AperturePhProperties"
-        ), "Expected AperturePhProperties. Got {}.".format(_input_dict["type"])
+        assert _input_dict["type"] == "AperturePhProperties", "Expected AperturePhProperties. Got {}.".format(
+            _input_dict["type"]
+        )
 
         new_prop = cls(host)
         new_prop.id_num = _input_dict["id_num"]
@@ -171,9 +161,7 @@ class AperturePhProperties(object):
         self.variant_type = _aperture_prop_dict["variant_type"]
 
         # Use get to ensure backwards compatibility for now
-        self.install_depth = _aperture_prop_dict.get(
-            "install_depth", 0.1016
-        )  # default = 4in.
+        self.install_depth = _aperture_prop_dict.get("install_depth", 0.1016)  # default = 4in.
 
         shading_dim_dict = _aperture_prop_dict.get("shading_dims", None)
         if shading_dim_dict:

@@ -50,10 +50,8 @@ class PhHeatingSystem(_base._PhHVACBase):
         # type: (dict) -> None
         """Check that the input dict type is correct for the Heating System being constructed."""
         heating_type = _input_dict["heating_type"]
-        msg = (
-            "Error creating Heating System from dict. Expected '{}' but got '{}'".format(
-                self.__class__.__name__, heating_type
-            )
+        msg = "Error creating Heating System from dict. Expected '{}' but got '{}'".format(
+            self.__class__.__name__, heating_type
         )
         assert heating_type == str(self.__class__.__name__), msg
         return None
@@ -134,9 +132,7 @@ class PhHeatingFossilBoiler(PhHeatingSystem):
         new_obj.in_conditioned_space = _input_dict["in_conditioned_space"]
         new_obj.effic_at_30_percent_load = _input_dict["effic_at_30_percent_load"]
         new_obj.effic_at_nominal_load = _input_dict["effic_at_nominal_load"]
-        new_obj.avg_rtrn_temp_at_30_percent_load = _input_dict[
-            "avg_rtrn_temp_at_30_percent_load"
-        ]
+        new_obj.avg_rtrn_temp_at_30_percent_load = _input_dict["avg_rtrn_temp_at_30_percent_load"]
         new_obj.avg_temp_at_70C_55C = _input_dict["avg_temp_at_70C_55C"]
         new_obj.avg_temp_at_55C_45C = _input_dict["avg_temp_at_55C_45C"]
         new_obj.avg_temp_at_32C_28C = _input_dict["avg_temp_at_32C_28C"]
@@ -227,9 +223,7 @@ class PhHeatingDistrict(PhHeatingSystem):
         # type: () -> dict
         d = super(PhHeatingDistrict, self).to_dict()
         d["fuel"] = self.fuel
-        d[
-            "util_factor_of_heat_transfer_station"
-        ] = self.util_factor_of_heat_transfer_station
+        d["util_factor_of_heat_transfer_station"] = self.util_factor_of_heat_transfer_station
         return d
 
     @classmethod
@@ -240,9 +234,7 @@ class PhHeatingDistrict(PhHeatingSystem):
         new_obj.base_attrs_from_dict(_input_dict)
 
         new_obj.fuel = _input_dict["fuel"]
-        new_obj.util_factor_of_heat_transfer_station = _input_dict[
-            "util_factor_of_heat_transfer_station"
-        ]
+        new_obj.util_factor_of_heat_transfer_station = _input_dict["util_factor_of_heat_transfer_station"]
         return new_obj
 
 
@@ -256,9 +248,7 @@ class PhHeatingSystemBuilder(object):
     def from_dict(cls, _input_dict):
         # type: (dict[str, Any]) -> PhHeatingSystem
         """Find the right appliance constructor class from the module based on the 'type' name."""
-        valid_class_types = [
-            nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")
-        ]
+        valid_class_types = [nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")]
 
         heating_type = _input_dict["heating_type"]
         if heating_type not in valid_class_types:

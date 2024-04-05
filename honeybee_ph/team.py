@@ -69,9 +69,7 @@ class ProjectTeamMember:
         return new_obj
 
     def __str__(self):
-        return "{}(name={}, street={})".format(
-            self.__class__.__name__, self.name, self.street
-        )
+        return "{}(name={}, street={})".format(self.__class__.__name__, self.name, self.street)
 
     def __repr__(self):
         return str(self)
@@ -114,16 +112,8 @@ class ProjectTeam:
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> ProjectTeam
         new_obj = cls()
-        new_obj.customer = ProjectTeamMember.from_dict(
-            _input_dict.get("customer", ProjectTeamMember())
-        )
-        new_obj.building = ProjectTeamMember.from_dict(
-            _input_dict.get("building", ProjectTeamMember())
-        )
-        new_obj.owner = ProjectTeamMember.from_dict(
-            _input_dict.get("owner", ProjectTeamMember())
-        )
-        new_obj.designer = ProjectTeamMember.from_dict(
-            _input_dict.get("designer", ProjectTeamMember())
-        )
+        new_obj.customer = ProjectTeamMember.from_dict(_input_dict.get("customer", ProjectTeamMember()))
+        new_obj.building = ProjectTeamMember.from_dict(_input_dict.get("building", ProjectTeamMember()))
+        new_obj.owner = ProjectTeamMember.from_dict(_input_dict.get("owner", ProjectTeamMember()))
+        new_obj.designer = ProjectTeamMember.from_dict(_input_dict.get("designer", ProjectTeamMember()))
         return new_obj

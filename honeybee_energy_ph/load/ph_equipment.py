@@ -240,9 +240,7 @@ class PhDishwasher(PhEquipment):
         super(PhDishwasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.capacity_type = _input_dict["capacity_type"]
         new_obj.capacity = _input_dict["capacity"]
-        new_obj._water_connection = PhDishwasherType.from_dict(
-            _input_dict["_water_connection"]
-        )
+        new_obj._water_connection = PhDishwasherType.from_dict(_input_dict["_water_connection"])
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
@@ -286,9 +284,7 @@ class PhClothesWasher(PhEquipment):
         super(PhClothesWasher, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.capacity = _input_dict["capacity"]
         new_obj.modified_energy_factor = _input_dict["modified_energy_factor"]
-        new_obj._water_connection = PhClothesWasherType.from_dict(
-            _input_dict["_water_connection"]
-        )
+        new_obj._water_connection = PhClothesWasherType.from_dict(_input_dict["_water_connection"])
         new_obj.utilization_factor = _input_dict["utilization_factor"]
         return new_obj
 
@@ -336,9 +332,7 @@ class PhClothesDryer(PhEquipment):
         new_obj._dryer_type = PhClothesDryerType.from_dict(_input_dict["_dryer_type"])
         new_obj.gas_consumption = _input_dict["gas_consumption"]
         new_obj.gas_efficiency_factor = _input_dict["gas_efficiency_factor"]
-        new_obj.field_utilization_factor_type = _input_dict[
-            "field_utilization_factor_type"
-        ]
+        new_obj.field_utilization_factor_type = _input_dict["field_utilization_factor_type"]
         new_obj.field_utilization_factor = _input_dict["field_utilization_factor"]
         return new_obj
 
@@ -458,10 +452,7 @@ class PhCooktop(PhEquipment):
     def annual_energy_kWh(self, _ref_room=None):
         # Num. Meals as per Phius Guidebook V3.02, pg 73 footnote #31
         annual_meals_per_occupant = 500
-        num_meals = (
-            _ref_room.properties.energy.people.properties.ph.number_people
-            * annual_meals_per_occupant
-        )
+        num_meals = _ref_room.properties.energy.people.properties.ph.number_people * annual_meals_per_occupant
         return self.energy_demand * num_meals
 
 
@@ -707,9 +698,7 @@ class PhElevatorGearedTraction(PhEquipment):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhElevatorGearedTraction
         new_obj = cls()
-        super(PhElevatorGearedTraction, new_obj).base_attrs_from_dict(
-            new_obj, _input_dict
-        )
+        super(PhElevatorGearedTraction, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         return new_obj
 
 
@@ -742,9 +731,7 @@ class PhElevatorGearlessTraction(PhEquipment):
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhElevatorGearlessTraction
         new_obj = cls()
-        super(PhElevatorGearlessTraction, new_obj).base_attrs_from_dict(
-            new_obj, _input_dict
-        )
+        super(PhElevatorGearlessTraction, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         return new_obj
 
 
@@ -761,9 +748,7 @@ class PhEquipmentBuilder(object):
         """Find the right appliance constructor class from the module based on the 'type' name."""
 
         equipment_type = _input_dict.get("equipment_type")
-        valid_class_types = [
-            nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")
-        ]
+        valid_class_types = [nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")]
         if equipment_type not in valid_class_types:
             msg = 'Error: Unknown PH Equipment type? Got: "{}" but only types: {} are allowed?'.format(
                 valid_class_types, equipment_type
@@ -899,9 +884,7 @@ class PhEquipmentCollection(object):
         return new_obj
 
     def __str__(self):
-        return "{}({} pieces of equipment)".format(
-            self.__class__.__name__, len(self._equipment_set.keys())
-        )
+        return "{}({} pieces of equipment)".format(self.__class__.__name__, len(self._equipment_set.keys()))
 
     def __repr__(self):
         return str(self)

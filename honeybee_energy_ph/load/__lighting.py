@@ -36,25 +36,19 @@ class LightingPhProperties(object):
         return self._host
 
     def __repr__(self):
-        return "LBT-Point3D Passive House Properties: [host: {}]".format(
-            self.host.display_name
-        )
+        return "LBT-Point3D Passive House Properties: [host: {}]".format(self.host.display_name)
 
     def to_dict(self, abridged=False):
         # type: (LightingPhProperties, bool) -> dict[str, dict]
         base = {"_PH": {}}
-        base["_PH"]["type"] = (
-            "LightingPhProperties" if not abridged else "LightingPhPropertiesAbridged"
-        )
+        base["_PH"]["type"] = "LightingPhProperties" if not abridged else "LightingPhPropertiesAbridged"
 
         return base
 
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> LightingPhProperties
-        assert (
-            data["type"] == "LightingPhProperties"
-        ), "Expected LightingPhProperties. Got {}.".format(data["type"])
+        assert data["type"] == "LightingPhProperties", "Expected LightingPhProperties. Got {}.".format(data["type"])
 
         new_prop = cls(host)
         new_prop.id_num = data.get("id_num", 0)
@@ -77,11 +71,7 @@ class LightingProperties(properties._Properties):
                 object should be returned (False) or just an abridged version (True).
                 Default: False.
         """
-        base = (
-            {"type": "LightingProperties"}
-            if not abridged
-            else {"type": "LightingPropertiesAbridged"}
-        )
+        base = {"type": "LightingProperties"} if not abridged else {"type": "LightingPropertiesAbridged"}
 
         return base
 

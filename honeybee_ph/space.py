@@ -113,10 +113,7 @@ class SpaceFloorSegment(_base._Base):
         try:
             return self.geometry.duplicate()
         except AttributeError as e:
-            msg = (
-                "\n\tSpaceFloorSegment {} has no geometry? "
-                "Cannot duplicate it.".format(self)
-            )
+            msg = "\n\tSpaceFloorSegment {} has no geometry? " "Cannot duplicate it.".format(self)
             raise AttributeError(msg, e)
 
     def scale(self, factor, origin=None):
@@ -223,9 +220,7 @@ class SpaceFloor(_base._Base):
         try:
             return self.geometry.duplicate()
         except AttributeError as e:
-            msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(
-                self
-            )
+            msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(self)
             raise AttributeError(msg, e)
 
     def to_dict(self):
@@ -566,12 +561,8 @@ class Space(_base._Base):
         new_obj.wufi_type = _input_dict["wufi_type"]
         new_obj.name = _input_dict["name"]
         new_obj.number = _input_dict["number"]
-        new_obj.add_new_volumes(
-            [SpaceVolume.from_dict(d) for d in _input_dict["volumes"]]
-        )
-        new_obj.properties = SpaceProperties.from_dict(
-            _input_dict["properties"], _host=new_obj
-        )
+        new_obj.add_new_volumes([SpaceVolume.from_dict(d) for d in _input_dict["volumes"]])
+        new_obj.properties = SpaceProperties.from_dict(_input_dict["properties"], _host=new_obj)
         new_obj.properties._load_extension_attr_from_dict(_input_dict["properties"])
         return new_obj
 

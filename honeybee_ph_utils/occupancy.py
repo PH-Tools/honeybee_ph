@@ -70,12 +70,8 @@ def hb_room_annual_avg_occupancy(_hb_room):
 
     peak_occupancy = hb_room_peak_occupancy(_hb_room)
     try:
-        mean_occupancy = (
-            _hb_room.properties.energy.people.occupancy_schedule.mean_occupancy
-        )
+        mean_occupancy = _hb_room.properties.energy.people.occupancy_schedule.mean_occupancy
     except AttributeError:
-        mean_occupancy = statistics.mean(
-            _hb_room.properties.energy.people.occupancy_schedule.values()
-        )
+        mean_occupancy = statistics.mean(_hb_room.properties.energy.people.occupancy_schedule.values())
 
     return peak_occupancy * mean_occupancy

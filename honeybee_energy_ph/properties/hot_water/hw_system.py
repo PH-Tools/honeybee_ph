@@ -13,9 +13,7 @@ from honeybee_energy_ph.hvac import hot_water
 
 class SHWSystemPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
         super(SHWSystemPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -54,9 +52,7 @@ class SHWSystemPhProperties(object):
         PHPP calculations and is not a true representation of the piping in the
         model.
         """
-        return sum(
-            _.total_home_run_fixture_length for _ in self._distribution_piping.values()
-        )
+        return sum(_.total_home_run_fixture_length for _ in self._distribution_piping.values())
 
     @property
     def total_recirc_pipe_length(self):
@@ -70,10 +66,7 @@ class SHWSystemPhProperties(object):
         """Return the length weighted average of recirculation piping temperatures"""
         if not self._recirc_piping or self.total_recirc_pipe_length == 0:
             return 60.0
-        return (
-            sum([v.water_temp * v.length_m for v in self._recirc_piping.values()])
-            / self.total_recirc_pipe_length
-        )
+        return sum([v.water_temp * v.length_m for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
 
     @property
     def recirc_hours(self):
@@ -82,8 +75,7 @@ class SHWSystemPhProperties(object):
         if not self._recirc_piping or self.total_recirc_pipe_length == 0:
             return 24
         return int(
-            sum([v.daily_period * v.length_m for v in self._recirc_piping.values()])
-            / self.total_recirc_pipe_length
+            sum([v.daily_period * v.length_m for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
         )
 
     @property
@@ -116,9 +108,7 @@ class SHWSystemPhProperties(object):
         if not _h:
             return
 
-        assert hasattr(
-            _h, "to_dict"
-        ), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
+        assert hasattr(_h, "to_dict"), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
         self._heaters[_h.identifier] = _h
 
     def add_distribution_piping(self, _distribution_piping, _key=None):
@@ -208,9 +198,7 @@ class SHWSystemPhProperties(object):
 
         d["distribution_piping"] = {}
         for distribution_piping in self.distribution_piping:
-            d["distribution_piping"][
-                distribution_piping.identifier
-            ] = distribution_piping.to_dict()
+            d["distribution_piping"][distribution_piping.identifier] = distribution_piping.to_dict()
 
         d["recirc_piping"] = {}
         for recirc_piping in self.recirc_piping:
@@ -237,26 +225,18 @@ class SHWSystemPhProperties(object):
         if _input_dict.get("tank_2", None):
             new_prop.tank_2 = hot_water.PhSHWTank.from_dict(_input_dict["tank_2"])
         if _input_dict.get("tank_buffer", None):
-            new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(
-                _input_dict["tank_buffer"]
-            )
+            new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(_input_dict["tank_buffer"])
         if _input_dict.get("tank_buffer", None):
-            new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(
-                _input_dict["tank_buffer"]
-            )
+            new_prop.tank_buffer = hot_water.PhSHWTank.from_dict(_input_dict["tank_buffer"])
 
         for heater_dict in _input_dict["heaters"].values():
             new_prop.add_heater(hot_water.PhSHWHeaterBuilder.from_dict(heater_dict))
 
         for distribution_piping_dict in _input_dict["distribution_piping"].values():
-            new_prop.add_distribution_piping(
-                hot_water.PhPipeTrunk.from_dict(distribution_piping_dict)
-            )
+            new_prop.add_distribution_piping(hot_water.PhPipeTrunk.from_dict(distribution_piping_dict))
 
         for recirc_piping_dict in _input_dict["recirc_piping"].values():
-            new_prop.add_recirc_piping(
-                hot_water.PhPipeElement.from_dict(recirc_piping_dict)
-            )
+            new_prop.add_recirc_piping(hot_water.PhPipeElement.from_dict(recirc_piping_dict))
 
         new_prop._number_tap_points = _input_dict["number_tap_points"]
 

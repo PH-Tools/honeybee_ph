@@ -18,8 +18,6 @@ def test_detailed_dict_round_trip(op_period_1_hour_factor_0):
 
 
 def test_make_from_start_end():
-    op_period = ruleset.DailyOperationPeriod.from_start_end_hours(
-        _start_hr=10, _end_hr=18, _op_frac=0.75, _name="test"
-    )
+    op_period = ruleset.DailyOperationPeriod.from_start_end_hours(_start_hr=10, _end_hr=18, _op_frac=0.75, _name="test")
     assert op_period.operation_hours == 8
     assert op_period.weighted_operation_hours == 6

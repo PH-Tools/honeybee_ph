@@ -173,9 +173,7 @@ class PhWindowGlazing(_base._Base):
         return new_obj
 
     def __str__(self):
-        return "{}(u_factor={:.3f}, g_value={:.3f})".format(
-            self.__class__.__name__, self.u_factor, self.g_value
-        )
+        return "{}(u_factor={:.3f}, g_value={:.3f})".format(self.__class__.__name__, self.u_factor, self.g_value)
 
     def __repr__(self):
         return str(self)

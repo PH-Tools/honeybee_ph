@@ -61,9 +61,7 @@ class PhiusBuildingUseType(enumerables.CustomEnum):
 
         # Quick double check cus' the numbering here is so stupid
         if self.value == "":
-            raise Exception(
-                "Error: WUFI's '_building_use_type' numbering is weird. Check the 'inputs' value is valid?"
-            )
+            raise Exception("Error: WUFI's '_building_use_type' numbering is weird. Check the 'inputs' value is valid?")
 
 
 class PhiusBuildingStatus(enumerables.CustomEnum):
@@ -98,9 +96,7 @@ class PhiusCertification(_base._Base):
         super(PhiusCertification, self).__init__()
         self.localization_selection_type = 2
 
-        self._certification_program = PhiusBuildingCertificationProgram(
-            "7-PHIUS 2021 CORE"
-        )
+        self._certification_program = PhiusBuildingCertificationProgram("7-PHIUS 2021 CORE")
         self._building_category_type = PhiusBuildingCategoryType("1-RESIDENTIAL BUILDING")
         self._building_use_type = PhiusBuildingUseType("1-RESIDENTIAL")
         self._building_status = PhiusBuildingStatus("1-IN_PLANNING")
@@ -217,18 +213,10 @@ class PhiusCertification(_base._Base):
 
         obj.localization_selection_type = _dict.get("localization_selection_type")
 
-        obj._certification_program = PhiusBuildingCertificationProgram.from_dict(
-            _dict.get("certification_program", {})
-        )
-        obj._building_category_type = PhiusBuildingCategoryType.from_dict(
-            _dict.get("building_category_type", {})
-        )
-        obj._building_use_type = PhiusBuildingUseType.from_dict(
-            _dict.get("building_use_type", {})
-        )
-        obj._building_status = PhiusBuildingStatus.from_dict(
-            _dict.get("building_status", {})
-        )
+        obj._certification_program = PhiusBuildingCertificationProgram.from_dict(_dict.get("certification_program", {}))
+        obj._building_category_type = PhiusBuildingCategoryType.from_dict(_dict.get("building_category_type", {}))
+        obj._building_use_type = PhiusBuildingUseType.from_dict(_dict.get("building_use_type", {}))
+        obj._building_status = PhiusBuildingStatus.from_dict(_dict.get("building_status", {}))
         obj._building_type = PhiusBuildingType.from_dict(_dict.get("building_type", {}))
 
         obj.PHIUS2021_heating_demand = _dict.get("PHIUS2021_heating_demand")
@@ -241,9 +229,7 @@ class PhiusCertification(_base._Base):
         obj.int_gains_num_toilets = _dict.get("int_gains_num_toilets")
         obj.int_gains_toilet_room_util_pat = _dict.get("int_gains_toilet_room_util_pat")
         obj.int_gains_use_school_defaults = _dict.get("int_gains_use_school_defaults")
-        obj.int_gains_dhw_marginal_perf_ratio = _dict.get(
-            "int_gains_dhw_marginal_perf_ratio"
-        )
+        obj.int_gains_dhw_marginal_perf_ratio = _dict.get("int_gains_dhw_marginal_perf_ratio")
 
         obj.user_data = _dict.get("user_data", {})
 

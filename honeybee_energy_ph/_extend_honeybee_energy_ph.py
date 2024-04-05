@@ -24,15 +24,9 @@ from honeybee_energy.properties.extension import (
 # -- honeybee_energy properties objects
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
-from honeybee_energy_ph.properties.construction.opaque import (
-    OpaqueConstructionPhProperties,
-)
-from honeybee_energy_ph.properties.construction.window import (
-    WindowConstructionPhProperties,
-)
-from honeybee_energy_ph.properties.construction.windowshade import (
-    WindowConstructionShadePhProperties,
-)
+from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
+from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
+from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
 from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
 from honeybee_energy_ph.properties.hvac.allair import AllAirSystemPhProperties
@@ -191,9 +185,7 @@ setattr(
     property(window_construction_shade_ph_properties),
 )
 setattr(EnergyMaterialProperties, "ph", property(energy_material_ph_properties))
-setattr(
-    EnergyMaterialNoMassProperties, "ph", property(energy_material_no_mass_ph_properties)
-)
+setattr(EnergyMaterialNoMassProperties, "ph", property(energy_material_no_mass_ph_properties))
 setattr(
     EnergyMaterialVegetationProperties,
     "ph",

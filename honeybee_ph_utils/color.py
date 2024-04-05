@@ -81,12 +81,7 @@ class PhColor(object):
 
     def __eq__(self, other):
         # type: (PhColor) -> bool
-        return (
-            self.a == other.a
-            and self.r == other.r
-            and self.g == other.g
-            and self.b == other.b
-        )
+        return self.a == other.a and self.r == other.r and self.g == other.g and self.b == other.b
 
     def ToString(self):
         # type: () -> str

@@ -74,8 +74,7 @@ class ModelPhProperties(object):
         """
         # -- Collect all the unique BldgSegments in the Model's Rooms
         ph_bldg_segments = {
-            rm.properties.ph.ph_bldg_segment.identifier: rm.properties.ph.ph_bldg_segment
-            for rm in self.host.rooms
+            rm.properties.ph.ph_bldg_segment.identifier: rm.properties.ph.ph_bldg_segment for rm in self.host.rooms
         }
         return [seg.to_dict() for seg in ph_bldg_segments.values()]
 
@@ -99,9 +98,7 @@ class ModelPhProperties(object):
     @classmethod
     def from_dict(cls, _dict, host):
         # type: (dict[str, Any], Any) -> ModelPhProperties
-        assert (
-            _dict["type"] == "ModelPhProperties"
-        ), "Expected ModelPhProperties. Got {}.".format(_dict["type"])
+        assert _dict["type"] == "ModelPhProperties", "Expected ModelPhProperties. Got {}.".format(_dict["type"])
 
         new_prop = cls(host)
         new_prop.id_num = _dict.get("id_num", 0)
@@ -137,9 +134,7 @@ class ModelPhProperties(object):
         --------
             * tuple[dict, dict]: A tuple of dictionaries with all the Honeybee-PH objects.
         """
-        assert (
-            "ph" in data["properties"]
-        ), "HB-Model Dictionary possesses no ModelPhProperties?"
+        assert "ph" in data["properties"], "HB-Model Dictionary possesses no ModelPhProperties?"
 
         bldg_segments_ = {}
         for seg in data["properties"]["ph"]["bldg_segments"]:

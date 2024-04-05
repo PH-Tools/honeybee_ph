@@ -53,9 +53,7 @@ class SpaceProperties(properties._Properties):
     @classmethod
     def from_dict(cls, _dict={}, _host=None):
         # type: (Dict, Any) -> SpaceProperties
-        assert (
-            _dict["type"] == "SpaceProperties"
-        ), "Expected SpaceProperties. Got {}.".format(_dict["type"])
+        assert _dict["type"] == "SpaceProperties", "Expected SpaceProperties. Got {}.".format(_dict["type"])
 
         obj = cls(_host)
 
@@ -190,9 +188,7 @@ class SpacePhProperties(object):
     @classmethod
     def from_dict(cls, data, host):
         # type: (dict, Any) -> SpacePhProperties
-        assert (
-            "SpacePhProperties" in data["type"]
-        ), "Expected SpacePhProperties. Got {}.".format(data["type"])
+        assert "SpacePhProperties" in data["type"], "Expected SpacePhProperties. Got {}.".format(data["type"])
         new_prop = cls(host)
 
         new_prop.id_num = data["id_num"]

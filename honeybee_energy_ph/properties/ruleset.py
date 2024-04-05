@@ -11,9 +11,7 @@ except:
 
 class ScheduleRulesetPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types[0], _expected_types[1], _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types[0], _expected_types[1], _input_type)
         super(ScheduleRulesetPhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -235,9 +233,7 @@ class ScheduleRulesetPhProperties(object):
             total_hours += op_period.operation_hours
 
         if abs(_total_period_hours - total_hours) > 0.001:
-            return "Error: Total Operating Hours={}, not {}?".format(
-                total_hours, _total_period_hours
-            )
+            return "Error: Total Operating Hours={}, not {}?".format(total_hours, _total_period_hours)
         else:
             return None
 
@@ -275,9 +271,7 @@ class ScheduleRulesetPhProperties(object):
         new_prop.id_num = _dict["id_num"]
         new_prop.operating_weeks_year = _dict["operating_weeks_year"]
         new_prop.operating_days_wk = _dict["operating_days_wk"]
-        new_prop.daily_operating_periods = DailyOperatingPeriodCollection.from_dict(
-            _dict.get("operating_periods", {})
-        )
+        new_prop.daily_operating_periods = DailyOperatingPeriodCollection.from_dict(_dict.get("operating_periods", {}))
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):

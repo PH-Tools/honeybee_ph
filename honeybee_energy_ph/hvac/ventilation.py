@@ -199,14 +199,8 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj.display_name = _input_dict["display_name"]
         obj.user_data = _input_dict.get("user_data", {})
         obj.sys_type = _input_dict["sys_type"]
-        obj.supply_ducting = [
-            ducting.PhDuctElement.from_dict(s_duct)
-            for s_duct in _input_dict["supply_ducting"]
-        ]
-        obj.exhaust_ducting = [
-            ducting.PhDuctElement.from_dict(e_duct)
-            for e_duct in _input_dict["exhaust_ducting"]
-        ]
+        obj.supply_ducting = [ducting.PhDuctElement.from_dict(s_duct) for s_duct in _input_dict["supply_ducting"]]
+        obj.exhaust_ducting = [ducting.PhDuctElement.from_dict(e_duct) for e_duct in _input_dict["exhaust_ducting"]]
         obj.id_num = _input_dict.get("id_num", 0)
 
         vent_unit_dict = _input_dict.get("ventilation_unit", None)
@@ -240,9 +234,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         return self.identifier < other.identifier
 
     def __repr__(self):
-        return "{}(display_name={!r}, sys_type={!r})".format(
-            self.__class__.__name__, self.display_name, self.sys_type
-        )
+        return "{}(display_name={!r}, sys_type={!r})".format(self.__class__.__name__, self.display_name, self.sys_type)
 
     def ToString(self):
         return self.__repr__()
@@ -327,15 +319,11 @@ class PhExhaustDeviceBuilder(object):
         """Find the right device constructor class from the module based on the 'type' name."""
         device_class_name = _input_dict["device_class_name"]  # type: str
 
-        valid_class_types = [
-            nm for nm in dir(sys.modules[__name__]) if nm.startswith("ExhaustVent")
-        ]
+        valid_class_types = [nm for nm in dir(sys.modules[__name__]) if nm.startswith("ExhaustVent")]
 
         if device_class_name not in valid_class_types:
             raise UnknownPhExhaustVentTypeError(valid_class_types, device_class_name)
-        device_class = getattr(
-            sys.modules[__name__], device_class_name
-        )  # type: _ExhaustVentilatorBase
+        device_class = getattr(sys.modules[__name__], device_class_name)  # type: _ExhaustVentilatorBase
         new_equipment = device_class.from_dict(_input_dict)
         return new_equipment
 

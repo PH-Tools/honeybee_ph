@@ -14,9 +14,7 @@ from honeybee_energy_ph.construction import window
 class WindowConstructionShadePhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         # type: (Collection[str], Dict[str, Any]) -> None
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
         super(WindowConstructionShadePhProperties_FromDictError, self).__init__(self.msg)
 
 
@@ -74,24 +72,18 @@ class WindowConstructionShadePhProperties(object):
             "WindowConstructionShadePhPropertiesAbridged",
         )
         if _input_dict["type"] not in valid_types:
-            raise WindowConstructionShadePhProperties_FromDictError(
-                valid_types, _input_dict["type"]
-            )
+            raise WindowConstructionShadePhProperties_FromDictError(valid_types, _input_dict["type"])
 
         new_obj = cls(host)
         new_obj.id_num = _input_dict["id_num"]
         if "ph_frame" in _input_dict:
             new_obj.ph_frame = window.PhWindowFrame.from_dict(_input_dict["ph_frame"])
         if "ph_glazing" in _input_dict:
-            new_obj.ph_glazing = window.PhWindowGlazing.from_dict(
-                _input_dict["ph_glazing"]
-            )
+            new_obj.ph_glazing = window.PhWindowGlazing.from_dict(_input_dict["ph_glazing"])
         return new_obj
 
     def __str__(self):
-        return "{}(frame={!r}, glazing={!r})".format(
-            self.__class__.__name__, self.ph_frame, self.ph_glazing
-        )
+        return "{}(frame={!r}, glazing={!r})".format(self.__class__.__name__, self.ph_frame, self.ph_glazing)
 
     def __repr__(self):
         return str(self)

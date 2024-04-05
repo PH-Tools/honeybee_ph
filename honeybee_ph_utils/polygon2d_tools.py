@@ -67,15 +67,11 @@ def translate_polygon2D(_polygon2D, _starting_plane, _target_plane, _tolerance):
     # -- Create a Vector2D from the Polygon2D's origin to the _new_plane's
     # -- origin within the new-plane's space.
     target_plane_origin_pt = copy(_target_plane.xyz_to_xy(_target_plane.o))
-    polygon2D_origin_pt_in_target_plane_space = copy(
-        _target_plane.xyz_to_xy(_starting_plane.o)
-    )
+    polygon2D_origin_pt_in_target_plane_space = copy(_target_plane.xyz_to_xy(_starting_plane.o))
 
     # ------------------------------------------------------------------------
     # -- Move the starting Polygon2D into the _new_plane's space
-    move_vec = move_vector_between_two_points(
-        polygon2D_origin_pt_in_target_plane_space, target_plane_origin_pt
-    )
+    move_vec = move_vector_between_two_points(polygon2D_origin_pt_in_target_plane_space, target_plane_origin_pt)
     moved_polygon2D = _polygon2D.move(move_vec)
 
     # ------------------------------------------------------------------------
@@ -85,9 +81,7 @@ def translate_polygon2D(_polygon2D, _starting_plane, _target_plane, _tolerance):
         _starting_plane,
         _tolerance,
     )
-    rotated_polygon = moved_polygon2D.rotate(
-        angle=angle_in_radians, origin=polygon2D_origin_pt_in_target_plane_space
-    )
+    rotated_polygon = moved_polygon2D.rotate(angle=angle_in_radians, origin=polygon2D_origin_pt_in_target_plane_space)
 
     return rotated_polygon
 
@@ -131,11 +125,7 @@ def merge_lbt_face_polygons(_lbt_face3Ds, _tolerance):
         # -- Get all the LBT-Face3D Polygon2Ds in the same Plane-space
         translated_polygon2Ds = []  # type: List[Polygon2D]
         for face3D_poly_2D, face3D_plane in zip(lbt_face3D_polygon2Ds, lbt_face3D_planes):
-            translated_polygon2Ds.append(
-                translate_polygon2D(
-                    face3D_poly_2D, face3D_plane, reference_plane, _tolerance
-                )
-            )
+            translated_polygon2Ds.append(translate_polygon2D(face3D_poly_2D, face3D_plane, reference_plane, _tolerance))
 
         # ---------------------------------------------------------------------
         # -- Try and merge all the new Polygon2Ds together into a single one.

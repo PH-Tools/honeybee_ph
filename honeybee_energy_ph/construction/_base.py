@@ -25,9 +25,7 @@ class _Base(object):
 
     @identifier.setter
     def identifier(self, identifier):
-        self._identifier = valid_ep_string(
-            clean_ep_string(str(identifier)), "construction identifier"
-        )
+        self._identifier = valid_ep_string(clean_ep_string(str(identifier)), "construction identifier")
 
     @property
     def display_name(self):
@@ -61,10 +59,9 @@ class _Base(object):
     def user_data(self, value):
         # type: (dict) -> None
         if value is not None:
-            assert isinstance(value, dict), (
-                "Expected dictionary for honeybee_energy_ph"
-                "object user_data. Got {}.".format(type(value))
-            )
+            assert isinstance(
+                value, dict
+            ), "Expected dictionary for honeybee_energy_ph" "object user_data. Got {}.".format(type(value))
         self._user_data = value
 
     def to_dict(self):
