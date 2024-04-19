@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""HB-Room Passive House HVAC Equipment Properties."""
+"""HB-Room Passive-House-HVAC-Equipment Properties."""
 
 try:
     from typing import Any, Dict, Optional
@@ -50,7 +50,7 @@ class RoomPhHvacEquipmentProperties(object):
         else:
             d["type"] = "RoomPhHvacEquipmentPropertiesAbridged"
 
-        return {"ph": d}
+        return {"ph_hvac": d}
 
     @classmethod
     def from_dict(cls, _input_dict, host):
