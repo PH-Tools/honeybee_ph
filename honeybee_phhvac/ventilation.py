@@ -37,15 +37,15 @@ class UnknownPhExhaustVentTypeError(Exception):
 class Ventilator(_base._PhHVACBase):
     def __init__(self):
         super(Ventilator, self).__init__()
-        self.display_name = "_unnamed_ventilator_"
-        self.id_num = 0
-        self.quantity = 1
-        self.sensible_heat_recovery = 0.0
-        self.latent_heat_recovery = 0.0
-        self.electric_efficiency = 0.55
-        self.frost_protection_reqd = True
-        self.temperature_below_defrost_used = -5
-        self.in_conditioned_space = True
+        self.display_name = "_unnamed_ventilator_"  # type: str
+        self.id_num = 0  # type: int
+        self.quantity = 1  # type: int
+        self.sensible_heat_recovery = 0.0  # type:float
+        self.latent_heat_recovery = 0.0  # type float
+        self.electric_efficiency = 0.55  # type: float
+        self.frost_protection_reqd = True  # type: bool
+        self.temperature_below_defrost_used = -5  # type: float
+        self.in_conditioned_space = True  # type: bool
 
     def to_dict(self):
         # type: () -> dict[str, Any]

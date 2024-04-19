@@ -7,7 +7,6 @@ from honeybee.properties import RoomProperties
 
 from .properties.room import RoomPhHvacEquipmentProperties
 
-
 # Step 1)
 # set a private 'ph_hvac' attribute on each relevant HB-Core Property class to None
 

@@ -19,11 +19,11 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
 try:
+    from honeybee_phhvac.heat_pumps import PhHeatPumpSystem, PhHeatPumpSystemBuilder
     from honeybee_phhvac.heating import PhHeatingSystem, PhHeatingSystemBuilder
-    from honeybee_phhvac.ventilation import PhVentilationSystem, _ExhaustVentilatorBase, PhExhaustDeviceBuilder
     from honeybee_phhvac.renewable_devices import PhRenewableEnergyDevice, PhRenewableEnergyDeviceBuilder
     from honeybee_phhvac.supportive_device import PhSupportiveDevice
-    from honeybee_phhvac.heat_pumps import PhHeatPumpSystem, PhHeatPumpSystemBuilder
+    from honeybee_phhvac.ventilation import PhExhaustDeviceBuilder, PhVentilationSystem, _ExhaustVentilatorBase
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_phhvac:\n\t{}".format(e))
 
