@@ -4,7 +4,7 @@
 """PH Properties classes for Space objects."""
 
 try:
-    from typing import Any
+    from typing import Any, Optional
 except:
     pass  # IronPython
 
@@ -21,7 +21,7 @@ class SpaceEnergyProperties(properties._Properties):
         return self._host
 
     def to_dict(self, abridged=False, include=None):
-        # type: (bool, list) -> dict[str, Any]
+        # type: (bool, Optional[list]) -> dict[str, Any]
         """Convert properties to dictionary.
 
         Args:

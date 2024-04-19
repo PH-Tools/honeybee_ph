@@ -6,8 +6,7 @@
 try:
     from typing import Any
 except ImportError:
-    # Python 2.7
-    pass
+    pass  # Python 2.7
 
 
 class LightingPhProperties_FromDictError(Exception):

@@ -1,4 +1,9 @@
-"""Fuels Enumeration"""
+# -*- coding: utf-8 -*-
+# -*- Python Version: 2.7 -*-
+
+
+"""DEPRECATED in favor of the new 'honeybee_phhvac' module."""
+
 
 # -- Boiler Fuels
 NATURAL_GAS = "NATURAL_GAS"
