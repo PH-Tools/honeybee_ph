@@ -20,6 +20,7 @@ setattr(RoomProperties, "_ph_hvac", None)
 
 
 def room_ph_hvac_properties(self):
+    # type: (RoomProperties) -> RoomPhHvacEquipmentProperties
     if self._ph_hvac is None:
         self._ph_hvac = RoomPhHvacEquipmentProperties(self.host)
     return self._ph_hvac
@@ -30,3 +31,16 @@ def room_ph_hvac_properties(self):
 
 
 setattr(RoomProperties, "ph_hvac", property(room_ph_hvac_properties))
+
+
+# Step 4_
+# Add a public Setter
+
+
+def room_ph_hvac_properties_setter(self, value):
+    # type: (RoomProperties, RoomPhHvacEquipmentProperties) -> None
+    if isinstance(value, RoomPhHvacEquipmentProperties):
+        self._ph_hvac = value
+
+
+setattr(RoomProperties, "ph_hvac", RoomProperties.ph_hvac.setter(room_ph_hvac_properties_setter))
