@@ -4,14 +4,10 @@
 """This is called during __init__ and extends the base honeybee class Properties with a new ._ph slot"""
 
 from honeybee_energy.properties.extension import (
-    AllAirSystemProperties,
-    DOASSystemProperties,
     ElectricEquipmentProperties,
     EnergyMaterialNoMassProperties,
     EnergyMaterialProperties,
     EnergyMaterialVegetationProperties,
-    HeatCoolSystemProperties,
-    IdealAirSystemProperties,
     LightingProperties,
     OpaqueConstructionProperties,
     PeopleProperties,

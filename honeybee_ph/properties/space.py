@@ -2,8 +2,9 @@
 # -*- Python Version: 2.7 -*-
 
 try:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, TYPE_CHECKING
 except ImportError:
+    TYPE_CHECKING = False
     pass  # Python 2.7
 
 try:
@@ -15,6 +16,20 @@ try:
     from honeybee import properties
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
+
+try:
+    if TYPE_CHECKING:
+        from honeybee_ph import space
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
+
+"""
+space.Space
+  ├─ properties: SpaceProperties
+      ├─ ph: SpacePhProperties
+      ├─ energy: SpaceEnergyProperties
+      ├─...
+"""
 
 
 class SpaceProperties(properties._Properties):
@@ -31,6 +46,23 @@ class SpaceProperties(properties._Properties):
         space.properties.ph -> SpacePhProperties
         space.properties.energy -> SpaceEnergyProperties
     """
+
+    def __init__(self, host):
+        # type: (Optional[space.Space]) -> None
+        self._host = host
+
+    @property
+    def host(self):
+        # type: () -> Optional[space.Space]
+        return self._host
+
+    @property
+    def host_name(self):
+        # type: () -> str
+        if self.host:
+            return self.host.display_name
+        else:
+            return "None"
 
     def to_dict(self, abridged=False, include=None):
         """Convert properties to dictionary.
@@ -54,9 +86,7 @@ class SpaceProperties(properties._Properties):
     def from_dict(cls, _dict={}, _host=None):
         # type: (Dict, Any) -> SpaceProperties
         assert _dict["type"] == "SpaceProperties", "Expected SpaceProperties. Got {}.".format(_dict["type"])
-
         obj = cls(_host)
-
         return obj
 
     def add_prefix(self, prefix):
@@ -113,11 +143,12 @@ class SpaceProperties(properties._Properties):
 
     def __repr__(self):
         """Properties representation."""
-        return "{}: {}".format(self.__class__.__name__, self.host.display_name)
+        return "{}(host={})".format(self.__class__.__name__, self.host_name)
 
 
 class SpacePhProperties(object):
     def __init__(self, _host):
+        # type: (Optional[SpaceProperties]) -> None
         self._host = _host
         self.id_num = 0
 
@@ -128,7 +159,16 @@ class SpacePhProperties(object):
 
     @property
     def host(self):
+        # type: () -> Optional[SpaceProperties]
         return self._host
+
+    @property
+    def host_name(self):
+        # type: () -> str
+        if self.host:
+            return self.host.host_name
+        else:
+            return "None"
 
     @property
     def has_ventilation_flow_rates(self):
@@ -155,9 +195,9 @@ class SpacePhProperties(object):
         return new_properties_obj
 
     def __str__(self):
-        return "{}: [host: {}], v_eta={}, v_sup={}, v_tran={}".format(
+        return "{}(host={}, v_eta={}, v_sup={}, v_tran={})".format(
             self.__class__.__name__,
-            self.host.display_name,
+            self.host_name,
             self._v_eta,
             self._v_sup,
             self._v_tran,
@@ -197,3 +237,9 @@ class SpacePhProperties(object):
         new_prop._v_tran = data["_v_tran"]
 
         return new_prop
+
+
+def get_ph_prop_from_space(_space):
+    # type: (space.Space) -> SpacePhProperties
+    """Get the space's PH-Properties."""
+    return getattr(_space.properties, "ph")

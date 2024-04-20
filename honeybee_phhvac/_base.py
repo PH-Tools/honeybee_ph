@@ -55,7 +55,7 @@ class _PhHVACBase(object):
         return hash(self.key)
 
     def __str__(self):
-        return "HBEPH_{}: ID-{}".format(self.__class__.__name__, self.identifier_short)
+        return "HB-PH-HVAC_{}: ID-{}".format(self.__class__.__name__, self.identifier_short)
 
     def ToString(self):
         return str(self)

@@ -112,6 +112,7 @@ class PhVentilationSystem(_base._PhHVACBase):
     """Passive House Fresh-Air Ventilation System."""
 
     def __init__(self):
+        # type: () -> None
         super(PhVentilationSystem, self).__init__()
         self.display_name = "_unnamed_ph_vent_system_"
         self.sys_type = 1  # '1-Balanced PH ventilation with HR'
