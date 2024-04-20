@@ -318,9 +318,9 @@ def get_ph_hvac_from_space(_space):
 def get_ventilation_system_from_space(_space):
     # type: (space.Space) -> Optional[PhVentilationSystem]
     """Get the Ventilation System from a Honeybee-PH Space."""
-    if not _space.host:
+    ph_hvac = get_ph_hvac_from_space(_space)
+    if not ph_hvac:
         return None
-    ph_hvac = get_ph_hvac_prop_from_room(_space.host)
     return ph_hvac.ventilation_system
 
 
@@ -369,3 +369,12 @@ def get_renewable_devices_from_space(_hph_space):
         return set()
     else:
         return hvac_prop_ph.renewable_devices
+
+
+def get_hot_water_system_from_space(_space):
+    # type: (space.Space) -> Optional[HotWaterSystem]
+    """Get the Hot Water System from a Honeybee-PH Space."""
+    ph_hvac = get_ph_hvac_from_space(_space)
+    if not ph_hvac:
+        return None
+    return ph_hvac.hot_water_system

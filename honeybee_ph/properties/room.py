@@ -67,7 +67,7 @@ class RoomPhProperties(object):
         # type: (Optional[room.Room]) -> None
         self._host = _host
         self.id_num = 0
-        self._spaces = list()
+        self._spaces = list()  # type: List[space.Space]
         self.ph_bldg_segment = BldgSegment()
         self._ph_foundations = {}  # type: Dict[str, PhFoundation]
         self.specific_heat_capacity = PhSpecificHeatCapacity("1-LIGHTWEIGHT")

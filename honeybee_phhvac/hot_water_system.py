@@ -8,6 +8,8 @@ try:
 except:
     pass  # IronPython
 
+from uuid import uuid4
+
 from honeybee_phhvac import hot_water_piping, hot_water_devices
 
 
@@ -21,6 +23,7 @@ class HotWaterSystem(object):
     """PH-HVAC: Hot Water System."""
 
     def __init__(self):
+        self.identifier = str(uuid4())
         self.id_num = 0
 
         self.tank_1 = None  # type: Optional[hot_water_devices.PhHvacHotWaterTank]
@@ -178,6 +181,7 @@ class HotWaterSystem(object):
             d["type"] = "SHWSystemPhProperties"
 
         d["id_num"] = self.id_num
+        d["identifier"] = self.identifier
         if self.tank_1:
             d["tank_1"] = self.tank_1.to_dict()
         if self.tank_2:
@@ -213,6 +217,7 @@ class HotWaterSystem(object):
             raise HotWaterSystem_FromDictError(valid_types, _input_dict["type"])
 
         new_prop = cls()
+        new_prop.identifier = _input_dict.get("identifier", str(uuid4()))
         new_prop.id_num = _input_dict.get("id_num")
 
         if _input_dict.get("tank_1", None):
@@ -240,7 +245,7 @@ class HotWaterSystem(object):
     def apply_properties_from_dict(self, abridged_data):
         return
 
-    def __copy__(self, new_host=None):
+    def __copy__(self):
         # type: (Any) -> HotWaterSystem
         new_obj = HotWaterSystem()
         new_obj.id_num = self.id_num
@@ -267,9 +272,9 @@ class HotWaterSystem(object):
 
         return new_obj
 
-    def duplicate(self, new_host=None):
+    def duplicate(self):
         # type: (Any) -> HotWaterSystem
-        return self.__copy__(new_host)
+        return self.__copy__()
 
     def __str__(self):
         return "{}: id={}".format(self.__class__.__name__, self.id_num)
@@ -325,3 +330,43 @@ class HotWaterSystem(object):
             return self
         else:
             return self + other
+
+    def __eq__(self, other):
+        # type: (HotWaterSystem) -> bool
+        if not isinstance(other, HotWaterSystem):
+            return False
+
+        if self.id_num != other.id_num:
+            return False
+
+        if self.tank_1 != other.tank_1:
+            return False
+        if self.tank_2 != other.tank_2:
+            return False
+        if self.tank_buffer != other.tank_buffer:
+            return False
+        if self.tank_solar != other.tank_solar:
+            return False
+
+        if len(self.heaters) != len(other.heaters):
+            return False
+        for heater in self.heaters:
+            if heater not in other.heaters:
+                return False
+
+        if len(self.distribution_piping) != len(other.distribution_piping):
+            return False
+        for distribution_pipe in self.distribution_piping:
+            if distribution_pipe not in other.distribution_piping:
+                return False
+
+        if len(self.recirc_piping) != len(other.recirc_piping):
+            return False
+        for recirc_pipe in self.recirc_piping:
+            if recirc_pipe not in other.recirc_piping:
+                return False
+
+        if self.number_tap_points != other.number_tap_points:
+            return False
+
+        return True
