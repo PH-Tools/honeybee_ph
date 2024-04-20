@@ -182,22 +182,22 @@ class ModelPhHvacProperties(object):
                 continue
             room.properties.ph_hvac.apply_properties_from_dict(room_dict, mechanical_systems)
 
-        # # -- Pull out all the Apertures, Faces, Shades, and Doors from the HB-Model
-        # apertures, faces, shades, doors = [], [], [], []
-        # for hb_room in self.host.rooms:
-        #     for face in hb_room.faces:
-        #         faces.append(face)
-        #         for aperture in face.apertures:
-        #             apertures.append(aperture)
+        # -- Pull out all the Apertures, Faces, Shades, and Doors from the HB-Model
+        apertures, faces, shades, doors = [], [], [], []
+        for hb_room in self.host.rooms:
+            for face in hb_room.faces:
+                faces.append(face)
+                for aperture in face.apertures:
+                    apertures.append(aperture)
 
-        # for face, face_dict in zip(faces, face_ph_dicts):
-        #     face.properties.ph_hvac.apply_properties_from_dict(face_dict)
+        for face, face_dict in zip(faces, face_ph_dicts):
+            face.properties.ph_hvac.apply_properties_from_dict(face_dict)
 
-        # for aperture, ap_dict in zip(apertures, ap_ph_dicts):
-        #     aperture.properties.ph_hvac.apply_properties_from_dict(ap_dict)
+        for aperture, ap_dict in zip(apertures, ap_ph_dicts):
+            aperture.properties.ph_hvac.apply_properties_from_dict(ap_dict)
 
-        # for shade, ap_dict in zip(shades, shd_ph_dicts):
-        #     shade.properties.ph_hvac.apply_properties_from_dict(ap_dict)
+        for shade, ap_dict in zip(shades, shd_ph_dicts):
+            shade.properties.ph_hvac.apply_properties_from_dict(ap_dict)
 
-        # for door, ap_dict in zip(doors, dr_ph_dicts):
-        #     door.properties.ph_hvac.apply_properties_from_dict(ap_dict)
+        for door, ap_dict in zip(doors, dr_ph_dicts):
+            door.properties.ph_hvac.apply_properties_from_dict(ap_dict)
