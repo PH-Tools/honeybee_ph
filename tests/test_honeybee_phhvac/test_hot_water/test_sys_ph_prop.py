@@ -1,27 +1,28 @@
-from honeybee_phhvac.hot_water import PhPipeElement, PhPipeTrunk, PhSHWTank
-from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
+from honeybee_phhvac.hot_water_piping import PhHvacPipeElement, PhHvacPipeTrunk
+from honeybee_phhvac.hot_water_devices import PhHvacHotWaterTank
+from honeybee_phhvac.hot_water_system import HotWaterSystem
 
 
-def test_basic_SHWSystemPhProperties_round_trip():
-    obj = SHWSystemPhProperties(None)
+def test_basic_HotWaterSystem_round_trip():
+    obj = HotWaterSystem(None)
     d = obj.to_dict()
-    new_obj = SHWSystemPhProperties.from_dict(d["ph"], None)
+    new_obj = HotWaterSystem.from_dict(d["ph"], None)
     assert new_obj.to_dict() == d
 
 
-def test_SHWSystemPhProperties_copy():
-    system = SHWSystemPhProperties(None)
+def test_HotWaterSystem_copy():
+    system = HotWaterSystem(None)
     system.id_num = 1
-    system.tank_1 = PhSHWTank()
-    system.tank_2 = PhSHWTank()
-    system.tank_buffer = PhSHWTank()
-    system.tank_solar = PhSHWTank()
+    system.tank_1 = PhHvacHotWaterTank()
+    system.tank_2 = PhHvacHotWaterTank()
+    system.tank_buffer = PhHvacHotWaterTank()
+    system.tank_solar = PhHvacHotWaterTank()
     system._heaters = {}
     system._distribution_piping = {
-        "trunk_1": PhPipeTrunk(),
-        "trunk_2": PhPipeTrunk(),
+        "trunk_1": PhHvacPipeTrunk(),
+        "trunk_2": PhHvacPipeTrunk(),
     }
-    system._recirc_piping = {"recirc_1": PhPipeElement(), "recirc_2": PhPipeElement()}
+    system._recirc_piping = {"recirc_1": PhHvacPipeElement(), "recirc_2": PhHvacPipeElement()}
     system._number_tap_points = 2
 
     new_system = system.__copy__()

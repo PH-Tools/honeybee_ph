@@ -12,7 +12,6 @@ from honeybee_energy.properties.extension import (
     OpaqueConstructionProperties,
     PeopleProperties,
     ServiceHotWaterProperties,
-    SHWSystemProperties,
     WindowConstructionProperties,
     WindowConstructionShadeProperties,
 )
@@ -24,7 +23,7 @@ from honeybee_energy_ph.properties.construction.opaque import OpaqueConstruction
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
-from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
+
 from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
 from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
 from honeybee_energy_ph.properties.load.people import PeoplePhProperties
@@ -50,7 +49,6 @@ setattr(EnergyMaterialVegetationProperties, "_ph", None)
 setattr(WindowConstructionProperties, "_ph", None)
 setattr(WindowConstructionShadeProperties, "_ph", None)
 setattr(ServiceHotWaterProperties, "_ph", None)
-setattr(SHWSystemProperties, "_ph", None)
 setattr(ElectricEquipmentProperties, "_ph", None)
 setattr(PeopleProperties, "_ph", None)
 setattr(LightingProperties, "_ph", None)
@@ -114,12 +112,6 @@ def hot_water_program_ph_properties(self):
     return self._ph
 
 
-def hot_water_system_ph_properties(self):
-    if self._ph is None:
-        self._ph = SHWSystemPhProperties(self.host)
-    return self._ph
-
-
 def elec_equip_ph_properties(self):
     if self._ph is None:
         self._ph = ElectricEquipmentPhProperties(self.host)
@@ -157,7 +149,6 @@ setattr(
     property(energy_material_vegetation_ph_properties),
 )
 setattr(ServiceHotWaterProperties, "ph", property(hot_water_program_ph_properties))
-setattr(SHWSystemProperties, "ph", property(hot_water_system_ph_properties))
 setattr(ElectricEquipmentProperties, "ph", property(elec_equip_ph_properties))
 setattr(PeopleProperties, "ph", property(people_ph_properties))
 setattr(LightingProperties, "ph", property(lighting_ph_properties))

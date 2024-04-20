@@ -1,19 +1,19 @@
-from honeybee_phhvac import hot_water
+from honeybee_phhvac import hot_water_devices
 
 
 def test_base_class():
-    sys = hot_water.PhHotWaterHeater()
+    sys = hot_water_devices.PhHvacHotWaterHeater()
     assert sys.ToString()
 
 
 # -----------------------------------------------------------------------------
 
 
-def test_dict_roundtrip_PhSHWHeaterElectric():
-    s1 = hot_water.PhSHWHeaterElectric()
+def test_dict_roundtrip_PhHvacHotWaterHeaterElectric():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterElectric()
     d = s1.to_dict()
 
-    s2 = hot_water.PhSHWHeaterElectric.from_dict(d)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterElectric.from_dict(d)
     assert s2.to_dict() == d
 
     # -- add user data
@@ -23,11 +23,11 @@ def test_dict_roundtrip_PhSHWHeaterElectric():
     assert s1.to_dict() != s2.to_dict()
 
 
-def test_dict_roundtrip_PhSHWHeaterBoiler():
-    s1 = hot_water.PhSHWHeaterBoiler()
+def test_dict_roundtrip_PhHvacHotWaterHeaterBoiler():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterBoiler()
     d = s1.to_dict()
 
-    s2 = hot_water.PhSHWHeaterBoiler.from_dict(d)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBoiler.from_dict(d)
     assert s2.to_dict() == d
 
     # -- add user data
@@ -37,11 +37,11 @@ def test_dict_roundtrip_PhSHWHeaterBoiler():
     assert s1.to_dict() != s2.to_dict()
 
 
-def test_dict_roundtrip_PhSHWHeaterBoilerWood():
-    s1 = hot_water.PhSHWHeaterBoilerWood()
+def test_dict_roundtrip_PhHvacHotWaterHeaterBoilerWood():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterBoilerWood()
     d = s1.to_dict()
 
-    s2 = hot_water.PhSHWHeaterBoilerWood.from_dict(d)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBoilerWood.from_dict(d)
     assert s2.to_dict() == d
 
     # -- add user data
@@ -51,11 +51,11 @@ def test_dict_roundtrip_PhSHWHeaterBoilerWood():
     assert s1.to_dict() != s2.to_dict()
 
 
-def test_dict_roundtrip_PhSHWHeaterDistrict():
-    s1 = hot_water.PhSHWHeaterDistrict()
+def test_dict_roundtrip_PhHvacHotWaterHeaterDistrict():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterDistrict()
     d = s1.to_dict()
 
-    s2 = hot_water.PhSHWHeaterDistrict.from_dict(d)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterDistrict.from_dict(d)
     assert s2.to_dict() == d
 
     # -- add user data
@@ -65,11 +65,11 @@ def test_dict_roundtrip_PhSHWHeaterDistrict():
     assert s1.to_dict() != s2.to_dict()
 
 
-def test_dict_roundtrip_PhSHWHeaterHeatPump():
-    s1 = hot_water.PhSHWHeaterHeatPump()
+def test_dict_roundtrip_PhHvacHotWaterHeaterHeatPump():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterHeatPump()
     d = s1.to_dict()
 
-    s2 = hot_water.PhSHWHeaterHeatPump.from_dict(d)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterHeatPump.from_dict(d)
     assert s2.to_dict() == d
 
     # -- add user data
@@ -82,36 +82,36 @@ def test_dict_roundtrip_PhSHWHeaterHeatPump():
 # -----------------------------------------------------------------------------
 
 
-def test_hw_builder_PhSHWHeaterElectric():
-    s1 = hot_water.PhSHWHeaterElectric()
+def test_hw_builder_PhHvacHotWaterHeaterElectric():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterElectric()
     d1 = s1.to_dict()
-    s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
 
 
-def test_hw_builder_PhSHWHeaterBoiler():
-    s1 = hot_water.PhSHWHeaterBoiler()
+def test_hw_builder_PhHvacHotWaterHeaterBoiler():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterBoiler()
     d1 = s1.to_dict()
-    s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
 
 
-def test_hw_builder_PhSHWHeaterBoilerWood():
-    s1 = hot_water.PhSHWHeaterBoilerWood()
+def test_hw_builder_PhHvacHotWaterHeaterBoilerWood():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterBoilerWood()
     d1 = s1.to_dict()
-    s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
 
 
-def test_hw_builder_PhSHWHeaterDistrict():
-    s1 = hot_water.PhSHWHeaterDistrict()
+def test_hw_builder_PhHvacHotWaterHeaterDistrict():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterDistrict()
     d1 = s1.to_dict()
-    s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()
 
 
-def test_hw_builder_PhSHWHeaterHeatPump():
-    s1 = hot_water.PhSHWHeaterHeatPump()
+def test_hw_builder_PhHvacHotWaterHeaterHeatPump():
+    s1 = hot_water_devices.PhHvacHotWaterHeaterHeatPump()
     d1 = s1.to_dict()
-    s2 = hot_water.PhSHWHeaterBuilder.from_dict(d1)
+    s2 = hot_water_devices.PhHvacHotWaterHeaterBuilder.from_dict(d1)
     assert s1.to_dict() == s2.to_dict()

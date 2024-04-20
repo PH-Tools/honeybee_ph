@@ -1,11 +1,11 @@
-from honeybee_phhvac.hot_water import PhSHWTank
+from honeybee_phhvac.hot_water_devices import PhHvacHotWaterTank
 
 
-def test_dict_roundtrip_PhSHWTank():
-    s1 = PhSHWTank()
+def test_dict_roundtrip_PhHvacHotWaterTank():
+    s1 = PhHvacHotWaterTank()
     d = s1.to_dict()
 
-    s2 = PhSHWTank.from_dict(d)
+    s2 = PhHvacHotWaterTank.from_dict(d)
     assert s2.to_dict() == d
 
     # -- add user data
@@ -15,8 +15,8 @@ def test_dict_roundtrip_PhSHWTank():
     assert s1.to_dict() != s2.to_dict()
 
 
-def test_duplicate_PhSHWTank():
-    t1 = PhSHWTank()
+def test_duplicate_PhHvacHotWaterTank():
+    t1 = PhHvacHotWaterTank()
     t2 = t1.duplicate()
     assert t1 == t2
     assert t1.to_dict() == t2.to_dict()
