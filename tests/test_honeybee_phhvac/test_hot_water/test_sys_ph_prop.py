@@ -4,14 +4,14 @@ from honeybee_phhvac.hot_water_system import HotWaterSystem
 
 
 def test_basic_HotWaterSystem_round_trip():
-    obj = HotWaterSystem(None)
+    obj = HotWaterSystem()
     d = obj.to_dict()
-    new_obj = HotWaterSystem.from_dict(d["ph"], None)
+    new_obj = HotWaterSystem.from_dict(d["ph_hvac"])
     assert new_obj.to_dict() == d
 
 
 def test_HotWaterSystem_copy():
-    system = HotWaterSystem(None)
+    system = HotWaterSystem()
     system.id_num = 1
     system.tank_1 = PhHvacHotWaterTank()
     system.tank_2 = PhHvacHotWaterTank()

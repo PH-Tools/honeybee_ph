@@ -20,8 +20,7 @@ class HotWaterSystem_FromDictError(Exception):
 class HotWaterSystem(object):
     """PH-HVAC: Hot Water System."""
 
-    def __init__(self, _host):
-        self._host = _host
+    def __init__(self):
         self.id_num = 0
 
         self.tank_1 = None  # type: Optional[hot_water_devices.PhHvacHotWaterTank]
@@ -165,10 +164,6 @@ class HotWaterSystem(object):
         return self._recirc_piping.values()
 
     @property
-    def host(self):
-        return self._host
-
-    @property
     def tanks(self):
         # type: () -> list[hot_water_devices.PhHvacHotWaterTank | None]
         """Return a list of the system tanks in order (1, 2, buffer, solar)."""
@@ -208,17 +203,17 @@ class HotWaterSystem(object):
         d["recirc_temp"] = self.recirc_temp
         d["recirc_hours"] = self.recirc_hours
 
-        return {"ph": d}
+        return {"ph_hvac": d}
 
     @classmethod
-    def from_dict(cls, _input_dict, _host):
-        # type: (dict, Any) -> HotWaterSystem
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> HotWaterSystem
         valid_types = ("SHWSystemPhProperties", "SHWSystemPhPropertiesAbridged")
         if _input_dict["type"] not in valid_types:
             raise HotWaterSystem_FromDictError(valid_types, _input_dict["type"])
 
-        new_prop = cls(_host)
-        new_prop.id_num = _input_dict["id_num"]
+        new_prop = cls()
+        new_prop.id_num = _input_dict.get("id_num")
 
         if _input_dict.get("tank_1", None):
             new_prop.tank_1 = hot_water_devices.PhHvacHotWaterTank.from_dict(_input_dict["tank_1"])
@@ -247,8 +242,7 @@ class HotWaterSystem(object):
 
     def __copy__(self, new_host=None):
         # type: (Any) -> HotWaterSystem
-        _host = new_host or self._host
-        new_obj = HotWaterSystem(_host)
+        new_obj = HotWaterSystem()
         new_obj.id_num = self.id_num
 
         if self.tank_1:
