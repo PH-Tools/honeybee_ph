@@ -1,14 +1,14 @@
-from honeybee_energy_ph.hvac import heat_pumps, heating, supportive_device, ventilation
-from honeybee_energy_ph.hvac.renewable_devices import PhPhotovoltaicDevice
-from honeybee_energy_ph.properties.hvac import idealair
+from honeybee_phhvac import heat_pumps, heating, supportive_device, ventilation
+from honeybee_phhvac.renewable_devices import PhPhotovoltaicDevice
+from honeybee_phhvac.properties.room import RoomPhHvacProperties
 
 
 def test_default_empty_system_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
@@ -17,18 +17,18 @@ def test_default_empty_system_dict_roundtrip():
 
 
 def test_system_with_single_exhaust_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = ventilation.ExhaustVentDryer()
     p1.exhaust_vent_devices.add(d1)
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_system_with_multiple_exhaust_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = ventilation.ExhaustVentDryer()
     d2 = ventilation.ExhaustVentKitchenHood()
     d3 = ventilation.ExhaustVentUserDefined()
@@ -39,12 +39,12 @@ def test_system_with_multiple_exhaust_dict_roundtrip():
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_duplicate_system_with_multiple_exhaust():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = ventilation.ExhaustVentDryer()
     d2 = ventilation.ExhaustVentKitchenHood()
     d3 = ventilation.ExhaustVentUserDefined()
@@ -61,18 +61,18 @@ def test_duplicate_system_with_multiple_exhaust():
 
 
 def test_system_with_vent_sys_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = ventilation.PhVentilationSystem()
     p1.ventilation_system = s1
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_duplicate_system_with_vent_sys():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = ventilation.PhVentilationSystem()
     p1.ventilation_system = s1
 
@@ -85,17 +85,17 @@ def test_duplicate_system_with_vent_sys():
 
 
 def test_system_with_supportive_device_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = supportive_device.PhSupportiveDevice()
     p1.supportive_devices.add(d1)
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_system_with_supportive_device_dict_ducplicate():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = supportive_device.PhSupportiveDevice()
     p1.supportive_devices.add(d1)
 
@@ -108,19 +108,19 @@ def test_system_with_supportive_device_dict_ducplicate():
 
 
 def test_system_with_single_heating_sys_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = heating.PhHeatingDirectElectric()
     p1.heating_systems.add(s1)
     p1.heating_systems.add(None)
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_system_with_multiple_heating_sys_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = heating.PhHeatingDirectElectric()
     s2 = heating.PhHeatingDistrict()
     s3 = heating.PhHeatingFossilBoiler()
@@ -132,12 +132,12 @@ def test_system_with_multiple_heating_sys_dict_roundtrip():
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_duplicate_system_with_single_heating_sys():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = heating.PhHeatingDirectElectric()
     p1.heating_systems.add(s1)
     assert p1.ToString()
@@ -151,7 +151,7 @@ def test_duplicate_system_with_single_heating_sys():
 
 
 def test_system_with_multiple_heat_pump_sys_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
 
     s1 = heat_pumps.PhHeatPumpAnnual()
     s2 = heat_pumps.PhHeatPumpRatedMonthly()
@@ -160,24 +160,24 @@ def test_system_with_multiple_heat_pump_sys_dict_roundtrip():
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_system_with_single_heat_pump_sys_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = heat_pumps.PhHeatPumpAnnual()
     p1.heat_pump_systems.add(s1)
     p1.heat_pump_systems.add(None)
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_duplicate_system_with_single_cooling_sys():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     s1 = heat_pumps.PhHeatPumpCoolingParams_Recirculation()
     p1.heat_pump_systems.add(s1)
     assert p1.ToString()
@@ -191,19 +191,19 @@ def test_duplicate_system_with_single_cooling_sys():
 
 
 def test_system_with_single_renewable_device_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = PhPhotovoltaicDevice()
     p1.renewable_devices.add(d1)
     p1.renewable_devices.add(None)
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_system_with_multiple_renewable_devices_dict_roundtrip():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = PhPhotovoltaicDevice()
     d2 = PhPhotovoltaicDevice()
     d3 = PhPhotovoltaicDevice()
@@ -213,12 +213,12 @@ def test_system_with_multiple_renewable_devices_dict_roundtrip():
     assert p1.ToString()
 
     d = p1.to_dict()
-    p2 = idealair.IdealAirSystemPhProperties.from_dict(d["ph"], p1.host)
+    p2 = RoomPhHvacProperties.from_dict(d["ph_hvac"], p1.host)
     assert p2.to_dict() == d
 
 
 def test_duplicate_system_with_multiple_renewable_devices():
-    p1 = idealair.IdealAirSystemPhProperties(_host=None)
+    p1 = RoomPhHvacProperties(_host=None)
     d1 = PhPhotovoltaicDevice()
     d2 = PhPhotovoltaicDevice()
     d3 = PhPhotovoltaicDevice()

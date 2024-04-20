@@ -93,7 +93,7 @@ class RoomPhHvacProperties(object):
 
     @classmethod
     def from_dict(cls, _input_dict, host):
-        # type: (Dict[str, Any], RoomProperties) -> RoomPhHvacProperties
+        # type: (Dict[str, Any], Optional[RoomProperties]) -> RoomPhHvacProperties
         valid_types = ("RoomPhHvacProperties", "RoomPhHvacPropertiesAbridged")
 
         if _input_dict["type"] not in valid_types:
