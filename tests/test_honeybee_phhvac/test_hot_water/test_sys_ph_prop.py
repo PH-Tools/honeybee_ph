@@ -1,4 +1,4 @@
-from honeybee_energy_ph.hvac.hot_water import PhPipeElement, PhPipeTrunk, PhSHWTank
+from honeybee_phhvac.hot_water import PhPipeElement, PhPipeTrunk, PhSHWTank
 from honeybee_energy_ph.properties.hot_water.hw_system import SHWSystemPhProperties
 
 

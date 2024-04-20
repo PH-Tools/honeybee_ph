@@ -1,4 +1,4 @@
-from honeybee_energy_ph.hvac.renewable_devices import (
+from honeybee_phhvac.renewable_devices import (
     PhPhotovoltaicDevice,
     PhRenewableEnergyDevice,
     PhRenewableEnergyDeviceBuilder,

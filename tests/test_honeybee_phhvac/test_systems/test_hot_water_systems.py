@@ -1,4 +1,4 @@
-from honeybee_energy_ph.hvac import hot_water
+from honeybee_phhvac import hot_water
 
 
 def test_base_class():

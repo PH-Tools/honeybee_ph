@@ -1,4 +1,4 @@
-from honeybee_energy_ph.hvac import ventilation
+from honeybee_phhvac import ventilation
 
 
 def test_default_ventilator():

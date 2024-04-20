@@ -1,6 +1,6 @@
 import pytest
 
-from honeybee_energy_ph.hvac import heat_pumps
+from honeybee_phhvac import heat_pumps
 
 
 def test_base_class():

@@ -1,4 +1,4 @@
-from honeybee_energy_ph.hvac.hot_water import PhSHWTank
+from honeybee_phhvac.hot_water import PhSHWTank
 
 
 def test_dict_roundtrip_PhSHWTank():

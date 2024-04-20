@@ -1,6 +1,6 @@
 import pytest
 
-from honeybee_energy_ph.hvac.supportive_device import PhSupportiveDevice
+from honeybee_phhvac.supportive_device import PhSupportiveDevice
 
 
 def test_PhSupportiveDevice_to_dict():

@@ -1,4 +1,4 @@
-from honeybee_energy_ph.hvac._base import _PhHVACBase
+from honeybee_phhvac._base import _PhHVACBase
 
 
 def test_base_default():

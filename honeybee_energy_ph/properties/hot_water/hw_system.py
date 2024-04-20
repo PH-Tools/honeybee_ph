@@ -8,7 +8,7 @@ try:
 except:
     pass  # IronPython
 
-from honeybee_energy_ph.hvac import hot_water
+from honeybee_phhvac import hot_water
 
 
 class SHWSystemPhProperties_FromDictError(Exception):
