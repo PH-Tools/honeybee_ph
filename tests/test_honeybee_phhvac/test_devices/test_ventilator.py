@@ -1,4 +1,5 @@
 from honeybee_phhvac import ventilation
+from copy import copy
 
 
 def test_default_ventilator():
@@ -35,6 +36,29 @@ def test_duplicate_default_ventilator():
     o2.user_data["test_key"] = "test_value"
     assert "test_key" not in o1.user_data
     assert "test_key" in o2.user_data
+
+
+def test_copy_default_ventilator():
+    o1 = ventilation.Ventilator()
+    assert o1.ToString()
+
+    o2 = copy(o1)
+    assert o2.to_dict() == o1.to_dict()
+
+    # -- user_data
+    o2.user_data["test_key"] = "test_value"
+    assert "test_key" not in o1.user_data
+    assert "test_key" in o2.user_data
+
+
+def test_sort_ventilators_by_identifier():
+    o1 = ventilation.Ventilator()
+    o1.identifier = 1
+
+    o2 = ventilation.Ventilator()
+    o2.identifier = 2
+
+    assert o1 < o2
 
 
 def test_custom_ventilator():

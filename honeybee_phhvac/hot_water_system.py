@@ -10,30 +10,32 @@ except:
 
 from uuid import uuid4
 
-from honeybee_phhvac import hot_water_piping, hot_water_devices
+from honeybee_phhvac import hot_water_devices as hwd
+from honeybee_phhvac import hot_water_piping as hwp
 
 
-class HotWaterSystem_FromDictError(Exception):
+class PhHotWaterSystem_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
         self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
-        super(HotWaterSystem_FromDictError, self).__init__(self.msg)
+        super(PhHotWaterSystem_FromDictError, self).__init__(self.msg)
 
 
-class HotWaterSystem(object):
+class PhHotWaterSystem(object):
     """PH-HVAC: Hot Water System."""
 
     def __init__(self):
         self.identifier = str(uuid4())
         self.id_num = 0
+        self.display_name = "_unnamed_hot_water_system_"
 
-        self.tank_1 = None  # type: Optional[hot_water_devices.PhHvacHotWaterTank]
-        self.tank_2 = None  # type: Optional[hot_water_devices.PhHvacHotWaterTank]
-        self.tank_buffer = None  # type: Optional[hot_water_devices.PhHvacHotWaterTank]
-        self.tank_solar = None  # type: Optional[hot_water_devices.PhHvacHotWaterTank]
+        self.tank_1 = None  # type: Optional[hwd.PhHvacHotWaterTank]
+        self.tank_2 = None  # type: Optional[hwd.PhHvacHotWaterTank]
+        self.tank_buffer = None  # type: Optional[hwd.PhHvacHotWaterTank]
+        self.tank_solar = None  # type: Optional[hwd.PhHvacHotWaterTank]
 
-        self._heaters = {}  # type: Dict[str, hot_water_devices.PhHvacHotWaterHeater]
-        self._distribution_piping = {}  # type: Dict[str, hot_water_piping.PhHvacPipeTrunk]
-        self._recirc_piping = {}  # type: Dict[str, hot_water_piping.PhHvacPipeElement]
+        self._heaters = {}  # type: Dict[str, hwd.PhHvacHotWaterHeater]
+        self._distribution_piping = {}  # type: Dict[str, hwp.PhHvacPipeTrunk]
+        self._recirc_piping = {}  # type: Dict[str, hwp.PhHvacPipeElement]
 
         self._number_tap_points = None  # type: Optional[int]
 
@@ -97,7 +99,7 @@ class HotWaterSystem(object):
 
     @property
     def heaters(self):
-        # type: () -> ValuesView[hot_water_devices.PhHvacHotWaterHeater]
+        # type: () -> ValuesView[hwd.PhHvacHotWaterHeater]
         """Returns a list of all the heaters on the system."""
         return self._heaters.values()
 
@@ -105,7 +107,7 @@ class HotWaterSystem(object):
         self._heaters = {}
 
     def add_heater(self, _h):
-        # type: (hot_water_devices.PhHvacHotWaterHeater) -> None
+        # type: (Optional[hwd.PhHvacHotWaterHeater]) -> None
         """Adds a new hot-water heater to the system."""
         if not _h:
             return
@@ -114,25 +116,25 @@ class HotWaterSystem(object):
         self._heaters[_h.identifier] = _h
 
     def add_distribution_piping(self, _distribution_piping, _key=None):
-        # type: (Union[hot_water_piping.PhHvacPipeTrunk, hot_water_piping.PhHvacPipeBranch, hot_water_piping.PhHvacPipeElement], Optional[str]) -> None
+        # type: (Union[hwp.PhHvacPipeTrunk, hwp.PhHvacPipeBranch, hwp.PhHvacPipeElement], Optional[str]) -> None
         """Add a new distribution (branch, trunk, fixture) to the system.
 
         If a branch or fixture pipe is passed, a 0-length trunk will be created and the
         branch or fixture will be added to it before adding to the system.
         """
 
-        if isinstance(_distribution_piping, hot_water_piping.PhHvacPipeTrunk):
+        if isinstance(_distribution_piping, hwp.PhHvacPipeTrunk):
             # -- Add the trunk to the collection
             new_trunk = _distribution_piping
-        elif isinstance(_distribution_piping, hot_water_piping.PhHvacPipeBranch):
+        elif isinstance(_distribution_piping, hwp.PhHvacPipeBranch):
             # -- Build a new Trunk and add the branch to it
-            new_trunk = hot_water_piping.PhHvacPipeTrunk()
+            new_trunk = hwp.PhHvacPipeTrunk()
             new_trunk.add_branch(_distribution_piping)
-        elif isinstance(_distribution_piping, hot_water_piping.PhHvacPipeElement):
+        elif isinstance(_distribution_piping, hwp.PhHvacPipeElement):
             # -- Build a new Trunk and Branch, add the fixture to it
-            new_branch = hot_water_piping.PhHvacPipeBranch()
+            new_branch = hwp.PhHvacPipeBranch()
             new_branch.add_fixture(_distribution_piping)
-            new_trunk = hot_water_piping.PhHvacPipeTrunk()
+            new_trunk = hwp.PhHvacPipeTrunk()
             new_trunk.add_branch(new_branch)
         else:
             raise ValueError(
@@ -149,12 +151,12 @@ class HotWaterSystem(object):
 
     @property
     def distribution_piping(self):
-        # type: () -> ValuesView[hot_water_piping.PhHvacPipeTrunk]
+        # type: () -> ValuesView[hwp.PhHvacPipeTrunk]
         """Returns a list of all the distribution-piping (Trunks) in the system."""
         return self._distribution_piping.values()
 
     def add_recirc_piping(self, _recirc_piping, _key=None):
-        # type: (hot_water_piping.PhHvacPipeElement, Optional[str]) -> None
+        # type: (hwp.PhHvacPipeElement, Optional[str]) -> None
         self._recirc_piping[_key or _recirc_piping.identifier] = _recirc_piping
 
     def clear_recirc_piping(self):
@@ -162,13 +164,13 @@ class HotWaterSystem(object):
 
     @property
     def recirc_piping(self):
-        # type: () -> ValuesView[hot_water_piping.PhHvacPipeElement]
+        # type: () -> ValuesView[hwp.PhHvacPipeElement]
         """Returns a list of all the recirculation-piping objects in the system."""
         return self._recirc_piping.values()
 
     @property
     def tanks(self):
-        # type: () -> list[hot_water_devices.PhHvacHotWaterTank | None]
+        # type: () -> list[hwd.PhHvacHotWaterTank | None]
         """Return a list of the system tanks in order (1, 2, buffer, solar)."""
         return [self.tank_1, self.tank_2, self.tank_buffer, self.tank_solar]
 
@@ -176,12 +178,13 @@ class HotWaterSystem(object):
         # type: (bool) -> dict[str, dict]
         d = {}
         if abridged:
-            d["type"] = "SHWSystemPhPropertiesAbridged"
+            d["type"] = "PhHvacHotWaterSystemAbridged"
         else:
-            d["type"] = "SHWSystemPhProperties"
+            d["type"] = "PhHvacHotWaterSystemPh"
 
         d["id_num"] = self.id_num
         d["identifier"] = self.identifier
+        d["display_name"] = self.display_name
         if self.tank_1:
             d["tank_1"] = self.tank_1.to_dict()
         if self.tank_2:
@@ -193,7 +196,7 @@ class HotWaterSystem(object):
 
         d["heaters"] = {}
         for heater in self.heaters:
-            d["heaters"][id(heater)] = heater.to_dict()
+            d["heaters"][heater.identifier] = heater.to_dict()
 
         d["distribution_piping"] = {}
         for distribution_piping in self.distribution_piping:
@@ -207,48 +210,50 @@ class HotWaterSystem(object):
         d["recirc_temp"] = self.recirc_temp
         d["recirc_hours"] = self.recirc_hours
 
-        return {"ph_hvac": d}
+        return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (dict) -> HotWaterSystem
-        valid_types = ("SHWSystemPhProperties", "SHWSystemPhPropertiesAbridged")
+        # type: (dict) -> PhHotWaterSystem
+        valid_types = ("PhHvacHotWaterSystemPh", "PhHvacHotWaterSystemAbridged")
         if _input_dict["type"] not in valid_types:
-            raise HotWaterSystem_FromDictError(valid_types, _input_dict["type"])
+            raise PhHotWaterSystem_FromDictError(valid_types, _input_dict["type"])
 
-        new_prop = cls()
-        new_prop.identifier = _input_dict.get("identifier", str(uuid4()))
-        new_prop.id_num = _input_dict.get("id_num")
+        new_system = cls()
+        new_system.identifier = _input_dict.get("identifier", str(uuid4()))
+        new_system.id_num = _input_dict["id_num"]
+        new_system.display_name = _input_dict["display_name"]
 
         if _input_dict.get("tank_1", None):
-            new_prop.tank_1 = hot_water_devices.PhHvacHotWaterTank.from_dict(_input_dict["tank_1"])
+            new_system.tank_1 = hwd.PhHvacHotWaterTank.from_dict(_input_dict["tank_1"])
         if _input_dict.get("tank_2", None):
-            new_prop.tank_2 = hot_water_devices.PhHvacHotWaterTank.from_dict(_input_dict["tank_2"])
+            new_system.tank_2 = hwd.PhHvacHotWaterTank.from_dict(_input_dict["tank_2"])
         if _input_dict.get("tank_buffer", None):
-            new_prop.tank_buffer = hot_water_devices.PhHvacHotWaterTank.from_dict(_input_dict["tank_buffer"])
-        if _input_dict.get("tank_buffer", None):
-            new_prop.tank_buffer = hot_water_devices.PhHvacHotWaterTank.from_dict(_input_dict["tank_buffer"])
+            new_system.tank_buffer = hwd.PhHvacHotWaterTank.from_dict(_input_dict["tank_buffer"])
+        if _input_dict.get("tank_solar", None):
+            new_system.tank_solar = hwd.PhHvacHotWaterTank.from_dict(_input_dict["tank_solar"])
 
         for heater_dict in _input_dict["heaters"].values():
-            new_prop.add_heater(hot_water_devices.PhHvacHotWaterHeaterBuilder.from_dict(heater_dict))
+            new_system.add_heater(hwd.PhHvacHotWaterHeaterBuilder.from_dict(heater_dict))
 
         for distribution_piping_dict in _input_dict["distribution_piping"].values():
-            new_prop.add_distribution_piping(hot_water_piping.PhHvacPipeTrunk.from_dict(distribution_piping_dict))
+            new_system.add_distribution_piping(hwp.PhHvacPipeTrunk.from_dict(distribution_piping_dict))
 
         for recirc_piping_dict in _input_dict["recirc_piping"].values():
-            new_prop.add_recirc_piping(hot_water_piping.PhHvacPipeElement.from_dict(recirc_piping_dict))
+            new_system.add_recirc_piping(hwp.PhHvacPipeElement.from_dict(recirc_piping_dict))
 
-        new_prop._number_tap_points = _input_dict["number_tap_points"]
+        new_system._number_tap_points = _input_dict["number_tap_points"]
 
-        return new_prop
+        return new_system
 
     def apply_properties_from_dict(self, abridged_data):
         return
 
     def __copy__(self):
-        # type: (Any) -> HotWaterSystem
-        new_obj = HotWaterSystem()
+        # type: () -> PhHotWaterSystem
+        new_obj = PhHotWaterSystem()
         new_obj.id_num = self.id_num
+        new_obj.display_name = self.display_name
 
         if self.tank_1:
             new_obj.tank_1 = self.tank_1.duplicate()
@@ -273,7 +278,7 @@ class HotWaterSystem(object):
         return new_obj
 
     def duplicate(self):
-        # type: (Any) -> HotWaterSystem
+        # type: (Any) -> PhHotWaterSystem
         return self.__copy__()
 
     def __str__(self):
@@ -295,7 +300,7 @@ class HotWaterSystem(object):
         return self.__repr__()
 
     def __add__(self, other):
-        # type: (HotWaterSystem) -> HotWaterSystem
+        # type: (PhHotWaterSystem) -> PhHotWaterSystem
         new_obj = self.duplicate()
 
         for heater in self.heaters:
@@ -325,15 +330,15 @@ class HotWaterSystem(object):
         return new_obj
 
     def __radd__(self, other):
-        # type: (HotWaterSystem) -> HotWaterSystem
+        # type: (PhHotWaterSystem) -> PhHotWaterSystem
         if isinstance(other, int):
             return self
         else:
             return self + other
 
     def __eq__(self, other):
-        # type: (HotWaterSystem) -> bool
-        if not isinstance(other, HotWaterSystem):
+        # type: (PhHotWaterSystem) -> bool
+        if not isinstance(other, PhHotWaterSystem):
             return False
 
         if self.id_num != other.id_num:

@@ -30,7 +30,7 @@ try:
     from honeybee_phhvac.renewable_devices import PhRenewableEnergyDevice, PhRenewableEnergyDeviceBuilder
     from honeybee_phhvac.supportive_device import PhSupportiveDevice
     from honeybee_phhvac.ventilation import PhExhaustDeviceBuilder, PhVentilationSystem, _ExhaustVentilatorBase
-    from honeybee_phhvac.hot_water_system import HotWaterSystem
+    from honeybee_phhvac.hot_water_system import PhHotWaterSystem
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_phhvac:\n\t{}".format(e))
 
@@ -52,7 +52,7 @@ class RoomPhHvacProperties(object):
         self._exhaust_vent_devices = set()  # type: set[_ExhaustVentilatorBase]
         self._supportive_devices = set()  # type: set[PhSupportiveDevice]
         self._renewable_devices = set()  # type: set[PhRenewableEnergyDevice]
-        self._hot_water_system = None  # type: Optional[HotWaterSystem]
+        self._hot_water_system = None  # type: Optional[PhHotWaterSystem]
 
     @property
     def host(self):
@@ -91,7 +91,7 @@ class RoomPhHvacProperties(object):
 
     @property
     def hot_water_system(self):
-        # type: () -> Optional[HotWaterSystem]
+        # type: () -> Optional[PhHotWaterSystem]
         return self._hot_water_system
 
     def set_ventilation_system(self, _ventilation_system):
@@ -130,7 +130,7 @@ class RoomPhHvacProperties(object):
             self._renewable_devices.add(_renewable_device)
 
     def set_hot_water_system(self, _hot_water_system):
-        # type: (Optional[HotWaterSystem]) -> None
+        # type: (Optional[PhHotWaterSystem]) -> None
         """Set the Hot Water System serving the Room."""
         self._hot_water_system = _hot_water_system
 
@@ -204,14 +204,13 @@ class RoomPhHvacProperties(object):
 
         hot_water_sys_dict = _input_dict.get("hot_water_system")
         if hot_water_sys_dict:
-            new_prop.set_hot_water_system(HotWaterSystem.from_dict(hot_water_sys_dict))
+            new_prop.set_hot_water_system(PhHotWaterSystem.from_dict(hot_water_sys_dict))
 
         return new_prop
 
     def apply_properties_from_dict(self, room_prop_dict, mech_systems, *args, **kwargs):
         # type: (Dict[str, Any], Dict[str, dict[str, Any]], list, dict) -> None
         """Apply properties from a RoomPhHvacPropertiesAbridged dictionary."""
-
         self.id_num = room_prop_dict["id_num"]
 
         # -- Find the identifiers for each of the room's mechanical systems
@@ -372,7 +371,7 @@ def get_renewable_devices_from_space(_hph_space):
 
 
 def get_hot_water_system_from_space(_space):
-    # type: (space.Space) -> Optional[HotWaterSystem]
+    # type: (space.Space) -> Optional[PhHotWaterSystem]
     """Get the Hot Water System from a Honeybee-PH Space."""
     ph_hvac = get_ph_hvac_from_space(_space)
     if not ph_hvac:

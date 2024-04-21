@@ -24,6 +24,7 @@ try:
     from honeybee_phhvac.renewable_devices import PhRenewableEnergyDeviceBuilder
     from honeybee_phhvac.supportive_device import PhSupportiveDevice
     from honeybee_phhvac.ventilation import PhExhaustDeviceBuilder, PhVentilationSystem
+    from honeybee_phhvac.hot_water_system import PhHotWaterSystem
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_phhvac:\n\t{}".format(e))
 
@@ -72,6 +73,7 @@ class ModelPhHvacProperties(object):
             "exhaust_vent_devices": {},
             "supportive_devices": {},
             "renewable_devices": {},
+            "hot_water_systems": {},
         }
 
         for room_dict in data:
@@ -93,6 +95,10 @@ class ModelPhHvacProperties(object):
 
             for d in room_dict.get("renewable_devices", []):
                 mechanical_systems["renewable_devices"][d["identifier"]] = PhRenewableEnergyDeviceBuilder.from_dict(d)
+
+            d = room_dict.get("hot_water_system", {})
+            if d:
+                mechanical_systems["hot_water_systems"][d["identifier"]] = PhHotWaterSystem.from_dict(d)
 
         return mechanical_systems
 

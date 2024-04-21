@@ -3,6 +3,7 @@ from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
 from honeybee_phhvac import ventilation
 from honeybee_phhvac.ducting import PhDuctElement, PhDuctSegment
+from copy import copy
 
 
 def test_default_vent_system():
@@ -12,6 +13,25 @@ def test_default_vent_system():
     d = o1.to_dict()
     o2 = ventilation.PhVentilationSystem.from_dict(d)
     assert o2.to_dict() == d
+
+
+def test_copy_default_vent_system():
+    o1 = ventilation.PhVentilationSystem()
+    assert o1.ToString()
+
+    o2 = copy(o1)
+    assert o2.to_dict() == o1.to_dict()
+
+
+def test_sort_systems_by_identifier():
+    o1 = ventilation.PhVentilationSystem()
+    o1.identifier = 1
+
+    o2 = ventilation.PhVentilationSystem()
+    o2.identifier = 2
+
+    assert o1 < o2
+    assert o2 > o1
 
 
 def test_duplicate_default_vent_system():

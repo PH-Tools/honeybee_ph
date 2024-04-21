@@ -6,6 +6,8 @@
 import sys
 from copy import copy
 
+from honeybee_phhvac._base import _PhHVACBase
+
 try:
     from typing import Any, Dict, List, Optional
 except ImportError:
@@ -91,13 +93,13 @@ class Ventilator(_base._PhHVACBase):
         new_obj.in_conditioned_space = self.in_conditioned_space
         return new_obj
 
+    def __lt__(self, other):
+        # type: (PhVentilationSystem) -> bool
+        return self.identifier < other.identifier
+
     def __copy__(self):
         # type: () -> Ventilator
         return self.duplicate()
-
-    def __lt__(self, other):
-        # type: (Ventilator) -> bool
-        return self.identifier < other.identifier
 
     def __repr__(self):
         return "{}(display_name={!r}, sensible_heat_recovery={:0.2f})".format(
