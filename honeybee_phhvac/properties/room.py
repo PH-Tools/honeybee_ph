@@ -214,16 +214,18 @@ class RoomPhHvacProperties(object):
         self.id_num = room_prop_dict["id_num"]
 
         # -- Find the identifiers for each of the room's mechanical systems
-        vent_system_id = room_prop_dict.get("ventilation_system", {}).get("identifier")
+        vent_sys_dict = room_prop_dict.get("ventilation_system", {}) or {}
+        vent_system_id = vent_sys_dict.get("identifier", None)
         heating_system_ids = [sys.get("identifier") for sys in room_prop_dict.get("heating_systems", [])]
         heat_pump_system_ids = [sys.get("identifier") for sys in room_prop_dict.get("heat_pump_systems", [])]
         exhaust_vent_ids = [sys.get("identifier") for sys in room_prop_dict.get("exhaust_vent_devices", [])]
         supportive_device_ids = [sys.get("identifier") for sys in room_prop_dict.get("supportive_devices", [])]
         renewable_device_ids = [sys.get("identifier") for sys in room_prop_dict.get("renewable_devices", [])]
-        hot_water_sys_id = room_prop_dict.get("hot_water_system", {}).get("identifier")
+        hot_water_sys_dict = room_prop_dict.get("hot_water_system", {}) or {}
+        hot_water_sys_id = hot_water_sys_dict.get("identifier", None)
 
         # -- Pull out the actual mechanical systems from the dictionary and apply them to the Properties
-        self.set_ventilation_system(mech_systems.get("ventilation_systems", {}).get(vent_system_id))
+        self.set_ventilation_system(mech_systems.get("ventilation_systems", {}).get(vent_system_id, None))
 
         for sys in (mech_systems.get("heating_systems", {}).get(_id) for _id in heating_system_ids):
             self.add_heating_system(sys)
@@ -240,7 +242,7 @@ class RoomPhHvacProperties(object):
         for sys in (mech_systems.get("renewable_devices", {}).get(_id) for _id in renewable_device_ids):
             self.add_renewable_device(sys)
 
-        self.set_hot_water_system(mech_systems.get("hot_water_systems", {}).get(hot_water_sys_id))
+        self.set_hot_water_system(mech_systems.get("hot_water_systems", {}).get(hot_water_sys_id, None))
 
         return None
 

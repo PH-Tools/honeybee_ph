@@ -43,7 +43,7 @@ def test_basic_HotWaterSystem_round_trip():
 def test_from_dict_wrong_type_raises_PhHotWaterSystem_FromDictError():
     obj = hws.PhHotWaterSystem()
     d = obj.to_dict()
-    d["type"] = "not_a_valid_system_type"
+    d["type"] = "not_a_valid_system_type"  # type: ignore
 
     with pytest.raises(hws.PhHotWaterSystem_FromDictError):
         hws.PhHotWaterSystem.from_dict(d)
