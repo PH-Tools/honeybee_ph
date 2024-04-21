@@ -45,4 +45,3 @@ def test_energy_material_no_mass_ph_properties_with_color() -> None:
     assert new_prop_2.ph_color.a == 255
     assert new_prop_2.ph_color.r == 255
     assert new_prop_2.ph_color.g == 255
-

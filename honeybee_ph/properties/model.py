@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- Python Version: 2.7 -*-
 
-"""HB-Model Passive House (PH) Properties."""
+"""HB-PH Model Properties."""
 
 try:
     from typing import Any, Dict, Tuple
@@ -108,7 +108,7 @@ class ModelPhProperties(object):
 
     @staticmethod
     def load_properties_from_dict(data):
-        # type: (Dict[str, Dict]) -> Tuple[Dict, ProjectTeam]
+        # type: (Dict[str, Dict]) -> Tuple[Dict[str, BldgSegment], ProjectTeam]
         """Load the HB-Model .ph properties from an HB-Model dictionary as Python objects.
 
         Loaded objects include: BldgSegment, Team, ...
@@ -132,7 +132,7 @@ class ModelPhProperties(object):
 
         Returns:
         --------
-            * tuple[dict, dict]: A tuple of dictionaries with all the Honeybee-PH objects.
+            * tuple[dict[str, BldgSegment], ProjectTeam]: ModelPhProperties Objects
         """
         assert "ph" in data["properties"], "HB-Model Dictionary possesses no ModelPhProperties?"
 

@@ -1,4 +1,5 @@
 import pytest
+
 from honeybee_energy_ph.properties.materials.opaque import EnergyMaterialPhProperties
 from honeybee_ph_utils.color import PhColor
 
@@ -10,10 +11,10 @@ def test_energy_material_ph_properties_deprecated_properties() -> None:
 
     with pytest.raises(DeprecationWarning):
         assert new_prop.percentage_of_assembly == 0.5
-    
+
     with pytest.raises(DeprecationWarning):
         new_prop.base_materials = []
-    
+
     with pytest.raises(DeprecationWarning):
         assert new_prop.base_materials == []
 

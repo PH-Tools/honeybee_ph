@@ -9,15 +9,17 @@ filterwarnings = [
 [tool.coverage.run]
 # --- For testing...
 command_line = "-m pytest tests"
-source = ["honeybee_ph", "honeybee_energy_ph", "honeybee_ph_standards", "honeybee_ph_utils"]
+source = [
+    "honeybee_ph",
+    "honeybee_energy_ph",
+    "honeybee_ph_standards",
+    "honeybee_ph_utils",
+    "honeybee_phhvac",
+]
 # ---
 branch = true
 cover_pylib = false
-omit = [
-    "*/__init__.py",
-    "*.venv/*",
-    "*.venv_mbair/*"
-]
+omit = ["*/__init__.py", "*.venv/*", "*.venv_mbair/*"]
 
 [tool.coverage.report]
 show_missing = true

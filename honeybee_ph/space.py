@@ -16,6 +16,11 @@ except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
 try:
+    from honeybee import room
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
+
+try:
     from honeybee_ph import _base
     from honeybee_ph.properties.space import SpaceProperties
 except ImportError as e:
@@ -415,6 +420,7 @@ class SpaceVolume(_base._Base):
 
 class Space(_base._Base):
     def __init__(self, _host=None):
+        # type: (Optional[room.Room]) -> None
         super(Space, self).__init__()
         self.quantity = 1
         self.wufi_type = 99  # -- User-Defined

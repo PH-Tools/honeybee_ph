@@ -2,7 +2,7 @@ import pytest
 from ladybug_geometry.geometry3d.line import LineSegment3D
 from ladybug_geometry.geometry3d.pointvector import Point3D
 
-from honeybee_energy_ph.hvac import hot_water
+from honeybee_phhvac import hot_water_piping
 
 # -- Segment
 
@@ -10,9 +10,9 @@ from honeybee_energy_ph.hvac import hot_water
 def test_PhPipeSegment_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    pipe1 = hot_water.PhPipeSegment(geom)
+    pipe1 = hot_water_piping.PhHvacPipeSegment(geom)
     d_1 = pipe1.to_dict()
-    pipe2 = hot_water.PhPipeSegment.from_dict(d_1)
+    pipe2 = hot_water_piping.PhHvacPipeSegment.from_dict(d_1)
 
     assert pipe2.to_dict() == pipe1.to_dict()
 
@@ -29,12 +29,12 @@ def test_PhPipeSegment_dict_round_trip():
 def test_PhPipeElement_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     d1 = ele1.to_dict()
 
-    ele2 = hot_water.PhPipeElement.from_dict(d1)
+    ele2 = hot_water_piping.PhHvacPipeElement.from_dict(d1)
 
     assert ele1.to_dict() == ele2.to_dict()
 
@@ -48,24 +48,24 @@ def test_PhPipeElement_dict_round_trip():
 def test_PhPipeElement_segment_names():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom)
     seg1.display_name = "segment_0"
-    ele1 = hot_water.PhPipeElement()
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
 
     assert ele1.segment_names == ["segment_0"]
 
 
 def test_PhPipeElement_with_no_segments_material_name():
-    ele1 = hot_water.PhPipeElement()
+    ele1 = hot_water_piping.PhHvacPipeElement()
     assert ele1.material_name == "1-COPPER_M"
 
 
 def test_PhPipeElement_with_one_segments_material_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom, _material=3)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _material=3)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
 
     assert ele1.material_name == "3-COPPER_K"
@@ -74,9 +74,9 @@ def test_PhPipeElement_with_one_segments_material_name():
 def test_PhPipeElement_with_two_same_segments_material_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom, _material=3)
-    seg2 = hot_water.PhPipeSegment(geom, _material=3)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _material=3)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _material=3)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)
 
@@ -86,9 +86,9 @@ def test_PhPipeElement_with_two_same_segments_material_name():
 def test_PhPipeElement_with_two_different_segments_material_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom, _material=3)
-    seg2 = hot_water.PhPipeSegment(geom, _material=4)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _material=3)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _material=4)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)
 
@@ -97,15 +97,15 @@ def test_PhPipeElement_with_two_different_segments_material_name():
 
 
 def test_PhPipeElement_with_no_segments_diameter_name():
-    ele1 = hot_water.PhPipeElement()
+    ele1 = hot_water_piping.PhHvacPipeElement()
     assert ele1.diameter_name == "1-3/8in"
 
 
 def test_PhPipeElement_with_one_segments_diameter_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom, _diameter=2)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
 
     assert ele1.diameter_name == "2-1/2IN"
@@ -114,9 +114,9 @@ def test_PhPipeElement_with_one_segments_diameter_name():
 def test_PhPipeElement_with_two_same_segments_diameter_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom, _diameter=2)
-    seg2 = hot_water.PhPipeSegment(geom, _diameter=2)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)
 
@@ -126,9 +126,9 @@ def test_PhPipeElement_with_two_same_segments_diameter_name():
 def test_PhPipeElement_with_two_different_segments_diameter_name():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom, _diameter=2)
-    seg2 = hot_water.PhPipeSegment(geom, _diameter=3)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=3)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)
 
@@ -143,18 +143,18 @@ def test_PhPipeBranch_dict_round_trip():
     # -- Build the Pipe Element
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
 
     # -- Build the Branch
-    branch1 = hot_water.PhPipeBranch()
+    branch1 = hot_water_piping.PhHvacPipeBranch()
     branch1.pipe_element = ele1
     branch1.add_fixture(ele1)
     d1 = branch1.to_dict()
 
     # --
-    branch2 = hot_water.PhPipeBranch.from_dict(d1)
+    branch2 = hot_water_piping.PhHvacPipeBranch.from_dict(d1)
 
     assert branch1.to_dict() == branch2.to_dict()
 
@@ -171,21 +171,21 @@ def test_PhPipeBranch_dict_round_trip():
 def test_PhPipeTrunk_dict_round_trip():
     p1, p2 = Point3D(), Point3D()
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water.PhPipeSegment(geom)
-    ele1 = hot_water.PhPipeElement()
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
 
     # -- Build the Branch
-    branch1 = hot_water.PhPipeBranch()
+    branch1 = hot_water_piping.PhHvacPipeBranch()
     branch1.pipe_element = ele1
 
     # -- Build the Trunk
-    trunk1 = hot_water.PhPipeTrunk()
+    trunk1 = hot_water_piping.PhHvacPipeTrunk()
     trunk1.pipe_element = ele1
     trunk1.add_branch(branch1)
     d1 = trunk1.to_dict()
 
-    trunk2 = hot_water.PhPipeTrunk.from_dict(d1)
+    trunk2 = hot_water_piping.PhHvacPipeTrunk.from_dict(d1)
 
     assert trunk1.to_dict() == trunk2.to_dict()
 

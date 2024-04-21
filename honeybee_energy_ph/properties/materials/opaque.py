@@ -5,7 +5,7 @@
 
 
 try:
-    from typing import Any, Iterable, List, Optional, NoReturn
+    from typing import Any, Iterable, List, NoReturn, Optional
 except ImportError:
     pass  # IronPython 2.7
 
@@ -43,18 +43,20 @@ class PhDivisionCell(object):
         d["column"] = self.column
         d["material"] = self.material.to_dict()
         return d
-    
+
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict[str, Any]) -> PhDivisionCell
-        new_cell = cls(_input_dict["row"], _input_dict["column"], opaque.EnergyMaterial.from_dict(_input_dict["material"]))
+        new_cell = cls(
+            _input_dict["row"], _input_dict["column"], opaque.EnergyMaterial.from_dict(_input_dict["material"])
+        )
         return new_cell
 
     def duplicate(self):
         # type: () -> PhDivisionCell
         """Duplicate the cell."""
         return PhDivisionCell(self.row, self.column, self.material.duplicate())
-    
+
     def __copy__(self):
         # type: () -> PhDivisionCell
         return self.duplicate()
@@ -66,7 +68,7 @@ class PhDivisionCell(object):
             self.column,
             self.material.display_name,
         )
-    
+
     def __repr__(self):
         return str(self)
 
@@ -140,8 +142,8 @@ class PhDivisionGrid(object):
         """Add a new COLUMN to the grid with the given width."""
         if _column_width is None:
             return
-        
-        if _column_width > 0:    
+
+        if _column_width > 0:
             self._column_widths.append(float(_column_width))
 
     def set_row_heights(self, _row_heights):
@@ -156,7 +158,7 @@ class PhDivisionGrid(object):
         """Add a new ROW to the grid with the given height."""
         if _row_height is None:
             return
-        
+
         if _row_height > 0:
             self._row_heights.append(float(_row_height))
 
@@ -194,9 +196,7 @@ class PhDivisionGrid(object):
             msg = (
                 "Error setting Material '{}' to row '{}'. The specified row is out of range. "
                 "Please setup all the row-heights before assigning any materials. And "
-                "remember that the rows start counting from '0', not '1'.".format(
-                    _hbe_material.display_name, _row_num
-                )
+                "remember that the rows start counting from '0', not '1'.".format(_hbe_material.display_name, _row_num)
             )
             raise CellPositionError(msg)
 
@@ -251,7 +251,7 @@ class PhDivisionGrid(object):
         for cell in self._cells:
             new_grid.set_cell_material(cell.column, cell.row, cell.material.duplicate())
         return new_grid
-    
+
     def __copy__(self):
         # type: () -> PhDivisionGrid
         return self.duplicate()
@@ -284,7 +284,6 @@ class EnergyMaterialPhProperties(object):
 
     # -------------------------------------------------------------------------
     # ------------------ Deprecated [April 4, 2024] ---------------------------
-    
 
     @property
     def percentage_of_assembly(self):
@@ -292,7 +291,7 @@ class EnergyMaterialPhProperties(object):
         raise DeprecationWarning(
             "The 'percentage_of_assembly' property is deprecated. Please use the 'divisions' for mixed materials."
         )
-    
+
     @percentage_of_assembly.setter
     def percentage_of_assembly(self, _percentage):
         # type: (Any) -> NoReturn
@@ -306,14 +305,14 @@ class EnergyMaterialPhProperties(object):
         raise DeprecationWarning(
             "The 'base_materials' property is deprecated. Please use the 'divisions' for mixed materials."
         )
-    
+
     @base_materials.setter
     def base_materials(self, _materials):
         # type: (Any) -> NoReturn
         raise DeprecationWarning(
             "The 'base_materials' property is deprecated. Please use the 'divisions' for mixed materials."
         )
-    
+
     def add_base_material(self, _hb_material):
         # type: (Any) -> NoReturn
         raise DeprecationWarning(
@@ -343,7 +342,7 @@ class EnergyMaterialPhProperties(object):
         # type: (bool) -> dict[str, dict]
         d = {}
         d["id_num"] = self.id_num
-        d['divisions'] = self.divisions.to_dict()
+        d["divisions"] = self.divisions.to_dict()
         d["user_data"] = self.user_data
 
         if self.ph_color:
@@ -358,7 +357,7 @@ class EnergyMaterialPhProperties(object):
         new_prop.id_num = _input_dict["id_num"]
         new_prop._ph_color = PhColor.from_dict(_input_dict.get("ph_color", None))
         new_prop.user_data = _input_dict.get("user_data", {})
-        new_prop.divisions = PhDivisionGrid.from_dict(_input_dict.get('divisions', {}))
+        new_prop.divisions = PhDivisionGrid.from_dict(_input_dict.get("divisions", {}))
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):

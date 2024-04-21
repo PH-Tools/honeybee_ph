@@ -14,6 +14,11 @@ except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
 try:
+    from honeybee import room
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
+
+try:
     from honeybee_ph import space
     from honeybee_ph.bldg_segment import BldgSegment
     from honeybee_ph.foundations import PhFoundation, PhFoundationFactory
@@ -25,6 +30,19 @@ try:
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph_utils:\n\t{}".format(e))
 
+"""
+room.Room
+    ├─ properties: RoomProperties
+        ├─ energy: RoomEnergyProperties
+        ├─ ph: RoomPhProperties
+            ├─ spaces: List[space.Space]    
+                ├─ properties: SpaceProperties
+                    ├─ ph: SpacePhProperties
+                    ├─ energy: SpaceEnergyProperties
+                    ├─...
+        ├─ ph_hvac: RoomPhHvacProperties
+        ├─ ...
+"""
 
 # -----------------------------------------------------------------------------
 
@@ -46,9 +64,10 @@ class PhSpecificHeatCapacity(enumerables.CustomEnum):
 
 class RoomPhProperties(object):
     def __init__(self, _host):
+        # type: (Optional[room.Room]) -> None
         self._host = _host
         self.id_num = 0
-        self._spaces = list()
+        self._spaces = list()  # type: List[space.Space]
         self.ph_bldg_segment = BldgSegment()
         self._ph_foundations = {}  # type: Dict[str, PhFoundation]
         self.specific_heat_capacity = PhSpecificHeatCapacity("1-LIGHTWEIGHT")
@@ -222,3 +241,9 @@ class RoomPhProperties(object):
 
         for space in self.spaces:
             space.scale(factor, origin=None)
+
+
+def get_ph_prop_from_room(_room):
+    # type: (room.Room) -> RoomPhProperties
+    """Get the RoomPhProperties of a HB-Room object."""
+    return getattr(_room.properties, "ph")
