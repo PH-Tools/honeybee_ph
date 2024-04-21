@@ -1,15 +1,16 @@
 import pytest
+
 from honeybee_energy_ph.hvac.heat_pumps import (
-    PhHeatPumpSystem,
+    PhHeatPumpAnnual,
+    PhHeatPumpCombined,
+    PhHeatPumpCoolingParams,
     PhHeatPumpCoolingParams_Base,
-    PhHeatPumpCoolingParams_Ventilation,
-    PhHeatPumpCoolingParams_Recirculation,
     PhHeatPumpCoolingParams_Dehumidification,
     PhHeatPumpCoolingParams_Panel,
-    PhHeatPumpCoolingParams,
-    PhHeatPumpAnnual,
+    PhHeatPumpCoolingParams_Recirculation,
+    PhHeatPumpCoolingParams_Ventilation,
     PhHeatPumpRatedMonthly,
-    PhHeatPumpCombined,
+    PhHeatPumpSystem,
     PhHeatPumpSystemBuilder,
 )
 

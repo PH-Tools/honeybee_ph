@@ -1,7 +1,8 @@
 import pytest
+
 from honeybee_energy_ph.hvac.renewable_devices import (
-    PhRenewableEnergyDevice,
     PhPhotovoltaicDevice,
+    PhRenewableEnergyDevice,
     PhRenewableEnergyDeviceBuilder,
 )
 

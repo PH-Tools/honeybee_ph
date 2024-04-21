@@ -1,6 +1,6 @@
 from honeybee_phhvac import heat_pumps, heating, supportive_device, ventilation
-from honeybee_phhvac.renewable_devices import PhPhotovoltaicDevice
 from honeybee_phhvac.properties.room import RoomPhHvacProperties
+from honeybee_phhvac.renewable_devices import PhPhotovoltaicDevice
 
 
 def test_default_empty_system_dict_roundtrip():

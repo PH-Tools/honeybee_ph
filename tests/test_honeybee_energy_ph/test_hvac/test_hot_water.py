@@ -1,20 +1,21 @@
 import pytest
+
 from honeybee_energy_ph.hvac.hot_water import (
+    PhHotWaterHeater,
+    PhPipeBranch,
     PhPipeDiameter,
+    PhPipeElement,
     PhPipeMaterial,
     PhPipeSegment,
-    PhPipeElement,
-    PhPipeBranch,
     PhPipeTrunk,
-    PhSHWTankType,
-    PhSHWTank,
-    PhHotWaterHeater,
-    PhSHWHeaterElectric,
     PhSHWHeaterBoiler,
     PhSHWHeaterBoilerWood,
-    PhSHWHeaterDistrict,
-    PhSHWHeaterHeatPump,
     PhSHWHeaterBuilder,
+    PhSHWHeaterDistrict,
+    PhSHWHeaterElectric,
+    PhSHWHeaterHeatPump,
+    PhSHWTank,
+    PhSHWTankType,
 )
 
 

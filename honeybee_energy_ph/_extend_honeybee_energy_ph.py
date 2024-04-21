@@ -23,7 +23,6 @@ from honeybee_energy_ph.properties.construction.opaque import OpaqueConstruction
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
-
 from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
 from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
 from honeybee_energy_ph.properties.load.people import PeoplePhProperties

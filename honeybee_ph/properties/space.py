@@ -2,7 +2,7 @@
 # -*- Python Version: 2.7 -*-
 
 try:
-    from typing import Any, Dict, Optional, TYPE_CHECKING
+    from typing import TYPE_CHECKING, Any, Dict, Optional
 except ImportError:
     TYPE_CHECKING = False
     pass  # Python 2.7

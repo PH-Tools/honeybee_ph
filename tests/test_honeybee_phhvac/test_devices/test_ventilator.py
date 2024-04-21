@@ -1,5 +1,6 @@
-from honeybee_phhvac import ventilation
 from copy import copy
+
+from honeybee_phhvac import ventilation
 
 
 def test_default_ventilator():

@@ -1,9 +1,10 @@
+from copy import copy
+
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
 from honeybee_phhvac import ventilation
 from honeybee_phhvac.ducting import PhDuctElement, PhDuctSegment
-from copy import copy
 
 
 def test_default_vent_system():

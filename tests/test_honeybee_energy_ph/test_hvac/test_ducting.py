@@ -1,4 +1,5 @@
 import pytest
+
 from honeybee_energy_ph.hvac.ducting import PhDuctElement, PhDuctSegment
 
 

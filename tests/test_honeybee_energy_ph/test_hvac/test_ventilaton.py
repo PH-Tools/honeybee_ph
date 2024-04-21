@@ -1,12 +1,13 @@
 import pytest
+
 from honeybee_energy_ph.hvac.ventilation import (
-    Ventilator,
-    PhVentilationSystem,
-    _ExhaustVentilatorBase,
     ExhaustVentDryer,
     ExhaustVentKitchenHood,
     ExhaustVentUserDefined,
     PhExhaustDeviceBuilder,
+    PhVentilationSystem,
+    Ventilator,
+    _ExhaustVentilatorBase,
 )
 
 

@@ -4,21 +4,20 @@
 """Called during __init__ to extend the HB-base class 'properties' with a new '_ph_hvac' attribute."""
 
 from honeybee.properties import (
-    ModelProperties,
-    RoomProperties,
-    FaceProperties,
-    ShadeProperties,
     ApertureProperties,
     DoorProperties,
+    FaceProperties,
+    ModelProperties,
+    RoomProperties,
+    ShadeProperties,
 )
 
-from .properties.model import ModelPhHvacProperties
-from .properties.room import RoomPhHvacProperties
-from .properties.face import FacePhHvacProperties
-from .properties.shade import ShadePhHvacProperties
 from .properties.aperture import AperturePhHvacProperties
 from .properties.door import DoorPhHvacProperties
-
+from .properties.face import FacePhHvacProperties
+from .properties.model import ModelPhHvacProperties
+from .properties.room import RoomPhHvacProperties
+from .properties.shade import ShadePhHvacProperties
 
 # -----------------------------------------------------------------------------
 # Step 1)
