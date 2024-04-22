@@ -37,6 +37,8 @@ def test_phius_cert_serialization_customized():
     phius_cert.int_gains_use_school_defaults = True
     phius_cert.int_gains_dhw_marginal_perf_ratio = None
 
+    phius_cert.icfa_override = 345.67
+
     phius_cert.user_data["test_key"] = "test_value"
 
     d = phius_cert.to_dict()

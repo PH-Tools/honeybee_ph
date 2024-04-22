@@ -114,6 +114,8 @@ class PhiusCertification(_base._Base):
         self.int_gains_use_school_defaults = False
         self.int_gains_dhw_marginal_perf_ratio = None
 
+        self.icfa_override = None  # type: Optional[float]
+
     @property
     def certification_program(self):
         # type: () -> PhiusBuildingCertificationProgram
@@ -204,6 +206,8 @@ class PhiusCertification(_base._Base):
 
         d["user_data"] = copy(self.user_data)
 
+        d["icfa_override"] = self.icfa_override
+
         return d
 
     @classmethod
@@ -233,6 +237,8 @@ class PhiusCertification(_base._Base):
 
         obj.user_data = _dict.get("user_data", {})
 
+        obj.icfa_override = _dict.get("icfa_override")
+
         return obj
 
     def __copy__(self):
@@ -261,6 +267,8 @@ class PhiusCertification(_base._Base):
         obj.int_gains_dhw_marginal_perf_ratio = self.int_gains_dhw_marginal_perf_ratio
 
         obj.user_data = self.user_data
+
+        obj.icfa_override = self.icfa_override
 
         return obj
 

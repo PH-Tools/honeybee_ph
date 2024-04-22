@@ -29,6 +29,7 @@ def test_phi_cert_serialization_customized():
 
     phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings9
     phi_cert_attributes.building_category_type = "1"
+    phi_cert_attributes.tfa_override = 436.89
 
     d = phi_cert.to_dict()
     new_obj = phi.PhiCertification.from_dict(d)
