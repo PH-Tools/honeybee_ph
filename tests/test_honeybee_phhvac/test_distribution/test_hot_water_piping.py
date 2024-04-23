@@ -23,6 +23,19 @@ def test_PhPipeSegment_dict_round_trip():
     assert pipe2.to_dict() != pipe1.to_dict()
 
 
+def test_scale_PhPipeSegment():
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 10)
+    geom = LineSegment3D(p1, p2)
+    pipe1 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=1.0)
+    assert pipe1.length == 10
+    assert pipe1.insulation_thickness == 1.0
+
+    pipe1.scale(2.0)
+
+    assert pipe1.length == 20
+    assert pipe1.insulation_thickness == 2.0
+
+
 # -- Element
 
 
@@ -136,6 +149,22 @@ def test_PhPipeElement_with_two_different_segments_diameter_name():
         assert ele1.diameter_name == "2-1/2IN"
 
 
+def test_scale_PhPipeElement_with_multiple_segments():
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 10)
+    geom = LineSegment3D(p1, p2)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=1.0)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=2.0)
+    ele1 = hot_water_piping.PhHvacPipeElement()
+    ele1.add_segment(seg1)
+    ele1.add_segment(seg2)
+
+    assert ele1.length == 20
+
+    ele1.scale(2.0)
+
+    assert ele1.length == 40
+
+
 # --- Branch
 
 
@@ -163,6 +192,65 @@ def test_PhPipeBranch_dict_round_trip():
     assert "test_key" in branch2.user_data
     assert "test_key" not in branch1.user_data
     assert branch2.to_dict() != branch1.to_dict()
+
+
+def test_PhPipeBranch_with_element_but_no_fixtures():
+    # -- Build the geometry
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 10)
+    geom = LineSegment3D(p1, p2)
+
+    ## -- Set the Branch's Geometry
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele1 = hot_water_piping.PhHvacPipeElement()
+    ele1.add_segment(seg1)
+
+    # -- Build the Branch
+    branch1 = hot_water_piping.PhHvacPipeBranch()
+    branch1.pipe_element = ele1
+
+    assert len(branch1.fixtures) == 0
+    assert branch1.length == 10
+    assert branch1.total_length == 10
+
+    branch2 = branch1.scale(2.0)
+
+    assert len(branch2.fixtures) == 0
+    assert branch2.length == 20
+    assert branch2.total_length == 20
+
+
+def test_PhPipeBranch_with_multiple_fixtures():
+    # -- Build the geometry
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 10)
+    geom = LineSegment3D(p1, p2)
+
+    ## -- Set the Branch's Geometry
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele1 = hot_water_piping.PhHvacPipeElement()
+    ele1.add_segment(seg1)
+
+    # -- Build the Branch
+    branch1 = hot_water_piping.PhHvacPipeBranch()
+    branch1.pipe_element = ele1
+
+    # -- Build and add fixtures
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele2 = hot_water_piping.PhHvacPipeElement()
+    ele2.add_segment(seg2)
+    branch1.add_fixture(ele2)
+
+    seg3 = hot_water_piping.PhHvacPipeSegment(geom)
+    ele3 = hot_water_piping.PhHvacPipeElement()
+    ele3.add_segment(seg3)
+    branch1.add_fixture(ele3)
+
+    assert len(branch1.fixtures) == 2
+    assert branch1.total_length == 30
+
+    branch2 = branch1.scale(2.0)
+
+    assert len(branch2.fixtures) == 2
+    assert branch2.total_length == 60
 
 
 # -- Trunk

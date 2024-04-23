@@ -14,6 +14,11 @@ except ImportError:
     pass  # IronPython
 
 try:
+    from ladybug_geometry.geometry3d.pointvector import Point3D
+except ImportError as e:
+    raise ImportError("Failed to import ladybug_geometry", e)
+
+try:
     from honeybee_phhvac import _base, ducting
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_phhvac:\n\t{}".format(e))
@@ -252,11 +257,11 @@ class PhVentilationSystem(_base._PhHVACBase):
         Args:
             moving_vec: A Vector3D with the direction and distance to move the ray.
         """
-        for duct_element in self.supply_ducting:
-            duct_element.move(moving_vec)
-
-        for duct_element in self.exhaust_ducting:
-            duct_element.move(moving_vec)
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.supply_ducting = [duct_element.move(moving_vec) for duct_element in self.supply_ducting]
+        new_system.exhaust_ducting = [duct_element.move(moving_vec) for duct_element in self.exhaust_ducting]
+        return new_system
 
     def rotate(self, axis, angle, origin):
         """Rotate the System's ducts by a certain angle around an axis and origin.
@@ -270,11 +275,11 @@ class PhVentilationSystem(_base._PhHVACBase):
             angle: An angle for rotation in radians.
             origin: A Point3D for the origin around which the object will be rotated.
         """
-        for duct_element in self.supply_ducting:
-            duct_element.rotate(axis, angle, origin)
-
-        for duct_element in self.exhaust_ducting:
-            duct_element.rotate(axis, angle, origin)
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.supply_ducting = [duct_element.rotate(axis, angle, origin) for duct_element in self.supply_ducting]
+        new_system.exhaust_ducting = [duct_element.rotate(axis, angle, origin) for duct_element in self.exhaust_ducting]
+        return new_system
 
     def rotate_xy(self, angle, origin):
         """Rotate the System's ducts counterclockwise in the XY plane by a certain angle.
@@ -283,11 +288,11 @@ class PhVentilationSystem(_base._PhHVACBase):
             angle: An angle in radians.
             origin: A Point3D for the origin around which the object will be rotated.
         """
-        for duct_element in self.supply_ducting:
-            duct_element.rotate_xy(angle, origin)
-
-        for duct_element in self.exhaust_ducting:
-            duct_element.rotate_xy(angle, origin)
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.supply_ducting = [duct_element.rotate_xy(angle, origin) for duct_element in self.supply_ducting]
+        new_system.exhaust_ducting = [duct_element.rotate_xy(angle, origin) for duct_element in self.exhaust_ducting]
+        return new_system
 
     def reflect(self, normal, origin):
         """Reflected the System's ducts across a plane with the input normal vector and origin.
@@ -297,13 +302,14 @@ class PhVentilationSystem(_base._PhHVACBase):
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
             origin: A Point3D representing the origin from which to reflect.
         """
-        for duct_element in self.supply_ducting:
-            duct_element.reflect(normal, origin)
-
-        for duct_element in self.exhaust_ducting:
-            duct_element.reflect(normal, origin)
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.supply_ducting = [duct_element.reflect(normal, origin) for duct_element in self.supply_ducting]
+        new_system.exhaust_ducting = [duct_element.reflect(normal, origin) for duct_element in self.exhaust_ducting]
+        return new_system
 
     def scale(self, factor, origin=None):
+        # type: (float, Optional[Point3D]) -> PhVentilationSystem
         """Scale the System's ducts by a factor from an origin point.
 
         Args:
@@ -311,11 +317,11 @@ class PhVentilationSystem(_base._PhHVACBase):
             origin: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
-        for duct_element in self.supply_ducting:
-            duct_element.scale(factor, origin)
-
-        for duct_element in self.exhaust_ducting:
-            duct_element.scale(factor, origin)
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.supply_ducting = [duct_element.scale(factor, origin) for duct_element in self.supply_ducting]
+        new_system.exhaust_ducting = [duct_element.scale(factor, origin) for duct_element in self.exhaust_ducting]
+        return new_system
 
 
 # -----------------------------------------------------------------------------

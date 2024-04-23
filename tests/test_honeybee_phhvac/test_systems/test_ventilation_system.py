@@ -160,3 +160,79 @@ def test_scale_system_with_single_exhaust_duct():
     assert sys_1.exhaust_ducting_size_description == "0.305 x 0.914"
     assert sys_1.supply_ducting_total_length == 0
     assert sys_1.supply_ducting_size_description == None
+
+
+def test_scale_system_with_multiple_exhaust_ducts():
+    sys_1 = ventilation.PhVentilationSystem()
+
+    # Build the geometry in INCHES
+    pt_1 = Point3D(0, 0, 0)
+    pt_2 = Point3D(0, 0, 144)
+    line_seg_1 = LineSegment3D(pt_1, pt_2)
+    duct_seg_1 = PhDuctSegment(line_seg_1, _width=12, _height=36)
+    duct_ele_1 = PhDuctElement()
+    duct_ele_1.add_segment(duct_seg_1)
+    sys_1.add_exhaust_duct_element(duct_ele_1)
+
+    pt_3 = Point3D(0, 0, 0)
+    pt_4 = Point3D(0, 0, 144)
+    line_seg_2 = LineSegment3D(pt_3, pt_4)
+    duct_seg_2 = PhDuctSegment(line_seg_2, _width=12, _height=36)
+    duct_ele_2 = PhDuctElement()
+    duct_ele_2.add_segment(duct_seg_2)
+    sys_1.add_exhaust_duct_element(duct_ele_2)
+
+    sys_1.scale(0.0254)
+
+    assert sys_1.exhaust_ducting_total_length == 7.3152
+    assert sys_1.exhaust_ducting_size_description == "0.305 x 0.914"
+    assert sys_1.supply_ducting_total_length == 0
+    assert sys_1.supply_ducting_size_description == None
+
+
+def test_scale_system_with_single_supply_duct():
+    sys_1 = ventilation.PhVentilationSystem()
+
+    # Build the geometry in INCHES
+    pt_1 = Point3D(0, 0, 0)
+    pt_2 = Point3D(0, 0, 144)
+    line_seg_1 = LineSegment3D(pt_1, pt_2)
+    duct_seg_1 = PhDuctSegment(line_seg_1, _diameter=6)
+    duct_ele_1 = PhDuctElement()
+    duct_ele_1.add_segment(duct_seg_1)
+    sys_1.add_supply_duct_element(duct_ele_1)
+
+    sys_1.scale(0.0254)
+
+    assert sys_1.supply_ducting_total_length == 3.6576
+    assert sys_1.supply_ducting_size_description == "0.152 Θ"
+    assert sys_1.exhaust_ducting_total_length == 0
+    assert sys_1.exhaust_ducting_size_description == None
+
+
+def test_scale_system_with_multiple_supply_ducts():
+    sys_1 = ventilation.PhVentilationSystem()
+
+    # Build the geometry in INCHES
+    pt_1 = Point3D(0, 0, 0)
+    pt_2 = Point3D(0, 0, 144)
+    line_seg_1 = LineSegment3D(pt_1, pt_2)
+    duct_seg_1 = PhDuctSegment(line_seg_1, _diameter=6)
+    duct_ele_1 = PhDuctElement()
+    duct_ele_1.add_segment(duct_seg_1)
+    sys_1.add_supply_duct_element(duct_ele_1)
+
+    pt_3 = Point3D(0, 0, 0)
+    pt_4 = Point3D(0, 0, 144)
+    line_seg_2 = LineSegment3D(pt_3, pt_4)
+    duct_seg_2 = PhDuctSegment(line_seg_2, _diameter=6)
+    duct_ele_2 = PhDuctElement()
+    duct_ele_2.add_segment(duct_seg_2)
+    sys_1.add_supply_duct_element(duct_ele_2)
+
+    sys_1.scale(0.0254)
+
+    assert sys_1.supply_ducting_total_length == 7.3152
+    assert sys_1.supply_ducting_size_description == "0.152 Θ"
+    assert sys_1.exhaust_ducting_total_length == 0
+    assert sys_1.exhaust_ducting_size_description == None

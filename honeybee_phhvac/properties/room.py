@@ -403,7 +403,7 @@ class RoomPhHvacProperties(object):
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
         if self._ventilation_system:
-            self._ventilation_system.scale(factor, origin)
+            self.set_ventilation_system(self._ventilation_system.scale(factor, origin))
 
         for sys in self._heating_systems:
             sys.scale(factor, origin)
@@ -421,7 +421,7 @@ class RoomPhHvacProperties(object):
             sys.scale(factor, origin)
 
         if self._hot_water_system:
-            self._hot_water_system.scale(factor, origin)
+            self.set_hot_water_system(self._hot_water_system.scale(factor, origin))
 
     def __str__(self):
         # type: () -> str

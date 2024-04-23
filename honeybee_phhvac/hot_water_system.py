@@ -10,8 +10,16 @@ except:
 
 from uuid import uuid4
 
-from honeybee_phhvac import hot_water_devices as hwd
-from honeybee_phhvac import hot_water_piping as hwp
+try:
+    from ladybug_geometry.geometry3d.pointvector import Point3D
+except ImportError as e:
+    raise ImportError("Failed to import ladybug_geometry", e)
+
+try:
+    from honeybee_phhvac import hot_water_devices as hwd
+    from honeybee_phhvac import hot_water_piping as hwp
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_phhvac", e)
 
 
 class PhHotWaterSystem_FromDictError(Exception):
@@ -382,11 +390,16 @@ class PhHotWaterSystem(object):
         Args:
             moving_vec: A Vector3D with the direction and distance to move the ray.
         """
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.clear_distribution_piping()
+        new_system.clear_recirc_piping()
+
         for k, pipe in self._distribution_piping.items():
-            pipe.move(moving_vec)
+            new_system.add_distribution_piping(pipe.move(moving_vec), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            pipe.move(moving_vec)
+            new_system.add_recirc_piping(pipe.move(moving_vec), _key=k)
 
     def rotate(self, axis, angle, origin):
         """Rotate the System's piping by a certain angle around an axis and origin.
@@ -400,11 +413,16 @@ class PhHotWaterSystem(object):
             angle: An angle for rotation in radians.
             origin: A Point3D for the origin around which the object will be rotated.
         """
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.clear_distribution_piping()
+        new_system.clear_recirc_piping()
+
         for k, pipe in self._distribution_piping.items():
-            pipe.rotate(axis, angle, origin)
+            new_system.add_distribution_piping(pipe.rotate(axis, angle, origin), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            pipe.rotate(axis, angle, origin)
+            new_system.add_recirc_piping(pipe.rotate(axis, angle, origin), _key=k)
 
     def rotate_xy(self, angle, origin):
         """Rotate the System's piping counterclockwise in the XY plane by a certain angle.
@@ -413,11 +431,16 @@ class PhHotWaterSystem(object):
             angle: An angle in radians.
             origin: A Point3D for the origin around which the object will be rotated.
         """
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.clear_distribution_piping()
+        new_system.clear_recirc_piping()
+
         for k, pipe in self._distribution_piping.items():
-            pipe.rotate_xy(angle, origin)
+            new_system.add_distribution_piping(pipe.rotate_xy(angle, origin), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            pipe.rotate_xy(angle, origin)
+            new_system.add_recirc_piping(pipe.rotate_xy(angle, origin), _key=k)
 
     def reflect(self, normal, origin):
         """Reflected the System's piping across a plane with the input normal vector and origin.
@@ -427,13 +450,19 @@ class PhHotWaterSystem(object):
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
             origin: A Point3D representing the origin from which to reflect.
         """
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.clear_distribution_piping()
+        new_system.clear_recirc_piping()
+
         for k, pipe in self._distribution_piping.items():
-            pipe.reflect(normal, origin)
+            new_system.add_distribution_piping(pipe.reflect(normal, origin), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            pipe.reflect(normal, origin)
+            new_system.add_recirc_piping(pipe.reflect(normal, origin), _key=k)
 
     def scale(self, factor, origin=None):
+        # type: (float, Optional[Point3D]) -> PhHotWaterSystem
         """Scale the System's piping by a factor from an origin point.
 
         Args:
@@ -441,8 +470,15 @@ class PhHotWaterSystem(object):
             origin: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
+        new_system = self.duplicate()
+        new_system.identifier = self.identifier
+        new_system.clear_distribution_piping()
+        new_system.clear_recirc_piping()
+
         for k, pipe in self._distribution_piping.items():
-            pipe.scale(factor, origin)
+            new_system.add_distribution_piping(pipe.scale(factor, origin), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            pipe.scale(factor, origin)
+            new_system.add_recirc_piping(pipe.scale(factor, origin), _key=k)
+
+        return new_system
