@@ -277,13 +277,151 @@ class RoomPhHvacProperties(object):
 
         return new_obj
 
-    def scale(self, factor, origin=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> None
-        """Scale the room, and all the spaces in the room by a specified factor."""
-        # TODO: Scale any ducts and pipes
-        return None
+    def move(self, moving_vec):
+        """Move the Room's HVAC Systems along a vector.
 
-    # TODO: Add other Transforms
+        Args:
+            moving_vec: A Vector3D with the direction and distance to move the ray.
+        """
+        if self._ventilation_system:
+            self._ventilation_system.move(moving_vec)
+
+        for sys in self._heating_systems:
+            sys.move(moving_vec)
+
+        for sys in self._heat_pump_systems:
+            sys.move(moving_vec)
+
+        for sys in self._exhaust_vent_devices:
+            sys.move(moving_vec)
+
+        for sys in self._supportive_devices:
+            sys.move(moving_vec)
+
+        for sys in self._renewable_devices:
+            sys.move(moving_vec)
+
+        if self._hot_water_system:
+            self._hot_water_system.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate the Room's HVAC Systems by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis: A Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        if self._ventilation_system:
+            self._ventilation_system.rotate(axis, angle, origin)
+
+        for sys in self._heating_systems:
+            sys.rotate(axis, angle, origin)
+
+        for sys in self._heat_pump_systems:
+            sys.rotate(axis, angle, origin)
+
+        for sys in self._exhaust_vent_devices:
+            sys.rotate(axis, angle, origin)
+
+        for sys in self._supportive_devices:
+            sys.rotate(axis, angle, origin)
+
+        for sys in self._renewable_devices:
+            sys.rotate(axis, angle, origin)
+
+        if self._hot_water_system:
+            self._hot_water_system.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate the Room's HVAC Systems counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle: An angle in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        if self._ventilation_system:
+            self._ventilation_system.rotate_xy(angle, origin)
+
+        for sys in self._heating_systems:
+            sys.rotate_xy(angle, origin)
+
+        for sys in self._heat_pump_systems:
+            sys.rotate_xy(angle, origin)
+
+        for sys in self._exhaust_vent_devices:
+            sys.rotate_xy(angle, origin)
+
+        for sys in self._supportive_devices:
+            sys.rotate_xy(angle, origin)
+
+        for sys in self._renewable_devices:
+            sys.rotate_xy(angle, origin)
+
+        if self._hot_water_system:
+            self._hot_water_system.rotate_xy(angle, origin)
+
+    def reflect(self, normal, origin):
+        """Reflected the Room's HVAC Systems across a plane with the input normal vector and origin.
+
+        Args:
+            normal: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin: A Point3D representing the origin from which to reflect.
+        """
+        if self._ventilation_system:
+            self._ventilation_system.reflect(normal, origin)
+
+        for sys in self._heating_systems:
+            sys.reflect(normal, origin)
+
+        for sys in self._heat_pump_systems:
+            sys.reflect(normal, origin)
+
+        for sys in self._exhaust_vent_devices:
+            sys.reflect(normal, origin)
+
+        for sys in self._supportive_devices:
+            sys.reflect(normal, origin)
+
+        for sys in self._renewable_devices:
+            sys.reflect(normal, origin)
+
+        if self._hot_water_system:
+            self._hot_water_system.reflect(normal, origin)
+
+    def scale(self, factor, origin=None):
+        """Scale the Room's HVAC Systems by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the line segment should be scaled.
+            origin: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        if self._ventilation_system:
+            self._ventilation_system.scale(factor, origin)
+
+        for sys in self._heating_systems:
+            sys.scale(factor, origin)
+
+        for sys in self._heat_pump_systems:
+            sys.scale(factor, origin)
+
+        for sys in self._exhaust_vent_devices:
+            sys.scale(factor, origin)
+
+        for sys in self._supportive_devices:
+            sys.scale(factor, origin)
+
+        for sys in self._renewable_devices:
+            sys.scale(factor, origin)
+
+        if self._hot_water_system:
+            self._hot_water_system.scale(factor, origin)
 
     def __str__(self):
         # type: () -> str

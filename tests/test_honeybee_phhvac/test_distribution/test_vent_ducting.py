@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.polyline import LineSegment3D
@@ -104,7 +102,7 @@ def test_shape_type_description_round():
     geom = LineSegment3D(p1, p2)
     o1 = PhDuctSegment(geom)
 
-    assert o1.shape_type_description == "160.00mm Θ"
+    assert o1.shape_type_description == "0.160 Θ"
 
 
 def test_shape_type_description_rectangular():
@@ -115,7 +113,7 @@ def test_shape_type_description_rectangular():
     o1.width = 100
     o1.height = 200
 
-    assert o1.shape_type_description == "100mm x 200mm"
+    assert o1.shape_type_description == "100.000 x 200.000"
 
 
 # -- PhDuctElement ---
@@ -175,7 +173,7 @@ def test_single_round_element_shape_type_description():
     ele1 = PhDuctElement()
     ele1.add_segment(PhDuctSegment.default())
 
-    assert ele1.shape_type_description == "160.00mm Θ"
+    assert ele1.shape_type_description == "0.160 Θ"
 
 
 def test_multiple_round_element_shape_type_description():
@@ -183,7 +181,7 @@ def test_multiple_round_element_shape_type_description():
     ele1.add_segment(PhDuctSegment.default())
     ele1.add_segment(PhDuctSegment.default())
 
-    assert ele1.shape_type_description == "160.00mm Θ"
+    assert ele1.shape_type_description == "0.160 Θ"
 
 
 def test_multiple_round_elements_with_different_shape_type_description_raises_error():
@@ -213,7 +211,7 @@ def test_single_rectangular_element_shape_type_description():
     ele1.segments[0].width = 100
     ele1.segments[0].height = 200
 
-    assert ele1.shape_type_description == "100mm x 200mm"
+    assert ele1.shape_type_description == "100.000 x 200.000"
 
 
 def test_multiple_rectangular_with_same_shape_shape_type_description():
@@ -224,7 +222,7 @@ def test_multiple_rectangular_with_same_shape_shape_type_description():
     ele1.add_segment(PhDuctSegment(geom, _width=100, _height=200))
     ele1.add_segment(PhDuctSegment(geom, _width=100, _height=200))
 
-    assert ele1.shape_type_description == "100mm x 200mm"
+    assert ele1.shape_type_description == "100.000 x 200.000"
 
 
 def test_multiple_rectangular_with_different_shape_shape_type_description_raises_error():

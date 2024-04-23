@@ -114,7 +114,7 @@ def test_supply_round_ducting_size_description():
     e1.add_segment(d1)
 
     o1.add_supply_duct_element(e1)
-    assert o1.supply_ducting_size_description == "160.00mm Θ"
+    assert o1.supply_ducting_size_description == "0.160 Θ"
 
 
 def test_exhaust_rectangular_ducting_size_description():
@@ -129,4 +129,34 @@ def test_exhaust_rectangular_ducting_size_description():
     e1.add_segment(d1)
 
     o1.add_exhaust_duct_element(e1)
-    assert o1.exhaust_ducting_size_description == "100mm x 200mm"
+    assert o1.exhaust_ducting_size_description == "100.000 x 200.000"
+
+
+# -- Transforms -------
+
+
+def test_scale_system_with_no_ducts():
+    o1 = ventilation.PhVentilationSystem()
+    o1.scale(0.0254)
+    assert o1.supply_ducting_total_length == 0
+    assert o1.exhaust_ducting_total_length == 0
+
+
+def test_scale_system_with_single_exhaust_duct():
+    sys_1 = ventilation.PhVentilationSystem()
+
+    # Build the geometry in INCHES
+    pt_1 = Point3D(0, 0, 0)
+    pt_2 = Point3D(0, 0, 144)
+    line_seg_1 = LineSegment3D(pt_1, pt_2)
+    duct_seg_1 = PhDuctSegment(line_seg_1, _width=12, _height=36)
+    duct_ele_1 = PhDuctElement()
+    duct_ele_1.add_segment(duct_seg_1)
+    sys_1.add_exhaust_duct_element(duct_ele_1)
+
+    sys_1.scale(0.0254)
+
+    assert sys_1.exhaust_ducting_total_length == 3.6576
+    assert sys_1.exhaust_ducting_size_description == "0.305 x 0.914"
+    assert sys_1.supply_ducting_total_length == 0
+    assert sys_1.supply_ducting_size_description == None

@@ -68,6 +68,57 @@ class PhRenewableEnergyDevice(_base._PhHVACBase):
         # type: (PhRenewableEnergyDevice) -> bool
         return self.identifier < other.identifier
 
+    def move(self, moving_vec):
+        """Move the device along a vector.
+
+        Args:
+            moving_vec: A Vector3D with the direction and distance to move the ray.
+        """
+        pass
+
+    def rotate(self, axis, angle, origin):
+        """Rotate the device by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis: A Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        pass
+
+    def rotate_xy(self, angle, origin):
+        """Rotate the device counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle: An angle in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        pass
+
+    def reflect(self, normal, origin):
+        """Reflected the device across a plane with the input normal vector and origin.
+
+        Args:
+            normal: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin: A Point3D representing the origin from which to reflect.
+        """
+        pass
+
+    def scale(self, factor, origin=None):
+        """Scale the device by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the line segment should be scaled.
+            origin: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        pass
+
 
 # -----------------------------------------------------------------------------
 # Renewable Energy Device Types
