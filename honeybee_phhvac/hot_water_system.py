@@ -43,7 +43,7 @@ class PhHotWaterSystem(object):
     def total_distribution_pipe_length(self):
         # type: () -> float
         """Returns the total length of all trunk, branch, and fixture piping."""
-        return sum(_.total_length_m for _ in self._distribution_piping.values())
+        return sum(_.total_length for _ in self._distribution_piping.values())
 
     @property
     def total_home_run_fixture_pipe_length(self):
@@ -62,7 +62,7 @@ class PhHotWaterSystem(object):
     def total_recirc_pipe_length(self):
         # type: () -> float
         """Returns the total length of all recirculation piping."""
-        return sum(_.length_m for _ in self._recirc_piping.values())
+        return sum(_.length for _ in self._recirc_piping.values())
 
     @property
     def recirc_temp(self):
@@ -70,7 +70,7 @@ class PhHotWaterSystem(object):
         """Return the length weighted average of recirculation piping temperatures"""
         if not self._recirc_piping or self.total_recirc_pipe_length == 0:
             return 60.0
-        return sum([v.water_temp * v.length_m for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
+        return sum([v.water_temp * v.length for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
 
     @property
     def recirc_hours(self):
@@ -79,7 +79,7 @@ class PhHotWaterSystem(object):
         if not self._recirc_piping or self.total_recirc_pipe_length == 0:
             return 24
         return int(
-            sum([v.daily_period * v.length_m for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
+            sum([v.daily_period * v.length for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
         )
 
     @property
@@ -382,7 +382,11 @@ class PhHotWaterSystem(object):
         Args:
             moving_vec: A Vector3D with the direction and distance to move the ray.
         """
-        pass
+        for k, pipe in self._distribution_piping.items():
+            pipe.move(moving_vec)
+
+        for k, pipe in self._recirc_piping.items():
+            pipe.move(moving_vec)
 
     def rotate(self, axis, angle, origin):
         """Rotate the System's piping by a certain angle around an axis and origin.
@@ -396,7 +400,11 @@ class PhHotWaterSystem(object):
             angle: An angle for rotation in radians.
             origin: A Point3D for the origin around which the object will be rotated.
         """
-        pass
+        for k, pipe in self._distribution_piping.items():
+            pipe.rotate(axis, angle, origin)
+
+        for k, pipe in self._recirc_piping.items():
+            pipe.rotate(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
         """Rotate the System's piping counterclockwise in the XY plane by a certain angle.
@@ -405,7 +413,11 @@ class PhHotWaterSystem(object):
             angle: An angle in radians.
             origin: A Point3D for the origin around which the object will be rotated.
         """
-        pass
+        for k, pipe in self._distribution_piping.items():
+            pipe.rotate_xy(angle, origin)
+
+        for k, pipe in self._recirc_piping.items():
+            pipe.rotate_xy(angle, origin)
 
     def reflect(self, normal, origin):
         """Reflected the System's piping across a plane with the input normal vector and origin.
@@ -415,7 +427,11 @@ class PhHotWaterSystem(object):
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
             origin: A Point3D representing the origin from which to reflect.
         """
-        pass
+        for k, pipe in self._distribution_piping.items():
+            pipe.reflect(normal, origin)
+
+        for k, pipe in self._recirc_piping.items():
+            pipe.reflect(normal, origin)
 
     def scale(self, factor, origin=None):
         """Scale the System's piping by a factor from an origin point.
@@ -425,4 +441,8 @@ class PhHotWaterSystem(object):
             origin: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
-        pass
+        for k, pipe in self._distribution_piping.items():
+            pipe.scale(factor, origin)
+
+        for k, pipe in self._recirc_piping.items():
+            pipe.scale(factor, origin)

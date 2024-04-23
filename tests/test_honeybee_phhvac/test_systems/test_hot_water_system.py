@@ -189,13 +189,13 @@ def test_total_home_run_fixture_pipe_length():
 
     fixture1 = hwp.PhHvacPipeElement()
     fixture1.add_segment(pipe_segment_1)
-    assert fixture1.length_m == 30.0
+    assert fixture1.length == 30.0
 
     branch1 = hwp.PhHvacPipeBranch()
     branch1.pipe_element = pipe_element_1
     branch1.add_fixture(fixture1)
-    assert branch1.length_m == 30.0
-    assert branch1.total_length_m == 60.0
+    assert branch1.length == 30.0
+    assert branch1.total_length == 60.0
     assert branch1.total_home_run_fixture_length == 60.0
 
     trunk1 = hwp.PhHvacPipeTrunk()

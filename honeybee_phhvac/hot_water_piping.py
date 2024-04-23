@@ -26,7 +26,7 @@ except ImportError as e:
     raise ImportError("Failed to import honeybee_ph_utils", e)
 
 
-# -- Piping ---------------------------------------------------------------------
+# -- Piping  Enums ------------------------------------------------------------
 
 
 class PhPipeDiameter(enumerables.CustomEnum):
@@ -87,6 +87,9 @@ class PhHvacPipeMaterial(enumerables.CustomEnum):
         return hash(self.value)
 
 
+# -- Piping -------------------------------------------------------------------
+
+
 class PhHvacPipeSegment(_base._PhHVACBase):
     """A single pipe segment (linear) with geometry and a diameter"""
 
@@ -94,7 +97,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         self,
         _geom,
         _diameter=2,
-        _insul_thickness_m=0.0127,
+        _insul_thickness=0.0127,
         _insul_conductivity=0.04,
         _insul_refl=True,
         _insul_quality=None,
@@ -108,7 +111,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         super(PhHvacPipeSegment, self).__init__()
         self.geometry = _geom
         self.diameter = PhPipeDiameter(_diameter)
-        self.insulation_thickness_m = _insul_thickness_m
+        self.insulation_thickness = _insul_thickness
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
         self.insulation_quality = _insul_quality
@@ -117,8 +120,9 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         self.material = PhHvacPipeMaterial(_material)
 
     @property
-    def length_m(self):
+    def length(self):
         # type: () -> float
+        """Return the length of the pipe segment in model-units."""
         return self.geometry.length
 
     def __copy__(self):
@@ -127,7 +131,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
 
         new_obj.diameter = PhPipeDiameter(self.diameter.value)
         new_obj.material = PhHvacPipeMaterial(self.material.value)
-        new_obj.insulation_thickness_m = self.insulation_thickness_m
+        new_obj.insulation_thickness = self.insulation_thickness
         new_obj.insulation_conductivity = self.insulation_conductivity
         new_obj.insulation_reflective = self.insulation_reflective
         new_obj.insulation_quality = self.insulation_quality
@@ -149,7 +153,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         d["geometry"] = self.geometry.to_dict()
         d["diameter_value"] = self.diameter.value
         d["material_value"] = self.material.value
-        d["insulation_thickness_m"] = self.insulation_thickness_m
+        d["insulation_thickness"] = self.insulation_thickness
         d["insulation_conductivity"] = self.insulation_conductivity
         d["insulation_reflective"] = self.insulation_reflective
         d["insulation_quality"] = self.insulation_quality
@@ -163,7 +167,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         new_obj = cls(_geom=LineSegment3D.from_dict(_input_dict["geometry"]))
         new_obj.diameter = PhPipeDiameter(_input_dict["diameter_value"])
         new_obj.material = PhHvacPipeMaterial(_input_dict["material_value"])
-        new_obj.insulation_thickness_m = _input_dict["insulation_thickness_m"]
+        new_obj.insulation_thickness = _input_dict["insulation_thickness"]
         new_obj.insulation_conductivity = _input_dict["insulation_conductivity"]
         new_obj.insulation_reflective = _input_dict["insulation_reflective"]
         new_obj.insulation_quality = _input_dict["insulation_quality"]
@@ -176,13 +180,65 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter.value, self.length_m)
+        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter.value, self.length)
 
     def __repr__(self):
         return str(self)
 
     def ToString(self):
         return self.__repr__()
+
+    def move(self, moving_vec):
+        """Move the pipe's geometry along a vector.
+
+        Args:
+            moving_vec: A Vector3D with the direction and distance to move the ray.
+        """
+        self.geometry.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate the pipe's geometry by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis: A Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        self.geometry.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate the pipe's geometry counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle: An angle in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        self.geometry.rotate_xy(angle, origin)
+
+    def reflect(self, normal, origin):
+        """Reflected the pipe's geometry across a plane with the input normal vector and origin.
+
+        Args:
+            normal: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin: A Point3D representing the origin from which to reflect.
+        """
+        self.geometry.reflect(normal, origin)
+
+    def scale(self, factor, origin=None):
+        """Scale the pipe's geometry by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the line segment should be scaled.
+            origin: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        self.geometry = self.geometry.scale(factor, origin)
+        self.insulation_thickness *= factor
 
 
 class PhHvacPipeElement(_base._PhHVACBase):
@@ -198,19 +254,20 @@ class PhHvacPipeElement(_base._PhHVACBase):
         return list(self._segments.values())
 
     @property
-    def length_m(self):
+    def length(self):
         # type: () -> float
-        return sum(s.length_m for s in self.segments)
+        """Return the total length of the pipe element in model-units."""
+        return sum(s.length for s in self.segments)
 
     @property
     def water_temp(self):
         # Return the length-weighted average water temperature of all the pipe segments
-        return sum(s.length_m * s.water_temp for s in self.segments) / self.length_m
+        return sum(s.length * s.water_temp for s in self.segments) / self.length
 
     @property
     def daily_period(self):
         # Return the length-weighted average daily period of all the pipe segments
-        return sum(s.length_m * s.daily_period for s in self.segments) / self.length_m
+        return sum(s.length * s.daily_period for s in self.segments) / self.length
 
     @property
     def segment_names(self):
@@ -290,7 +347,7 @@ class PhHvacPipeElement(_base._PhHVACBase):
             self.display_name,
             self.identifier_short,
             len(self.segments),
-            self.length_m,
+            self.length,
         )
 
     def __repr__(self):
@@ -298,6 +355,62 @@ class PhHvacPipeElement(_base._PhHVACBase):
 
     def ToString(self):
         return self.__repr__()
+
+    def move(self, moving_vec):
+        """Move the pipe's segments along a vector.
+
+        Args:
+            moving_vec: A Vector3D with the direction and distance to move the ray.
+        """
+        for segment in self._segments.values():
+            segment.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate the pipe's segments by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis: A Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        for segment in self._segments.values():
+            segment.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate the pipe's segments counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle: An angle in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        for segment in self._segments.values():
+            segment.rotate_xy(angle, origin)
+
+    def reflect(self, normal, origin):
+        """Reflected the pipe's segments across a plane with the input normal vector and origin.
+
+        Args:
+            normal: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin: A Point3D representing the origin from which to reflect.
+        """
+        for segment in self._segments.values():
+            segment.reflect(normal, origin)
+
+    def scale(self, factor, origin=None):
+        """Scale the pipe's segments by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the line segment should be scaled.
+            origin: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for segment in self._segments.values():
+            segment.scale(factor, origin)
 
 
 class PhHvacPipeBranch(_base._PhHVACBase):
@@ -335,12 +448,12 @@ class PhHvacPipeBranch(_base._PhHVACBase):
         return self.pipe_element.segments
 
     @property
-    def length_m(self):
+    def length(self):
         # type: () -> float
-        """Return the total length of the branch itself.
+        """Return the total length of the branch itself in model-units.
         For the total length of the Branch PLUS all fixtures, use 'total_length_m'.
         """
-        return float(self.pipe_element.length_m)
+        return float(self.pipe_element.length)
 
     @property
     def water_temp(self):
@@ -358,10 +471,10 @@ class PhHvacPipeBranch(_base._PhHVACBase):
         return len(self.fixtures)
 
     @property
-    def total_length_m(self):
+    def total_length(self):
         # type: () -> float
-        """Return the total length of the branch PLUS all fixture pipes."""
-        return self.length_m + sum(f.length_m for f in self.fixtures)
+        """Return the total length of the branch PLUS all fixture pipes in model-units."""
+        return self.length + sum(f.length for f in self.fixtures)
 
     @property
     def total_home_run_fixture_length(self):
@@ -374,11 +487,11 @@ class PhHvacPipeBranch(_base._PhHVACBase):
         PHPP calculations and is not a true representation of the piping in the
         model.
         """
-        return sum(fixture.length_m + self.length_m for fixture in self.fixtures)
+        return sum(fixture.length + self.length for fixture in self.fixtures)
 
     def add_fixture(self, _fixture):
         # type: (PhHvacPipeElement) -> None
-        """Add a new HBPH PhPipeBranch to the Trunk."""
+        """Add a new HBPH Fixture (twig) PhPipeBranch to the Trunk."""
         self.fixtures.append(_fixture)
 
     def __copy__(self):
@@ -428,7 +541,7 @@ class PhHvacPipeBranch(_base._PhHVACBase):
             self.display_name,
             self.identifier_short,
             len(self.segments),
-            float(self.length_m),
+            float(self.length),
             len(self.fixtures),
         )
 
@@ -439,6 +552,67 @@ class PhHvacPipeBranch(_base._PhHVACBase):
     def ToString(self):
         # type: () -> str
         return self.__repr__()
+
+    def move(self, moving_vec):
+        """Move the pipe's elements along a vector.
+
+        Args:
+            moving_vec: A Vector3D with the direction and distance to move the ray.
+        """
+        self.pipe_element.move(moving_vec)
+        for fixture in self.fixtures:
+            fixture.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate the pipe's elements by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis: A Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        self.pipe_element.rotate(axis, angle, origin)
+        for fixture in self.fixtures:
+            fixture.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate the pipe's elements counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle: An angle in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        self.pipe_element.rotate_xy(angle, origin)
+        for fixture in self.fixtures:
+            fixture.rotate_xy(angle, origin)
+
+    def reflect(self, normal, origin):
+        """Reflected the pipe's elements across a plane with the input normal vector and origin.
+
+        Args:
+            normal: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin: A Point3D representing the origin from which to reflect.
+        """
+        self.pipe_element.reflect(normal, origin)
+        for fixture in self.fixtures:
+            fixture.reflect(normal, origin)
+
+    def scale(self, factor, origin=None):
+        """Scale the pipe's elements by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the line segment should be scaled.
+            origin: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        self.pipe_element.scale(factor, origin)
+        for fixture in self.fixtures:
+            fixture.scale(factor, origin)
 
 
 class PhHvacPipeTrunk(_base._PhHVACBase):
@@ -467,9 +641,10 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         return self.pipe_element.segments
 
     @property
-    def length_m(self):
+    def length(self):
         # type: () -> float
-        return self.pipe_element.length_m
+        """Return the total length of the trunk itself in model-units."""
+        return self.pipe_element.length
 
     @property
     def water_temp(self):
@@ -487,10 +662,10 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         return sum(branch.num_fixtures for branch in self.branches)
 
     @property
-    def total_length_m(self):
+    def total_length(self):
         # type: () -> float
-        """Return the total length of the trunk PLUS all branches and fixture pipes."""
-        return self.length_m + sum(branch.total_length_m for branch in self.branches)
+        """Return the total length of the trunk PLUS all branches and fixture pipes in model-units."""
+        return self.length + sum(branch.total_length for branch in self.branches)
 
     @property
     def total_home_run_fixture_length(self):
@@ -503,7 +678,7 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         PHPP calculations and is not a true representation of the piping in the
         model.
         """
-        return sum(self.length_m + branch.total_home_run_fixture_length for branch in self.branches)
+        return sum(self.length + branch.total_home_run_fixture_length for branch in self.branches)
 
     def add_branch(self, _branch):
         # type: (PhHvacPipeBranch) -> None
@@ -561,7 +736,7 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
             self.identifier_short,
             self.multiplier,
             len(self.segments),
-            float(self.length_m),
+            float(self.length),
             len(self.branches),
         )
 
@@ -572,3 +747,64 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
     def ToString(self):
         # type: () -> str
         return self.__repr__()
+
+    def move(self, moving_vec):
+        """Move the pipe's elements along a vector.
+
+        Args:
+            moving_vec: A Vector3D with the direction and distance to move the ray.
+        """
+        self.pipe_element.move(moving_vec)
+        for branch in self.branches:
+            branch.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate the pipe's elements by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis: A Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        self.pipe_element.rotate(axis, angle, origin)
+        for branch in self.branches:
+            branch.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate the pipe's elements counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle: An angle in radians.
+            origin: A Point3D for the origin around which the object will be rotated.
+        """
+        self.pipe_element.rotate_xy(angle, origin)
+        for branch in self.branches:
+            branch.rotate_xy(angle, origin)
+
+    def reflect(self, normal, origin):
+        """Reflected the pipe's elements across a plane with the input normal vector and origin.
+
+        Args:
+            normal: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin: A Point3D representing the origin from which to reflect.
+        """
+        self.pipe_element.reflect(normal, origin)
+        for branch in self.branches:
+            branch.reflect(normal, origin)
+
+    def scale(self, factor, origin=None):
+        """Scale the pipe's elements by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the line segment should be scaled.
+            origin: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        self.pipe_element.scale(factor, origin)
+        for branch in self.branches:
+            branch.scale(factor, origin)
