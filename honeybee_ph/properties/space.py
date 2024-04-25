@@ -173,11 +173,13 @@ class SpacePhProperties(object):
     @property
     def has_ventilation_flow_rates(self):
         # type: () -> bool
+        """Return True if any of the Passive House ventilation flow rate overrides (sup, eta, trans) are set."""
         return any([self._v_sup, self._v_eta, self._v_tran])
 
     @property
     def honeybee_flow_rate(self):
         # type: () -> Optional[float]
+        """Return the maximum of the Passive House ventilation flow rate overrides (sup, eta, trans), or None if none are set."""
         if not self.has_ventilation_flow_rates:
             return None
         return max([self._v_sup or 0, self._v_eta or 0, self._v_tran or 0])

@@ -1,10 +1,9 @@
 import pytest
+from honeybee.units import conversion_factor_to_meters
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.polyline import LineSegment3D
-from honeybee.units import conversion_factor_to_meters
 
 from honeybee_phhvac.ducting import PhDuctElement, PhDuctSegment
-
 
 INCH_TO_METER_FACTOR = conversion_factor_to_meters("Inches")
 

@@ -103,10 +103,10 @@ class SpaceFloorSegment(_base._Base):
         new_obj.display_name = self.display_name
         new_obj.user_data = self.user_data
 
-        if self.geometry:
+        if self.geometry is not None:
             new_obj.geometry = self.duplicate_geometry()
 
-        if self.reference_point:
+        if self.reference_point is not None:
             new_obj.reference_point = self.reference_point.duplicate()
 
         new_obj.weighting_factor = self.weighting_factor

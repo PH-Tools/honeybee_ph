@@ -6,13 +6,13 @@
 from copy import copy
 
 try:
-    from typing import Any, Dict, List, Union, Optional
+    from typing import Any, Dict, List, Optional, Union
 except ImportError:
     pass  # IronPython
 
 try:
-    from ladybug_geometry.geometry3d.polyline import LineSegment3D
     from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+    from ladybug_geometry.geometry3d.polyline import LineSegment3D
 except ImportError as e:
     raise ImportError("Failed to import ladybug_geometry", e)
 

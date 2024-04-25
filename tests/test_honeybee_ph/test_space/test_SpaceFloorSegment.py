@@ -1,4 +1,5 @@
 import pytest
+from ladybug_geometry.geometry3d.pointvector import Point3D
 
 from honeybee_ph import space
 
@@ -75,6 +76,32 @@ def test_flr_seg_duplication_with_geom(floor_segment_geometry):
     seg = space.SpaceFloorSegment()
     seg.geometry = floor_segment_geometry.flr_segment_1
     seg.weighting_factor = 0.856
+
+    seg2 = seg.duplicate()
+    assert seg.geometry == seg2.geometry
+    assert seg.weighting_factor == seg2.weighting_factor
+    assert seg.reference_point == seg2.reference_point
+    assert seg.weighted_floor_area == seg2.weighted_floor_area
+
+
+def test_flr_seg_duplication_with_reference_point_at_0_0_0(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 0.856
+    seg.reference_point = Point3D(0, 0, 0)
+
+    seg2 = seg.duplicate()
+    assert seg.geometry == seg2.geometry
+    assert seg.weighting_factor == seg2.weighting_factor
+    assert seg.reference_point == seg2.reference_point
+    assert seg.weighted_floor_area == seg2.weighted_floor_area
+
+
+def test_flr_seg_duplication_with_reference_point(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 0.856
+    seg.reference_point = Point3D(1, 2, 3)
 
     seg2 = seg.duplicate()
     assert seg.geometry == seg2.geometry
