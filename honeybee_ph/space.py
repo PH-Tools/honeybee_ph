@@ -58,8 +58,8 @@ class SpaceFloorSegment(_base._Base):
         else:
             return 0
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, include_mesh=False, *args, **kwargs):
+        # type: (bool, list, dict) -> Dict[str, Any]
         d = {}
 
         d["identifier"] = self.identifier
@@ -71,6 +71,9 @@ class SpaceFloorSegment(_base._Base):
             d["geometry"] = self.geometry.to_dict()
         if self.reference_point:
             d["reference_point"] = self.reference_point.to_dict()
+
+        if include_mesh and self.geometry:
+            d["mesh"] = self.geometry.triangulated_mesh3d.to_dict()
 
         return d
 
@@ -228,8 +231,8 @@ class SpaceFloor(_base._Base):
             msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(self)
             raise AttributeError(msg, e)
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, include_mesh=False, *args, **kwargs):
+        # type: (bool, list, dict) -> Dict[str, Any]
         d = {}
 
         d["identifier"] = self.identifier
@@ -238,6 +241,9 @@ class SpaceFloor(_base._Base):
 
         d["floor_segments"] = [seg.to_dict() for seg in self.floor_segments]
         d["geometry"] = self.geometry.to_dict() if self.geometry else None
+
+        if include_mesh and self.geometry:
+            d["mesh"] = self.geometry.triangulated_mesh3d.to_dict()
 
         return d
 
@@ -351,8 +357,8 @@ class SpaceVolume(_base._Base):
             new_volume.geometry = [geo.duplicate() for geo in self.geometry]
         return new_volume
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, include_mesh=False, *args, **kwargs):
+        # type: (bool, list, dict) -> Dict[str, Any]
         d = {}
 
         d["identifier"] = self.identifier
@@ -360,8 +366,13 @@ class SpaceVolume(_base._Base):
         d["user_data"] = copy(self.user_data)
 
         d["avg_ceiling_height"] = self.avg_ceiling_height
-        d["floor"] = self.floor.to_dict()
-        d["geometry"] = [geom.to_dict() for geom in self.geometry]
+        d["floor"] = self.floor.to_dict(include_mesh)
+        d["geometry"] = []
+        for geom in self.geometry:
+            g_dict = geom.to_dict()
+            if include_mesh:
+                g_dict["mesh"] = geom.triangulated_mesh3d.to_dict()
+            d["geometry"].append(g_dict)
 
         return d
 
@@ -539,8 +550,8 @@ class Space(_base._Base):
 
         return new_space
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, include_mesh=False, *args, **kwargs):
+        # type: (bool, list, dict) -> Dict[str, Any]
         d = {}
 
         d["identifier"] = self.identifier
@@ -550,7 +561,7 @@ class Space(_base._Base):
         d["wufi_type"] = self.wufi_type
         d["name"] = self.name
         d["number"] = self.number
-        d["volumes"] = [vol.to_dict() for vol in self.volumes]
+        d["volumes"] = [vol.to_dict(include_mesh) for vol in self.volumes]
         d["properties"] = self.properties.to_dict()
 
         return d

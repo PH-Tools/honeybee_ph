@@ -49,6 +49,21 @@ def test_floor_serialize_with_segments(floor_segment_geometry):
     assert d1 == d2
 
 
+def test_floor_serialize_with_segments_and_mesh(floor_segment_geometry):
+    seg1 = space.SpaceFloorSegment()
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+
+    floor = space.SpaceFloor()
+    floor.add_floor_segment(seg1)
+    floor.geometry = floor_segment_geometry.flr_segment_1
+
+    d1 = floor.to_dict(include_mesh=True)
+    o = space.SpaceFloor.from_dict(d1)
+    d2 = o.to_dict(include_mesh=True)
+
+    assert d1 == d2
+
+
 # -- Duplicate ---
 
 

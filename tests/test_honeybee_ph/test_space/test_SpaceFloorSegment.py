@@ -58,6 +58,17 @@ def test_flr_seg_serialization_with_geom(floor_segment_geometry):
     assert d1 == d2
 
 
+def test_flr_seg_serialization_with_geom_and_mesh(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 0.74
+
+    d1 = seg.to_dict(include_mesh=True)
+    o = space.SpaceFloorSegment.from_dict(d1)
+    d2 = o.to_dict(include_mesh=True)
+    assert d1 == d2
+
+
 # -- Duplication --
 
 

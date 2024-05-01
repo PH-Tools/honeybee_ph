@@ -47,6 +47,28 @@ def test_volume_serialize(floor_segment_geometry):
     assert d1 == d2
 
 
+def test_volume_serialize_with_mesh(floor_segment_geometry):
+    # -- Seg
+    seg1 = space.SpaceFloorSegment()
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.weighting_factor = 1.0
+
+    # -- Floor
+    flr1 = space.SpaceFloor()
+    flr1.add_floor_segment(seg1)
+    flr1.geometry = floor_segment_geometry.flr_segment_1
+
+    # -- Volume
+    vol1 = space.SpaceVolume()
+    vol1.floor = flr1
+
+    d1 = vol1.to_dict(include_mesh=True)
+    o = space.SpaceVolume.from_dict(d1)
+    d2 = o.to_dict(include_mesh=True)
+
+    assert d1 == d2
+
+
 # -- Scale --
 
 
