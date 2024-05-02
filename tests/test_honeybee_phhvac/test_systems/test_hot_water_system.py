@@ -266,7 +266,7 @@ def test_scale_system_with_no_piping():
 
 
 def test_scale_system_with_single_trunk():
-    system = hws.PhHotWaterSystem()
+    system1 = hws.PhHotWaterSystem()
     pt1 = Point3D(0, 0, 0)
     vec1 = Vector3D(0, 0, 1)
     pipe_segment_1 = hwp.PhHvacPipeSegment(LineSegment3D.from_sdl(pt1, vec1, 144.0))
@@ -274,20 +274,22 @@ def test_scale_system_with_single_trunk():
     pipe_element_1.add_segment(pipe_segment_1)
     trunk1 = hwp.PhHvacPipeTrunk()
     trunk1.pipe_element = pipe_element_1
-    system.add_distribution_piping(trunk1)
+    system1.add_distribution_piping(trunk1)
 
-    system.scale(0.0254)
-    assert system.total_distribution_pipe_length == 3.6576
+    system2 = system1.scale(0.0254)
+    assert system1.total_distribution_pipe_length == pytest.approx(144.0)
+    assert system2.total_distribution_pipe_length == pytest.approx(3.6576)
 
 
 def test_scale_system_with_single_recirc_element():
-    system = hws.PhHotWaterSystem()
+    system1 = hws.PhHotWaterSystem()
     pt1 = Point3D(0, 0, 0)
     vec1 = Vector3D(0, 0, 1)
     pipe_segment_1 = hwp.PhHvacPipeSegment(LineSegment3D.from_sdl(pt1, vec1, 144.0))
     pipe_element_1 = hwp.PhHvacPipeElement()
     pipe_element_1.add_segment(pipe_segment_1)
-    system.add_recirc_piping(pipe_element_1)
+    system1.add_recirc_piping(pipe_element_1)
 
-    system.scale(0.0254)
-    assert system.total_recirc_pipe_length == 3.6576
+    system2 = system1.scale(0.0254)
+    assert system1.total_recirc_pipe_length == pytest.approx(144.0)
+    assert system2.total_recirc_pipe_length == pytest.approx(3.6576)

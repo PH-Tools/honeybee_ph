@@ -151,6 +151,15 @@ class PhHvacHotWaterHeater(_base._PhHVACBase):
         self.percent_coverage = 1.0
         self.in_conditioned_space = True
 
+    def __copy__(self):
+        # type: () -> PhHvacHotWaterHeater
+        # TODO: Implement copy
+        return self
+
+    def duplicate(self):
+        # type: () -> PhHvacHotWaterHeater
+        return self.__copy__()
+
     def to_dict(self):
         # type: () -> dict
         d = super(PhHvacHotWaterHeater, self).to_dict()

@@ -4,6 +4,7 @@
 """Honeybee-PH-HVAC: Hot Water Piping."""
 
 from copy import copy
+from math import radians
 
 try:
     from typing import Any, Dict, List, Optional, Union
@@ -128,7 +129,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
 
     def __copy__(self):
         # type: () -> PhHvacPipeSegment
-        new_obj = PhHvacPipeSegment(self.geometry)
+        new_obj = PhHvacPipeSegment(self.geometry.duplicate())
 
         new_obj.diameter = PhPipeDiameter(self.diameter.value)
         new_obj.material = PhHvacPipeMaterial(self.material.value)
@@ -142,7 +143,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         new_obj.display_name = self.display_name
         new_obj.user_data = copy(self.user_data)
 
-        return self
+        return new_obj
 
     def duplicate(self):
         # type: () -> PhHvacPipeSegment
@@ -189,64 +190,84 @@ class PhHvacPipeSegment(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
+        # type: (Vector3D) -> PhHvacPipeSegment
         """Move the pipe's geometry along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Returns:
+            A new PhHvacPipeSegment with the moved geometry.
         """
-        self.geometry = self.geometry.move(moving_vec)
+        dup = self.duplicate()
+        dup.geometry = self.geometry.move(moving_vec3D)
+        return dup
 
-    def rotate(self, axis, angle, origin):
-        """Rotate the pipe's geometry by a certain angle around an axis and origin.
+    def rotate(self, axis_3D, angle_degrees, origin_pt3D):
+        # type: (Vector3D, float, Point3D) -> PhHvacPipeSegment
+        """Rotate the pipe's geometry by a certain angle_degrees around an axis_3D and origin_pt3D.
 
         Right hand rule applies:
-        If axis has a positive orientation, rotation will be clockwise.
-        If axis has a negative orientation, rotation will be counterclockwise.
+        If axis_3D has a positive orientation, rotation will be clockwise.
+        If axis_3D has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_3D: A Vector3D axis_3D representing the axis_3D of rotation.
+            angle_degrees: An angle_degrees for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeSegment with the rotated geometry.
         """
-        self.geometry = self.geometry.rotate(axis, angle, origin)
+        dup = self.duplicate()
+        dup.geometry = self.geometry.rotate(axis_3D, radians(angle_degrees), origin_pt3D)
+        return dup
 
-    def rotate_xy(self, angle, origin):
-        """Rotate the pipe's geometry counterclockwise in the XY plane by a certain angle.
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, Point3D) -> PhHvacPipeSegment
+        """Rotate the pipe's geometry counterclockwise in the XY plane by a certain angle_degrees.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle_degrees in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeSegment with the rotated geometry.
         """
-        self.geometry = self.geometry.rotate_xy(angle, origin)
+        dup = self.duplicate()
+        dup.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
+        return dup
 
-    def reflect(self, normal, origin):
-        """Reflected the pipe's geometry across a plane with the input normal vector and origin.
+    def reflect(self, normal_vec3D, origin_pt3D):
+        # type: (Vector3D, Point3D) -> PhHvacPipeSegment
+        """Reflected the pipe's geometry across a plane with the input normal vector and origin_pt3D.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Returns:
+            A new PhHvacPipeSegment with the reflected geometry.
         """
-        self.geometry = self.geometry.reflect(normal, origin)
+        dup = self.duplicate()
+        dup.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
+        return dup
 
-    def scale(self, factor, origin=None):
+    def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Union[None, Point3D]) -> PhHvacPipeSegment
-        """Scale the pipe's geometry by a factor from an origin point.
+        """Scale the pipe's geometry by a factor from an origin_pt3D point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
-                If None, it will be scaled from the World origin (0, 0, 0).
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
         """
         new_pipe_segment = self.duplicate()
-        new_pipe_segment.geometry = self.geometry.scale(factor, origin)
-        new_pipe_segment.insulation_thickness *= factor
+        new_pipe_segment.geometry = self.geometry.scale(scale_factor, origin_pt3D)
+        new_pipe_segment.insulation_thickness *= scale_factor
         return new_pipe_segment
 
 
 class PhHvacPipeElement(_base._PhHVACBase):
-    """A Pipe Element made up of one or more individual Pipe Segments."""
+    """A Pipe Element (Fixture) made up of one or more individual Pipe Segments."""
 
     def __init__(self):
         super(PhHvacPipeElement, self).__init__()
@@ -255,6 +276,7 @@ class PhHvacPipeElement(_base._PhHVACBase):
     @property
     def segments(self):
         # type: () -> List[PhHvacPipeSegment]
+        """Return a list of a;; the Pipe-Segments in the Pipe-Element."""
         return list(self._segments.values())
 
     @property
@@ -265,12 +287,14 @@ class PhHvacPipeElement(_base._PhHVACBase):
 
     @property
     def water_temp(self):
-        # Return the length-weighted average water temperature of all the pipe segments
+        # type: () -> float
+        """Return the length-weighted average water temperature of all the pipe segments"""
         return sum(s.length * s.water_temp for s in self.segments) / self.length
 
     @property
     def daily_period(self):
-        # Return the length-weighted average daily period of all the pipe segments
+        # type: () -> float
+        """Return the length-weighted average daily period of all the pipe segments"""
         return sum(s.length * s.daily_period for s in self.segments) / self.length
 
     @property
@@ -282,6 +306,7 @@ class PhHvacPipeElement(_base._PhHVACBase):
     @property
     def material_name(self):
         # type: () -> str
+        """Return the material name of the pipe element."""
         materials = {s.material for s in self.segments}
         if len(materials) == 0:
             return PhHvacPipeMaterial.allowed[0]
@@ -294,6 +319,7 @@ class PhHvacPipeElement(_base._PhHVACBase):
     @property
     def diameter_name(self):
         # type: () -> str
+        """Return the diameter name of the pipe element."""
         diameters = {s.diameter for s in self.segments}
         if len(diameters) == 0:
             return PhPipeDiameter.allowed[0]
@@ -305,10 +331,17 @@ class PhHvacPipeElement(_base._PhHVACBase):
 
     def add_segment(self, _segment):
         # type: (PhHvacPipeSegment) -> None
+        """Add a new Pipe Segment to the Pipe Element."""
         self._segments[_segment.identifier] = _segment
+
+    def clear_segments(self):
+        # type: () -> None
+        """Clear all the segments from the pipe element."""
+        self._segments = {}
 
     def __copy__(self):
         # type: () -> PhHvacPipeElement
+        """Duplicate the pipe element."""
         new_obj = PhHvacPipeElement()
 
         for segment in self.segments:
@@ -360,99 +393,108 @@ class PhHvacPipeElement(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         # type: (Vector3D) -> PhHvacPipeElement
         """Move the pipe's segments along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
-        new_segments = {}
-        for k, segment in self._segments.items():
-            new_segments[k] = segment.move(moving_vec)
-
-        new_pipe_element = self.duplicate()
-        new_pipe_element._segments = new_segments
-        return new_pipe_element
-
-    def rotate(self, axis, angle, origin):
-        # type: (Vector3D, float, Point3D) -> PhHvacPipeElement
-        """Rotate the pipe's segments by a certain angle around an axis and origin.
+        """Rotate the pipe's segments by a certain angle_degrees around an axis_3D and origin_pt3D.
 
         Right hand rule applies:
-        If axis has a positive orientation, rotation will be clockwise.
-        If axis has a negative orientation, rotation will be counterclockwise.
+        If axis_3D has a positive orientation, rotation will be clockwise.
+        If axis_3D has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_3D: A Vector3D axis_3D representing the axis_3D of rotation.
+            angle_degrees: An angle_degrees for rotation in radians.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeElement with the rotated segments.
         """
-        new_segments = {}
-        for k, segment in self._segments.items():
-            new_segments[k] = segment.rotate(axis, angle, origin)
-
         new_pipe_element = self.duplicate()
-        new_pipe_element._segments = new_segments
+        new_pipe_element.clear_segments()
+        for segment in self.segments:
+            new_pipe_element.add_segment(segment.move(moving_vec3D))
         return new_pipe_element
 
-    def rotate_xy(self, angle, origin):
+    def rotate(self, axis_3D, angle_degrees, origin_pt3D):
+        # type: (Vector3D, float, Point3D) -> PhHvacPipeElement
+        """Rotate the pipe's segments by a certain angle_degrees around an axis_3D and origin_pt3D.
+
+        Right hand rule applies:
+        If axis_3D has a positive orientation, rotation will be clockwise.
+        If axis_3D has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_3D: A Vector3D axis_3D representing the axis_3D of rotation.
+            angle_degrees: An angle_degrees for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeElement with the rotated segments.
+        """
+        new_pipe_element = self.duplicate()
+        new_pipe_element.clear_segments()
+        for segment in self.segments:
+            new_pipe_element.add_segment(segment.rotate(axis_3D, angle_degrees, origin_pt3D))
+        return new_pipe_element
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> PhHvacPipeElement
-        """Rotate the pipe's segments counterclockwise in the XY plane by a certain angle.
+        """Rotate the pipe's segments counterclockwise in the XY plane by a certain angle_degrees.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle_degrees in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeElement with the rotated segments.
         """
-        new_segments = {}
-        for k, segment in self._segments.items():
-            new_segments[k] = segment.rotate_xy(angle, origin)
-
         new_pipe_element = self.duplicate()
-        new_pipe_element._segments = new_segments
+        new_pipe_element.clear_segments()
+        for segment in self.segments:
+            new_pipe_element.add_segment(segment.rotate_xy(angle_degrees, origin_pt3D))
         return new_pipe_element
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> PhHvacPipeElement
-        """Reflected the pipe's segments across a plane with the input normal vector and origin.
+        """Reflected the pipe's segments across a plane with the input normal_vec3D vector and origin_pt3D.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal_vec3D vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Returns:
+            A new PhHvacPipeElement with the reflected segments.
         """
-        new_segments = {}
-        for k, segment in self._segments.items():
-            new_segments[k] = segment.reflect(normal, origin)
-
         new_pipe_element = self.duplicate()
-        new_pipe_element._segments = new_segments
+        new_pipe_element.clear_segments()
+        for segment in self.segments:
+            new_pipe_element.add_segment(segment.reflect(normal_vec3D, origin_pt3D))
         return new_pipe_element
 
-    def scale(self, factor, origin=None):
+    def scale(self, factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhHvacPipeElement
-        """Scale the pipe's segments by a factor from an origin point.
+        """Scale the pipe's segments by a factor from an origin_pt3D point.
 
         Args:
             factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
-                If None, it will be scaled from the World origin (0, 0, 0).
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Returns:
+            A new PhHvacPipeElement with the scaled segments.
         """
-        new_segments = {}
-        for k, segment in self._segments.items():
-            new_segments[k] = segment.scale(factor, origin)
-
         new_pipe_element = self.duplicate()
-        new_pipe_element._segments = new_segments
+        new_pipe_element.clear_segments()
+        for segment in self.segments:
+            new_pipe_element.add_segment(segment.scale(factor, origin_pt3D))
         return new_pipe_element
 
 
 class PhHvacPipeBranch(_base._PhHVACBase):
     """A 'Branch' Pipe which has geometry, and serves one or more 'Fixture' (Twig) pipe elements."""
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         # type: () -> None
         super(PhHvacPipeBranch, self).__init__()
         self.pipe_element = PhHvacPipeElement()
@@ -479,6 +521,7 @@ class PhHvacPipeBranch(_base._PhHVACBase):
     @property
     def segments(self):
         # type () -> List[PhPipeSegment]
+        """Return a list of all the Pipe-Segments in the Branch."""
         return self.pipe_element.segments
 
     @property
@@ -492,16 +535,19 @@ class PhHvacPipeBranch(_base._PhHVACBase):
     @property
     def water_temp(self):
         # type: () -> float
+        """Return the length-weighted average water temperature of all the pipe segments."""
         return self.pipe_element.water_temp
 
     @property
     def daily_period(self):
         # type: () -> float
+        """Return the length-weighted average daily period of all the pipe segments."""
         return self.pipe_element.daily_period
 
     @property
     def num_fixtures(self):
         # type: () -> int
+        """Return the number of fixtures connected to the branch."""
         return len(self.fixtures)
 
     @property
@@ -587,75 +633,85 @@ class PhHvacPipeBranch(_base._PhHVACBase):
         # type: () -> str
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         # type: (Vector3D) -> PhHvacPipeBranch
         """Move the pipe's elements along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Returns:
+            A new PhHvacPipeBranch with the moved elements.
         """
         new_branch = self.duplicate()
-        new_branch.fixtures = [fixture.move(moving_vec) for fixture in self.fixtures]
-        new_branch.pipe_element = self.pipe_element.move(moving_vec)
+        new_branch.fixtures = [fixture.move(moving_vec3D) for fixture in self.fixtures]
+        new_branch.pipe_element = self.pipe_element.move(moving_vec3D)
         return new_branch
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> PhHvacPipeBranch
-        """Rotate the pipe's elements by a certain angle around an axis and origin.
+        """Rotate the pipe's elements by a certain angle_degrees around an axis_3D and origin_pt3D.
 
         Right hand rule applies:
-        If axis has a positive orientation, rotation will be clockwise.
-        If axis has a negative orientation, rotation will be counterclockwise.
+        If axis_3D has a positive orientation, rotation will be clockwise.
+        If axis_3D has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_3D: A Vector3D axis_3D representing the axis_3D of rotation.
+            angle_degrees: An angle_degrees for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeBranch with the rotated elements.
         """
         new_branch = self.duplicate()
-        new_branch.fixtures = [fixture.rotate(axis, angle, origin) for fixture in self.fixtures]
-        new_branch.pipe_element = self.pipe_element.rotate(axis, angle, origin)
+        new_branch.fixtures = [fixture.rotate(axis_3D, angle_degrees, origin_pt3D) for fixture in self.fixtures]
+        new_branch.pipe_element = self.pipe_element.rotate(axis_3D, angle_degrees, origin_pt3D)
         return new_branch
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> PhHvacPipeBranch
-        """Rotate the pipe's elements counterclockwise in the XY plane by a certain angle.
+        """Rotate the pipe's elements counterclockwise in the XY plane by a certain angle_degrees.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle_degrees in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeBranch with the rotated elements.
         """
         new_branch = self.duplicate()
-        new_branch.fixtures = [fixture.rotate_xy(angle, origin) for fixture in self.fixtures]
-        new_branch.pipe_element = self.pipe_element.rotate_xy(angle, origin)
+        new_branch.fixtures = [fixture.rotate_xy(angle_degrees, origin_pt3D) for fixture in self.fixtures]
+        new_branch.pipe_element = self.pipe_element.rotate_xy(angle_degrees, origin_pt3D)
         return new_branch
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> PhHvacPipeBranch
-        """Reflected the pipe's elements across a plane with the input normal vector and origin.
+        """Reflected the pipe's elements across a plane with the input normal_vec3D vector and origin_pt3D.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal_vec3D vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Returns:
+            A new PhHvacPipeBranch with the reflected elements.
         """
         new_branch = self.duplicate()
-        new_branch.fixtures = [fixture.reflect(normal, origin) for fixture in self.fixtures]
-        new_branch.pipe_element = self.pipe_element.reflect(normal, origin)
+        new_branch.fixtures = [fixture.reflect(normal_vec3D, origin_pt3D) for fixture in self.fixtures]
+        new_branch.pipe_element = self.pipe_element.reflect(normal_vec3D, origin_pt3D)
         return new_branch
 
-    def scale(self, factor, origin=None):
+    def scale(self, factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhHvacPipeBranch
-        """Scale the pipe's elements by a factor from an origin point.
+        """Scale the pipe's elements by a factor from an origin_pt3D point.
 
         Args:
             factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
-                If None, it will be scaled from the World origin (0, 0, 0).
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Returns:
+            A new PhHvacPipeBranch with the scaled elements.
         """
         new_branch = self.duplicate()
-        new_branch.fixtures = [fixture.scale(factor, origin) for fixture in self.fixtures]
-        new_branch.pipe_element = self.pipe_element.scale(factor, origin)
+        new_branch.fixtures = [fixture.scale(factor, origin_pt3D) for fixture in self.fixtures]
+        new_branch.pipe_element = self.pipe_element.scale(factor, origin_pt3D)
         return new_branch
 
 
@@ -672,16 +728,19 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
     @property
     def material_name(self):
         # type: () -> str
+        """Return the material name of the pipe element."""
         return self.pipe_element.material_name
 
     @property
     def diameter_name(self):
         # type: () -> str
+        """Return the diameter name of the pipe element."""
         return self.pipe_element.diameter_name
 
     @property
     def segments(self):
         # type () -> List[PhPipeSegment]
+        """Return a list of all the Pipe-Segments in the Trunk."""
         return self.pipe_element.segments
 
     @property
@@ -693,16 +752,19 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
     @property
     def water_temp(self):
         # type: () -> float
+        """Return the length-weighted average water temperature of all the pipe segments."""
         return self.pipe_element.water_temp
 
     @property
     def daily_period(self):
         # type: () -> float
+        """Return the length-weighted average daily period of all the pipe segments."""
         return self.pipe_element.daily_period
 
     @property
     def num_fixtures(self):
         # type: () -> int
+        """Return the number of fixtures connected to the trunk."""
         return sum(branch.num_fixtures for branch in self.branches)
 
     @property
@@ -792,73 +854,83 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         # type: () -> str
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         # type: (Vector3D) -> PhHvacPipeTrunk
         """Move the pipe's elements along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Returns:
+            A new PhHvacPipeTrunk with the moved elements.
         """
         new_trunk = self.duplicate()
-        new_trunk.branches = [branch.move(moving_vec) for branch in self.branches]
-        new_trunk.pipe_element = self.pipe_element.move(moving_vec)
+        new_trunk.branches = [branch.move(moving_vec3D) for branch in self.branches]
+        new_trunk.pipe_element = self.pipe_element.move(moving_vec3D)
         return new_trunk
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> PhHvacPipeTrunk
-        """Rotate the pipe's elements by a certain angle around an axis and origin.
+        """Rotate the pipe's elements by a certain angle_degrees around an axis_3D and origin_pt3D.
 
         Right hand rule applies:
-        If axis has a positive orientation, rotation will be clockwise.
-        If axis has a negative orientation, rotation will be counterclockwise.
+        If axis_3D has a positive orientation, rotation will be clockwise.
+        If axis_3D has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_3D: A Vector3D axis_3D representing the axis_3D of rotation.
+            angle_degrees: An angle_degrees for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeTrunk with the rotated elements.
         """
         new_trunk = self.duplicate()
-        new_trunk.branches = [branch.rotate(axis, angle, origin) for branch in self.branches]
-        new_trunk.pipe_element = self.pipe_element.rotate(axis, angle, origin)
+        new_trunk.branches = [branch.rotate(axis_3D, angle_degrees, origin_pt3D) for branch in self.branches]
+        new_trunk.pipe_element = self.pipe_element.rotate(axis_3D, angle_degrees, origin_pt3D)
         return new_trunk
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> PhHvacPipeTrunk
-        """Rotate the pipe's elements counterclockwise in the XY plane by a certain angle.
+        """Rotate the pipe's elements counterclockwise in the XY plane by a certain angle_degrees.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle_degrees in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new PhHvacPipeTrunk with the rotated elements.
         """
         new_trunk = self.duplicate()
-        new_trunk.branches = [branch.rotate_xy(angle, origin) for branch in self.branches]
-        new_trunk.pipe_element = self.pipe_element.rotate_xy(angle, origin)
+        new_trunk.branches = [branch.rotate_xy(angle_degrees, origin_pt3D) for branch in self.branches]
+        new_trunk.pipe_element = self.pipe_element.rotate_xy(angle_degrees, origin_pt3D)
         return new_trunk
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         # type (Vector3D, Point3D) -> PhHvacPipeTrunk
-        """Reflected the pipe's elements across a plane with the input normal vector and origin.
+        """Reflected the pipe's elements across a plane with the input normal_vec3D vector and origin_pt3D.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal_vec3D vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Returns:
+            A new PhHvacPipeTrunk with the reflected elements.
         """
         new_trunk = self.duplicate()
-        new_trunk.branches = [branch.reflect(normal, origin) for branch in self.branches]
-        new_trunk.pipe_element = self.pipe_element.reflect(normal, origin)
+        new_trunk.branches = [branch.reflect(normal_vec3D, origin_pt3D) for branch in self.branches]
+        new_trunk.pipe_element = self.pipe_element.reflect(normal_vec3D, origin_pt3D)
         return new_trunk
 
-    def scale(self, factor, origin=None):
+    def scale(self, factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhHvacPipeTrunk
-        """Scale the pipe's elements by a factor from an origin point.
+        """Scale the pipe's elements by a factor from an origin_pt3D point.
 
         Args:
             factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
-                If None, it will be scaled from the World origin (0, 0, 0).
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Returns:
+            A new PhHvacPipeTrunk with the scaled elements.
         """
         new_trunk = self.duplicate()
-        new_trunk.branches = [branch.scale(factor, origin) for branch in self.branches]
-        new_trunk.pipe_element = self.pipe_element.scale(factor, origin)
+        new_trunk.branches = [branch.scale(factor, origin_pt3D) for branch in self.branches]
+        new_trunk.pipe_element = self.pipe_element.scale(factor, origin_pt3D)
         return new_trunk

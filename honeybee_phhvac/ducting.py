@@ -3,6 +3,8 @@
 
 """Honeybee-PH-HVAC-Equipment: Ducts."""
 
+from math import radians
+
 try:
     from typing import Any, Dict, List, Optional, Union
 except ImportError:
@@ -145,18 +147,18 @@ class PhDuctSegment(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         # type: (Point3D) -> PhDuctSegment
         """Move the duct segment along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.move(moving_vec)
+        new_segment.geometry = self.geometry.move(moving_vec3D)
         return new_segment
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Point3D, float, Point3D) -> PhDuctSegment
         """Rotate the duct segment by a certain angle around an axis and origin.
 
@@ -165,54 +167,54 @@ class PhDuctSegment(_base._PhHVACBase):
         If axis has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.rotate(axis, angle, origin)
+        new_segment.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
         return new_segment
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> PhDuctSegment
         """Rotate the duct segment counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.rotate_xy(angle, origin)
+        new_segment.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
         return new_segment
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Point3D, Point3D) -> PhDuctSegment
         """Reflected the duct segment across a plane with the input normal vector and origin.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin from which to reflect.
         """
         new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.reflect(normal, origin)
+        new_segment.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
         return new_segment
 
-    def scale(self, factor, origin=None):
+    def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhDuctSegment
         """Scale the duct segment by a factor from an origin point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
         new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.scale(factor, origin)
-        new_segment.insulation_thickness = self.insulation_thickness * factor
-        new_segment.diameter = self.diameter * factor
-        new_segment.height = factor * self.height if self.height else None
-        new_segment.width = factor * self.width if self.width else None
+        new_segment.geometry = self.geometry.scale(scale_factor, origin_pt3D)
+        new_segment.insulation_thickness = self.insulation_thickness * scale_factor
+        new_segment.diameter = self.diameter * scale_factor
+        new_segment.height = scale_factor * self.height if self.height else None
+        new_segment.width = scale_factor * self.width if self.width else None
         return new_segment
 
 
@@ -361,19 +363,19 @@ class PhDuctElement(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         """Move the duct element's segment along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:
-            new_element.add_segment(segment.move(moving_vec))
+            new_element.add_segment(segment.move(moving_vec3D))
         return new_element
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         """Rotate the duct element's segment by a certain angle around an axis and origin.
 
         Right hand rule applies:
@@ -381,54 +383,54 @@ class PhDuctElement(_base._PhHVACBase):
         If axis has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:
-            new_element.add_segment(segment.rotate(axis, angle, origin))
+            new_element.add_segment(segment.rotate(axis_vec3D, angle_degrees, origin_pt3D))
         return new_element
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the duct element's segment counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degree: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:
-            new_element.add_segment(segment.rotate_xy(angle, origin))
+            new_element.add_segment(segment.rotate_xy(angle_degrees, origin_pt3D))
         return new_element
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         """Reflected the duct element's segment across a plane with the input normal vector and origin.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin from which to reflect.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:
-            new_element.add_segment(segment.reflect(normal, origin))
+            new_element.add_segment(segment.reflect(normal_vec3D, origin_pt3D))
         return new_element
 
-    def scale(self, factor, origin=None):
+    def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhDuctElement
         """Scale the duct element's segments by a factor from an origin point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:
-            new_element.add_segment(segment.scale(factor, origin))
+            new_element.add_segment(segment.scale(scale_factor, origin_pt3D))
         return new_element

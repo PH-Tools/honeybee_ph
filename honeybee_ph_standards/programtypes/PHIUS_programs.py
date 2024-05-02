@@ -745,7 +745,7 @@ PHIUS_Non_Res = {
     },
     "2021::PHIUS_NR::Library_Storage": {
         "name": "Library Storage",
-        "hb_base_program": "",
+        "hb_base_program": "2019::SecondarySchool::Library",
         "protocol": "PHIUS_NonRes",
         "description": "Library magazine and stores",
         "source": ["PHIUS_Certification_Guidebook_v3.02_N10", ""],
@@ -795,7 +795,7 @@ PHIUS_Non_Res = {
     },
     "2021::PHIUS_NR::Library_Stacks": {
         "name": "Library Stacks",
-        "hb_base_program": "",
+        "hb_base_program": "2019::SecondarySchool::Library",
         "protocol": "PHIUS_NonRes",
         "description": "Library-open stacks areas",
         "source": ["PHIUS_Certification_Guidebook_v3.02_N10", ""],
@@ -1160,7 +1160,7 @@ PHIUS_Non_Res = {
     },
     "2021::PHIUS_NR::Office_Workspace_Closed": {
         "name": "Office Workspace Closed",
-        "hb_base_program": "",
+        "hb_base_program": "2019::MediumOffice::ClosedOffice",
         "protocol": "PHIUS_NonRes",
         "description": "Personal office (single occupant)",
         "source": ["PHIUS_Certification_Guidebook_v3.02_N10", ""],

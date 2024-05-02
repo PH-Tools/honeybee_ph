@@ -72,54 +72,54 @@ class PhHeatPumpSystem(_base._PhHVACBase):
         # type: (PhHeatPumpSystem) -> bool
         return self.identifier < other.identifier
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         """Move the System's elements along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         pass
 
-    def rotate(self, axis, angle, origin):
-        """Rotate the System's elements by a certain angle around an axis and origin.
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        """Rotate the System's elements by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
-        If axis has a positive orientation, rotation will be clockwise.
-        If axis has a negative orientation, rotation will be counterclockwise.
+        If axis_vec3D has a positive orientation, rotation will be clockwise.
+        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         """
         pass
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the System's elements counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         """
         pass
 
-    def reflect(self, normal, origin):
-        """Reflected the System's elements across a plane with the input normal vector and origin.
+    def reflect(self, normal_vec3D, origin_pt3D):
+        """Reflected the System's elements across a plane with the input normal vector and origin_pt3D.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
         """
         pass
 
-    def scale(self, factor, origin=None):
-        """Scale the System's elements by a factor from an origin point.
+    def scale(self, scale_factor, origin_pt3D=None):
+        """Scale the System's elements by a factor from an origin_pt3D point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
-                If None, it will be scaled from the World origin (0, 0, 0).
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
         """
         pass
 

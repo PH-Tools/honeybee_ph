@@ -6,8 +6,6 @@
 import sys
 from copy import copy
 
-from honeybee_phhvac._base import _PhHVACBase
-
 try:
     from typing import Any, Dict, List, Optional
 except ImportError:
@@ -251,19 +249,19 @@ class PhVentilationSystem(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         """Move the System's ducts along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
-        new_system.supply_ducting = [duct_element.move(moving_vec) for duct_element in self.supply_ducting]
-        new_system.exhaust_ducting = [duct_element.move(moving_vec) for duct_element in self.exhaust_ducting]
+        new_system.supply_ducting = [duct_element.move(moving_vec3D) for duct_element in self.supply_ducting]
+        new_system.exhaust_ducting = [duct_element.move(moving_vec3D) for duct_element in self.exhaust_ducting]
         return new_system
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         """Rotate the System's ducts by a certain angle around an axis and origin.
 
         Right hand rule applies:
@@ -271,56 +269,72 @@ class PhVentilationSystem(_base._PhHVACBase):
         If axis has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
-        new_system.supply_ducting = [duct_element.rotate(axis, angle, origin) for duct_element in self.supply_ducting]
-        new_system.exhaust_ducting = [duct_element.rotate(axis, angle, origin) for duct_element in self.exhaust_ducting]
+        new_system.supply_ducting = [
+            duct_element.rotate(axis_vec3D, angle_degrees, origin_pt3D) for duct_element in self.supply_ducting
+        ]
+        new_system.exhaust_ducting = [
+            duct_element.rotate(axis_vec3D, angle_degrees, origin_pt3D) for duct_element in self.exhaust_ducting
+        ]
         return new_system
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the System's ducts counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
-        new_system.supply_ducting = [duct_element.rotate_xy(angle, origin) for duct_element in self.supply_ducting]
-        new_system.exhaust_ducting = [duct_element.rotate_xy(angle, origin) for duct_element in self.exhaust_ducting]
+        new_system.supply_ducting = [
+            duct_element.rotate_xy(angle_degrees, origin_pt3D) for duct_element in self.supply_ducting
+        ]
+        new_system.exhaust_ducting = [
+            duct_element.rotate_xy(angle_degrees, origin_pt3D) for duct_element in self.exhaust_ducting
+        ]
         return new_system
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         """Reflected the System's ducts across a plane with the input normal vector and origin.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin from which to reflect.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
-        new_system.supply_ducting = [duct_element.reflect(normal, origin) for duct_element in self.supply_ducting]
-        new_system.exhaust_ducting = [duct_element.reflect(normal, origin) for duct_element in self.exhaust_ducting]
+        new_system.supply_ducting = [
+            duct_element.reflect(normal_vec3D, origin_pt3D) for duct_element in self.supply_ducting
+        ]
+        new_system.exhaust_ducting = [
+            duct_element.reflect(normal_vec3D, origin_pt3D) for duct_element in self.exhaust_ducting
+        ]
         return new_system
 
-    def scale(self, factor, origin=None):
+    def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhVentilationSystem
         """Scale the System's ducts by a factor from an origin point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
-        new_system.supply_ducting = [duct_element.scale(factor, origin) for duct_element in self.supply_ducting]
-        new_system.exhaust_ducting = [duct_element.scale(factor, origin) for duct_element in self.exhaust_ducting]
+        new_system.supply_ducting = [
+            duct_element.scale(scale_factor, origin_pt3D) for duct_element in self.supply_ducting
+        ]
+        new_system.exhaust_ducting = [
+            duct_element.scale(scale_factor, origin_pt3D) for duct_element in self.exhaust_ducting
+        ]
         return new_system
 
 
@@ -375,54 +389,54 @@ class _ExhaustVentilatorBase(_base._PhHVACBase):
     def ToString(self):
         return self.__repr__()
 
-    def move(self, moving_vec):
-        """Move the device along a vector.
+    def move(self, moving_vec3D):
+        """Move the device's elements along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         pass
 
-    def rotate(self, axis, angle, origin):
-        """Rotate the device by a certain angle around an axis and origin.
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        """Rotate the device's elements by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
-        If axis has a positive orientation, rotation will be clockwise.
-        If axis has a negative orientation, rotation will be counterclockwise.
+        If axis_vec3D has a positive orientation, rotation will be clockwise.
+        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         """
         pass
 
-    def rotate_xy(self, angle, origin):
-        """Rotate the device counterclockwise in the XY plane by a certain angle.
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        """Rotate the device's elements counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         """
         pass
 
-    def reflect(self, normal, origin):
-        """Reflected the device across a plane with the input normal vector and origin.
+    def reflect(self, normal_vec3D, origin_pt3D):
+        """Reflected the device's elements across a plane with the input normal vector and origin_pt3D.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
         """
         pass
 
-    def scale(self, factor, origin=None):
-        """Scale the device by a factor from an origin point.
+    def scale(self, scale_factor, origin_pt3D=None):
+        """Scale the device's elements by a factor from an origin_pt3D point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
-                If None, it will be scaled from the World origin (0, 0, 0).
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
         """
         pass
 

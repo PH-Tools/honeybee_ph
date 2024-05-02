@@ -67,7 +67,7 @@ class PhHeatingSystem(_base._PhHVACBase):
         # type: (PhHeatingSystem) -> bool
         return self.identifier < other.identifier
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
         """Move the System's elements along a vector.
 
         Args:
@@ -75,7 +75,7 @@ class PhHeatingSystem(_base._PhHVACBase):
         """
         pass
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_vec3D, angle_degree, origin_pt3D):
         """Rotate the System's elements by a certain angle around an axis and origin.
 
         Right hand rule applies:
@@ -84,21 +84,21 @@ class PhHeatingSystem(_base._PhHVACBase):
 
         Args:
             axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
+            angle: An angle for rotation in degrees.
             origin: A Point3D for the origin around which the object will be rotated.
         """
         pass
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degree, origin_pt3D):
         """Rotate the System's elements counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
+            angle: An angle in degrees.
             origin: A Point3D for the origin around which the object will be rotated.
         """
         pass
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         """Reflected the System's elements across a plane with the input normal vector and origin.
 
         Args:
@@ -108,7 +108,7 @@ class PhHeatingSystem(_base._PhHVACBase):
         """
         pass
 
-    def scale(self, factor, origin=None):
+    def scale(self, scale_factor, origin=None):
         """Scale the System's elements by a factor from an origin point.
 
         Args:

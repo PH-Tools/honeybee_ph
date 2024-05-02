@@ -114,14 +114,14 @@ class PhHotWaterSystem(object):
     def clear_heaters(self):
         self._heaters = {}
 
-    def add_heater(self, _h):
+    def add_heater(self, _heater):
         # type: (Optional[hwd.PhHvacHotWaterHeater]) -> None
         """Adds a new hot-water heater to the system."""
-        if not _h:
+        if not _heater:
             return
 
-        assert hasattr(_h, "to_dict"), 'Error: HW-Heater "{}" is not serializable?'.format(_h)
-        self._heaters[_h.identifier] = _h
+        assert hasattr(_heater, "to_dict"), 'Error: HW-Heater "{}" is not serializable?'.format(_heater)
+        self._heaters[_heater.identifier] = _heater
 
     def add_distribution_piping(self, _distribution_piping, _key=None):
         # type: (Union[hwp.PhHvacPipeTrunk, hwp.PhHvacPipeBranch, hwp.PhHvacPipeElement], Optional[str]) -> None
@@ -273,7 +273,7 @@ class PhHotWaterSystem(object):
             new_obj.tank_solar = self.tank_solar.duplicate()
 
         for k, v in self._heaters.items():
-            new_obj.add_heater(v)
+            new_obj.add_heater(v.duplicate())
 
         for k, v in self._distribution_piping.items():
             new_obj.add_distribution_piping(v.duplicate(), _key=k)
@@ -384,11 +384,14 @@ class PhHotWaterSystem(object):
 
         return True
 
-    def move(self, moving_vec):
+    def move(self, moving_vec3D):
+        # type: (Point3D) -> PhHotWaterSystem
         """Move the System's piping along a vector.
 
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Reflect:
+            A new PhHotWaterSystem object with the moved piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -396,12 +399,15 @@ class PhHotWaterSystem(object):
         new_system.clear_recirc_piping()
 
         for k, pipe in self._distribution_piping.items():
-            new_system.add_distribution_piping(pipe.move(moving_vec), _key=k)
+            new_system.add_distribution_piping(pipe.move(moving_vec3D), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            new_system.add_recirc_piping(pipe.move(moving_vec), _key=k)
+            new_system.add_recirc_piping(pipe.move(moving_vec3D), _key=k)
 
-    def rotate(self, axis, angle, origin):
+        return new_system
+
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (Point3D, float, Point3D) -> PhHotWaterSystem
         """Rotate the System's piping by a certain angle around an axis and origin.
 
         Right hand rule applies:
@@ -409,9 +415,11 @@ class PhHotWaterSystem(object):
         If axis has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Returns:
+            A new PhHotWaterSystem object with the rotated piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -419,17 +427,22 @@ class PhHotWaterSystem(object):
         new_system.clear_recirc_piping()
 
         for k, pipe in self._distribution_piping.items():
-            new_system.add_distribution_piping(pipe.rotate(axis, angle, origin), _key=k)
+            new_system.add_distribution_piping(pipe.rotate(axis_vec3D, angle_degrees, origin_pt3D), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            new_system.add_recirc_piping(pipe.rotate(axis, angle, origin), _key=k)
+            new_system.add_recirc_piping(pipe.rotate(axis_vec3D, angle_degrees, origin_pt3D), _key=k)
 
-    def rotate_xy(self, angle, origin):
+        return new_system
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, Point3D) -> PhHotWaterSystem
         """Rotate the System's piping counterclockwise in the XY plane by a certain angle.
 
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Returns:
+            A new PhHotWaterSystem object with the rotated piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -437,18 +450,23 @@ class PhHotWaterSystem(object):
         new_system.clear_recirc_piping()
 
         for k, pipe in self._distribution_piping.items():
-            new_system.add_distribution_piping(pipe.rotate_xy(angle, origin), _key=k)
+            new_system.add_distribution_piping(pipe.rotate_xy(angle_degrees, origin_pt3D), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            new_system.add_recirc_piping(pipe.rotate_xy(angle, origin), _key=k)
+            new_system.add_recirc_piping(pipe.rotate_xy(angle_degrees, origin_pt3D), _key=k)
 
-    def reflect(self, normal, origin):
+        return new_system
+
+    def reflect(self, normal_vec3D, origin_pt3D):
+        # type: (Point3D, Point3D) -> PhHotWaterSystem
         """Reflected the System's piping across a plane with the input normal vector and origin.
 
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin from which to reflect.
+        Returns:
+            A new PhHotWaterSystem object with the reflected piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -456,19 +474,23 @@ class PhHotWaterSystem(object):
         new_system.clear_recirc_piping()
 
         for k, pipe in self._distribution_piping.items():
-            new_system.add_distribution_piping(pipe.reflect(normal, origin), _key=k)
+            new_system.add_distribution_piping(pipe.reflect(normal_vec3D, origin_pt3D), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            new_system.add_recirc_piping(pipe.reflect(normal, origin), _key=k)
+            new_system.add_recirc_piping(pipe.reflect(normal_vec3D, origin_pt3D), _key=k)
 
-    def scale(self, factor, origin=None):
+        return new_system
+
+    def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhHotWaterSystem
         """Scale the System's piping by a factor from an origin point.
 
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+        Returns:
+            A new PhHotWaterSystem object with the scaled piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -476,9 +498,9 @@ class PhHotWaterSystem(object):
         new_system.clear_recirc_piping()
 
         for k, pipe in self._distribution_piping.items():
-            new_system.add_distribution_piping(pipe.scale(factor, origin), _key=k)
+            new_system.add_distribution_piping(pipe.scale(scale_factor, origin_pt3D), _key=k)
 
         for k, pipe in self._recirc_piping.items():
-            new_system.add_recirc_piping(pipe.scale(factor, origin), _key=k)
+            new_system.add_recirc_piping(pipe.scale(scale_factor, origin_pt3D), _key=k)
 
         return new_system

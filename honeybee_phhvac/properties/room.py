@@ -134,6 +134,16 @@ class RoomPhHvacProperties(object):
         """Set the Hot Water System serving the Room."""
         self._hot_water_system = _hot_water_system
 
+    def clear_systems(self):
+        """Clear all the HVAC Systems from the Room."""
+        self._ventilation_system = None
+        self._heating_systems.clear()
+        self._heat_pump_systems.clear()
+        self._exhaust_vent_devices.clear()
+        self._supportive_devices.clear()
+        self._renewable_devices.clear()
+        self._hot_water_system = None
+
     def to_dict(self, abridged=False):
         # type: (bool) -> Dict[str, Any]
         d = {}
@@ -256,7 +266,7 @@ class RoomPhHvacProperties(object):
         new_obj = RoomPhHvacProperties(_host)
         new_obj.id_num = self.id_num
 
-        new_obj.set_ventilation_system(self.ventilation_system)
+        new_obj.set_ventilation_system(self.ventilation_system.duplicate() if self.ventilation_system else None)
 
         for htg_sys in self.heating_systems:
             new_obj.add_heating_system(htg_sys)
@@ -273,155 +283,197 @@ class RoomPhHvacProperties(object):
         for renewable_device in self.renewable_devices:
             new_obj.add_renewable_device(renewable_device)
 
-        new_obj.set_hot_water_system(self.hot_water_system)
+        new_obj.set_hot_water_system(self.hot_water_system.duplicate() if self.hot_water_system else None)
 
         return new_obj
 
-    def move(self, moving_vec):
+    def move(self, move_vec3D):
         """Move the Room's HVAC Systems along a vector.
 
+        When used in within Honeybee, this method will most often be triggered as part of a
+        larger model-transform. For instance, when triggered during a Room's
+        `honeybee.properties._Properties` transform.
+
+        When this method is used on its own, it is best practice to duplicate the
+        object before applying this transform since it applies the transform to the object
+        directly, rather than returning a new object with the transform applied.
+
         Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+            move_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         if self._ventilation_system:
-            self._ventilation_system.move(moving_vec)
+            self._ventilation_system.move(move_vec3D)
 
         for sys in self._heating_systems:
-            sys.move(moving_vec)
+            sys.move(move_vec3D)
 
         for sys in self._heat_pump_systems:
-            sys.move(moving_vec)
+            sys.move(move_vec3D)
 
         for sys in self._exhaust_vent_devices:
-            sys.move(moving_vec)
+            sys.move(move_vec3D)
 
         for sys in self._supportive_devices:
-            sys.move(moving_vec)
+            sys.move(move_vec3D)
 
         for sys in self._renewable_devices:
-            sys.move(moving_vec)
+            sys.move(move_vec3D)
 
         if self._hot_water_system:
-            self._hot_water_system.move(moving_vec)
+            self._hot_water_system.move(move_vec3D)
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         """Rotate the Room's HVAC Systems by a certain angle around an axis and origin.
+
+        When used in within Honeybee, this method will most often be triggered as part of a
+        larger model-transform. For instance, when triggered during a Room's
+        `honeybee.properties._Properties` transform.
+
+        When this method is used on its own, it is best practice to duplicate the
+        object before applying this transform since it applies the transform to the object
+        directly, rather than returning a new object with the transform applied.
 
         Right hand rule applies:
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
         Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         if self._ventilation_system:
-            self._ventilation_system.rotate(axis, angle, origin)
+            self._ventilation_system.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         for sys in self._heating_systems:
-            sys.rotate(axis, angle, origin)
+            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         for sys in self._heat_pump_systems:
-            sys.rotate(axis, angle, origin)
+            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         for sys in self._exhaust_vent_devices:
-            sys.rotate(axis, angle, origin)
+            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         for sys in self._supportive_devices:
-            sys.rotate(axis, angle, origin)
+            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         for sys in self._renewable_devices:
-            sys.rotate(axis, angle, origin)
+            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         if self._hot_water_system:
-            self._hot_water_system.rotate(axis, angle, origin)
+            self._hot_water_system.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle_degree, origin_pt3D):
+        # type: (float, geometry3d.Point3D) -> None
         """Rotate the Room's HVAC Systems counterclockwise in the XY plane by a certain angle.
 
+        When used in within Honeybee, this method will most often be triggered as part of a
+        larger model-transform. For instance, when triggered during a Room's
+        `honeybee.properties._Properties` transform.
+
+        When this method is used on its own, it is best practice to duplicate the
+        object before applying this transform since it applies the transform to the object
+        directly, rather than returning a new object with the transform applied.
+
         Args:
-            angle: An angle in radians.
-            origin: A Point3D for the origin around which the object will be rotated.
+            angle_degree: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
+
         if self._ventilation_system:
-            self._ventilation_system.rotate_xy(angle, origin)
+            self._ventilation_system = self._ventilation_system.rotate_xy(angle_degree, origin_pt3D)
 
         for sys in self._heating_systems:
-            sys.rotate_xy(angle, origin)
+            sys.rotate_xy(angle_degree, origin_pt3D)
 
         for sys in self._heat_pump_systems:
-            sys.rotate_xy(angle, origin)
+            sys.rotate_xy(angle_degree, origin_pt3D)
 
         for sys in self._exhaust_vent_devices:
-            sys.rotate_xy(angle, origin)
+            sys.rotate_xy(angle_degree, origin_pt3D)
 
         for sys in self._supportive_devices:
-            sys.rotate_xy(angle, origin)
+            sys.rotate_xy(angle_degree, origin_pt3D)
 
         for sys in self._renewable_devices:
-            sys.rotate_xy(angle, origin)
+            sys.rotate_xy(angle_degree, origin_pt3D)
 
         if self._hot_water_system:
-            self._hot_water_system.rotate_xy(angle, origin)
+            self._hot_water_system = self._hot_water_system.rotate_xy(angle_degree, origin_pt3D)
 
-    def reflect(self, normal, origin):
+    def reflect(self, normal_vec3D, origin_pt3D):
         """Reflected the Room's HVAC Systems across a plane with the input normal vector and origin.
 
+        When used in within Honeybee, this method will most often be triggered as part of a
+        larger model-transform. For instance, when triggered during a Room's
+        `honeybee.properties._Properties` transform.
+
+        When this method is used on its own, it is best practice to duplicate the
+        object before applying this transform since it applies the transform to the object
+        directly, rather than returning a new object with the transform applied.
+
         Args:
-            normal: A Vector3D representing the normal vector for the plane across
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            origin_pt3D: A Point3D representing the origin from which to reflect.
         """
         if self._ventilation_system:
-            self._ventilation_system.reflect(normal, origin)
+            self._ventilation_system.reflect(normal_vec3D, origin_pt3D)
 
         for sys in self._heating_systems:
-            sys.reflect(normal, origin)
+            sys.reflect(normal_vec3D, origin_pt3D)
 
         for sys in self._heat_pump_systems:
-            sys.reflect(normal, origin)
+            sys.reflect(normal_vec3D, origin_pt3D)
 
         for sys in self._exhaust_vent_devices:
-            sys.reflect(normal, origin)
+            sys.reflect(normal_vec3D, origin_pt3D)
 
         for sys in self._supportive_devices:
-            sys.reflect(normal, origin)
+            sys.reflect(normal_vec3D, origin_pt3D)
 
         for sys in self._renewable_devices:
-            sys.reflect(normal, origin)
+            sys.reflect(normal_vec3D, origin_pt3D)
 
         if self._hot_water_system:
-            self._hot_water_system.reflect(normal, origin)
+            self._hot_water_system.reflect(normal_vec3D, origin_pt3D)
 
-    def scale(self, factor, origin=None):
+    def scale(self, scale_factor, origin_pt3D=None):
         """Scale the Room's HVAC Systems by a factor from an origin point.
 
+        When used in within Honeybee, this method will most often be triggered as part of a
+        larger model-transform. For instance, when triggered during a Room's
+        `honeybee.properties._Properties` transform.
+
+        When this method is used on its own, it is best practice to duplicate the
+        object before applying this transform since it applies the transform to the object
+        directly, rather than returning a new object with the transform applied.
+
         Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
         """
         if self._ventilation_system:
-            self.set_ventilation_system(self._ventilation_system.scale(factor, origin))
+            self.set_ventilation_system(self._ventilation_system.scale(scale_factor, origin_pt3D))
 
         for sys in self._heating_systems:
-            sys.scale(factor, origin)
+            sys.scale(scale_factor, origin_pt3D)
 
         for sys in self._heat_pump_systems:
-            sys.scale(factor, origin)
+            sys.scale(scale_factor, origin_pt3D)
 
         for sys in self._exhaust_vent_devices:
-            sys.scale(factor, origin)
+            sys.scale(scale_factor, origin_pt3D)
 
         for sys in self._supportive_devices:
-            sys.scale(factor, origin)
+            sys.scale(scale_factor, origin_pt3D)
 
         for sys in self._renewable_devices:
-            sys.scale(factor, origin)
+            sys.scale(scale_factor, origin_pt3D)
 
         if self._hot_water_system:
-            self.set_hot_water_system(self._hot_water_system.scale(factor, origin))
+            self.set_hot_water_system(self._hot_water_system.scale(scale_factor, origin_pt3D))
 
     def __str__(self):
         # type: () -> str
