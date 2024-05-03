@@ -1,5 +1,5 @@
 import pytest
-from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
 
 from honeybee_ph import space
 
@@ -122,6 +122,135 @@ def test_Space_scale(floor_segment_geometry):
     assert sp2.weighted_floor_area == pytest.approx(2_152.7822)
     assert sp2.avg_clear_height == pytest.approx(8.2021)
     assert sp2.net_volume == pytest.approx(17_657.34)
+    assert sp2.average_floor_weighting_factor == 1.0
+    assert len(sp2.floor_segment_surfaces) == 2
+
+
+def test_Space_rotate(floor_segment_geometry):
+    # --  Build the Floor Segments
+    flr_seg_1 = space.SpaceFloorSegment()
+    flr_seg_1.geometry = floor_segment_geometry.flr_segment_1
+    flr_seg_1.weighting_factor = 1.0
+
+    flr_seg_2 = space.SpaceFloorSegment()
+    flr_seg_2.geometry = floor_segment_geometry.flr_segment_2
+    flr_seg_2.weighting_factor = 1.0
+
+    # -- Build the Floors
+    floor_1 = space.SpaceFloor()
+    floor_1.add_floor_segment(flr_seg_1)
+    floor_1.geometry = floor_segment_geometry.flr_segment_1
+
+    floor_2 = space.SpaceFloor()
+    floor_2.add_floor_segment(flr_seg_2)
+    floor_2.geometry = floor_segment_geometry.flr_segment_2
+
+    # -- Build the Volumes
+    vol_1 = space.SpaceVolume()
+    vol_1.floor = floor_1
+    vol_1.avg_ceiling_height = 2.5
+
+    vol_2 = space.SpaceVolume()
+    vol_2.floor = floor_2
+    vol_2.avg_ceiling_height = 2.5
+
+    # -- Build the Space
+    sp = space.Space()
+    sp.add_new_volumes([vol_1, vol_2])
+
+    # -- Rotate the Space and all the Volumes, all the floors
+    sp2 = sp.rotate(Vector3D(0, 0, 1), 90, Point3D(0, 0, 0))  # Rotate 90 degrees around Z axis
+
+    assert sp2.floor_area == pytest.approx(200)
+    assert sp2.weighted_floor_area == pytest.approx(200)
+    assert sp2.avg_clear_height == pytest.approx(2.5)
+    assert sp2.net_volume == pytest.approx(500)
+    assert sp2.average_floor_weighting_factor == 1.0
+    assert len(sp2.floor_segment_surfaces) == 2
+
+
+def test_Space_move(floor_segment_geometry):
+    # --  Build the Floor Segments
+    flr_seg_1 = space.SpaceFloorSegment()
+    flr_seg_1.geometry = floor_segment_geometry.flr_segment_1
+    flr_seg_1.weighting_factor = 1.0
+
+    flr_seg_2 = space.SpaceFloorSegment()
+    flr_seg_2.geometry = floor_segment_geometry.flr_segment_2
+    flr_seg_2.weighting_factor = 1.0
+
+    # -- Build the Floors
+    floor_1 = space.SpaceFloor()
+    floor_1.add_floor_segment(flr_seg_1)
+    floor_1.geometry = floor_segment_geometry.flr_segment_1
+
+    floor_2 = space.SpaceFloor()
+    floor_2.add_floor_segment(flr_seg_2)
+    floor_2.geometry = floor_segment_geometry.flr_segment_2
+
+    # -- Build the Volumes
+    vol_1 = space.SpaceVolume()
+    vol_1.floor = floor_1
+    vol_1.avg_ceiling_height = 2.5
+
+    vol_2 = space.SpaceVolume()
+    vol_2.floor = floor_2
+    vol_2.avg_ceiling_height = 2.5
+
+    # -- Build the Space
+    sp = space.Space()
+    sp.add_new_volumes([vol_1, vol_2])
+
+    # -- Move the Space and all the Volumes, all the floors
+    sp2 = sp.move(Vector3D(1, 0, 0))
+
+    assert sp2.floor_area == pytest.approx(200)
+    assert sp2.weighted_floor_area == pytest.approx(200)
+    assert sp2.avg_clear_height == pytest.approx(2.5)
+    assert sp2.net_volume == pytest.approx(500)
+    assert sp2.average_floor_weighting_factor == 1.0
+    assert len(sp2.floor_segment_surfaces) == 2
+
+
+def test_Space_reflect(floor_segment_geometry):
+    # --  Build the Floor Segments
+    flr_seg_1 = space.SpaceFloorSegment()
+    flr_seg_1.geometry = floor_segment_geometry.flr_segment_1
+    flr_seg_1.weighting_factor = 1.0
+
+    flr_seg_2 = space.SpaceFloorSegment()
+    flr_seg_2.geometry = floor_segment_geometry.flr_segment_2
+    flr_seg_2.weighting_factor = 1.0
+
+    # -- Build the Floors
+    floor_1 = space.SpaceFloor()
+    floor_1.add_floor_segment(flr_seg_1)
+    floor_1.geometry = floor_segment_geometry.flr_segment_1
+
+    floor_2 = space.SpaceFloor()
+    floor_2.add_floor_segment(flr_seg_2)
+    floor_2.geometry = floor_segment_geometry.flr_segment_2
+
+    # -- Build the Volumes
+    vol_1 = space.SpaceVolume()
+    vol_1.floor = floor_1
+    vol_1.avg_ceiling_height = 2.5
+
+    vol_2 = space.SpaceVolume()
+    vol_2.floor = floor_2
+    vol_2.avg_ceiling_height = 2.5
+
+    # -- Build the Space
+    sp = space.Space()
+    sp.add_new_volumes([vol_1, vol_2])
+
+    # -- Reflect the Space and all the Volumes, all the floors
+    sp2 = sp.reflect(Vector3D(1, 0, 0), Point3D(0, 0, 0))
+
+    assert sp2.floor_area == pytest.approx(200)
+    assert sp2.weighted_floor_area == pytest.approx(200)
+    assert sp2.avg_clear_height == pytest.approx(2.5)
+    assert sp2.net_volume == pytest.approx(500)
     assert sp2.average_floor_weighting_factor == 1.0
     assert len(sp2.floor_segment_surfaces) == 2
 
