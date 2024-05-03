@@ -1,6 +1,6 @@
-import pytest
 from math import radians
 
+import pytest
 from ladybug_geometry.geometry3d.line import LineSegment3D
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 

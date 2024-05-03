@@ -1,5 +1,5 @@
 import pytest
-from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
+from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
 from honeybee_ph import space
 

@@ -12,8 +12,8 @@ except:
     pass  # IronPython
 
 try:
-    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
     from ladybug_geometry.geometry3d.face import Face3D as LBFace3D
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
