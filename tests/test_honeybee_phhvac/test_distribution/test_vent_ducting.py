@@ -54,6 +54,7 @@ def test_custom_segment_duplicate():
     o2 = o1.duplicate()
 
     assert o2.to_dict() == o1.to_dict()
+    assert id(o1) != id(o2)
 
 
 def test_round_segment_shape_type():
@@ -116,6 +117,17 @@ def test_shape_type_description_rectangular():
     assert o1.shape_type_description == "100.000 x 200.000"
 
 
+def test_PhDuctSegment_duplicate():
+    p1 = Point3D(0, 0, 0)
+    p2 = Point3D(0, 0, 12)
+    geom = LineSegment3D(p1, p2)
+    o1 = PhDuctSegment(geom)
+    o2 = o1.duplicate()
+
+    assert o1.to_dict() == o2.to_dict()
+    assert id(o1) != id(o2)
+
+
 # -- PhDuctElement ---
 
 
@@ -160,6 +172,7 @@ def test_custom_element_duplicate():
     ele2 = ele1.duplicate()
 
     assert ele1.to_dict() == ele2.to_dict()
+    assert id(ele1) != id(ele2)
 
 
 def test_element_is_round():

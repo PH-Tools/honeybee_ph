@@ -74,3 +74,18 @@ def test_PhSupportiveDevice_dict_roundtrip():
     new_device = PhSupportiveDevice.from_dict(device.to_dict())
 
     assert device == new_device
+
+
+def test_PhSupportiveDevice_duplicate():
+    device = PhSupportiveDevice()
+    device.display_name = "Test Device"
+    device.device_type = 20
+    device.quantity = 2
+    device.in_conditioned_space = False
+    device.norm_energy_demand_W = 500
+    device.annual_period_operation_khrs = 2000
+
+    new_device = device.duplicate()
+
+    assert device == new_device
+    assert id(device) != id(new_device)

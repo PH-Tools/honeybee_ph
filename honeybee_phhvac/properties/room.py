@@ -257,12 +257,12 @@ class RoomPhHvacProperties(object):
 
         return None
 
-    def duplicate(self, new_host=None, include_spaces=True):
-        # type: (Optional[RoomProperties], bool) -> RoomPhHvacProperties
-        return self.__copy__(new_host)
+    def __copy__(self, new_host=None, *args, **kwargs):
+        # type: (Optional[RoomProperties], list, dict) -> RoomPhHvacProperties
+        return self.duplicate(new_host)
 
-    def __copy__(self, new_host=None):
-        # type: (Optional[RoomProperties]) -> RoomPhHvacProperties
+    def duplicate(self, new_host=None, *args, **kwargs):
+        # type: (Optional[RoomProperties], list, dict) -> RoomPhHvacProperties
         _host = new_host or self._host
         new_obj = RoomPhHvacProperties(_host)
         new_obj.id_num = self.id_num
@@ -270,19 +270,19 @@ class RoomPhHvacProperties(object):
         new_obj.set_ventilation_system(self.ventilation_system.duplicate() if self.ventilation_system else None)
 
         for htg_sys in self.heating_systems:
-            new_obj.add_heating_system(htg_sys)
+            new_obj.add_heating_system(htg_sys.duplicate())
 
         for heat_pump_sys in self.heat_pump_systems:
-            new_obj.add_heat_pump_system(heat_pump_sys)
+            new_obj.add_heat_pump_system(heat_pump_sys.duplicate())
 
         for exhaust_device in self.exhaust_vent_devices:
-            new_obj.add_exhaust_vent_device(exhaust_device)
+            new_obj.add_exhaust_vent_device(exhaust_device.duplicate())
 
         for supportive_device in self.supportive_devices:
-            new_obj.add_supportive_device(supportive_device)
+            new_obj.add_supportive_device(supportive_device.duplicate())
 
         for renewable_device in self.renewable_devices:
-            new_obj.add_renewable_device(renewable_device)
+            new_obj.add_renewable_device(renewable_device.duplicate())
 
         new_obj.set_hot_water_system(self.hot_water_system.duplicate() if self.hot_water_system else None)
 
@@ -303,25 +303,26 @@ class RoomPhHvacProperties(object):
             move_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         if self._ventilation_system:
-            self._ventilation_system.move(move_vec3D)
+            self.set_ventilation_system(self._ventilation_system.move(move_vec3D))
 
-        for sys in self._heating_systems:
-            sys.move(move_vec3D)
+        # Not Implemented
+        # for sys in self._heating_systems:
+        #     sys.move(move_vec3D)
 
-        for sys in self._heat_pump_systems:
-            sys.move(move_vec3D)
+        # for sys in self._heat_pump_systems:
+        #     sys.move(move_vec3D)
 
-        for sys in self._exhaust_vent_devices:
-            sys.move(move_vec3D)
+        # for sys in self._exhaust_vent_devices:
+        #     sys.move(move_vec3D)
 
-        for sys in self._supportive_devices:
-            sys.move(move_vec3D)
+        # for sys in self._supportive_devices:
+        #     sys.move(move_vec3D)
 
-        for sys in self._renewable_devices:
-            sys.move(move_vec3D)
+        # for sys in self._renewable_devices:
+        #     sys.move(move_vec3D)
 
         if self._hot_water_system:
-            self._hot_water_system.move(move_vec3D)
+            self.set_hot_water_system(self._hot_water_system.move(move_vec3D))
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         """Rotate the Room's HVAC Systems by a certain angle around an axis and origin.
@@ -344,25 +345,26 @@ class RoomPhHvacProperties(object):
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
         if self._ventilation_system:
-            self._ventilation_system.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+            self.set_ventilation_system(self._ventilation_system.rotate(axis_vec3D, angle_degrees, origin_pt3D))
 
-        for sys in self._heating_systems:
-            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        # Not Implemented
+        # for sys in self._heating_systems:
+        #     sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
-        for sys in self._heat_pump_systems:
-            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        # for sys in self._heat_pump_systems:
+        #     sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
-        for sys in self._exhaust_vent_devices:
-            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        # for sys in self._exhaust_vent_devices:
+        #     sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
-        for sys in self._supportive_devices:
-            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        # for sys in self._supportive_devices:
+        #     sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
-        for sys in self._renewable_devices:
-            sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        # for sys in self._renewable_devices:
+        #     sys.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
         if self._hot_water_system:
-            self._hot_water_system.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+            self.set_hot_water_system(self._hot_water_system.rotate(axis_vec3D, angle_degrees, origin_pt3D))
 
     def rotate_xy(self, angle_degree, origin_pt3D):
         # type: (float, Point3D) -> None
@@ -380,27 +382,27 @@ class RoomPhHvacProperties(object):
             angle_degree: An angle in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-
         if self._ventilation_system:
-            self._ventilation_system = self._ventilation_system.rotate_xy(angle_degree, origin_pt3D)
+            self.set_ventilation_system(self._ventilation_system.rotate_xy(angle_degree, origin_pt3D))
 
-        for sys in self._heating_systems:
-            sys.rotate_xy(angle_degree, origin_pt3D)
+        # Not Implemented
+        # for sys in self._heating_systems:
+        #     sys.rotate_xy(angle_degree, origin_pt3D)
 
-        for sys in self._heat_pump_systems:
-            sys.rotate_xy(angle_degree, origin_pt3D)
+        # for sys in self._heat_pump_systems:
+        #     sys.rotate_xy(angle_degree, origin_pt3D)
 
-        for sys in self._exhaust_vent_devices:
-            sys.rotate_xy(angle_degree, origin_pt3D)
+        # for sys in self._exhaust_vent_devices:
+        #     sys.rotate_xy(angle_degree, origin_pt3D)
 
-        for sys in self._supportive_devices:
-            sys.rotate_xy(angle_degree, origin_pt3D)
+        # for sys in self._supportive_devices:
+        #     sys.rotate_xy(angle_degree, origin_pt3D)
 
-        for sys in self._renewable_devices:
-            sys.rotate_xy(angle_degree, origin_pt3D)
+        # for sys in self._renewable_devices:
+        #     sys.rotate_xy(angle_degree, origin_pt3D)
 
         if self._hot_water_system:
-            self._hot_water_system = self._hot_water_system.rotate_xy(angle_degree, origin_pt3D)
+            self.set_hot_water_system(self._hot_water_system.rotate_xy(angle_degree, origin_pt3D))
 
     def reflect(self, plane):
         # type: (Plane) -> None
@@ -418,25 +420,26 @@ class RoomPhHvacProperties(object):
             plane: A Plane object representing the plane across which the object will be reflected.
         """
         if self._ventilation_system:
-            self._ventilation_system.reflect(plane.n, plane.o)
+            self.set_ventilation_system(self._ventilation_system.reflect(plane.n, plane.o))
 
-        for sys in self._heating_systems:
-            sys.reflect(plane.n, plane.o)
+        # Not Implemented
+        # for sys in self._heating_systems:
+        #     sys.reflect(plane.n, plane.o)
 
-        for sys in self._heat_pump_systems:
-            sys.reflect(plane.n, plane.o)
+        # for sys in self._heat_pump_systems:
+        #     sys.reflect(plane.n, plane.o)
 
-        for sys in self._exhaust_vent_devices:
-            sys.reflect(plane.n, plane.o)
+        # for sys in self._exhaust_vent_devices:
+        #     sys.reflect(plane.n, plane.o)
 
-        for sys in self._supportive_devices:
-            sys.reflect(plane.n, plane.o)
+        # for sys in self._supportive_devices:
+        #     sys.reflect(plane.n, plane.o)
 
-        for sys in self._renewable_devices:
-            sys.reflect(plane.n, plane.o)
+        # for sys in self._renewable_devices:
+        #     sys.reflect(plane.n, plane.o)
 
         if self._hot_water_system:
-            self._hot_water_system.reflect(plane.n, plane.o)
+            self.set_hot_water_system(self._hot_water_system.reflect(plane.n, plane.o))
 
     def scale(self, scale_factor, origin_pt3D=None):
         """Scale the Room's HVAC Systems by a factor from an origin point.
@@ -457,20 +460,21 @@ class RoomPhHvacProperties(object):
         if self._ventilation_system:
             self.set_ventilation_system(self._ventilation_system.scale(scale_factor, origin_pt3D))
 
-        for sys in self._heating_systems:
-            sys.scale(scale_factor, origin_pt3D)
+        # Not Implemented
+        # for sys in self._heating_systems:
+        #     sys.scale(scale_factor, origin_pt3D)
 
-        for sys in self._heat_pump_systems:
-            sys.scale(scale_factor, origin_pt3D)
+        # for sys in self._heat_pump_systems:
+        #     sys.scale(scale_factor, origin_pt3D)
 
-        for sys in self._exhaust_vent_devices:
-            sys.scale(scale_factor, origin_pt3D)
+        # for sys in self._exhaust_vent_devices:
+        #     sys.scale(scale_factor, origin_pt3D)
 
-        for sys in self._supportive_devices:
-            sys.scale(scale_factor, origin_pt3D)
+        # for sys in self._supportive_devices:
+        #     sys.scale(scale_factor, origin_pt3D)
 
-        for sys in self._renewable_devices:
-            sys.scale(scale_factor, origin_pt3D)
+        # for sys in self._renewable_devices:
+        #     sys.scale(scale_factor, origin_pt3D)
 
         if self._hot_water_system:
             self.set_hot_water_system(self._hot_water_system.scale(scale_factor, origin_pt3D))

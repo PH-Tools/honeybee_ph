@@ -154,12 +154,22 @@ def test_scale_system_with_single_exhaust_duct():
     duct_ele_1.add_segment(duct_seg_1)
     sys_1.add_exhaust_duct_element(duct_ele_1)
 
-    sys_1.scale(0.0254)
-
-    assert sys_1.exhaust_ducting_total_length == 3.6576
-    assert sys_1.exhaust_ducting_size_description == "0.305 x 0.914"
+    assert sys_1.exhaust_ducting_total_length == 144
+    assert sys_1.exhaust_ducting_size_description == "12.000 x 36.000"
     assert sys_1.supply_ducting_total_length == 0
     assert sys_1.supply_ducting_size_description == None
+
+    sys_2 = sys_1.scale(0.0254)
+
+    assert sys_1.exhaust_ducting_total_length == 144
+    assert sys_1.exhaust_ducting_size_description == "12.000 x 36.000"
+    assert sys_1.supply_ducting_total_length == 0
+    assert sys_1.supply_ducting_size_description == None
+
+    assert sys_2.exhaust_ducting_total_length == 3.6576
+    assert sys_2.exhaust_ducting_size_description == "0.305 x 0.914"
+    assert sys_2.supply_ducting_total_length == 0
+    assert sys_2.supply_ducting_size_description == None
 
 
 def test_scale_system_with_multiple_exhaust_ducts():
@@ -182,12 +192,22 @@ def test_scale_system_with_multiple_exhaust_ducts():
     duct_ele_2.add_segment(duct_seg_2)
     sys_1.add_exhaust_duct_element(duct_ele_2)
 
-    sys_1.scale(0.0254)
-
-    assert sys_1.exhaust_ducting_total_length == 7.3152
-    assert sys_1.exhaust_ducting_size_description == "0.305 x 0.914"
+    assert sys_1.exhaust_ducting_total_length == 288
+    assert sys_1.exhaust_ducting_size_description == "12.000 x 36.000"
     assert sys_1.supply_ducting_total_length == 0
     assert sys_1.supply_ducting_size_description == None
+
+    sys_2 = sys_1.scale(0.0254)
+
+    assert sys_1.exhaust_ducting_total_length == 288
+    assert sys_1.exhaust_ducting_size_description == "12.000 x 36.000"
+    assert sys_1.supply_ducting_total_length == 0
+    assert sys_1.supply_ducting_size_description == None
+
+    assert sys_2.exhaust_ducting_total_length == 7.3152
+    assert sys_2.exhaust_ducting_size_description == "0.305 x 0.914"
+    assert sys_2.supply_ducting_total_length == 0
+    assert sys_2.supply_ducting_size_description == None
 
 
 def test_scale_system_with_single_supply_duct():
@@ -202,12 +222,22 @@ def test_scale_system_with_single_supply_duct():
     duct_ele_1.add_segment(duct_seg_1)
     sys_1.add_supply_duct_element(duct_ele_1)
 
-    sys_1.scale(0.0254)
-
-    assert sys_1.supply_ducting_total_length == 3.6576
-    assert sys_1.supply_ducting_size_description == "0.152 Θ"
+    assert sys_1.supply_ducting_total_length == 144
+    assert sys_1.supply_ducting_size_description == "6.000 Θ"
     assert sys_1.exhaust_ducting_total_length == 0
     assert sys_1.exhaust_ducting_size_description == None
+
+    sys_2 = sys_1.scale(0.0254)
+
+    assert sys_1.supply_ducting_total_length == 144
+    assert sys_1.supply_ducting_size_description == "6.000 Θ"
+    assert sys_1.exhaust_ducting_total_length == 0
+    assert sys_1.exhaust_ducting_size_description == None
+
+    assert sys_2.supply_ducting_total_length == 3.6576
+    assert sys_2.supply_ducting_size_description == "0.152 Θ"
+    assert sys_2.exhaust_ducting_total_length == 0
+    assert sys_2.exhaust_ducting_size_description == None
 
 
 def test_scale_system_with_multiple_supply_ducts():
@@ -230,9 +260,19 @@ def test_scale_system_with_multiple_supply_ducts():
     duct_ele_2.add_segment(duct_seg_2)
     sys_1.add_supply_duct_element(duct_ele_2)
 
-    sys_1.scale(0.0254)
-
-    assert sys_1.supply_ducting_total_length == 7.3152
-    assert sys_1.supply_ducting_size_description == "0.152 Θ"
+    assert sys_1.supply_ducting_total_length == 288
+    assert sys_1.supply_ducting_size_description == "6.000 Θ"
     assert sys_1.exhaust_ducting_total_length == 0
     assert sys_1.exhaust_ducting_size_description == None
+
+    sys_2 = sys_1.scale(0.0254)
+
+    assert sys_1.supply_ducting_total_length == 288
+    assert sys_1.supply_ducting_size_description == "6.000 Θ"
+    assert sys_1.exhaust_ducting_total_length == 0
+    assert sys_1.exhaust_ducting_size_description == None
+
+    assert sys_2.supply_ducting_total_length == 7.3152
+    assert sys_2.supply_ducting_size_description == "0.152 Θ"
+    assert sys_2.exhaust_ducting_total_length == 0
+    assert sys_2.exhaust_ducting_size_description == None

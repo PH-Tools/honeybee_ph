@@ -82,7 +82,7 @@ class Ventilator(_base._PhHVACBase):
 
     def duplicate(self):
         # type: () -> Ventilator
-        new_obj = self.__class__()
+        new_obj = Ventilator()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
         new_obj.user_data = copy(self.user_data)
@@ -273,6 +273,8 @@ class PhVentilationSystem(_base._PhHVACBase):
             angle_degrees: An angle for rotation in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
+        print("  - PhVentilationSystem<id={}>.rotate(angle_degrees={})".format(id(self), angle_degrees))
+
         new_system = self.duplicate()
         new_system.identifier = self.identifier
         new_system.supply_ducting = [
@@ -290,6 +292,8 @@ class PhVentilationSystem(_base._PhHVACBase):
             angle_degrees: An angle in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
+        print("  - PhVentilationSystem<id={}>.rotate_xy(angle_degrees={})".format(id(self), angle_degrees))
+
         new_system = self.duplicate()
         new_system.identifier = self.identifier
         new_system.supply_ducting = [
@@ -440,11 +444,35 @@ class _ExhaustVentilatorBase(_base._PhHVACBase):
         """
         pass
 
+    def __copy__(self):
+        # type: () -> ExhaustVentDryer
+        raise NotImplementedError("This method must be implemented by the subclass.")
+
+    def duplicate(self):
+        # type: () -> ExhaustVentDryer
+        raise NotImplementedError("This method must be implemented by the subclass.")
+
 
 class ExhaustVentDryer(_ExhaustVentilatorBase):
     def __init__(self):
         super(ExhaustVentDryer, self).__init__()
         self.display_name = "_unnamed_dryer_exh_"
+
+    def __copy__(self):
+        # type: () -> ExhaustVentDryer
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> ExhaustVentDryer
+        new_obj = self.__class__()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = copy(self.user_data)
+        new_obj.quantity = self.quantity
+        new_obj.annual_runtime_minutes = self.annual_runtime_minutes
+        new_obj.device_class_name = self.device_class_name
+        new_obj.exhaust_flow_rate_m3s = self.exhaust_flow_rate_m3s
+        return new_obj
 
 
 class ExhaustVentKitchenHood(_ExhaustVentilatorBase):
@@ -452,11 +480,43 @@ class ExhaustVentKitchenHood(_ExhaustVentilatorBase):
         super(ExhaustVentKitchenHood, self).__init__()
         self.display_name = "_unnamed_kitchen_hood_exh_"
 
+    def __copy__(self):
+        # type: () -> ExhaustVentKitchenHood
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> ExhaustVentKitchenHood
+        new_obj = self.__class__()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = copy(self.user_data)
+        new_obj.quantity = self.quantity
+        new_obj.annual_runtime_minutes = self.annual_runtime_minutes
+        new_obj.device_class_name = self.device_class_name
+        new_obj.exhaust_flow_rate_m3s = self.exhaust_flow_rate_m3s
+        return new_obj
+
 
 class ExhaustVentUserDefined(_ExhaustVentilatorBase):
     def __init__(self):
         super(ExhaustVentUserDefined, self).__init__()
         self.display_name = "_unnamed_user_defined_exh_"
+
+    def __copy__(self):
+        # type: () -> ExhaustVentUserDefined
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> ExhaustVentUserDefined
+        new_obj = self.__class__()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = copy(self.user_data)
+        new_obj.quantity = self.quantity
+        new_obj.annual_runtime_minutes = self.annual_runtime_minutes
+        new_obj.device_class_name = self.device_class_name
+        new_obj.exhaust_flow_rate_m3s = self.exhaust_flow_rate_m3s
+        return new_obj
 
 
 class PhExhaustDeviceBuilder(object):

@@ -123,6 +123,15 @@ class PhHeatPumpSystem(_base._PhHVACBase):
         """
         pass
 
+    def __copy__(self):
+        # type: () -> PhHeatPumpSystem
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpSystem
+        """Duplicate the System."""
+        raise NotImplementedError("Error: duplicate() called from BaseClass")
+
 
 # -----------------------------------------------------------------------------
 # Heat-Pump Cooling Parameters
@@ -152,6 +161,13 @@ class PhHeatPumpCoolingParams_Base(_base._PhHVACBase):
     @classmethod
     def from_dict(cls, input_dict):
         raise NotImplementedError("Error: from_dict() called from PhHeatPumpCoolingParams_Base?")
+
+    def __copy__(self):
+        raise NotImplementedError("Error: __copy__() called from PhHeatPumpCoolingParams_Base?")
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpCoolingParams_Base
+        raise NotImplementedError("Error: duplicate() called from PhHeatPumpCoolingParams_Base?")
 
     def __str__(self):
         # type: () -> str
@@ -186,6 +202,22 @@ class PhHeatPumpCoolingParams_Ventilation(PhHeatPumpCoolingParams_Base):
         new_obj.min_coil_temp = _input_dict["min_coil_temp"]
         new_obj.capacity = _input_dict["capacity"]
         new_obj.annual_COP = _input_dict["annual_COP"]
+        return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpCoolingParams_Ventilation
+        new_obj = PhHeatPumpCoolingParams_Ventilation()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+        new_obj.used = self.used
+        new_obj.single_speed = self.single_speed
+        new_obj.min_coil_temp = self.min_coil_temp
+        new_obj.capacity = self.capacity
+        new_obj.annual_COP = self.annual_COP
         return new_obj
 
 
@@ -225,6 +257,24 @@ class PhHeatPumpCoolingParams_Recirculation(PhHeatPumpCoolingParams_Base):
         new_obj.annual_COP = _input_dict["annual_COP"]
         return new_obj
 
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpCoolingParams_Recirculation
+        new_obj = PhHeatPumpCoolingParams_Recirculation()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+        new_obj.used = self.used
+        new_obj.single_speed = self.single_speed
+        new_obj.min_coil_temp = self.min_coil_temp
+        new_obj.flow_rate_m3_hr = self.flow_rate_m3_hr
+        new_obj.flow_rate_variable = self.flow_rate_variable
+        new_obj.capacity = self.capacity
+        new_obj.annual_COP = self.annual_COP
+        return new_obj
+
 
 class PhHeatPumpCoolingParams_Dehumidification(PhHeatPumpCoolingParams_Base):
     """Cooling via dedicated dehumidification system."""
@@ -250,6 +300,20 @@ class PhHeatPumpCoolingParams_Dehumidification(PhHeatPumpCoolingParams_Base):
         new_obj.annual_COP = _input_dict["annual_COP"]
         return new_obj
 
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpCoolingParams_Dehumidification
+        new_obj = PhHeatPumpCoolingParams_Dehumidification()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+        new_obj.used = self.used
+        new_obj.useful_heat_loss = self.useful_heat_loss
+        new_obj.annual_COP = self.annual_COP
+        return new_obj
+
 
 class PhHeatPumpCoolingParams_Panel(PhHeatPumpCoolingParams_Base):
     """Cooling via radiant panels."""
@@ -270,6 +334,19 @@ class PhHeatPumpCoolingParams_Panel(PhHeatPumpCoolingParams_Base):
         new_obj = cls()
         new_obj.base_attrs_from_dict(_input_dict)
         new_obj.annual_COP = _input_dict["annual_COP"]
+        return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpCoolingParams_Panel
+        new_obj = PhHeatPumpCoolingParams_Panel()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+        new_obj.used = self.used
+        new_obj.annual_COP = self.annual_COP
         return new_obj
 
 
@@ -319,6 +396,19 @@ class PhHeatPumpCoolingParams:
         # type: () -> str
         return str(self)
 
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpCoolingParams
+        new_obj = PhHeatPumpCoolingParams()
+        new_obj.percent_coverage = self.percent_coverage
+        new_obj.ventilation = self.ventilation.duplicate()
+        new_obj.recirculation = self.recirculation.duplicate()
+        new_obj.dehumidification = self.dehumidification.duplicate()
+        new_obj.panel = self.panel.duplicate()
+        return new_obj
+
 
 # -----------------------------------------------------------------------------
 # -- Heat Pumps Types
@@ -349,6 +439,20 @@ class PhHeatPumpAnnual(PhHeatPumpSystem):
         new_obj.annual_COP = _input_dict["annual_COP"]
         new_obj.total_system_perf_ratio = _input_dict["total_system_perf_ratio"]
         new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(_input_dict["cooling_params"])
+        return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpAnnual
+        new_obj = PhHeatPumpAnnual()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+        new_obj.annual_COP = self.annual_COP
+        new_obj.total_system_perf_ratio = self.total_system_perf_ratio
+        new_obj.cooling_params = self.cooling_params.duplicate()
         return new_obj
 
 
@@ -411,6 +515,22 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
         new_obj.COP_2 = _input_dict["COP_2"]
         new_obj.ambient_temp_2 = _input_dict["ambient_temp_2"]
         new_obj.cooling_params = PhHeatPumpCoolingParams.from_dict(_input_dict["cooling_params"])
+        return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatPumpRatedMonthly
+        new_obj = PhHeatPumpRatedMonthly()
+        new_obj.identifier = self.identifier
+        new_obj.display_name = self.display_name
+        new_obj.user_data = self.user_data
+        new_obj.COP_1 = self.COP_1
+        new_obj.ambient_temp_1 = self.ambient_temp_1
+        new_obj.COP_2 = self.COP_2
+        new_obj.ambient_temp_2 = self.ambient_temp_2
+        new_obj.cooling_params = self.cooling_params.duplicate()
         return new_obj
 
 

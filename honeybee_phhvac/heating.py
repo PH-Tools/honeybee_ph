@@ -4,6 +4,7 @@
 """Honeybee-PH-HVAC-Equipment: Heating Devices."""
 
 import sys
+from copy import copy
 
 try:
     from typing import Any, Optional
@@ -118,6 +119,13 @@ class PhHeatingSystem(_base._PhHVACBase):
         """
         pass
 
+    def duplicate(self):
+        # type: () -> PhHeatingSystem
+        raise NotImplementedError("Error: duplicate() called on BaseClass.")
+
+    def __copy__(self):
+        raise NotImplementedError("Error: __copy__() called on BaseClass.")
+
 
 # -----------------------------------------------------------------------------
 # Heating Types
@@ -141,6 +149,17 @@ class PhHeatingDirectElectric(PhHeatingSystem):
         new_obj.check_dict_type(_input_dict)
         new_obj.base_attrs_from_dict(_input_dict)
         return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatingDirectElectric
+        obj = PhHeatingDirectElectric()
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+        return obj
 
 
 class PhHeatingFossilBoiler(PhHeatingSystem):
@@ -192,6 +211,26 @@ class PhHeatingFossilBoiler(PhHeatingSystem):
         new_obj.avg_temp_at_32C_28C = _input_dict["avg_temp_at_32C_28C"]
 
         return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatingFossilBoiler
+        obj = PhHeatingFossilBoiler()
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+        obj.fuel = self.fuel
+        obj.condensing = self.condensing
+        obj.in_conditioned_space = self.in_conditioned_space
+        obj.effic_at_30_percent_load = self.effic_at_30_percent_load
+        obj.effic_at_nominal_load = self.effic_at_nominal_load
+        obj.avg_rtrn_temp_at_30_percent_load = self.avg_rtrn_temp_at_30_percent_load
+        obj.avg_temp_at_70C_55C = self.avg_temp_at_70C_55C
+        obj.avg_temp_at_55C_45C = self.avg_temp_at_55C_45C
+        obj.avg_temp_at_32C_28C = self.avg_temp_at_32C_28C
+        return obj
 
 
 class PhHeatingWoodBoiler(PhHeatingSystem):
@@ -264,6 +303,30 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
 
         return new_obj
 
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatingWoodBoiler
+        obj = PhHeatingWoodBoiler()
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+        obj.fuel = self.fuel
+        obj.in_conditioned_space = self.in_conditioned_space
+        obj.effic_in_basic_cycle = self.effic_in_basic_cycle
+        obj.effic_in_const_operation = self.effic_in_const_operation
+        obj.avg_frac_heat_output = self.avg_frac_heat_output
+        obj.temp_diff_on_off = self.temp_diff_on_off
+        obj.rated_capacity = self.rated_capacity
+        obj.demand_basic_cycle = self.demand_basic_cycle
+        obj.power_stationary_run = self.power_stationary_run
+        obj.power_standard_run = self.power_standard_run
+        obj.no_transport_pellets = self.no_transport_pellets
+        obj.only_control = self.only_control
+        obj.area_mech_room = self.area_mech_room
+        return obj
+
 
 class PhHeatingDistrict(PhHeatingSystem):
     """Heating via district-heat."""
@@ -290,6 +353,19 @@ class PhHeatingDistrict(PhHeatingSystem):
         new_obj.fuel = _input_dict["fuel"]
         new_obj.util_factor_of_heat_transfer_station = _input_dict["util_factor_of_heat_transfer_station"]
         return new_obj
+
+    def __copy__(self):
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhHeatingDistrict
+        obj = PhHeatingDistrict()
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+        obj.fuel = self.fuel
+        obj.util_factor_of_heat_transfer_station = self.util_factor_of_heat_transfer_station
+        return obj
 
 
 # -----------------------------------------------------------------------------

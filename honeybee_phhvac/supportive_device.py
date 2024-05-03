@@ -3,6 +3,8 @@
 
 """Honeybee-PH-HVAC-Equipment: Aux. Energy Supportive Devices."""
 
+from copy import copy
+
 try:
     from typing import Any, Dict
 except ImportError:
@@ -132,3 +134,20 @@ class PhSupportiveDevice(_base._PhHVACBase):
                 If None, it will be scaled from the World origin_pt3D (0, 0, 0).
         """
         pass
+
+    def __copy__(self):
+        # type: () -> PhSupportiveDevice
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhSupportiveDevice
+        obj = PhSupportiveDevice()
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+        obj.device_type = self.device_type
+        obj.quantity = self.quantity
+        obj.in_conditioned_space = self.in_conditioned_space
+        obj.norm_energy_demand_W = self.norm_energy_demand_W
+        obj.annual_period_operation_khrs = self.annual_period_operation_khrs
+        return obj

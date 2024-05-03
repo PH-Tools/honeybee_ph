@@ -4,6 +4,7 @@
 """Honeybee-PH-HVAC-Equipment: Renewable Energy Devices."""
 
 import sys
+from copy import copy
 
 try:
     from typing import Any, Dict
@@ -119,6 +120,14 @@ class PhRenewableEnergyDevice(_base._PhHVACBase):
         """
         pass
 
+    def __copy__(self):
+        # type: () -> PhPhotovoltaicDevice
+        raise NotImplementedError("Error: __copy__() called on BaseClass.")
+
+    def duplicate(self):
+        # type: () -> PhPhotovoltaicDevice
+        raise NotImplementedError("Error: duplicate() called on BaseClass.")
+
 
 # -----------------------------------------------------------------------------
 # Renewable Energy Device Types
@@ -153,6 +162,23 @@ class PhPhotovoltaicDevice(PhRenewableEnergyDevice):
         new_obj.utilization_factor = _input_dict["utilization_factor"]
 
         return new_obj
+
+    def __copy__(self):
+        # type: () -> PhPhotovoltaicDevice
+        return self.duplicate()
+
+    def duplicate(self):
+        # type: () -> PhPhotovoltaicDevice
+        """Duplicate the device."""
+        obj = PhPhotovoltaicDevice()
+        obj.identifier = self.identifier
+        obj.display_name = self.display_name
+        obj.user_data = copy(self.user_data)
+        obj.photovoltaic_renewable_energy = self.photovoltaic_renewable_energy
+        obj.array_size = self.array_size
+        obj.utilization_factor = self.utilization_factor
+        obj.percent_coverage = self.percent_coverage
+        return obj
 
 
 # -----------------------------------------------------------------------------

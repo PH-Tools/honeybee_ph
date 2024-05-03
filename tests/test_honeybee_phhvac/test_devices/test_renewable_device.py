@@ -1,3 +1,5 @@
+import pytest
+
 from honeybee_phhvac.renewable_devices import (
     PhPhotovoltaicDevice,
     PhRenewableEnergyDevice,
@@ -8,6 +10,12 @@ from honeybee_phhvac.renewable_devices import (
 def test_base_class():
     sys = PhRenewableEnergyDevice()
     assert sys.ToString()
+
+
+def test_duplicate_base_class_raises_NotImplementedError():
+    with pytest.raises(NotImplementedError):
+        sys = PhRenewableEnergyDevice()
+        sys.duplicate()
 
 
 # -----------------------------------------------------------------------------
@@ -28,6 +36,17 @@ def test_dict_roundtrip_PhPhotovoltaicDevice():
     assert "test_key" in s2.user_data
     assert "test_key" not in s1.user_data
     assert s1.to_dict() != s2.to_dict()
+
+
+def test_duplicate_PhPhotovoltaicDevice():
+    s1 = PhPhotovoltaicDevice()
+    s1.utilization_factor = 0.5
+    s1.array_size = 1234
+    s1.display_name = "A Test"
+    s2 = s1.duplicate()
+    assert s1.to_dict() == s2.to_dict()
+    assert s1.display_name == s2.display_name
+    assert id(s1) != id(s2)
 
 
 # -----------------------------------------------------------------------------

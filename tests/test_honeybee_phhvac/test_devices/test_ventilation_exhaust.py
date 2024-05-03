@@ -40,6 +40,16 @@ def test_custom_exhaust_Dryer_dict_roundtrip():
     assert o2.to_dict() == d
 
 
+def test_custom_exhaust_Dryer_duplicate():
+    o1 = ventilation.ExhaustVentDryer()
+    o1.annual_runtime_minutes = 1234.5
+    o1.exhaust_flow_rate_m3s = 4567.8
+    o2 = o1.duplicate()
+    assert o2.annual_runtime_minutes == 1234.5
+    assert o2.exhaust_flow_rate_m3s == 4567.8
+    assert id(o1) != id(o2)
+
+
 def test_custom_exhaust_Hood_dict_roundtrip():
     o1 = ventilation.ExhaustVentKitchenHood()
     o1.annual_runtime_minutes = 1234.5
@@ -49,6 +59,16 @@ def test_custom_exhaust_Hood_dict_roundtrip():
     assert o2.to_dict() == d
 
 
+def test_custom_exhaust_Hood_duplicate():
+    o1 = ventilation.ExhaustVentKitchenHood()
+    o1.annual_runtime_minutes = 1234.5
+    o1.exhaust_flow_rate_m3s = 4567.8
+    o2 = o1.duplicate()
+    assert o2.annual_runtime_minutes == 1234.5
+    assert o2.exhaust_flow_rate_m3s == 4567.8
+    assert id(o1) != id(o2)
+
+
 def test_custom_exhaust_User_Defined_dict_roundtrip():
     o1 = ventilation.ExhaustVentUserDefined()
     o1.annual_runtime_minutes = 1234.5
@@ -56,6 +76,16 @@ def test_custom_exhaust_User_Defined_dict_roundtrip():
     d = o1.to_dict()
     o2 = ventilation.ExhaustVentUserDefined.from_dict(d)
     assert o2.to_dict() == d
+
+
+def test_custom_exhaust_User_Defined_duplicate():
+    o1 = ventilation.ExhaustVentUserDefined()
+    o1.annual_runtime_minutes = 1234.5
+    o1.exhaust_flow_rate_m3s = 4567.8
+    o2 = o1.duplicate()
+    assert o2.annual_runtime_minutes == 1234.5
+    assert o2.exhaust_flow_rate_m3s == 4567.8
+    assert id(o1) != id(o2)
 
 
 # -----------------------------------------------------------------------------
