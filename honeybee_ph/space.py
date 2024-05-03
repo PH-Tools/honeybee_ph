@@ -12,13 +12,14 @@ except:
     pass  # IronPython
 
 try:
-    from ladybug_geometry import geometry3d
     from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+    from ladybug_geometry.geometry3d.face import Face3D as LBFace3D
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
 try:
     from honeybee import room
+    from honeybee.face import Face3D as HBFace3D
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
@@ -32,7 +33,7 @@ except ImportError as e:
 class SpaceFloorSegment(_base._Base):
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
-        self.geometry = None  # type: Optional[geometry3d.face.Face3D]
+        self.geometry = None  # type: Optional[LBFace3D]
         self.weighting_factor = 1.0
 
         # -- Reference Point Note: Usually this is just the center, although for
@@ -92,11 +93,11 @@ class SpaceFloorSegment(_base._Base):
 
         geom_dict = _input_dict.get("geometry", None)
         if geom_dict:
-            new_obj.geometry = geometry3d.Face3D.from_dict(geom_dict)
+            new_obj.geometry = LBFace3D.from_dict(geom_dict)
 
         ref_pt_dict = _input_dict.get("reference_point", None)
         if ref_pt_dict:
-            new_obj.reference_point = geometry3d.Point3D.from_dict(ref_pt_dict)
+            new_obj.reference_point = Point3D.from_dict(ref_pt_dict)
 
         return new_obj
 
@@ -119,15 +120,15 @@ class SpaceFloorSegment(_base._Base):
         return new_obj
 
     def duplicate_geometry(self):
-        # type: () -> geometry3d.face.Face3D
+        # type: () -> LBFace3D
         try:
-            return self.geometry.duplicate()
+            return self.geometry.duplicate()  # type: ignore
         except AttributeError as e:
             msg = "\n\tSpaceFloorSegment {} has no geometry? " "Cannot duplicate it.".format(self)
             raise AttributeError(msg, e)
 
     def move(self, moving_vec3D):
-        # type: (geometry3d.Vector3D) -> SpaceFloorSegment
+        # type: (Vector3D) -> SpaceFloorSegment
         """Move the SpaceFloorSegment along a vector.
 
         Args:
@@ -143,7 +144,7 @@ class SpaceFloorSegment(_base._Base):
         return dup_floor_seg
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> SpaceFloorSegment
+        # type: (Vector3D, float, Point3D) -> SpaceFloorSegment
         """Rotate the SpaceFloorSegment by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
@@ -161,11 +162,12 @@ class SpaceFloorSegment(_base._Base):
         if self.geometry:
             dup_floor_seg.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = self.reference_point.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
+            new_pt = Point3D.from_array(self.reference_point.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D))
+            dup_floor_seg.reference_point = new_pt
         return dup_floor_seg
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
-        # type: (float, geometry3d.Point3D) -> SpaceFloorSegment
+        # type: (float, Point3D) -> SpaceFloorSegment
         """Rotate the SpaceFloorSegment counterclockwise in the XY plane by a certain angle.
 
         Args:
@@ -178,11 +180,12 @@ class SpaceFloorSegment(_base._Base):
         if self.geometry:
             dup_floor_seg.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = self.reference_point.rotate_xy(radians(angle_degrees), origin_pt3D)
+            new_pt = Point3D.from_array(self.reference_point.rotate_xy(radians(angle_degrees), origin_pt3D))
+            dup_floor_seg.reference_point = new_pt
         return dup_floor_seg
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> SpaceFloorSegment
+        # type: (Vector3D, Point3D) -> SpaceFloorSegment
         """Reflected the SpaceFloorSegment across a plane with the input normal vector and origin_pt3D.
 
         Args:
@@ -196,11 +199,12 @@ class SpaceFloorSegment(_base._Base):
         if self.geometry:
             dup_floor_seg.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = Point3D.from_array(self.reference_point.reflect(normal_vec3D, origin_pt3D))
+            new_pt = Point3D.from_array(self.reference_point.reflect(normal_vec3D, origin_pt3D))
+            dup_floor_seg.reference_point = new_pt
         return dup_floor_seg
 
     def scale(self, scale_factor, origin_pt3D=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> SpaceFloorSegment
+        # type: (float, Optional[Point3D]) -> SpaceFloorSegment
         """Scale the SpaceFloorSegment by a factor from an origin_pt3D point.
 
         Args:
@@ -214,7 +218,8 @@ class SpaceFloorSegment(_base._Base):
         if self.geometry:
             dup_floor_seg.geometry = self.geometry.scale(scale_factor, origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = self.reference_point.scale(scale_factor, origin_pt3D)
+            new_pt = Point3D.from_array(self.reference_point.scale(scale_factor, origin_pt3D))
+            dup_floor_seg.reference_point = new_pt
         return dup_floor_seg
 
     def __str__(self):
@@ -236,11 +241,11 @@ class SpaceFloor(_base._Base):
     def __init__(self):
         super(SpaceFloor, self).__init__()
         self._floor_segments = list()  # type: List[SpaceFloorSegment]
-        self.geometry = None  # type: Optional[geometry3d.face.Face3D]
+        self.geometry = None  # type: Optional[LBFace3D]
 
     @property
     def reference_points(self):
-        # type() -> list[geometry3d.Point3D]
+        # type() -> list[Point3D]
         """Returns a list of the Floor's FloorSegment reference points."""
         return [seg.reference_point for seg in self.floor_segments]
 
@@ -287,7 +292,8 @@ class SpaceFloor(_base._Base):
         new_floor.identifier = self.identifier
         new_floor.display_name = self.display_name
         new_floor.user_data = self.user_data
-        new_floor.geometry = self.geometry.duplicate() if self.geometry else None
+        if self.geometry:
+            new_floor.geometry = self.geometry.__copy__()
 
         if _include_floor_segments:
             for seg in self.floor_segments:
@@ -296,12 +302,12 @@ class SpaceFloor(_base._Base):
         return new_floor
 
     def duplicate_geometry(self):
-        # type: () -> geometry3d.face.Face3D
-        try:
-            return self.geometry.duplicate()
-        except AttributeError as e:
+        # type: () -> LBFace3D
+        if self.geometry is not None:
+            return self.geometry.__copy__()
+        else:
             msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(self)
-            raise AttributeError(msg, e)
+            raise AttributeError(msg)
 
     def to_dict(self, include_mesh=False, *args, **kwargs):
         # type: (bool, list, dict) -> Dict[str, Any]
@@ -330,7 +336,7 @@ class SpaceFloor(_base._Base):
 
         geom_dict = _input_dict.get("geometry", None)
         if geom_dict:
-            new_obj.geometry = geometry3d.Face3D.from_dict(geom_dict)
+            new_obj.geometry = LBFace3D.from_dict(geom_dict)
 
         flr_seg_dicts = _input_dict.get("floor_segments", [])
         for seg_dict in flr_seg_dicts:
@@ -339,7 +345,7 @@ class SpaceFloor(_base._Base):
         return new_obj
 
     def move(self, moving_vec3D):
-        # type: (geometry3d.Vector3D) -> SpaceFloor
+        # type: (Vector3D) -> SpaceFloor
         """Move the SpaceFloor along a vector.
 
         Args:
@@ -355,7 +361,7 @@ class SpaceFloor(_base._Base):
         return dup_floor
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> SpaceFloor
+        # type: (Vector3D, float, Point3D) -> SpaceFloor
         """Rotate the SpaceFloor by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
@@ -377,7 +383,7 @@ class SpaceFloor(_base._Base):
         return dup_floor
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
-        # type: (float, geometry3d.Point3D) -> SpaceFloor
+        # type: (float, Point3D) -> SpaceFloor
         """Rotate the SpaceFloor counterclockwise in the XY plane by a certain angle.
 
         Args:
@@ -394,7 +400,7 @@ class SpaceFloor(_base._Base):
         return dup_floor
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> SpaceFloor
+        # type: (Vector3D, Point3D) -> SpaceFloor
         """Reflected the SpaceFloor across a plane with the input normal vector and origin_pt3D.
 
         Args:
@@ -412,7 +418,7 @@ class SpaceFloor(_base._Base):
         return dup_floor
 
     def scale(self, scale_factor, origin_pt3D=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> SpaceFloor
+        # type: (float, Optional[Point3D]) -> SpaceFloor
         """Scale the SpaceFloor by a factor from an origin_pt3D point.
 
         Args:
@@ -444,7 +450,7 @@ class SpaceVolume(_base._Base):
         super(SpaceVolume, self).__init__()
         self.avg_ceiling_height = 2.5  # m
         self.floor = SpaceFloor()
-        self.geometry = []  # type: List[geometry3d.face.Face3D]
+        self.geometry = []  # type: List[LBFace3D]
 
     @property
     def net_volume(self):
@@ -465,13 +471,13 @@ class SpaceVolume(_base._Base):
 
     @property
     def reference_points(self):
-        # type() -> list[geometry3d.Point3D]
+        # type() -> list[Point3D]
         """Returns the Volume's FloorSegment reference points (center)."""
         return self.floor.reference_points
 
     @property
     def floor_segment_surfaces(self):
-        # type: () -> List[Optional[geometry3d.face.Face3D]]
+        # type: () -> List[Optional[LBFace3D]]
         return [flr_seg.geometry for flr_seg in self.floor.floor_segments]
 
     @property
@@ -497,13 +503,14 @@ class SpaceVolume(_base._Base):
             new_volume.floor = self.floor.duplicate()
 
         if self.geometry:
-            new_volume.geometry = [geo.duplicate() for geo in self.geometry]
+            new_geom = [geo.__copy__() for geo in self.geometry]
+            new_volume.geometry = new_geom
 
         return new_volume
 
     def to_dict(self, include_mesh=False, *args, **kwargs):
         # type: (bool, list, dict) -> Dict[str, Any]
-        d = {}
+        d = {}  # type: dict[str, Any]
 
         d["identifier"] = self.identifier
         d["display_name"] = self.display_name
@@ -513,7 +520,7 @@ class SpaceVolume(_base._Base):
         d["floor"] = self.floor.to_dict(include_mesh)
         d["geometry"] = []
         for geom in self.geometry:
-            g_dict = geom.to_dict()
+            g_dict = geom.to_dict()  # type: dict[str, Any]
             if include_mesh:
                 g_dict["mesh"] = geom.triangulated_mesh3d.to_dict()
             d["geometry"].append(g_dict)
@@ -534,12 +541,12 @@ class SpaceVolume(_base._Base):
 
         geom_list = _input_dict.get("geometry", [])
         for geom_dict in geom_list:
-            new_obj.geometry.append(geometry3d.Face3D.from_dict(geom_dict))
+            new_obj.geometry.append(LBFace3D.from_dict(geom_dict))
 
         return new_obj
 
     def move(self, moving_vec3D):
-        # type: (geometry3d.Vector3D) -> SpaceVolume
+        # type: (Vector3D) -> SpaceVolume
         """Move the SpaceVolume along a vector.
 
         Args:
@@ -553,7 +560,7 @@ class SpaceVolume(_base._Base):
         return dup_volume
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> SpaceVolume
+        # type: (Vector3D, float, Point3D) -> SpaceVolume
         """Rotate the SpaceVolume by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
@@ -573,7 +580,7 @@ class SpaceVolume(_base._Base):
         return dup_volume
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
-        # type: (float, geometry3d.Point3D) -> SpaceVolume
+        # type: (float, Point3D) -> SpaceVolume
         """Rotate the SpaceVolume counterclockwise in the XY plane by a certain angle.
 
         Args:
@@ -588,7 +595,7 @@ class SpaceVolume(_base._Base):
         return dup_volume
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> SpaceVolume
+        # type: (Vector3D, Point3D) -> SpaceVolume
         """Reflected the SpaceVolume across a plane with the input normal vector and origin_pt3D.
 
         Args:
@@ -604,7 +611,7 @@ class SpaceVolume(_base._Base):
         return dup_volume
 
     def scale(self, scale_factor, origin_pt3D=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> SpaceVolume
+        # type: (float, Optional[Point3D]) -> SpaceVolume
         """Scale the SpaceVolume by a factor from an origin_pt3D point.
 
         Args:
@@ -690,7 +697,7 @@ class Space(_base._Base):
 
     @property
     def reference_points(self):
-        # type: () -> list[geometry3d.Point3D]
+        # type: () -> list[Point3D]
         """Returns a list of the Space's Volume reference Points (center of the floor segments)."""
         pts = []
         for vol in self.volumes:
@@ -704,7 +711,7 @@ class Space(_base._Base):
 
     @property
     def floor_segment_surfaces(self):
-        # type: () -> List[List[Optional[geometry3d.face.Face3D]]]
+        # type: () -> List[List[Optional[LBFace3D]]]
         return [v.floor_segment_surfaces for v in self.volumes]
 
     @property
@@ -791,7 +798,7 @@ class Space(_base._Base):
         return new_obj
 
     def move(self, moving_vec3D):
-        # type: (geometry3d.Vector3D) -> Space
+        # type: (Vector3D) -> Space
         """Move the Space and its Volumes along a vector.
 
         Args:
@@ -805,7 +812,7 @@ class Space(_base._Base):
         return dup_space
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> Space
+        # type: (Vector3D, float, Point3D) -> Space
         """Rotate the Space and its Volumes by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
@@ -825,7 +832,7 @@ class Space(_base._Base):
         return dup_space
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
-        # type: (float, geometry3d.Point3D) -> Space
+        # type: (float, Point3D) -> Space
         """Rotate the Space and its Volumes counterclockwise in the XY plane by a certain angle.
 
         Args:
@@ -840,7 +847,7 @@ class Space(_base._Base):
         return dup_space
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> Space
+        # type: (Vector3D, Point3D) -> Space
         """Reflected the Space and its Volumes across a plane with the input normal vector and origin_pt3D.
 
         Args:
@@ -856,7 +863,7 @@ class Space(_base._Base):
         return dup_space
 
     def scale(self, scale_factor, origin_pt3D=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> Space
+        # type: (float, Optional[Point3D]) -> Space
         """Scale the Space and its Volumes by a factor from an origin_pt3D point.
 
         Args:
