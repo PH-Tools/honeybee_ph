@@ -1,4 +1,5 @@
 import pytest
+from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
 
 from honeybee_ph import space
 
@@ -69,10 +70,10 @@ def test_volume_serialize_with_mesh(floor_segment_geometry):
     assert d1 == d2
 
 
-# -- Scale --
+# -- Transforms --
 
 
-def test_volume_scale(floor_segment_geometry):
+def test_scale_volume(floor_segment_geometry):
     # -- Seg
     seg1 = space.SpaceFloorSegment()
     seg1.geometry = floor_segment_geometry.flr_segment_1
@@ -103,6 +104,105 @@ def test_volume_scale(floor_segment_geometry):
     assert vol2.weighted_floor_area == pytest.approx(1_076.39111056)
     assert vol2.avg_ceiling_height == pytest.approx(8.2021)
     assert vol2.net_volume == pytest.approx(8_828.67)
+
+
+def test_rotate_volume(floor_segment_geometry):
+    # -- Seg
+    seg1 = space.SpaceFloorSegment()
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.weighting_factor = 1.0
+
+    # -- Floor
+    flr1 = space.SpaceFloor()
+    flr1.add_floor_segment(seg1)
+    flr1.geometry = floor_segment_geometry.flr_segment_1
+
+    # -- Volume
+    vol1 = space.SpaceVolume()
+    vol1.floor = flr1
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    vol2 = vol1.rotate(Vector3D(0, 0, 1), 90, Point3D(0, 0, 0))
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    assert vol2.floor_area == pytest.approx(100)
+    assert vol2.weighted_floor_area == pytest.approx(100)
+    assert vol2.avg_ceiling_height == pytest.approx(2.5)
+    assert vol2.net_volume == pytest.approx(250)
+
+
+def test_rotate_xy_volume(floor_segment_geometry):
+    # -- Seg
+    seg1 = space.SpaceFloorSegment()
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.weighting_factor = 1.0
+
+    # -- Floor
+    flr1 = space.SpaceFloor()
+    flr1.add_floor_segment(seg1)
+    flr1.geometry = floor_segment_geometry.flr_segment_1
+
+    # -- Volume
+    vol1 = space.SpaceVolume()
+    vol1.floor = flr1
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    vol2 = vol1.rotate_xy(90, Point3D(0, 0, 0))
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    assert vol2.floor_area == pytest.approx(100)
+    assert vol2.weighted_floor_area == pytest.approx(100)
+    assert vol2.avg_ceiling_height == pytest.approx(2.5)
+    assert vol2.net_volume == pytest.approx(250)
+
+
+def test_reflect_volume(floor_segment_geometry):
+    # -- Seg
+    seg1 = space.SpaceFloorSegment()
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.weighting_factor = 1.0
+
+    # -- Floor
+    flr1 = space.SpaceFloor()
+    flr1.add_floor_segment(seg1)
+    flr1.geometry = floor_segment_geometry.flr_segment_1
+
+    # -- Volume
+    vol1 = space.SpaceVolume()
+    vol1.floor = flr1
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    vol2 = vol1.reflect(Vector3D(1, 0, 0), Point3D(0, 0, 0))
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    assert vol2.floor_area == pytest.approx(100)
+    assert vol2.weighted_floor_area == pytest.approx(100)
+    assert vol2.avg_ceiling_height == pytest.approx(2.5)
+    assert vol2.net_volume == pytest.approx(250)
 
 
 # -- Duplication --
