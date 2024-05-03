@@ -293,7 +293,7 @@ class SpaceFloor(_base._Base):
         new_floor.display_name = self.display_name
         new_floor.user_data = self.user_data
         if self.geometry:
-            new_floor.geometry = self.geometry.__copy__()
+            new_floor.geometry = copy(self.geometry)
 
         if _include_floor_segments:
             for seg in self.floor_segments:
@@ -304,7 +304,7 @@ class SpaceFloor(_base._Base):
     def duplicate_geometry(self):
         # type: () -> LBFace3D
         if self.geometry is not None:
-            return self.geometry.__copy__()
+            return copy(self.geometry)
         else:
             msg = "\n\tSpaceFloorSegment {} has to .geometry? Cannot duplicate.".format(self)
             raise AttributeError(msg)
@@ -503,8 +503,7 @@ class SpaceVolume(_base._Base):
             new_volume.floor = self.floor.duplicate()
 
         if self.geometry:
-            new_geom = [geo.__copy__() for geo in self.geometry]
-            new_volume.geometry = new_geom
+            new_volume.geometry = [copy(geo) for geo in self.geometry]
 
         return new_volume
 
