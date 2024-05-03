@@ -1,4 +1,5 @@
 import pytest
+from ladybug_geometry.geometry3d.pointvector import Vector3D
 
 from honeybee_ph import space
 
@@ -79,7 +80,7 @@ def test_Space_avg_clear_height_uneven_heights(floor_segment_geometry):
     assert len(sp.floor_segment_surfaces) == 2
 
 
-# -- Scale --
+# -- Transforms --
 
 
 def test_Space_scale(floor_segment_geometry):
@@ -115,14 +116,14 @@ def test_Space_scale(floor_segment_geometry):
     sp.add_new_volumes([vol_1, vol_2])
 
     # -- Scale the Space and all the Volumes, all the floors
-    sp.scale(3.28084)  # M --> FOOT
+    sp2 = sp.scale(3.28084)  # M --> FOOT
 
-    assert sp.floor_area == pytest.approx(2_152.7822)
-    assert sp.weighted_floor_area == pytest.approx(2_152.7822)
-    assert sp.avg_clear_height == pytest.approx(8.2021)
-    assert sp.net_volume == pytest.approx(17_657.34)
-    assert sp.average_floor_weighting_factor == 1.0
-    assert len(sp.floor_segment_surfaces) == 2
+    assert sp2.floor_area == pytest.approx(2_152.7822)
+    assert sp2.weighted_floor_area == pytest.approx(2_152.7822)
+    assert sp2.avg_clear_height == pytest.approx(8.2021)
+    assert sp2.net_volume == pytest.approx(17_657.34)
+    assert sp2.average_floor_weighting_factor == 1.0
+    assert len(sp2.floor_segment_surfaces) == 2
 
 
 # -- Serialize --

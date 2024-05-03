@@ -92,12 +92,17 @@ def test_volume_scale(floor_segment_geometry):
     assert vol1.avg_ceiling_height == 2.5
     assert vol1.net_volume == 250
 
-    vol1.scale(3.28084)  # M --> FOOT
+    vol2 = vol1.scale(3.28084)  # M --> FOOT
 
-    assert vol1.floor_area == pytest.approx(1_076.39111056)
-    assert vol1.weighted_floor_area == pytest.approx(1_076.39111056)
-    assert vol1.avg_ceiling_height == pytest.approx(8.2021)
-    assert vol1.net_volume == pytest.approx(8_828.67)
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.avg_ceiling_height == 2.5
+    assert vol1.net_volume == 250
+
+    assert vol2.floor_area == pytest.approx(1_076.39111056)
+    assert vol2.weighted_floor_area == pytest.approx(1_076.39111056)
+    assert vol2.avg_ceiling_height == pytest.approx(8.2021)
+    assert vol2.net_volume == pytest.approx(8_828.67)
 
 
 # -- Duplication --

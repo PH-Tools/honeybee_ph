@@ -1,7 +1,9 @@
 import pytest
-from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
 from honeybee_ph import space
+
+TOL = 0.00001
 
 
 def test_basic_floor_segment(floor_segment_geometry):
@@ -138,7 +140,7 @@ def test_flr_seg_duplication_geom_only_with_geom(floor_segment_geometry):
     assert seg.geometry == new_geom
 
 
-# -- Scale With Geometry --
+# -- Transform With Geometry --
 
 
 def test_floor_segment_scale_M_to_FOOT(floor_segment_geometry):
@@ -147,8 +149,9 @@ def test_floor_segment_scale_M_to_FOOT(floor_segment_geometry):
     seg.weighting_factor = 1.0
     assert seg.floor_area == 100
 
-    seg.scale(3.28084)  # M --> FOOT
-    assert seg.floor_area == pytest.approx(1_076.39111056)
+    seg2 = seg.scale(3.28084)  # M --> FOOT
+    assert seg.floor_area == 100
+    assert seg2.floor_area == pytest.approx(1_076.39111056)
 
 
 def test_floor_segment_scale_M_to_INCH(floor_segment_geometry):
@@ -157,8 +160,9 @@ def test_floor_segment_scale_M_to_INCH(floor_segment_geometry):
     seg.weighting_factor = 1.0
     assert seg.floor_area == 100
 
-    seg.scale(39.37007874)  # M --> INCH
-    assert seg.floor_area == pytest.approx(155_000.31)
+    seg2 = seg.scale(39.37007874)  # M --> INCH
+    assert seg.floor_area == 100
+    assert seg2.floor_area == pytest.approx(155_000.31)
 
 
 def test_floor_segment_scale_M_to_CM(floor_segment_geometry):
@@ -167,8 +171,9 @@ def test_floor_segment_scale_M_to_CM(floor_segment_geometry):
     seg.weighting_factor = 1.0
     assert seg.floor_area == 100
 
-    seg.scale(100)  # M --> CM
-    assert seg.floor_area == pytest.approx(1_000_000)
+    seg2 = seg.scale(100)  # M --> CM
+    assert seg.floor_area == 100
+    assert seg2.floor_area == pytest.approx(1_000_000)
 
 
 def test_floor_segment_scale_M_to_MM(floor_segment_geometry):
@@ -177,11 +182,83 @@ def test_floor_segment_scale_M_to_MM(floor_segment_geometry):
     seg.weighting_factor = 1.0
     assert seg.floor_area == 100
 
-    seg.scale(1_000)  # M --> MM
-    assert seg.floor_area == pytest.approx(100_000_000)
+    seg2 = seg.scale(1_000)  # M --> MM
+    assert seg.floor_area == 100
+    assert seg2.floor_area == pytest.approx(100_000_000)
 
 
-# -- Scale Without Geometry --
+def test_floor_segment_move(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 1.0
+    seg.reference_point = Point3D(5, 5, 0)
+    assert seg.floor_area == 100
+    assert seg.reference_point is not None
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+
+    seg2 = seg.move(Vector3D(1, 0, 0))
+    assert seg.floor_area == 100
+    assert seg2.floor_area == 100
+
+    assert seg.reference_point == Point3D(5, 5, 0)
+    assert seg2.reference_point == Point3D(6, 5, 0)
+
+
+def test_floor_segment_rotate(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 1.0
+    seg.reference_point = Point3D(5, 5, 0)
+    assert seg.floor_area == 100
+    assert seg.reference_point is not None
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+
+    seg2 = seg.rotate(Vector3D(0, 0, 1), 90, Point3D(0, 0, 0))
+    assert seg.floor_area == 100
+    assert seg2.floor_area == 100
+
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+    assert seg2.reference_point is not None
+    assert seg2.reference_point.is_equivalent(Point3D(-5, 5, 0), TOL)
+
+
+def test_floor_segment_rotate_xy(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 1.0
+    seg.reference_point = Point3D(5, 5, 0)
+    assert seg.floor_area == 100
+    assert seg.reference_point is not None
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+
+    seg2 = seg.rotate_xy(90, Point3D(0, 0, 0))
+    assert seg.floor_area == 100
+    assert seg2.floor_area == 100
+
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+    assert seg2.reference_point is not None
+    assert seg2.reference_point.is_equivalent(Point3D(-5, 5, 0), TOL)
+
+
+def test_floor_segment_reflect(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.weighting_factor = 1.0
+    seg.reference_point = Point3D(5, 5, 0)
+    assert seg.floor_area == 100
+    assert seg.reference_point is not None
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+
+    seg2 = seg.reflect(Vector3D(0, 1, 0), Point3D(0, 0, 0))
+    assert seg.floor_area == 100
+    assert seg2.floor_area == 100
+
+    assert seg.reference_point.is_equivalent(Point3D(5, 5, 0), TOL)
+    assert seg2.reference_point is not None
+    assert seg2.reference_point.is_equivalent(Point3D(5, -5, 0), TOL)
+
+
+# -- Transform Without Geometry --
 
 
 def test_floor_segment_scale_no_geometry():
@@ -189,5 +266,46 @@ def test_floor_segment_scale_no_geometry():
     seg.weighting_factor = 1.0
     assert seg.floor_area == 0
 
-    seg.scale(1_000)  # M --> MM
+    seg2 = seg.scale(1_000)  # M --> MM
     assert seg.floor_area == 0
+    assert seg2.floor_area == 0
+
+
+def test_floor_segment_move_no_geometry():
+    seg = space.SpaceFloorSegment()
+    seg.weighting_factor = 1.0
+    assert seg.floor_area == 0
+
+    seg2 = seg.move(Vector3D(1, 0, 0))
+    assert seg.floor_area == 0
+    assert seg2.floor_area == 0
+
+
+def test_floor_segment_rotate_no_geometry():
+    seg = space.SpaceFloorSegment()
+    seg.weighting_factor = 1.0
+    assert seg.floor_area == 0
+
+    seg2 = seg.rotate(Vector3D(0, 0, 1), 90, Point3D(0, 0, 0))
+    assert seg.floor_area == 0
+    assert seg2.floor_area == 0
+
+
+def test_floor_segment_rotate_xy_no_geometry():
+    seg = space.SpaceFloorSegment()
+    seg.weighting_factor = 1.0
+    assert seg.floor_area == 0
+
+    seg2 = seg.rotate_xy(90, Point3D(0, 0, 0))
+    assert seg.floor_area == 0
+    assert seg2.floor_area == 0
+
+
+def test_floor_segment_reflect_no_geometry():
+    seg = space.SpaceFloorSegment()
+    seg.weighting_factor = 1.0
+    assert seg.floor_area == 0
+
+    seg2 = seg.reflect(Vector3D(0, 1, 0), Point3D(0, 0, 0))
+    assert seg.floor_area == 0
+    assert seg2.floor_area == 0

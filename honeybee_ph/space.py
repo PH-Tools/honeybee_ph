@@ -161,7 +161,7 @@ class SpaceFloorSegment(_base._Base):
         dup_floor_seg = self.duplicate()
         if self.geometry:
             dup_floor_seg.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
-        if self.reference_point:
+        if self.reference_point is not None:
             new_pt = Point3D.from_array(self.reference_point.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D))
             dup_floor_seg.reference_point = new_pt
         return dup_floor_seg

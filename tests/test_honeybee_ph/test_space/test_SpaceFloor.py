@@ -115,10 +115,11 @@ def test_scale_floor_single_segment(floor_segment_geometry):
     floor.add_floor_segment(seg1)
     floor.geometry = floor_segment_geometry.flr_segment_1
 
-    floor.scale(3.28084)  # M --> FOOT
-    assert floor.floor_area == pytest.approx(1_076.39111056)
-    assert floor.weighted_floor_area == pytest.approx(1_076.39111056)
-    assert floor.geometry.area == pytest.approx(1_076.39111056)
+    floor2 = floor.scale(3.28084)  # M --> FOOT
+    assert floor2.floor_area == pytest.approx(1_076.39111056)
+    assert floor2.weighted_floor_area == pytest.approx(1_076.39111056)
+    assert floor2.geometry is not None
+    assert floor2.geometry.area == pytest.approx(1_076.39111056)
 
 
 def test_scale_floor_multiple_segments(floor_segment_geometry):
@@ -137,10 +138,16 @@ def test_scale_floor_multiple_segments(floor_segment_geometry):
     assert floor.floor_area == 200
     assert floor.weighted_floor_area == 200
 
-    floor.scale(3.28084)  # M --> FOOT
-    assert floor.floor_area == pytest.approx(2_152.7822)
-    assert floor.weighted_floor_area == pytest.approx(2_152.7822)
+    floor2 = floor.scale(3.28084)  # M --> FOOT
+    assert floor.floor_area == 200
+    assert floor.weighted_floor_area == 200
+    assert floor2.floor_area == pytest.approx(2_152.7822)
+    assert floor2.weighted_floor_area == pytest.approx(2_152.7822)
 
-    floor.scale(0.305)  # FOOT --> M
-    assert floor.floor_area == pytest.approx(200.262566119688)
-    assert floor.weighted_floor_area == pytest.approx(200.262566119688)
+    floor3 = floor2.scale(0.305)  # FOOT --> M
+    assert floor.floor_area == 200
+    assert floor.weighted_floor_area == 200
+    assert floor2.floor_area == pytest.approx(2_152.7822)
+    assert floor2.weighted_floor_area == pytest.approx(2_152.7822)
+    assert floor3.floor_area == pytest.approx(200.262566119688)
+    assert floor3.weighted_floor_area == pytest.approx(200.262566119688)

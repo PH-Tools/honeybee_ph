@@ -9,7 +9,7 @@ except ImportError:
     pass  # Python2.7
 
 try:
-    from ladybug_geometry import geometry3d
+    from ladybug_geometry.geometry3d.pointvector import Point3D
     from ladybug_geometry.geometry3d.plane import Plane
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
@@ -365,7 +365,7 @@ class RoomPhHvacProperties(object):
             self._hot_water_system.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
     def rotate_xy(self, angle_degree, origin_pt3D):
-        # type: (float, geometry3d.Point3D) -> None
+        # type: (float, Point3D) -> None
         """Rotate the Room's HVAC Systems counterclockwise in the XY plane by a certain angle.
 
         When used in within Honeybee, this method will most often be triggered as part of a
