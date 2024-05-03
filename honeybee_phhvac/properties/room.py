@@ -10,6 +10,7 @@ except ImportError:
 
 try:
     from ladybug_geometry import geometry3d
+    from ladybug_geometry.geometry3d.plane import Plane
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
@@ -401,7 +402,8 @@ class RoomPhHvacProperties(object):
         if self._hot_water_system:
             self._hot_water_system = self._hot_water_system.rotate_xy(angle_degree, origin_pt3D)
 
-    def reflect(self, normal_vec3D, origin_pt3D):
+    def reflect(self, plane):
+        # type: (Plane) -> None
         """Reflected the Room's HVAC Systems across a plane with the input normal vector and origin.
 
         When used in within Honeybee, this method will most often be triggered as part of a
@@ -413,30 +415,28 @@ class RoomPhHvacProperties(object):
         directly, rather than returning a new object with the transform applied.
 
         Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin from which to reflect.
+            plane: A Plane object representing the plane across which the object will be reflected.
         """
         if self._ventilation_system:
-            self._ventilation_system.reflect(normal_vec3D, origin_pt3D)
+            self._ventilation_system.reflect(plane.n, plane.o)
 
         for sys in self._heating_systems:
-            sys.reflect(normal_vec3D, origin_pt3D)
+            sys.reflect(plane.n, plane.o)
 
         for sys in self._heat_pump_systems:
-            sys.reflect(normal_vec3D, origin_pt3D)
+            sys.reflect(plane.n, plane.o)
 
         for sys in self._exhaust_vent_devices:
-            sys.reflect(normal_vec3D, origin_pt3D)
+            sys.reflect(plane.n, plane.o)
 
         for sys in self._supportive_devices:
-            sys.reflect(normal_vec3D, origin_pt3D)
+            sys.reflect(plane.n, plane.o)
 
         for sys in self._renewable_devices:
-            sys.reflect(normal_vec3D, origin_pt3D)
+            sys.reflect(plane.n, plane.o)
 
         if self._hot_water_system:
-            self._hot_water_system.reflect(normal_vec3D, origin_pt3D)
+            self._hot_water_system.reflect(plane.n, plane.o)
 
     def scale(self, scale_factor, origin_pt3D=None):
         """Scale the Room's HVAC Systems by a factor from an origin point.

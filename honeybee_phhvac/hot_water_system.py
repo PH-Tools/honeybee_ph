@@ -11,7 +11,7 @@ except:
 from uuid import uuid4
 
 try:
-    from ladybug_geometry.geometry3d.pointvector import Point3D
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 except ImportError as e:
     raise ImportError("Failed to import ladybug_geometry", e)
 
@@ -458,7 +458,7 @@ class PhHotWaterSystem(object):
         return new_system
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        # type: (Point3D, Point3D) -> PhHotWaterSystem
+        # type: (Vector3D, Point3D) -> PhHotWaterSystem
         """Reflected the System's piping across a plane with the input normal vector and origin.
 
         Args:

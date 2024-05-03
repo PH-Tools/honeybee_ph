@@ -10,6 +10,8 @@ except ImportError:
 
 try:
     from ladybug_geometry import geometry3d
+    from ladybug_geometry.geometry3d.pointvector import Point3D
+    from ladybug_geometry.geometry3d.plane import Plane
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
@@ -257,16 +259,14 @@ class RoomPhProperties(object):
         """
         self._spaces = [space.rotate_xy(angle_degrees, origin_pt3D) for space in self.spaces]
 
-    def reflect(self, normal_vec3D, origin_pt3D):
-        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> None
+    def reflect(self, plane):
+        # type: (Plane) -> None
         """Reflected the RoomPhProperties and its Volumes across a plane with the input normal vector and origin_pt3D.
 
         Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+            plane: A Plane representing the plane across which the object will be reflected.
         """
-        self._spaces = [space.reflect(normal_vec3D, origin_pt3D) for space in self.spaces]
+        self._spaces = [space.reflect(plane.n, plane.o) for space in self.spaces]
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[geometry3d.Point3D]) -> None
