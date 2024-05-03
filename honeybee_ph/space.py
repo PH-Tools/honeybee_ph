@@ -3,12 +3,13 @@
 
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)."""
 
+from copy import copy
+from math import radians
+
 try:
     from typing import Any, Dict, List, Optional, Union
 except:
     pass  # IronPython
-
-from copy import copy
 
 try:
     from ladybug_geometry import geometry3d
@@ -158,9 +159,9 @@ class SpaceFloorSegment(_base._Base):
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
-            dup_floor_seg.geometry = self.geometry.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+            dup_floor_seg.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = self.reference_point.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+            dup_floor_seg.reference_point = self.reference_point.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
         return dup_floor_seg
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
@@ -175,9 +176,9 @@ class SpaceFloorSegment(_base._Base):
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
-            dup_floor_seg.geometry = self.geometry.rotate_xy(angle_degrees, origin_pt3D)
+            dup_floor_seg.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = self.reference_point.rotate_xy(angle_degrees, origin_pt3D)
+            dup_floor_seg.reference_point = self.reference_point.rotate_xy(radians(angle_degrees), origin_pt3D)
         return dup_floor_seg
 
     def reflect(self, normal_vec3D, origin_pt3D):
@@ -347,7 +348,8 @@ class SpaceFloor(_base._Base):
             A new SpaceFloor object with the move applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
-        dup_floor.geometry = self.geometry.move(moving_vec3D) if self.geometry else None
+        if self.geometry:
+            dup_floor.geometry = self.geometry.move(moving_vec3D)
         for seg in self.floor_segments:
             dup_floor.add_floor_segment(seg.move(moving_vec3D))
         return dup_floor
@@ -368,7 +370,8 @@ class SpaceFloor(_base._Base):
             A new SpaceFloor object with the rotation applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
-        dup_floor.geometry = self.geometry.rotate(axis_vec3D, angle_degrees, origin_pt3D) if self.geometry else None
+        if self.geometry:
+            dup_floor.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
         for seg in self.floor_segments:
             dup_floor.add_floor_segment(seg.rotate(axis_vec3D, angle_degrees, origin_pt3D))
         return dup_floor
@@ -384,7 +387,8 @@ class SpaceFloor(_base._Base):
             A new SpaceFloor object with the rotation applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
-        dup_floor.geometry = self.geometry.rotate_xy(angle_degrees, origin_pt3D) if self.geometry else None
+        if self.geometry:
+            dup_floor.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
         for seg in self.floor_segments:
             dup_floor.add_floor_segment(seg.rotate_xy(angle_degrees, origin_pt3D))
         return dup_floor
@@ -401,7 +405,8 @@ class SpaceFloor(_base._Base):
             A new SpaceFloor object with the reflection applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
-        dup_floor.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D) if self.geometry else None
+        if self.geometry:
+            dup_floor.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
         for seg in self.floor_segments:
             dup_floor.add_floor_segment(seg.reflect(normal_vec3D, origin_pt3D))
         return dup_floor
@@ -418,7 +423,8 @@ class SpaceFloor(_base._Base):
             A new SpaceFloor object with the scaling applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
-        dup_floor.geometry = self.geometry.scale(scale_factor, origin_pt3D) if self.geometry else None
+        if self.geometry:
+            dup_floor.geometry = self.geometry.scale(scale_factor, origin_pt3D)
         for seg in self.floor_segments:
             dup_floor.add_floor_segment(seg.scale(scale_factor, origin_pt3D))
         return dup_floor
@@ -562,7 +568,7 @@ class SpaceVolume(_base._Base):
             A new SpaceVolume object with the rotation applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
-        dup_volume.geometry = [f.rotate(axis_vec3D, angle_degrees, origin_pt3D) for f in self.geometry]
+        dup_volume.geometry = [f.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D) for f in self.geometry]
         dup_volume.floor = self.floor.rotate(axis_vec3D, angle_degrees, origin_pt3D)
         return dup_volume
 
@@ -577,7 +583,7 @@ class SpaceVolume(_base._Base):
             A new SpaceVolume object with the rotation applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
-        dup_volume.geometry = [f.rotate_xy(angle_degrees, origin_pt3D) for f in self.geometry]
+        dup_volume.geometry = [f.rotate_xy(radians(angle_degrees), origin_pt3D) for f in self.geometry]
         dup_volume.floor = self.floor.rotate_xy(angle_degrees, origin_pt3D)
         return dup_volume
 
