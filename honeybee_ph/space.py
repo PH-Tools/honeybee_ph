@@ -12,6 +12,7 @@ from copy import copy
 
 try:
     from ladybug_geometry import geometry3d
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
@@ -38,7 +39,7 @@ class SpaceFloorSegment(_base._Base):
         # -- In those cases, it should be a point 'on' the surface, as near to the
         # -- center as possible. This point is used for testing hosting of the
         # -- SpaceFloorSegment 'inside' an HB-Room.
-        self.reference_point = None  # type: Optional[geometry3d.pointvector.Point3D]
+        self.reference_point = None  # type: Optional[Point3D]
 
     @property
     def weighted_floor_area(self):
@@ -124,27 +125,96 @@ class SpaceFloorSegment(_base._Base):
             msg = "\n\tSpaceFloorSegment {} has no geometry? " "Cannot duplicate it.".format(self)
             raise AttributeError(msg, e)
 
-    def scale(self, factor, origin=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> None
-        """Scale the floor-segment geometry by a specified factor.
+    def move(self, moving_vec3D):
+        # type: (geometry3d.Vector3D) -> SpaceFloorSegment
+        """Move the SpaceFloorSegment along a vector.
 
-        Arguments:
-        ----------
-            * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
-                Point3D representing the origin from which to scale. If None,
-                it will be scaled from the World origin (0, 0, 0).
-
+        Args:
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         Returns:
-        --------
-            * None
+            A new SpaceFloorSegment object with the move applied.
         """
-
+        dup_floor_seg = self.duplicate()
         if self.geometry:
-            self.geometry = self.geometry.scale(factor, origin)
-
+            dup_floor_seg.geometry = self.geometry.move(moving_vec3D)
         if self.reference_point:
-            self.reference_point = self.reference_point.scale(factor, origin)
+            dup_floor_seg.reference_point = self.reference_point.move(moving_vec3D)
+        return dup_floor_seg
+
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> SpaceFloorSegment
+        """Rotate the SpaceFloorSegment by a certain angle around an axis_vec3D and origin_pt3D.
+
+        Right hand rule applies:
+        If axis_vec3D has a positive orientation, rotation will be clockwise.
+        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new SpaceFloorSegment object with the rotation applied.
+        """
+        dup_floor_seg = self.duplicate()
+        if self.geometry:
+            dup_floor_seg.geometry = self.geometry.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        if self.reference_point:
+            dup_floor_seg.reference_point = self.reference_point.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        return dup_floor_seg
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, geometry3d.Point3D) -> SpaceFloorSegment
+        """Rotate the SpaceFloorSegment counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new SpaceFloorSegment object with the rotation applied.
+        """
+        dup_floor_seg = self.duplicate()
+        if self.geometry:
+            dup_floor_seg.geometry = self.geometry.rotate_xy(angle_degrees, origin_pt3D)
+        if self.reference_point:
+            dup_floor_seg.reference_point = self.reference_point.rotate_xy(angle_degrees, origin_pt3D)
+        return dup_floor_seg
+
+    def reflect(self, normal_vec3D, origin_pt3D):
+        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> SpaceFloorSegment
+        """Reflected the SpaceFloorSegment across a plane with the input normal vector and origin_pt3D.
+
+        Args:
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Returns:
+            A new SpaceFloorSegment object with the reflection applied.
+        """
+        dup_floor_seg = self.duplicate()
+        if self.geometry:
+            dup_floor_seg.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
+        if self.reference_point:
+            dup_floor_seg.reference_point = self.reference_point.reflect(normal_vec3D, origin_pt3D)
+        return dup_floor_seg
+
+    def scale(self, scale_factor, origin_pt3D=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> SpaceFloorSegment
+        """Scale the SpaceFloorSegment by a factor from an origin_pt3D point.
+
+        Args:
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Returns:
+            A new SpaceFloorSegment object with the scaling applied.
+        """
+        dup_floor_seg = self.duplicate()
+        if self.geometry:
+            dup_floor_seg.geometry = self.geometry.scale(scale_factor, origin_pt3D)
+        if self.reference_point:
+            dup_floor_seg.reference_point = self.reference_point.scale(scale_factor, origin_pt3D)
+        return dup_floor_seg
 
     def __str__(self):
         return "{}(weighting_factor={!r}, geometry={!r}, reference_point={!r})".format(
