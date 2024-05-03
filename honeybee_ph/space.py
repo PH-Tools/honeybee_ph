@@ -209,18 +209,19 @@ class SpaceFloor(_base._Base):
         # type: () -> list[SpaceFloorSegment]
         return self._floor_segments
 
-    def duplicate(self):
-        # type: () -> SpaceFloor
+    def duplicate(self, _include_floor_segments=True):
+        # type: (bool) -> SpaceFloor
         new_floor = SpaceFloor()
 
         new_floor.identifier = self.identifier
         new_floor.display_name = self.display_name
         new_floor.user_data = self.user_data
+        new_floor.geometry = self.geometry.duplicate() if self.geometry else None
 
-        if self.geometry:
-            new_floor.geometry = self.geometry.duplicate()
-        for seg in self.floor_segments:
-            new_floor.add_floor_segment(seg.duplicate())
+        if _include_floor_segments:
+            for seg in self.floor_segments:
+                new_floor.add_floor_segment(seg.duplicate())
+
         return new_floor
 
     def duplicate_geometry(self):
@@ -266,27 +267,91 @@ class SpaceFloor(_base._Base):
 
         return new_obj
 
-    def scale(self, factor, origin=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> None
-        """Scale the floor and all the geometry of the floor by a specified factor.
+    def move(self, moving_vec3D):
+        # type: (geometry3d.Vector3D) -> SpaceFloor
+        """Move the SpaceFloor along a vector.
 
-        Arguments:
-        ----------
-            * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
-                Point3D representing the origin from which to scale. If None,
-                it will be scaled from the World origin (0, 0, 0).
-
+        Args:
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         Returns:
-        --------
-            * None
+            A new SpaceFloor object with the move applied.
         """
+        dup_floor = self.duplicate(_include_floor_segments=False)
+        dup_floor.geometry = self.geometry.move(moving_vec3D) if self.geometry else None
+        for seg in self.floor_segments:
+            dup_floor.add_floor_segment(seg.move(moving_vec3D))
+        return dup_floor
 
-        if self.geometry:
-            self.geometry = self.geometry.scale(factor, origin)
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> SpaceFloor
+        """Rotate the SpaceFloor by a certain angle around an axis_vec3D and origin_pt3D.
 
-        for segment in self.floor_segments:
-            segment.scale(factor, origin)
+        Right hand rule applies:
+        If axis_vec3D has a positive orientation, rotation will be clockwise.
+        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new SpaceFloor object with the rotation applied.
+        """
+        dup_floor = self.duplicate(_include_floor_segments=False)
+        dup_floor.geometry = self.geometry.rotate(axis_vec3D, angle_degrees, origin_pt3D) if self.geometry else None
+        for seg in self.floor_segments:
+            dup_floor.add_floor_segment(seg.rotate(axis_vec3D, angle_degrees, origin_pt3D))
+        return dup_floor
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, geometry3d.Point3D) -> SpaceFloor
+        """Rotate the SpaceFloor counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Returns:
+            A new SpaceFloor object with the rotation applied.
+        """
+        dup_floor = self.duplicate(_include_floor_segments=False)
+        dup_floor.geometry = self.geometry.rotate_xy(angle_degrees, origin_pt3D) if self.geometry else None
+        for seg in self.floor_segments:
+            dup_floor.add_floor_segment(seg.rotate_xy(angle_degrees, origin_pt3D))
+        return dup_floor
+
+    def reflect(self, normal_vec3D, origin_pt3D):
+        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> SpaceFloor
+        """Reflected the SpaceFloor across a plane with the input normal vector and origin_pt3D.
+
+        Args:
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Returns:
+            A new SpaceFloor object with the reflection applied.
+        """
+        dup_floor = self.duplicate(_include_floor_segments=False)
+        dup_floor.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D) if self.geometry else None
+        for seg in self.floor_segments:
+            dup_floor.add_floor_segment(seg.reflect(normal_vec3D, origin_pt3D))
+        return dup_floor
+
+    def scale(self, scale_factor, origin_pt3D=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> SpaceFloor
+        """Scale the SpaceFloor by a factor from an origin_pt3D point.
+
+        Args:
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Returns:
+            A new SpaceFloor object with the scaling applied.
+        """
+        dup_floor = self.duplicate(_include_floor_segments=False)
+        dup_floor.geometry = self.geometry.scale(scale_factor, origin_pt3D) if self.geometry else None
+        for seg in self.floor_segments:
+            dup_floor.add_floor_segment(seg.scale(scale_factor, origin_pt3D))
+        return dup_floor
 
     def __str__(self):
         return "{}()".format(self.__class__.__name__)
