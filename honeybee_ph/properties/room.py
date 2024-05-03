@@ -9,8 +9,7 @@ except ImportError:
     pass  # Python2.7
 
 try:
-    from ladybug_geometry import geometry3d
-    from ladybug_geometry.geometry3d.pointvector import Point3D
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
     from ladybug_geometry.geometry3d.plane import Plane
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
@@ -226,7 +225,7 @@ class RoomPhProperties(object):
             self.add_new_space(_new_space)
 
     def move(self, moving_vec3D):
-        # type: (geometry3d.Vector3D) -> None
+        # type: (Vector3D) -> None
         """Move the RoomPhProperties and its Volumes along a vector.
 
         Args:
@@ -235,7 +234,7 @@ class RoomPhProperties(object):
         self._spaces = [space.move(moving_vec3D) for space in self.spaces]
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> None
+        # type: (Vector3D, float, Point3D) -> None
         """Rotate the RoomPhProperties and its Volumes by a certain angle around an axis_vec3D and origin_pt3D.
 
         Right hand rule applies:
@@ -250,7 +249,7 @@ class RoomPhProperties(object):
         self._spaces = [space.rotate(axis_vec3D, angle_degrees, origin_pt3D) for space in self.spaces]
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
-        # type: (float, geometry3d.Point3D) -> None
+        # type: (float, Point3D) -> None
         """Rotate the RoomPhProperties and its Volumes counterclockwise in the XY plane by a certain angle.
 
         Args:
@@ -269,7 +268,7 @@ class RoomPhProperties(object):
         self._spaces = [space.reflect(plane.n, plane.o) for space in self.spaces]
 
     def scale(self, scale_factor, origin_pt3D=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> None
+        # type: (float, Optional[Point3D]) -> None
         """Scale the RoomPhProperties and its Volumes by a factor from an origin_pt3D point.
 
         Args:
