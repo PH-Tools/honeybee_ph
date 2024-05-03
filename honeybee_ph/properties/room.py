@@ -35,7 +35,7 @@ room.Room
     ├─ properties: RoomProperties
         ├─ energy: RoomEnergyProperties
         ├─ ph: RoomPhProperties
-            ├─ spaces: List[space.Space]    
+            ├─ spaces: List[space.RoomPhProperties]    
                 ├─ properties: SpaceProperties
                     ├─ ph: SpacePhProperties
                     ├─ energy: SpaceEnergyProperties
@@ -223,24 +223,64 @@ class RoomPhProperties(object):
         except IndexError:
             self.add_new_space(_new_space)
 
-    def scale(self, factor, origin=None):
-        # type: (float, Optional[geometry3d.Point3D]) -> None
-        """Scale the room, and all the spaces in the room by a specified factor.
+    def move(self, moving_vec3D):
+        # type: (geometry3d.Vector3D) -> None
+        """Move the RoomPhProperties and its Volumes along a vector.
 
-        Arguments:
-        ----------
-            * factor (float): The scale factor
-            * origin (Optional[geometry3d.Point3D]): default=None, A ladybug_geometry
-                Point3D representing the origin from which to scale. If None,
-                it will be scaled from the World origin (0, 0, 0).
-
-        Returns:
-        --------
-            * None
+        Args:
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
+        self._spaces = [space.move(moving_vec3D) for space in self.spaces]
 
-        for space in self.spaces:
-            space.scale(factor, origin=None)
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (geometry3d.Vector3D, float, geometry3d.Point3D) -> None
+        """Rotate the RoomPhProperties and its Volumes by a certain angle around an axis_vec3D and origin_pt3D.
+
+        Right hand rule applies:
+        If axis_vec3D has a positive orientation, rotation will be clockwise.
+        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        """
+        self._spaces = [space.rotate(axis_vec3D, angle_degrees, origin_pt3D) for space in self.spaces]
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, geometry3d.Point3D) -> None
+        """Rotate the RoomPhProperties and its Volumes counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        """
+        self._spaces = [space.rotate_xy(angle_degrees, origin_pt3D) for space in self.spaces]
+
+    def reflect(self, normal_vec3D, origin_pt3D):
+        # type: (geometry3d.Vector3D, geometry3d.Point3D) -> None
+        """Reflected the RoomPhProperties and its Volumes across a plane with the input normal vector and origin_pt3D.
+
+        Args:
+            normal_vec3D: A Vector3D representing the normal vector for the plane across
+                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        """
+        self._spaces = [space.reflect(normal_vec3D, origin_pt3D) for space in self.spaces]
+
+    def scale(self, scale_factor, origin_pt3D=None):
+        # type: (float, Optional[geometry3d.Point3D]) -> None
+        """Scale the RoomPhProperties and its Volumes by a factor from an origin_pt3D point.
+
+        Args:
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        """
+        self._spaces = [space.scale(scale_factor, origin_pt3D) for space in self.spaces]
+
+    # TODO: Transform Foundations....
+    # TODO: Building Segment (icfa/tfa overrides)....
 
 
 def get_ph_prop_from_room(_room):

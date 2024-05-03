@@ -195,7 +195,7 @@ class SpaceFloorSegment(_base._Base):
         if self.geometry:
             dup_floor_seg.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
         if self.reference_point:
-            dup_floor_seg.reference_point = self.reference_point.reflect(normal_vec3D, origin_pt3D)
+            dup_floor_seg.reference_point = Point3D.from_array(self.reference_point.reflect(normal_vec3D, origin_pt3D))
         return dup_floor_seg
 
     def scale(self, scale_factor, origin_pt3D=None):
