@@ -1,4 +1,5 @@
 import pytest
+from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
 
 from honeybee_ph import space
 
@@ -103,7 +104,7 @@ def test_duplicate_floor_geometry_fail():
         floor.duplicate_geometry()
 
 
-# -- Scale ---
+# -- Transforms ---
 
 
 def test_scale_floor_single_segment(floor_segment_geometry):
@@ -151,3 +152,63 @@ def test_scale_floor_multiple_segments(floor_segment_geometry):
     assert floor2.weighted_floor_area == pytest.approx(2_152.7822)
     assert floor3.floor_area == pytest.approx(200.262566119688)
     assert floor3.weighted_floor_area == pytest.approx(200.262566119688)
+
+
+def test_move_floor_single_segment(floor_segment_geometry):
+    seg1 = space.SpaceFloorSegment()
+    seg1.weighting_factor = 1.0
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.reference_point = Point3D(5, 5, 0)
+
+    floor = space.SpaceFloor()
+    floor.add_floor_segment(seg1)
+    floor.geometry = floor_segment_geometry.flr_segment_1
+
+    floor2 = floor.move(Vector3D(1, 0, 0))
+    assert floor2.floor_area == pytest.approx(100)
+    assert floor2.reference_points[0] == Point3D(6, 5, 0)
+
+
+def test_rotate_floor_single_segment(floor_segment_geometry):
+    seg1 = space.SpaceFloorSegment()
+    seg1.weighting_factor = 1.0
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.reference_point = Point3D(5, 5, 0)
+
+    floor = space.SpaceFloor()
+    floor.add_floor_segment(seg1)
+    floor.geometry = floor_segment_geometry.flr_segment_1
+
+    floor2 = floor.rotate(Vector3D(0, 0, 1), 90, Point3D(0, 0, 0))
+    assert floor2.floor_area == pytest.approx(100)
+    assert floor2.reference_points[0] == Point3D(-5, 5, 0)
+
+
+def test_rotate_xy_floor_single_segment(floor_segment_geometry):
+    seg1 = space.SpaceFloorSegment()
+    seg1.weighting_factor = 1.0
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.reference_point = Point3D(5, 5, 0)
+
+    floor = space.SpaceFloor()
+    floor.add_floor_segment(seg1)
+    floor.geometry = floor_segment_geometry.flr_segment_1
+
+    floor2 = floor.rotate_xy(90, Point3D(0, 0, 0))
+    assert floor2.floor_area == pytest.approx(100)
+    assert floor2.reference_points[0] == Point3D(-5, 5, 0)
+
+
+def test_reflect_floor_single_segment(floor_segment_geometry):
+    seg1 = space.SpaceFloorSegment()
+    seg1.weighting_factor = 1.0
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.reference_point = Point3D(5, 5, 0)
+
+    floor = space.SpaceFloor()
+    floor.add_floor_segment(seg1)
+    floor.geometry = floor_segment_geometry.flr_segment_1
+
+    floor2 = floor.reflect(Vector3D(1, 0, 0), Point3D(0, 0, 0))
+    assert floor2.floor_area == pytest.approx(100)
+    assert floor2.reference_points[0] == Point3D(-5, 5, 0)
