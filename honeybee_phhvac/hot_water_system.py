@@ -182,8 +182,8 @@ class PhHotWaterSystem(object):
         """Return a list of the system tanks in order (1, 2, buffer, solar)."""
         return [self.tank_1, self.tank_2, self.tank_buffer, self.tank_solar]
 
-    def to_dict(self, abridged=False):
-        # type: (bool) -> dict[str, dict]
+    def to_dict(self, abridged=False, _include_properties=False):
+        # type: (bool, bool) -> dict[str, dict]
         d = {}
         if abridged:
             d["type"] = "PhHvacHotWaterSystemAbridged"
@@ -194,29 +194,34 @@ class PhHotWaterSystem(object):
         d["identifier"] = self.identifier
         d["display_name"] = self.display_name
         if self.tank_1:
-            d["tank_1"] = self.tank_1.to_dict()
+            d["tank_1"] = self.tank_1.to_dict(_include_properties)
         if self.tank_2:
-            d["tank_2"] = self.tank_2.to_dict()
+            d["tank_2"] = self.tank_2.to_dict(_include_properties)
         if self.tank_buffer:
-            d["tank_buffer"] = self.tank_buffer.to_dict()
+            d["tank_buffer"] = self.tank_buffer.to_dict(_include_properties)
         if self.tank_solar:
-            d["tank_solar"] = self.tank_solar.to_dict()
+            d["tank_solar"] = self.tank_solar.to_dict(_include_properties)
 
         d["heaters"] = {}
         for heater in self.heaters:
-            d["heaters"][heater.identifier] = heater.to_dict()
+            d["heaters"][heater.identifier] = heater.to_dict(_include_properties)
 
         d["distribution_piping"] = {}
         for distribution_piping in self.distribution_piping:
-            d["distribution_piping"][distribution_piping.identifier] = distribution_piping.to_dict()
+            d["distribution_piping"][distribution_piping.identifier] = distribution_piping.to_dict(_include_properties)
 
         d["recirc_piping"] = {}
         for recirc_piping in self.recirc_piping:
-            d["recirc_piping"][recirc_piping.identifier] = recirc_piping.to_dict()
+            d["recirc_piping"][recirc_piping.identifier] = recirc_piping.to_dict(_include_properties)
 
         d["number_tap_points"] = self._number_tap_points
         d["recirc_temp"] = self.recirc_temp
         d["recirc_hours"] = self.recirc_hours
+
+        if _include_properties:
+            d["total_distribution_pipe_length"] = self.total_distribution_pipe_length
+            d["total_home_run_fixture_pipe_length"] = self.total_home_run_fixture_pipe_length
+            d["total_recirc_pipe_length"] = self.total_recirc_pipe_length
 
         return d
 

@@ -91,8 +91,8 @@ class PhHvacHotWaterTank(_base._PhHVACBase):
         # type: () -> PhHvacHotWaterTank
         return self.__copy__()
 
-    def to_dict(self):
-        # type: () -> dict[str, Any]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> dict[str, Any]
         d = super(PhHvacHotWaterTank, self).to_dict()
         d["quantity"] = self.quantity
         d["_tank_type"] = self._tank_type.to_dict()
@@ -153,15 +153,15 @@ class PhHvacHotWaterHeater(_base._PhHVACBase):
 
     def __copy__(self):
         # type: () -> PhHvacHotWaterHeater
-        # TODO: Implement copy
+        # TODO: Implement copy on all the subclasses
         return self
 
     def duplicate(self):
         # type: () -> PhHvacHotWaterHeater
         return self.__copy__()
 
-    def to_dict(self):
-        # type: () -> dict
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> dict
         d = super(PhHvacHotWaterHeater, self).to_dict()
         return d
 
@@ -172,6 +172,8 @@ class PhHvacHotWaterHeater(_base._PhHVACBase):
         new_obj.identifier = _input_dict["identifier"]
         new_obj.display_name = _input_dict["display_name"]
         new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.percent_coverage = _input_dict["percent_coverage"]
+        new_obj.in_conditioned_space = _input_dict["in_conditioned_space"]
         return new_obj
 
     def __str__(self):
@@ -188,8 +190,8 @@ class PhHvacHotWaterHeaterElectric(PhHvacHotWaterHeater):
     def __init__(self):
         super(PhHvacHotWaterHeaterElectric, self).__init__()
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Any]
         d = super(PhHvacHotWaterHeaterElectric, self).to_dict()
         d["heater_type"] = self.__class__.__name__
         d["percent_coverage"] = self.percent_coverage
@@ -220,8 +222,8 @@ class PhHvacHotWaterHeaterBoiler(PhHvacHotWaterHeater):
         self.avg_boiler_temp_at_55_45 = 35
         self.avg_boiler_temp_at_35_28 = 24
 
-    def to_dict(self):
-        # type: () -> dict
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> dict
         d = super(PhHvacHotWaterHeaterBoiler, self).to_dict()
         d["heater_type"] = self.__class__.__name__
         d["percent_coverage"] = self.percent_coverage
@@ -258,6 +260,7 @@ class PhHvacHotWaterHeaterBoiler(PhHvacHotWaterHeater):
 
 class PhHvacHotWaterHeaterBoilerWood(PhHvacHotWaterHeater):
     def __init__(self):
+        # type: () -> None
         super(PhHvacHotWaterHeaterBoilerWood, self).__init__()
         self.fuel = 1  # Pellet
         self.effic_in_basic_cycle = 0.72
@@ -265,8 +268,8 @@ class PhHvacHotWaterHeaterBoilerWood(PhHvacHotWaterHeater):
         self.avg_frac_heat_released = 0.5
         self.on_off_temp_diff = 30
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Any]
         d = super(PhHvacHotWaterHeaterBoilerWood, self).to_dict()
         d["heater_type"] = self.__class__.__name__
         d["percent_coverage"] = self.percent_coverage
@@ -302,8 +305,8 @@ class PhHvacHotWaterHeaterDistrict(PhHvacHotWaterHeater):
         self.solar_fraction = 0
         self.util_fact_heat_transfer = 1
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Any]
         d = super(PhHvacHotWaterHeaterDistrict, self).to_dict()
         d["heater_type"] = self.__class__.__name__
         d["percent_coverage"] = self.percent_coverage
@@ -336,8 +339,8 @@ class PhHvacHotWaterHeaterHeatPump(PhHvacHotWaterHeater):
         self.annual_system_perf_ratio = None
         self.annual_energy_factor = None
 
-    def to_dict(self):
-        # type: () -> Dict[str, Any]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Any]
         d = super(PhHvacHotWaterHeaterHeatPump, self).to_dict()
         d["heater_type"] = self.__class__.__name__
         d["percent_coverage"] = self.percent_coverage

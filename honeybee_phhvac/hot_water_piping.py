@@ -149,8 +149,8 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         # type: () -> PhHvacPipeSegment
         return self.__copy__()
 
-    def to_dict(self):
-        # type: () -> Dict[str, Union[str, Dict]]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Union[str, Dict]]
         d = super(PhHvacPipeSegment, self).to_dict()
         d["geometry"] = self.geometry.to_dict()
         d["diameter_value"] = self.diameter.value
@@ -161,6 +161,10 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         d["insulation_quality"] = self.insulation_quality
         d["daily_period"] = self.daily_period
         d["water_temp"] = self.water_temp
+
+        if _include_properties:
+            d["length"] = self.length
+
         return d
 
     @classmethod
@@ -289,13 +293,19 @@ class PhHvacPipeElement(_base._PhHVACBase):
     def water_temp(self):
         # type: () -> float
         """Return the length-weighted average water temperature of all the pipe segments"""
-        return sum(s.length * s.water_temp for s in self.segments) / self.length
+        try:
+            return sum(s.length * s.water_temp for s in self.segments) / self.length
+        except ZeroDivisionError:
+            return 60.0
 
     @property
     def daily_period(self):
         # type: () -> float
         """Return the length-weighted average daily period of all the pipe segments"""
-        return sum(s.length * s.daily_period for s in self.segments) / self.length
+        try:
+            return sum(s.length * s.daily_period for s in self.segments) / self.length
+        except ZeroDivisionError:
+            return 24.0
 
     @property
     def segment_names(self):
@@ -357,12 +367,20 @@ class PhHvacPipeElement(_base._PhHVACBase):
         # type: () -> PhHvacPipeElement
         return self.__copy__()
 
-    def to_dict(self):
-        # type: () -> dict[str, Union[str, dict]]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> dict[str, Union[str, dict]]
         d = super(PhHvacPipeElement, self).to_dict()
         d["segments"] = {}
         for segment in self.segments:
-            d["segments"][segment.identifier] = segment.to_dict()
+            d["segments"][segment.identifier] = segment.to_dict(_include_properties)
+
+        if _include_properties:
+            d["length"] = self.length
+            d["water_temp"] = self.water_temp
+            d["daily_period"] = self.daily_period
+            d["material_name"] = self.material_name
+            d["diameter_name"] = self.diameter_name
+
         return d
 
     @classmethod
@@ -399,19 +417,8 @@ class PhHvacPipeElement(_base._PhHVACBase):
 
         Args:
             moving_vec3D: A Vector3D with the direction and distance to move the ray.
-        """
-        """Rotate the pipe's segments by a certain angle_degrees around an axis_3D and origin_pt3D.
-
-        Right hand rule applies:
-        If axis_3D has a positive orientation, rotation will be clockwise.
-        If axis_3D has a negative orientation, rotation will be counterclockwise.
-
-        Args:
-            axis_3D: A Vector3D axis_3D representing the axis_3D of rotation.
-            angle_degrees: An angle_degrees for rotation in radians.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         Returns:
-            A new PhHvacPipeElement with the rotated segments.
+            A new PhHvacPipeElement with the moved segments.
         """
         new_pipe_element = self.duplicate()
         new_pipe_element.clear_segments()
@@ -591,13 +598,21 @@ class PhHvacPipeBranch(_base._PhHVACBase):
         # type: () -> PhHvacPipeBranch
         return self.__copy__()
 
-    def to_dict(self):
-        # type: () -> Dict[str, Union[str, Dict]]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Union[str, Dict]]
         d = super(PhHvacPipeBranch, self).to_dict()
-        d["pipe_element"] = self.pipe_element.to_dict()
+        d["pipe_element"] = self.pipe_element.to_dict(_include_properties)
         d["fixtures"] = {}
         for branch in self.fixtures:
-            d["fixtures"][branch.identifier] = branch.to_dict()
+            d["fixtures"][branch.identifier] = branch.to_dict(_include_properties)
+
+        if _include_properties:
+            d["length"] = self.length
+            d["water_temp"] = self.water_temp
+            d["daily_period"] = self.daily_period
+            d["num_fixtures"] = self.num_fixtures
+            d["total_length"] = self.total_length
+            d["total_home_run_fixture_length"] = self.total_home_run_fixture_length
         return d
 
     @classmethod
@@ -809,14 +824,22 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         # type: () -> PhHvacPipeTrunk
         return self.__copy__()
 
-    def to_dict(self):
-        # type: () -> Dict[str, Union[str, Dict]]
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Union[str, Dict]]
         d = super(PhHvacPipeTrunk, self).to_dict()
-        d["pipe_element"] = self.pipe_element.to_dict()
+        d["pipe_element"] = self.pipe_element.to_dict(_include_properties)
         d["multiplier"] = self.multiplier
         d["branches"] = {}
         for branch in self.branches:
-            d["branches"][branch.identifier] = branch.to_dict()
+            d["branches"][branch.identifier] = branch.to_dict(_include_properties)
+
+        if _include_properties:
+            d["length"] = self.length
+            d["water_temp"] = self.water_temp
+            d["daily_period"] = self.daily_period
+            d["num_fixtures"] = self.num_fixtures
+            d["total_length"] = self.total_length
+            d["total_home_run_fixture_length"] = self.total_home_run_fixture_length
         return d
 
     @classmethod
