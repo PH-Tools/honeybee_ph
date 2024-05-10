@@ -44,7 +44,6 @@ def test_radians_angle_between_45_degree_planes():
     assert vector_equal(plane1.x, Vector3D(1, 0, 0), TOL)
 
     plane2 = plane1.rotate(plane1.n, math.radians(45), plane1.o)
-    print("{:.12f}".format(plane2.x.x))
     assert vector_equal(plane2.x, Vector3D(0.707106781187, 0.707106781187, 0), TOL)  # type: ignore
 
     angle = counterclockwise_angle_between_2_Planes(

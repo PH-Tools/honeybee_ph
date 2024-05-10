@@ -13,16 +13,14 @@ except ImportError:
 
 class PeoplePhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
-            _expected_types, _input_type
-        )
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types, _input_type)
         super(PeoplePhProperties_FromDictError, self).__init__(self.msg)
 
 
 class PhDwellings(object):
     """A Dwelling Object to store information on the number of dwelling units."""
 
-    _default = None # type: Optional[PhDwellings]
+    _default = None  # type: Optional[PhDwellings]
 
     def __init__(self, _num_dwellings=0):
         # type: (int) -> None
@@ -40,12 +38,11 @@ class PhDwellings(object):
         d["identifier"] = str(self.identifier)
         d["num_dwellings"] = self.num_dwellings
         return d
-    
+
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhDwellings
         if not _input_dict:
-            print("No PH 'dwelling' data found? Please ensure your HBPH version is up to date.")
             return cls()
 
         obj = cls(_input_dict["num_dwellings"])
@@ -67,17 +64,17 @@ class PhDwellings(object):
 
     def __hash__(self):
         return hash(self.identifier)
-    
+
     def __eq__(self, other):
         # type: (PhDwellings) -> bool
         return self.identifier == other.identifier
 
     def __str__(self):
-        return '{}(num_dwellings={})'.format(self.__class__.__name__, self.num_dwellings)
-    
+        return "{}(num_dwellings={})".format(self.__class__.__name__, self.num_dwellings)
+
     def __repr__(self):
         return str(self)
-    
+
     def ToString(self):
         return str(self)
 
@@ -115,7 +112,9 @@ class PeoplePhProperties(object):
 
     @property
     def is_dwelling_unit(self):
-        print("WARNING: The 'PeoplePhProperties' property 'is_dwelling_unit' is deprecated and should be replace with 'is_residential' from now on.")
+        print(
+            "WARNING: The 'PeoplePhProperties' property 'is_dwelling_unit' is deprecated and should be replace with 'is_residential' from now on."
+        )
         return self.is_residential
 
     @property
@@ -171,20 +170,13 @@ class PeoplePhProperties(object):
         if self.dwellings != other.dwellings:
             return False
         return True
-    
+
     def __str__(self):
         return "{}: id={}".format(self.__class__.__name__, self.id_num)
 
     def __repr__(self):
-        return (
-            "{!r}(id_num={!r}, number_bedrooms={!r}"
-            " number_people={!r}, dwellings={!r})".format(
-                self.__class__.__name__,
-                self.id_num,
-                self.number_bedrooms,
-                self.number_people,
-                self.dwellings
-            )
+        return "{!r}(id_num={!r}, number_bedrooms={!r}" " number_people={!r}, dwellings={!r})".format(
+            self.__class__.__name__, self.id_num, self.number_bedrooms, self.number_people, self.dwellings
         )
 
     def ToString(self):

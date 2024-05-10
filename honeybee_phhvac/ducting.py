@@ -171,7 +171,6 @@ class PhDuctSegment(_base._PhHVACBase):
             angle_degrees: An angle for rotation in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-        print("      - PhDuctSegment<id={}>.rotate(angle_degrees={})".format(id(self), angle_degrees))
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
         return new_segment
@@ -184,7 +183,6 @@ class PhDuctSegment(_base._PhHVACBase):
             angle_degrees: An angle in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-        print("      - PhDuctSegment<id={}>.rotate_xy(angle_degrees={})".format(id(self), angle_degrees))
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
         return new_segment
@@ -389,7 +387,6 @@ class PhDuctElement(_base._PhHVACBase):
             angle_degrees: An angle for rotation in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-        print("    - PhDuctElement<id={}>.rotate(angle_degrees={})".format(id(self), angle_degrees))
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:
@@ -403,7 +400,6 @@ class PhDuctElement(_base._PhHVACBase):
             angle_degree: An angle in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-        print("    - PhDuctElement<id={}>.rotate_xy(angle_degrees={})".format(id(self), angle_degrees))
         new_element = self.duplicate()
         new_element.clear_segments()
         for segment in self.segments:

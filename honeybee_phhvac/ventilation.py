@@ -273,8 +273,6 @@ class PhVentilationSystem(_base._PhHVACBase):
             angle_degrees: An angle for rotation in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-        print("  - PhVentilationSystem<id={}>.rotate(angle_degrees={})".format(id(self), angle_degrees))
-
         new_system = self.duplicate()
         new_system.identifier = self.identifier
         new_system.supply_ducting = [
@@ -292,8 +290,6 @@ class PhVentilationSystem(_base._PhHVACBase):
             angle_degrees: An angle in degrees.
             origin_pt3D: A Point3D for the origin around which the object will be rotated.
         """
-        print("  - PhVentilationSystem<id={}>.rotate_xy(angle_degrees={})".format(id(self), angle_degrees))
-
         new_system = self.duplicate()
         new_system.identifier = self.identifier
         new_system.supply_ducting = [
