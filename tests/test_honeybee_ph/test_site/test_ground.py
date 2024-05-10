@@ -35,3 +35,16 @@ def test_climate_Ground_deserialization_when_identifier_is_missing():
     assert ground_2.identifier != ground_1.identifier
     assert isinstance(ground_2, honeybee_ph.site.Climate_Ground)
     assert ground_1.to_dict() != ground_2.to_dict()
+
+
+def test_duplicate_climate_Ground():
+    grnd = honeybee_ph.site.Climate_Ground()
+    grnd.user_data["test_key"] = "test_value"
+    new_grnd = grnd.duplicate()
+
+    assert new_grnd.user_data == grnd.user_data
+    assert new_grnd.to_dict() == grnd.to_dict()
+    assert new_grnd.identifier == grnd.identifier
+    assert isinstance(new_grnd, honeybee_ph.site.Climate_Ground)
+    assert isinstance(new_grnd, honeybee_ph.site._base._Base)
+    assert "test_key" in new_grnd.user_data

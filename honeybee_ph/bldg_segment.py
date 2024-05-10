@@ -36,7 +36,9 @@ class SetPoints(_base._Base):
 
         d["winter"] = self.winter
         d["summer"] = self.summer
+        d["identifier"] = self.identifier
         d["user_data"] = copy(self.user_data)
+        d["display_name"] = self.display_name
 
         return d
 
@@ -47,7 +49,9 @@ class SetPoints(_base._Base):
 
         obj.winter = _dict.get("winter", 20.0)
         obj.summer = _dict.get("summer", 25.0)
+        obj.identifier = _dict.get("identifier")
         obj.user_data = _dict.get("user_data", {})
+        obj.display_name = _dict.get("display_name")
 
         return obj
 
@@ -92,6 +96,8 @@ class BldgSegment(_base._Base):
         d = {}
 
         d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+        d["display_name"] = self.display_name
         d["name"] = self.display_name
         d["num_floor_levels"] = self.num_floor_levels
         d["num_dwelling_units"] = self.num_dwelling_units
@@ -106,7 +112,6 @@ class BldgSegment(_base._Base):
         d["thermal_bridges"] = {}
         for tb in self.thermal_bridges.values():
             d["thermal_bridges"][str(tb.identifier)] = tb.to_dict()
-        d["user_data"] = self.user_data
         d["summer_hrv_bypass_mode"] = self.summer_hrv_bypass_mode.to_dict()
         return d
 
@@ -115,8 +120,9 @@ class BldgSegment(_base._Base):
         # type: (Dict[str, Any]) -> BldgSegment
         obj = cls()
 
-        obj.identifier = _dict.get("identifier")
-        obj.display_name = _dict.get("name")
+        obj.identifier = _dict.get("identifier", "")
+        obj.user_data = _dict.get("user_data", {})
+        obj.display_name = _dict.get("name", "")
         obj.num_floor_levels = _dict.get("num_floor_levels")
         obj.num_dwelling_units = _dict.get("num_dwelling_units")
         obj.site = site.Site.from_dict(_dict.get("site", {}))
@@ -130,16 +136,13 @@ class BldgSegment(_base._Base):
         for tb_dict in _dict["thermal_bridges"].values():
             tb_obj = thermal_bridge.PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
-        obj.user_data = _dict.get("user_data", {})
         obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_hrv_bypass_mode", {}))
         return obj
 
     def __copy__(self):
         # type () -> BldgSegment
         new_obj = BldgSegment()
-
-        new_obj.identifier = self.identifier
-        new_obj.display_name = self.display_name
+        new_obj.set_base_attrs_from_source(self)
         new_obj.num_floor_levels = self.num_floor_levels
         new_obj.num_dwelling_units = self.num_dwelling_units
         new_obj.site = self.site.duplicate()
@@ -153,7 +156,6 @@ class BldgSegment(_base._Base):
         new_obj.thermal_bridges = {}
         for tb_k, tb_v in self.thermal_bridges.items():
             new_obj.thermal_bridges[tb_k] = tb_v.duplicate()
-        new_obj.user_data = self.user_data
         new_obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(self.summer_hrv_bypass_mode.value)
         return new_obj
 

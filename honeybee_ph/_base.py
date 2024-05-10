@@ -3,6 +3,7 @@
 
 """Base class for Honeybee-PH Objects with some generic methods and attributes."""
 
+from copy import copy
 import uuid
 
 
@@ -43,7 +44,7 @@ class _Base(object):
 
     def set_base_attrs_from_source(self, _source):
         self._identifier = _source._identifier
-        self.user_data = _source.user_data
+        self.user_data = copy(_source.user_data)
         self._display_name = _source._display_name
         return self
 

@@ -3,13 +3,17 @@
 
 """Project Team-Member Classes."""
 
+from copy import copy
+
 try:
     from typing import Any, Dict, Optional
 except ImportError:
     pass  # Python 2.7
 
+from honeybee_ph import _base
 
-class ProjectTeamMember:
+
+class ProjectTeamMember(_base._Base):
     def __init__(
         self,
         _name=None,
@@ -21,6 +25,7 @@ class ProjectTeamMember:
         _license_number=None,
     ):
         # type: (Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]) -> None
+        super(ProjectTeamMember, self).__init__()
         self.name = _name
         self.street = _street
         self.city = _city
@@ -40,6 +45,7 @@ class ProjectTeamMember:
             self.email,
             self.license_number,
         )
+        new_obj.set_base_attrs_from_source(self)
         return new_obj
 
     def to_dict(self):
@@ -52,6 +58,9 @@ class ProjectTeamMember:
         d["telephone"] = self.telephone
         d["email"] = self.email
         d["license_number"] = self.license_number
+        d["identifier"] = self.identifier
+        d["user_data"] = self.user_data
+        d["display_name"] = self.display_name
         return d
 
     @classmethod
@@ -66,6 +75,9 @@ class ProjectTeamMember:
             _input_dict["email"],
             _input_dict["license_number"],
         )
+        new_obj.identifier = _input_dict.get("identifier", "")
+        new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.display_name = _input_dict.get("display_name", "")
         return new_obj
 
     def __str__(self):
@@ -78,9 +90,10 @@ class ProjectTeamMember:
         return str(self)
 
 
-class ProjectTeam:
+class ProjectTeam(_base._Base):
     def __init__(self):
         # type: () -> None
+        super(ProjectTeam, self).__init__()
         self.customer = ProjectTeamMember()
         self.building = ProjectTeamMember()
         self.owner = ProjectTeamMember()
@@ -93,6 +106,7 @@ class ProjectTeam:
     def duplicate(self):
         # type: () -> ProjectTeam
         new_obj = ProjectTeam()
+        new_obj.set_base_attrs_from_source(self)
         new_obj.customer = self.customer.duplicate()
         new_obj.building = self.building.duplicate()
         new_obj.owner = self.owner.duplicate()
@@ -102,6 +116,9 @@ class ProjectTeam:
     def to_dict(self):
         # type: () -> Dict[str, Any]
         d = {}
+        d["identifier"] = self.identifier
+        d["user_data"] = self.user_data
+        d["display_name"] = self.display_name
         d["customer"] = self.customer.to_dict()
         d["building"] = self.building.to_dict()
         d["owner"] = self.owner.to_dict()
@@ -112,6 +129,9 @@ class ProjectTeam:
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> ProjectTeam
         new_obj = cls()
+        new_obj.identifier = _input_dict.get("identifier", "")
+        new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.display_name = _input_dict.get("display_name", "")
         new_obj.customer = ProjectTeamMember.from_dict(_input_dict.get("customer", ProjectTeamMember()))
         new_obj.building = ProjectTeamMember.from_dict(_input_dict.get("building", ProjectTeamMember()))
         new_obj.owner = ProjectTeamMember.from_dict(_input_dict.get("owner", ProjectTeamMember()))

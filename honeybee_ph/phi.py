@@ -397,7 +397,9 @@ class PhiCertification(_base._Base):
         d = {}
         d["phpp_version"] = self.phpp_version
         d["attributes"] = self.attributes.to_dict()
+        d["identifier"] = self.identifier
         d["user_data"] = self.user_data
+        d["display_name"] = self.display_name
         return d
 
     @classmethod
@@ -409,7 +411,10 @@ class PhiCertification(_base._Base):
             new_obj.attributes = PHPPSettings10.from_dict(attr_dict)
         else:
             new_obj.attributes = PHPPSettings9.from_dict(attr_dict)
+
+        new_obj.identifier = _input_dict.get("identifier", "")
         new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.display_name = _input_dict.get("display_name", "")
 
         return new_obj
 

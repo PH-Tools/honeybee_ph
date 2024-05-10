@@ -204,7 +204,9 @@ class PhiusCertification(_base._Base):
         d["int_gains_use_school_defaults"] = self.int_gains_use_school_defaults
         d["int_gains_dhw_marginal_perf_ratio"] = self.int_gains_dhw_marginal_perf_ratio
 
+        d["identifier"] = self.identifier
         d["user_data"] = copy(self.user_data)
+        d["display_name"] = self.display_name
 
         d["icfa_override"] = self.icfa_override
 
@@ -235,7 +237,9 @@ class PhiusCertification(_base._Base):
         obj.int_gains_use_school_defaults = _dict.get("int_gains_use_school_defaults")
         obj.int_gains_dhw_marginal_perf_ratio = _dict.get("int_gains_dhw_marginal_perf_ratio")
 
+        obj.identifier = _dict.get("identifier")
         obj.user_data = _dict.get("user_data", {})
+        obj.display_name = _dict.get("display_name")
 
         obj.icfa_override = _dict.get("icfa_override")
 
@@ -265,8 +269,6 @@ class PhiusCertification(_base._Base):
         obj.int_gains_toilet_room_util_pat = self.int_gains_toilet_room_util_pat
         obj.int_gains_use_school_defaults = self.int_gains_use_school_defaults
         obj.int_gains_dhw_marginal_perf_ratio = self.int_gains_dhw_marginal_perf_ratio
-
-        obj.user_data = self.user_data
 
         obj.icfa_override = self.icfa_override
 

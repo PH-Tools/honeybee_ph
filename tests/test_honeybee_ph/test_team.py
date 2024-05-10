@@ -97,7 +97,7 @@ def test_ProjectTeam_duplicate():
     assert team.designer.license_number == None
 
 
-def test_ProjectTeamMember_to_from_dict():
+def test_ProjectTeam_to_from_dict_roundtrip():
     team = ProjectTeam()
     team.customer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
     team.owner = ProjectTeamMember("Jane Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
@@ -107,3 +107,27 @@ def test_ProjectTeamMember_to_from_dict():
     team_dict = team.to_dict()
     team_dup = ProjectTeam.from_dict(team_dict)
     assert team_dup.to_dict() == team_dict
+
+    team.user_data = {"test": "test"}
+    team_dict = team.to_dict()
+    team_dup = ProjectTeam.from_dict(team_dict)
+    assert team_dup.to_dict() == team_dict
+    assert "test" in team_dup.user_data
+
+
+def test_ProjectTeamMember_to_from_dict_roundtrip():
+    team = ProjectTeam()
+    team.customer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.owner = ProjectTeamMember("Jane Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.building = ProjectTeamMember("Joe Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+    team.designer = ProjectTeamMember("John Doe", "123 Main St.", "Anytown", "12345", "555-555-5555", None)
+
+    team_dict = team.to_dict()
+    team_dup = ProjectTeam.from_dict(team_dict)
+    assert team_dup.to_dict() == team_dict
+
+    team.user_data = {"test": "test"}
+    team_dict = team.to_dict()
+    team_dup = ProjectTeam.from_dict(team_dict)
+    assert team_dup.to_dict() == team_dict
+    assert "test" in team_dup.user_data

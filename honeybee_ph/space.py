@@ -19,7 +19,6 @@ except ImportError as e:
 
 try:
     from honeybee import room
-    from honeybee.face import Face3D as HBFace3D
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
@@ -101,7 +100,7 @@ class SpaceFloorSegment(_base._Base):
 
         return new_obj
 
-    def duplicate(self):
+    def __copy__(self):
         # type: () -> SpaceFloorSegment
         new_obj = SpaceFloorSegment()
 
@@ -118,6 +117,10 @@ class SpaceFloorSegment(_base._Base):
         new_obj.weighting_factor = self.weighting_factor
 
         return new_obj
+
+    def duplicate(self):
+        # type: () -> SpaceFloorSegment
+        return self.__copy__()
 
     def duplicate_geometry(self):
         # type: () -> LBFace3D
@@ -285,7 +288,7 @@ class SpaceFloor(_base._Base):
         # type: () -> list[SpaceFloorSegment]
         return self._floor_segments
 
-    def duplicate(self, _include_floor_segments=True):
+    def __copy__(self, _include_floor_segments=True):
         # type: (bool) -> SpaceFloor
         new_floor = SpaceFloor()
 
@@ -300,6 +303,10 @@ class SpaceFloor(_base._Base):
                 new_floor.add_floor_segment(seg.duplicate())
 
         return new_floor
+
+    def duplicate(self, _include_floor_segments=True):
+        # type: (bool) -> SpaceFloor
+        return self.__copy__(_include_floor_segments)
 
     def duplicate_geometry(self):
         # type: () -> LBFace3D
@@ -490,7 +497,7 @@ class SpaceVolume(_base._Base):
         """Delete all the geometry from the SpaceVolume."""
         self.geometry = []
 
-    def duplicate(self, _include_floor=True):
+    def __copy__(self, _include_floor=True):
         # type: (bool) -> SpaceVolume
         new_volume = SpaceVolume()
 
@@ -506,6 +513,10 @@ class SpaceVolume(_base._Base):
             new_volume.geometry = [copy(geo) for geo in self.geometry]
 
         return new_volume
+
+    def duplicate(self, _include_floor=True):
+        # type: (bool) -> SpaceVolume
+        return self.__copy__(_include_floor)
 
     def to_dict(self, include_mesh=False, *args, **kwargs):
         # type: (bool, list, dict) -> Dict[str, Any]
@@ -741,7 +752,7 @@ class Space(_base._Base):
         """Delete all the Volumes from the Space."""
         self._volumes = []
 
-    def duplicate(self, _host=None, _include_volumes=True):
+    def __copy__(self, _host=None, _include_volumes=True):
         # type: (Any, bool) -> Space
         new_space = Space()
 
@@ -762,6 +773,10 @@ class Space(_base._Base):
             new_space.add_new_volumes([vol.duplicate() for vol in self.volumes])
 
         return new_space
+
+    def duplicate(self, _host=None, _include_volumes=True):
+        # type: (Any, bool) -> Space
+        return self.__copy__(_host, _include_volumes)
 
     def to_dict(self, include_mesh=False, *args, **kwargs):
         # type: (bool, list, dict) -> Dict[str, Any]

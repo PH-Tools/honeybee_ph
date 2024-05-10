@@ -61,6 +61,9 @@ class PhFoundation(_base._Base):
 
     def duplicate(self):
         # type: () -> PhFoundation
+        return self.__copy__()
+
+    def __copy__(self):
         new_obj = self.__class__()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
@@ -68,9 +71,6 @@ class PhFoundation(_base._Base):
         new_obj.foundation_type = PhFoundationType(self.foundation_type.value)
         new_obj.user_data = self.user_data
         return new_obj
-
-    def __copy__(self):
-        return self.duplicate()
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -146,7 +146,7 @@ class PhHeatedBasement(PhFoundation):
         self.slab_depth_below_grade_m = 2.5
         self.basement_wall_u_value = 1.0
 
-    def duplicate(self):
+    def __copy__(self):
         # type: () -> PhHeatedBasement
         obj = self.__class__()
         obj.display_name = self.display_name
@@ -159,6 +159,10 @@ class PhHeatedBasement(PhFoundation):
         obj.slab_depth_below_grade_m = self.slab_depth_below_grade_m
         obj.basement_wall_u_value = self.basement_wall_u_value
         return obj
+
+    def duplicate(self):
+        # type: () -> PhHeatedBasement
+        return self.__copy__()
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -199,7 +203,7 @@ class PhUnheatedBasement(PhFoundation):
         self.basement_volume_m3 = 0.0
         self.basement_ventilation_ach = 0.0
 
-    def duplicate(self):
+    def __copy__(self):
         # type: () -> PhUnheatedBasement
         obj = self.__class__()
         obj.display_name = self.display_name
@@ -217,6 +221,10 @@ class PhUnheatedBasement(PhFoundation):
         obj.basement_volume_m3 = self.basement_volume_m3
         obj.basement_ventilation_ach = self.basement_ventilation_ach
         return obj
+
+    def duplicate(self):
+        # type: () -> PhUnheatedBasement
+        return self.__copy__()
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -272,7 +280,7 @@ class PhSlabOnGrade(PhFoundation):
     def perim_insulation_position(self, _input):
         self._perim_insulation_position = PhSlabEdgeInsulationPosition(_input)
 
-    def duplicate(self):
+    def __copy__(self):
         # type: () -> PhSlabOnGrade
         obj = self.__class__()
         obj.display_name = self.display_name
@@ -287,6 +295,10 @@ class PhSlabOnGrade(PhFoundation):
         obj.perim_insulation_thickness_m = self.perim_insulation_thickness_m
         obj.perim_insulation_conductivity = self.perim_insulation_conductivity
         return obj
+
+    def duplicate(self):
+        # type: () -> PhSlabOnGrad
+        return self.__copy__()
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -328,7 +340,7 @@ class PhVentedCrawlspace(PhFoundation):
         self.crawlspace_vent_opening_are_m2 = 0.0
         self.crawlspace_wall_u_value = 1.0
 
-    def duplicate(self):
+    def __copy__(self):
         # type: () -> PhVentedCrawlspace
         obj = self.__class__()
         obj.display_name = self.display_name
@@ -343,6 +355,10 @@ class PhVentedCrawlspace(PhFoundation):
         obj.crawlspace_vent_opening_are_m2 = self.crawlspace_vent_opening_are_m2
         obj.crawlspace_wall_u_value = self.crawlspace_wall_u_value
         return obj
+
+    def duplicate(self):
+        # type: () -> PhVentedCrawlspace
+        return self.__copy__()
 
     def to_dict(self):
         # type: () -> Dict[str, Any]

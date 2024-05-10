@@ -24,6 +24,19 @@ def test_climate_serialization_with_user_data():
     assert new_o.to_dict() == d
 
 
+def test_climate_duplicate_with_user_data():
+    cli = honeybee_ph.site.Climate()
+    cli.user_data["test_key"] = "test_value"
+    new_cli = cli.duplicate()
+
+    assert new_cli.user_data == cli.user_data
+    assert new_cli.to_dict() == cli.to_dict()
+    assert new_cli.identifier == cli.identifier
+    assert isinstance(new_cli, honeybee_ph.site.Climate)
+    assert isinstance(new_cli, honeybee_ph.site._base._Base)
+    assert "test_key" in new_cli.user_data
+
+
 def test_climate_deserialization_when_identifier_is_missing():
     """when deserializing from dict, if identifier is missing, (old hbjson files))"""
     obj_1 = honeybee_ph.site.Climate()
