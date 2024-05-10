@@ -3,8 +3,8 @@
 
 """Base class for Honeybee-PH Objects with some generic methods and attributes."""
 
-from copy import copy
 import uuid
+from copy import copy
 
 
 class _Base(object):
