@@ -8,12 +8,22 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
-from honeybee import room
-from honeybee_energy.load import equipment
-from honeybee_energy.properties.room import RoomEnergyProperties
-from honeybee_energy.schedule import ruleset
+try:
+    from honeybee import room
+except ImportError as e:
+    raise ImportError("Failed to import honeybee: {}".format(e))
 
-from honeybee_ph import space
+try:
+    from honeybee_ph import space
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_ph: {}".format(e))
+
+try:
+    from honeybee_energy.load import equipment
+    from honeybee_energy.properties.room import RoomEnergyProperties
+    from honeybee_energy.schedule import ruleset
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_energy: {}".format(e))
 
 
 class PhiusResidentialStory(object):
@@ -65,30 +75,19 @@ class PhiusResidentialStory(object):
 
     def calc_story_floor_area(self, _hb_rooms):
         # type: (List[room.Room]) -> float
-        return sum(
-            space.weighted_floor_area
-            for rm in _hb_rooms
-            for space in rm.properties.ph.spaces
-        )
+        return sum(space.weighted_floor_area for rm in _hb_rooms for space in getattr(rm.properties, "ph").spaces)
 
     def calc_story_bedrooms(self, _hb_rooms):
         # type: (List[room.Room]) -> int
-        return sum(
-            rm.properties.energy.people.properties.ph.number_bedrooms for rm in _hb_rooms
-        )
+        return sum(getattr(rm.properties, "energy").people.properties.ph.number_bedrooms for rm in _hb_rooms)
 
     def calc_design_occupancy(self, _hb_rooms):
         # type: (List[room.Room]) -> float
-        return sum(
-            rm.properties.energy.people.properties.ph.number_people for rm in _hb_rooms
-        )
+        return sum(getattr(rm.properties, "energy").people.properties.ph.number_people for rm in _hb_rooms)
 
     def calc_num_dwellings(self, _hb_rooms):
         # type: (List[room.Room]) -> int
-        return sum(
-            rm.properties.energy.people.properties.ph.number_dwelling_units
-            for rm in _hb_rooms
-        )
+        return sum(getattr(rm.properties, "energy").people.properties.ph.number_dwelling_units for rm in _hb_rooms)
 
     def calc_mel(self):
         # type: () -> float
@@ -143,10 +142,7 @@ class PhiusResidentialStory(object):
         # type: () -> float
         """Calculate the Phius MF Garage Lighting for the story."""
         GARAGE_LIGHTING_KHW = 100
-        a = (
-            GARAGE_LIGHTING_KHW * (1 - self.lighting_garage_HE_frac)
-            + 25 * self.lighting_garage_HE_frac
-        )
+        a = GARAGE_LIGHTING_KHW * (1 - self.lighting_garage_HE_frac) + 25 * self.lighting_garage_HE_frac
 
         return self.total_number_dwellings * a * self.phius_resnet_fraction
 
@@ -195,6 +191,7 @@ class PhiusNonResProgram(object):
 
     @property
     def mel_kWh_ft2_yr(self):
+        # type: () -> float
         return self.mel_kWh_m2_yr * 0.09290304
 
     def to_phius_mf_workbook(self):
@@ -217,18 +214,21 @@ class PhiusNonResProgram(object):
         obj = cls()
 
         # -- type Alias
-        rm_prop_energy = (
-            _hb_room.properties.energy
-        )  # type: RoomEnergyProperties # type: ignore
+        rm_prop_energy = getattr(_hb_room.properties, "energy")  # type: RoomEnergyProperties
 
         obj.name = rm_prop_energy.program_type.display_name
-        obj.operating_hours_day = obj._operating_hours_day_from_hb_schedule(
-            rm_prop_energy.lighting.schedule
-        )
+        if not isinstance(rm_prop_energy.lighting.schedule, ruleset.ScheduleRuleset):
+            raise ValueError(
+                "Error: Room Lighting Schedule must be a ScheduleRuleset object."
+                "The Lighting Schedule {} from room {} is of type {} which is not compatible wth Honeybee-PH".format(
+                    rm_prop_energy.lighting.schedule.display_name,
+                    _hb_room.display_name,
+                    type(rm_prop_energy.lighting.schedule),
+                )
+            )
+        obj.operating_hours_day = obj._operating_hours_day_from_hb_schedule(rm_prop_energy.lighting.schedule)
         obj.lighting_W_per_m2 = rm_prop_energy.lighting.watts_per_area
-        obj.mel_kWh_m2_yr = obj._calc_mel_kWh_per_m2_from_hb_elec(
-            rm_prop_energy.electric_equipment
-        )
+        obj.mel_kWh_m2_yr = obj._calc_mel_kWh_per_m2_from_hb_elec(rm_prop_energy.electric_equipment)
         obj.mel_w_m2 = rm_prop_energy.electric_equipment.watts_per_area
 
         return obj
@@ -238,6 +238,13 @@ class PhiusNonResProgram(object):
         """Returns the total Elec. Equip kWh for an HBE-Electric-Equipment object."""
 
         # -- Calc annual full-load hours
+        if not isinstance(_hb_elec_equip.schedule, ruleset.ScheduleRuleset):
+            raise ValueError(
+                "Error: Electric Equipment Schedule must be a ScheduleRuleset object."
+                "The Electric Equipment Schedule {} is of type {} which is not compatible wth Honeybee-PH".format(
+                    _hb_elec_equip.schedule.display_name, type(_hb_elec_equip.schedule)
+                )
+            )
         annual_full_load_hours = sum(_hb_elec_equip.schedule.values())
 
         # -- Calc total usage in kWh
@@ -367,7 +374,8 @@ class PhiusNonResRoom(object):
 
         obj.name = _ph_space.full_name
         obj.icfa_m2 = _ph_space.weighted_floor_area
-        obj.program_type = PhiusNonResProgram.from_hb_room(_ph_space.host)
+        if _ph_space.host is not None:
+            obj.program_type = PhiusNonResProgram.from_hb_room(_ph_space.host)
 
         return obj
 

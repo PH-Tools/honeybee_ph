@@ -3,24 +3,43 @@
 
 """HB-PH Electric Equipment and Appliances."""
 
+import sys
+
 try:
     from typing import Any, Dict, Optional, Union
 except ImportError:
     pass  # IronPython
 
-import sys
-
-from honeybee import room
-
-from honeybee_energy_ph.load import _base
+try:
+    from honeybee import room
+except ImportError as e:
+    raise ImportError("Failed to import room: {}".format(e))
 
 try:
-    from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
-except ImportError:
-    pass
+    from honeybee_energy.properties.room import RoomEnergyProperties
+except ImportError as e:
+    raise ImportError("Failed to import RoomEnergyProperties: {}".format(e))
 
-from honeybee_ph_utils import enumerables
-from honeybee_ph_utils.input_tools import input_to_int
+try:
+    from honeybee_energy_ph.load import _base
+    from honeybee_energy_ph.properties.load.people import PeoplePhProperties
+
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_energy_ph: {}".format(e))
+
+try:
+    from typing import TYPE_CHECKING
+
+    if TYPE_CHECKING:
+        from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
+except ImportError as e:
+    pass  # IronPython
+
+try:
+    from honeybee_ph_utils import enumerables
+    from honeybee_ph_utils.input_tools import input_to_int
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_ph_utils: {}".format(e))
 
 # -----------------------------------------------------------------------------
 # - Type Enums
@@ -220,9 +239,12 @@ class PhDishwasher(PhEquipment):
 
     @water_connection.setter
     def water_connection(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
-            self._water_connection = PhDishwasherType(input_to_int(_input))
+            _input = input_to_int(_input)
+            if not _input:
+                raise ValueError("Invalid input for water_connection: {}".format(_input))
+            self._water_connection = PhDishwasherType(_input)
 
     def to_dict(self):
         # type: () -> dict
@@ -263,9 +285,12 @@ class PhClothesWasher(PhEquipment):
 
     @water_connection.setter
     def water_connection(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
-            self._water_connection = PhClothesWasherType(input_to_int(_input))
+            _input = input_to_int(_input)
+            if not _input:
+                raise ValueError("Invalid input for water_connection: {}".format(_input))
+            self._water_connection = PhClothesWasherType(_input)
 
     def to_dict(self):
         # type: () -> dict
@@ -311,7 +336,10 @@ class PhClothesDryer(PhEquipment):
     def dryer_type(self, _input):
         # type: (Optional[Union[int, str]]) -> None
         if _input:
-            self._dryer_type = PhClothesDryerType(input_to_int(_input))
+            _input = input_to_int(_input)
+            if not _input:
+                raise ValueError("Invalid input for dryer_type: {}".format(_input))
+            self._dryer_type = PhClothesDryerType(_input)
 
     def to_dict(self):
         # type: () -> dict
@@ -430,9 +458,12 @@ class PhCooktop(PhEquipment):
 
     @cooktop_type.setter
     def cooktop_type(self, _input):
-        # type: (Optional[str]) -> None
+        # type: (Optional[Union[str, int]]) -> None
         if _input:
-            self._cooktop_type = PhCookingType(input_to_int(_input))
+            _input = input_to_int(_input)
+            if not _input:
+                raise ValueError("Invalid input for cooktop_type: {}".format(_input))
+            self._cooktop_type = PhCookingType(_input)
 
     def to_dict(self):
         # type: () -> dict
@@ -450,9 +481,18 @@ class PhCooktop(PhEquipment):
         return new_obj
 
     def annual_energy_kWh(self, _ref_room=None):
-        # Num. Meals as per Phius Guidebook V3.02, pg 73 footnote #31
+        # type: (room.Room | None) -> float
+        """Returns the annual energy use (kWh) of the equipment.
+
+        Assuming a number of meals as per Phius Guidebook V3.02, pg 73 footnote #31
+        """
+        if not _ref_room:
+            return 0
+
         annual_meals_per_occupant = 500
-        num_meals = _ref_room.properties.energy.people.properties.ph.number_people * annual_meals_per_occupant
+        hbe_room_prop = getattr(_ref_room.properties, "energy")  # type: RoomEnergyProperties
+        hbph_people_prop = getattr(hbe_room_prop.people.properties, "ph")  # type: PeoplePhProperties
+        num_meals = hbph_people_prop.number_people * annual_meals_per_occupant
         return self.energy_demand * num_meals
 
 
@@ -747,7 +787,7 @@ class PhEquipmentBuilder(object):
         # type: (dict) -> PhEquipment
         """Find the right appliance constructor class from the module based on the 'type' name."""
 
-        equipment_type = _input_dict.get("equipment_type")
+        equipment_type = _input_dict["equipment_type"]
         valid_class_types = [nm for nm in dir(sys.modules[__name__]) if nm.startswith("Ph")]
         if equipment_type not in valid_class_types:
             msg = 'Error: Unknown PH Equipment type? Got: "{}" but only types: {} are allowed?'.format(

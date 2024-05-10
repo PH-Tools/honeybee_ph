@@ -37,6 +37,7 @@ class PhThermalBridgeType(enumerables.CustomEnum):
     ]
 
     def __init__(self, _value=15, _index_offset=0):
+        # type: (Union[str, int], int) -> None
         super(PhThermalBridgeType, self).__init__(_value, _index_offset)
 
 
@@ -71,13 +72,11 @@ class PhThermalBridge(_base._Base):
     def to_dict(self):
         # type: () -> dict[str, Any]
         d = super(PhThermalBridge, self).to_dict()
-        d["display_name"] = self.display_name
         d["quantity"] = self.quantity
         d["_group_type"] = self._group_type.to_dict()
         d["psi_value"] = self.psi_value
         d["fRsi_value"] = self.fRsi_value
         d["geometry"] = self.geometry.to_dict()
-
         return d
 
     @classmethod
@@ -97,7 +96,6 @@ class PhThermalBridge(_base._Base):
 
         new_obj = cls(_input_dict["identifier"], geom)
         new_obj.set_base_attrs_from_dict(_input_dict)
-        new_obj.display_name = _input_dict["display_name"]
         new_obj.quantity = _input_dict["quantity"]
         new_obj._group_type = PhThermalBridgeType.from_dict(_input_dict["_group_type"])
         new_obj.psi_value = _input_dict["psi_value"]

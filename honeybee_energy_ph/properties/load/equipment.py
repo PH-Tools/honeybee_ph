@@ -8,7 +8,10 @@ try:
 except:
     pass  # IronPython
 
-from honeybee_energy_ph.load import ph_equipment
+try:
+    from honeybee_energy_ph.load import ph_equipment
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_energy_ph: {}".format(e))
 
 
 class ElectricEquipmentPhProperties_FromDictError(Exception):
