@@ -31,35 +31,6 @@ except ImportError as e:
 # -- Piping  Enums ------------------------------------------------------------
 
 
-class PhPipeDiameter(enumerables.CustomEnum):
-    allowed = [
-        "1-3/8in",
-        "2-1/2in",
-        "3-5/8in",
-        "4-3/4in",
-        "5-1in",
-        "6-1-1/4in",
-        "7-1-1/2in",
-        "8-2in",
-    ]
-
-    def __init__(self, _value=2):
-        # type: (Union[str, int]) -> None
-        super(PhPipeDiameter, self).__init__(_value)
-
-    def __eq__(self, other):
-        # type: (PhPipeDiameter) -> bool
-        return self.value == other.value
-
-    def __ne__(self, other):
-        # type: (PhPipeDiameter) -> bool
-        return self.value != other.value
-
-    def __hash__(self):
-        # type: () -> int
-        return hash(self.value)
-
-
 class PhHvacPipeMaterial(enumerables.CustomEnum):
     allowed = [
         "1-COPPER_M",
@@ -93,32 +64,37 @@ class PhHvacPipeMaterial(enumerables.CustomEnum):
 
 
 class PhHvacPipeSegment(_base._PhHVACBase):
-    """A single pipe segment (linear) with geometry and a diameter"""
+    """A single pipe segment (linear) with geometry and a diameter
+
+    Note: Following the LBT convention, while the geometry can be in a variety of
+    units, thicknesses are all required to be in meters. This means that while the geometry
+    will scale, the thickness and diameter will not.
+    """
 
     def __init__(
         self,
         _geom,
-        _diameter=2,
-        _insul_thickness=0.0127,
+        _diameter_mm=12.7,
+        _insul_thickness_mm=12.7,
         _insul_conductivity=0.04,
         _insul_refl=True,
         _insul_quality=None,
         _daily_period=24,
-        _water_temp=60.0,
+        _water_temp_c=60.0,
         _material=2,
         *args,
         **kwargs
     ):
-        # type: (LineSegment3D, int, float, float, bool, None, float, float, int, *Any, **Any) -> None
+        # type: (LineSegment3D, float, float, float, bool, None, float, float, int, *Any, **Any) -> None
         super(PhHvacPipeSegment, self).__init__()
         self.geometry = _geom
-        self.diameter = PhPipeDiameter(_diameter)
-        self.insulation_thickness = _insul_thickness
+        self.diameter_mm = _diameter_mm
+        self.insulation_thickness_mm = _insul_thickness_mm
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
         self.insulation_quality = _insul_quality
         self.daily_period = _daily_period
-        self.water_temp = _water_temp
+        self.water_temp_c = _water_temp_c
         self.material = PhHvacPipeMaterial(_material)
 
     @property
@@ -127,18 +103,30 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         """Return the length of the pipe segment in model-units."""
         return self.geometry.length
 
+    @property
+    def diameter_m(self):
+        # type: () -> float
+        """Return the diameter of the pipe segment in meters."""
+        return self.diameter_mm * 0.001
+
+    @property
+    def insulation_thickness_m(self):
+        # type: () -> float
+        """Return the insulation thickness of the pipe segment in meters."""
+        return self.insulation_thickness_mm * 0.001
+
     def __copy__(self):
         # type: () -> PhHvacPipeSegment
         new_obj = PhHvacPipeSegment(self.geometry.duplicate())
 
-        new_obj.diameter = PhPipeDiameter(self.diameter.value)
+        new_obj.diameter_mm = self.diameter_mm
         new_obj.material = PhHvacPipeMaterial(self.material.value)
-        new_obj.insulation_thickness = self.insulation_thickness
+        new_obj.insulation_thickness_mm = self.insulation_thickness_mm
         new_obj.insulation_conductivity = self.insulation_conductivity
         new_obj.insulation_reflective = self.insulation_reflective
         new_obj.insulation_quality = self.insulation_quality
         new_obj.daily_period = self.daily_period
-        new_obj.water_temp = self.water_temp
+        new_obj.water_temp_c = self.water_temp_c
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.user_data = copy(self.user_data)
@@ -153,14 +141,14 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         # type: (bool) -> Dict[str, Union[str, Dict]]
         d = super(PhHvacPipeSegment, self).to_dict()
         d["geometry"] = self.geometry.to_dict()
-        d["diameter_value"] = self.diameter.value
+        d["diameter_mm"] = self.diameter_mm
         d["material_value"] = self.material.value
-        d["insulation_thickness"] = self.insulation_thickness
+        d["insulation_thickness_mm"] = self.insulation_thickness_mm
         d["insulation_conductivity"] = self.insulation_conductivity
         d["insulation_reflective"] = self.insulation_reflective
         d["insulation_quality"] = self.insulation_quality
         d["daily_period"] = self.daily_period
-        d["water_temp"] = self.water_temp
+        d["water_temp_c"] = self.water_temp_c
 
         if _include_properties:
             d["length"] = self.length
@@ -171,14 +159,14 @@ class PhHvacPipeSegment(_base._PhHVACBase):
     def from_dict(cls, _input_dict):
         # type: (Dict) -> PhHvacPipeSegment
         new_obj = cls(_geom=LineSegment3D.from_dict(_input_dict["geometry"]))
-        new_obj.diameter = PhPipeDiameter(_input_dict["diameter_value"])
+        new_obj.diameter_mm = _input_dict["diameter_mm"]
         new_obj.material = PhHvacPipeMaterial(_input_dict["material_value"])
-        new_obj.insulation_thickness = _input_dict["insulation_thickness"]
+        new_obj.insulation_thickness_mm = _input_dict["insulation_thickness_mm"]
         new_obj.insulation_conductivity = _input_dict["insulation_conductivity"]
         new_obj.insulation_reflective = _input_dict["insulation_reflective"]
         new_obj.insulation_quality = _input_dict["insulation_quality"]
         new_obj.daily_period = _input_dict["daily_period"]
-        new_obj.water_temp = _input_dict["water_temp"]
+        new_obj.water_temp_c = _input_dict["water_temp_c"]
         new_obj.identifier = _input_dict["identifier"]
         new_obj.display_name = _input_dict["display_name"]
         new_obj.user_data = _input_dict["user_data"]
@@ -186,7 +174,9 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         return new_obj
 
     def __str__(self):
-        return "{}: diam={}, length={:.3f}".format(self.__class__.__name__, self.diameter.value, self.length)
+        return "{}: diam={:.3f} (MM), length={:.3f} (Model-Unit)".format(
+            self.__class__.__name__, self.diameter_mm, self.length
+        )
 
     def __repr__(self):
         return str(self)
@@ -259,6 +249,10 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         # type: (float, Union[None, Point3D]) -> PhHvacPipeSegment
         """Scale the pipe's geometry by a factor from an origin_pt3D point.
 
+        Note that following the LBT convention, while the geometry can be in a variety of
+        units, thicknesses are all required to be in meters. This means that while the geometry
+        will scale, the thickness and diameter will not.
+
         Args:
             scale_factor: A number representing how much the line segment should be scaled.
             origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
@@ -266,7 +260,6 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         """
         new_pipe_segment = self.duplicate()
         new_pipe_segment.geometry = self.geometry.scale(scale_factor, origin_pt3D)
-        new_pipe_segment.insulation_thickness *= scale_factor
         return new_pipe_segment
 
 
@@ -290,11 +283,20 @@ class PhHvacPipeElement(_base._PhHVACBase):
         return sum(s.length for s in self.segments)
 
     @property
-    def water_temp(self):
+    def diameter_mm(self):
+        # type: () -> float
+        """Return the length-weighted average diameter of all the pipe segments"""
+        try:
+            return sum(s.length * s.diameter_mm for s in self.segments) / self.length
+        except ZeroDivisionError:
+            return 0
+
+    @property
+    def water_temp_c(self):
         # type: () -> float
         """Return the length-weighted average water temperature of all the pipe segments"""
         try:
-            return sum(s.length * s.water_temp for s in self.segments) / self.length
+            return sum(s.length * s.water_temp_c for s in self.segments) / self.length
         except ZeroDivisionError:
             return 60.0
 
@@ -325,19 +327,6 @@ class PhHvacPipeElement(_base._PhHVACBase):
             return mat.value
         else:
             raise ValueError("Pipe segments: {} have different materials.".format(self.segment_names))
-
-    @property
-    def diameter_name(self):
-        # type: () -> str
-        """Return the diameter name of the pipe element."""
-        diameters = {s.diameter for s in self.segments}
-        if len(diameters) == 0:
-            return PhPipeDiameter.allowed[0]
-        elif len(diameters) == 1:
-            diam = diameters.pop()
-            return diam.value
-        else:
-            raise ValueError("Pipe segments: {} have different diameters.".format(self.segment_names))
 
     def add_segment(self, _segment):
         # type: (PhHvacPipeSegment) -> None
@@ -376,10 +365,10 @@ class PhHvacPipeElement(_base._PhHVACBase):
 
         if _include_properties:
             d["length"] = self.length
-            d["water_temp"] = self.water_temp
+            d["water_temp"] = self.water_temp_c
             d["daily_period"] = self.daily_period
             d["material_name"] = self.material_name
-            d["diameter_name"] = self.diameter_name
+            d["diameter"] = self.diameter_mm
 
         return d
 
@@ -514,10 +503,10 @@ class PhHvacPipeBranch(_base._PhHVACBase):
         return self.pipe_element.material_name
 
     @property
-    def diameter_name(self):
-        # type: () -> str
-        """Return the diameter name of the pipe element."""
-        return self.pipe_element.diameter_name
+    def diameter_mm(self):
+        # type: () -> float
+        """Return the length-weighted diameter (MM) of the pipe element."""
+        return self.pipe_element.diameter_mm
 
     @property
     def twigs(self):
@@ -535,15 +524,15 @@ class PhHvacPipeBranch(_base._PhHVACBase):
     def length(self):
         # type: () -> float
         """Return the total length of the branch itself in model-units.
-        For the total length of the Branch PLUS all fixtures, use 'total_length_m'.
+        For the total length of the Branch PLUS all fixtures, use 'total_length'.
         """
         return float(self.pipe_element.length)
 
     @property
-    def water_temp(self):
+    def water_temp_c(self):
         # type: () -> float
         """Return the length-weighted average water temperature of all the pipe segments."""
-        return self.pipe_element.water_temp
+        return self.pipe_element.water_temp_c
 
     @property
     def daily_period(self):
@@ -566,7 +555,7 @@ class PhHvacPipeBranch(_base._PhHVACBase):
     @property
     def total_home_run_fixture_length(self):
         # type: () -> float
-        """Return the total length of all fixture pipes as measured from end to end.
+        """Return the total length (in model-units) of all fixture pipes as measured from end to end.
 
         NOTE: This method will include the branch's length for EACH of
         the fixture pipes. The result will be a total hot-water transport length
@@ -608,7 +597,7 @@ class PhHvacPipeBranch(_base._PhHVACBase):
 
         if _include_properties:
             d["length"] = self.length
-            d["water_temp"] = self.water_temp
+            d["water_temp_c"] = self.water_temp_c
             d["daily_period"] = self.daily_period
             d["num_fixtures"] = self.num_fixtures
             d["total_length"] = self.total_length
@@ -747,10 +736,10 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         return self.pipe_element.material_name
 
     @property
-    def diameter_name(self):
-        # type: () -> str
-        """Return the diameter name of the pipe element."""
-        return self.pipe_element.diameter_name
+    def diameter_mm(self):
+        # type: () -> float
+        """Return the length-weighted diameter (MM) name of the pipe element."""
+        return self.pipe_element.diameter_mm
 
     @property
     def segments(self):
@@ -765,10 +754,10 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         return self.pipe_element.length
 
     @property
-    def water_temp(self):
+    def water_temp_c(self):
         # type: () -> float
-        """Return the length-weighted average water temperature of all the pipe segments."""
-        return self.pipe_element.water_temp
+        """Return the length-weighted average water temperature (deg-C) of all the pipe segments."""
+        return self.pipe_element.water_temp_c
 
     @property
     def daily_period(self):
@@ -785,13 +774,13 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
     @property
     def total_length(self):
         # type: () -> float
-        """Return the total length of the trunk PLUS all branches and fixture pipes in model-units."""
+        """Return the total length (in model-units) of the trunk PLUS all branches and fixture pipes in model-units."""
         return self.length + sum(branch.total_length for branch in self.branches)
 
     @property
     def total_home_run_fixture_length(self):
         # type: () -> float
-        """Return the total length of all fixture pipes as measured from end to end.
+        """Return the total length (in model-units) of all fixture pipes as measured from end to end.
 
         NOTE: This method will include the trunk's and branch's length for EACH of
         the fixture pipes. The result will be a total hot-water transport length
@@ -835,7 +824,7 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
 
         if _include_properties:
             d["length"] = self.length
-            d["water_temp"] = self.water_temp
+            d["water_temp_c"] = self.water_temp_c
             d["daily_period"] = self.daily_period
             d["num_fixtures"] = self.num_fixtures
             d["total_length"] = self.total_length

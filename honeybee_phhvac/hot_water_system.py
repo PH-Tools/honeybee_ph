@@ -78,7 +78,7 @@ class PhHotWaterSystem(object):
         """Return the length weighted average of recirculation piping temperatures"""
         if not self._recirc_piping or self.total_recirc_pipe_length == 0:
             return 60.0
-        return sum([v.water_temp * v.length for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
+        return sum([v.water_temp_c * v.length for v in self._recirc_piping.values()]) / self.total_recirc_pipe_length
 
     @property
     def recirc_hours(self):

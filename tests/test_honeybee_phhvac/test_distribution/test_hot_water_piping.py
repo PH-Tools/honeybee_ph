@@ -28,17 +28,20 @@ def test_PhPipeSegment_dict_round_trip():
 def test_scale_PhPipeSegment():
     p1, p2 = Point3D(0, 0, 0), Vector3D(0, 0, 10)
     geom = LineSegment3D(p1, p2)
-    pipe1 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=1.0)
+    pipe1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=1.0, _insul_thickness_mm=1.0)
     assert pipe1.length == 10
-    assert pipe1.insulation_thickness == 1.0
+    assert pipe1.diameter_mm == 1.0
+    assert pipe1.insulation_thickness_mm == 1.0
 
     pipe2 = pipe1.scale(2.0)
 
     assert pipe1.length == 10
-    assert pipe1.insulation_thickness == 1.0
+    assert pipe1.diameter_mm == 1.0
+    assert pipe1.insulation_thickness_mm == 1.0
 
     assert pipe2.length == 20
-    assert pipe2.insulation_thickness == 2.0
+    assert pipe2.diameter_mm == 1.0
+    assert pipe2.insulation_thickness_mm == 1.0
 
 
 # -- Element
@@ -114,68 +117,74 @@ def test_PhPipeElement_with_two_different_segments_material_name():
         assert ele1.material_name == "3-COPPER_K"
 
 
-def test_PhPipeElement_with_no_segments_diameter_name():
+def test_PhPipeElement_with_no_segments_diameter():
     ele1 = hot_water_piping.PhHvacPipeElement()
-    assert ele1.diameter_name == "1-3/8in"
+    assert ele1.length == 0
+    assert ele1.diameter_mm == 0
 
 
-def test_PhPipeElement_with_one_segments_diameter_name():
-    p1, p2 = Point3D(), Point3D()
+def test_PhPipeElement_with_one_segments_diameter():
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 1)
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
-    ele1 = hot_water_piping.PhHvacPipeElement()
-    ele1.add_segment(seg1)
-
-    assert ele1.diameter_name == "2-1/2IN"
-
-
-def test_PhPipeElement_with_two_same_segments_diameter_name():
-    p1, p2 = Point3D(), Point3D()
-    geom = LineSegment3D(p1, p2)
-    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
-    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=0.03)
     ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
-    ele1.add_segment(seg2)
 
-    assert ele1.diameter_name == "2-1/2IN"
+    assert ele1.length == 1.0
+    assert ele1.diameter_mm == 0.03
 
 
-def test_PhPipeElement_with_two_different_segments_diameter_name():
-    p1, p2 = Point3D(), Point3D()
+def test_PhPipeElement_with_two_same_segments_diameter():
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 1)
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=2)
-    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter=3)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=1.0)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=1.0)
     ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)
 
-    with pytest.raises(ValueError):
-        assert ele1.diameter_name == "2-1/2IN"
+    assert ele1.length == 2.0
+    assert ele1.diameter_mm == 1.0
+
+
+def test_PhPipeElement_with_two_different_segments_diameter():
+    p1, p2 = Point3D(0, 0, 0), Point3D(0, 0, 1)
+    geom = LineSegment3D(p1, p2)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=0.5)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=1.0)
+    ele1 = hot_water_piping.PhHvacPipeElement()
+    ele1.add_segment(seg1)
+    ele1.add_segment(seg2)
+
+    assert ele1.length == 2.0
+    assert ele1.diameter_mm == 0.75
 
 
 def test_scale_PhPipeElement_with_multiple_segments():
     p1, p2 = Point3D(0, 0, 0), Vector3D(0, 0, 10)
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=1.0)
-    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=2.0)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=0.5, _insul_thickness_mm=1.0)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _diameter_mm=1.0, _insul_thickness_mm=2.0)
     ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)
 
     assert ele1.length == 20
+    assert ele1.diameter_mm == 0.75
 
     ele2 = ele1.scale(2.0)
 
     assert ele1.length == 20
+    assert ele1.diameter_mm == 0.75
     assert ele2.length == 40
+    assert ele2.diameter_mm == 0.75
 
 
 def test_rotate_xy_PhPipeElement_with_multiple_segments():
     p1, p2 = Point3D(0, 0, 0), Vector3D(10, 0, 0)
     geom = LineSegment3D(p1, p2)
-    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=1.0)
-    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness=2.0)
+    seg1 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness_mm=1.0)
+    seg2 = hot_water_piping.PhHvacPipeSegment(geom, _insul_thickness_mm=2.0)
     ele1 = hot_water_piping.PhHvacPipeElement()
     ele1.add_segment(seg1)
     ele1.add_segment(seg2)

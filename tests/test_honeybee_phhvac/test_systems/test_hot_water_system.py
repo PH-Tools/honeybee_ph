@@ -240,10 +240,10 @@ def test_recirc_custom_temp_and_run_period():
     pt1 = Point3D(0, 0, 0)
     vec1 = Vector3D(0, 0, 1)
     pipe_segment_1 = hwp.PhHvacPipeSegment(LineSegment3D.from_sdl(pt1, vec1, 30.0))
-    pipe_segment_1.water_temp = 50.0
+    pipe_segment_1.water_temp_c = 50.0
     pipe_segment_1.daily_period = 12
     pipe_segment_2 = hwp.PhHvacPipeSegment(LineSegment3D.from_sdl(pt1, vec1, 50.0))
-    pipe_segment_2.water_temp = 100.0
+    pipe_segment_2.water_temp_c = 100.0
     pipe_segment_1.daily_period = 6
 
     pipe_element_1 = hwp.PhHvacPipeElement()
