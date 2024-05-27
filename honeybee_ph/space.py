@@ -67,15 +67,18 @@ class SpaceFloorSegment(_base._Base):
         d["identifier"] = self.identifier
         d["display_name"] = self.display_name
         d["user_data"] = copy(self.user_data)
-
         d["weighting_factor"] = self.weighting_factor
-        if self.geometry:
-            d["geometry"] = self.geometry.to_dict()
+
         if self.reference_point:
             d["reference_point"] = self.reference_point.to_dict()
 
+        d["geometry"] = None
         if include_mesh and self.geometry:
-            d["mesh"] = self.geometry.triangulated_mesh3d.to_dict()
+            geom_dict = self.geometry.to_dict()  # type: dict[str, Any]
+            geom_dict["mesh"] = self.geometry.triangulated_mesh3d.to_dict()
+            d["geometry"] = geom_dict
+        elif self.geometry:
+            d["geometry"] = self.geometry.to_dict()
 
         return d
 
@@ -323,12 +326,15 @@ class SpaceFloor(_base._Base):
         d["identifier"] = self.identifier
         d["display_name"] = self.display_name
         d["user_data"] = copy(self.user_data)
+        d["floor_segments"] = [seg.to_dict(include_mesh) for seg in self.floor_segments]
 
-        d["floor_segments"] = [seg.to_dict() for seg in self.floor_segments]
-        d["geometry"] = self.geometry.to_dict() if self.geometry else None
-
+        d["geometry"] = None
         if include_mesh and self.geometry:
-            d["mesh"] = self.geometry.triangulated_mesh3d.to_dict()
+            geom_dict = self.geometry.to_dict()  # type: dict[str, Any]
+            geom_dict["mesh"] = self.geometry.triangulated_mesh3d.to_dict()
+            d["geometry"] = geom_dict
+        elif self.geometry:
+            d["geometry"] = self.geometry.to_dict()
 
         return d
 
