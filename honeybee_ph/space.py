@@ -68,6 +68,8 @@ class SpaceFloorSegment(_base._Base):
         d["display_name"] = self.display_name
         d["user_data"] = copy(self.user_data)
         d["weighting_factor"] = self.weighting_factor
+        d["floor_area"] = self.floor_area
+        d["weighted_floor_area"] = self.weighted_floor_area
 
         if self.reference_point:
             d["reference_point"] = self.reference_point.to_dict()
