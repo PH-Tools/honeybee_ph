@@ -16,8 +16,11 @@ def test_set_Climate_MonthlyValueSet_values():
 
     monthly_climate_collection.values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     assert getattr(monthly_climate_collection, "january") == 1
+    assert monthly_climate_collection.january == 1
     assert getattr(monthly_climate_collection, "july") == 7
+    assert monthly_climate_collection.july == 7
     assert getattr(monthly_climate_collection, "december") == 12
+    assert monthly_climate_collection.december == 12
 
 
 def test_Climate_MonthlyValueSet_serialization_empty():

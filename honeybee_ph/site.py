@@ -21,6 +21,18 @@ from honeybee_ph import _base
 class Climate_MonthlyValueSet(_base._Base):
     """A set of 12 monthly values (temp, radiation, etc)."""
 
+    january = 0.0
+    february = 0.0
+    march = 0.0
+    april = 0.0
+    may = 0.0
+    june = 0.0
+    july = 0.0
+    august = 0.0
+    september = 0.0
+    october = 0.0
+    november = 0.0
+    december = 0.0
     months = [
         "january",
         "february",
@@ -40,18 +52,6 @@ class Climate_MonthlyValueSet(_base._Base):
         # type: (Collection[float]) -> None
         super(Climate_MonthlyValueSet, self).__init__()
         self.values = _values
-        self.january = 0.0
-        self.february = 0.0
-        self.march = 0.0
-        self.april = 0.0
-        self.may = 0.0
-        self.june = 0.0
-        self.july = 0.0
-        self.august = 0.0
-        self.september = 0.0
-        self.october = 0.0
-        self.november = 0.0
-        self.december = 0.0
 
     @property
     def values(self):
