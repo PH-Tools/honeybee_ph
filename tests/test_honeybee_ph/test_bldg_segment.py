@@ -1,7 +1,7 @@
 from ladybug_geometry.geometry3d import LineSegment3D, Point3D
 
 from honeybee_energy_ph.construction.thermal_bridge import PhThermalBridge
-from honeybee_ph.bldg_segment import BldgSegment, PhVentilationSummerBypassMode, SetPoints
+from honeybee_ph.bldg_segment import BldgSegment, PhVentilationSummerBypassMode, PhWindExposureType, SetPoints
 
 
 def test_set_points_round_trip():
@@ -110,3 +110,22 @@ def test_set_summer_bypass_mode_duplicate():
 
     seg2 = seg1.duplicate()
     assert seg2.summer_hrv_bypass_mode == seg1.summer_hrv_bypass_mode
+
+
+def test_set_wind_exposure_type_roundtrip():
+    seg1 = BldgSegment()
+    seg1.wind_exposure_type = PhWindExposureType(2)
+
+    d1 = seg1.to_dict()
+    seg2 = BldgSegment.from_dict(d1)
+    assert seg2.wind_exposure_type.number == 2
+    assert seg2.wind_exposure_type == seg1.wind_exposure_type
+
+
+def test_set_wind_exposure_type_duplicate():
+    seg1 = BldgSegment()
+    seg1.wind_exposure_type = PhWindExposureType(2)
+
+    seg2 = seg1.duplicate()
+    assert seg2.wind_exposure_type.number == 2
+    assert seg2.wind_exposure_type == seg1.wind_exposure_type
