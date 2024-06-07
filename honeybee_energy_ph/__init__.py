@@ -10,6 +10,6 @@ to add relevant Passive House fields and functions.
 
 # load all functions that extends honeybee core library
 # Make sure the load `honeybee_energy` before anything else to avoid import errors.
-import honeybee_energy
+import honeybee_energy._extend_honeybee
 
 import honeybee_energy_ph._extend_honeybee_energy_ph

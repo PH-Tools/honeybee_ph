@@ -9,4 +9,4 @@ Grasshopper. These modules include a variety of helper functions used throughout
 
 # load all functions that extends honeybee core library
 # Make sure the load `honeybee_energy` before anything else to avoid import errors.
-import honeybee_energy
+import honeybee_energy._extend_honeybee
