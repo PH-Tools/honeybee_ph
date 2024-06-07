@@ -9,4 +9,7 @@ relevant Honeybee entities and logged for later use.
 """
 
 # load all functions that extends honeybee core library
+# Make sure the load `honeybee_energy` before anything else to avoid import errors.
+import honeybee_energy
+
 import honeybee_ph._extend_honeybee_ph

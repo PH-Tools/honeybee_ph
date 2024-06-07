@@ -3,6 +3,15 @@
 
 """This is called during __init__ and extends the base honeybee class Properties with a new ._ph slot"""
 
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+###### IMPORTANT ######
+## ALL HONEYBEE-CORE / HONEYBEE-ENERGY CLASSES MUST BE IMPORTED **FIRST** BEFORE ANY OF THE
+## HONEYBEE-PH EXTENSIONS CAN BE LOADED. SEE ISSUE HERE:
+## https://discourse.pollination.cloud/t/honeybee-ph-causing-error/
+
+
+import honeybee_energy
 from honeybee_energy.properties.extension import (
     ElectricEquipmentProperties,
     EnergyMaterialNoMassProperties,
@@ -15,10 +24,13 @@ from honeybee_energy.properties.extension import (
     WindowConstructionProperties,
     WindowConstructionShadeProperties,
 )
-
-# -- honeybee_energy properties objects
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
+
+# -----------------------------------------------------------------------------
+# -- Now import the relevant HB-PH classes
+
+from honeybee_ph.properties.space import SpaceProperties
 from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
@@ -31,11 +43,13 @@ from honeybee_energy_ph.properties.materials.opaque import (
     EnergyMaterialPhProperties,
     EnergyMaterialVegetationPhProperties,
 )
-
-# -- honeybee_energy_ph properties objects
 from honeybee_energy_ph.properties.ruleset import ScheduleRulesetPhProperties
 from honeybee_energy_ph.properties.space import SpaceEnergyProperties
-from honeybee_ph.properties.space import SpaceProperties
+
+
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 # Step 1)
 # set a private ._ph attribute on each relevant HB-Energy Property class to None
@@ -52,6 +66,8 @@ setattr(ElectricEquipmentProperties, "_ph", None)
 setattr(PeopleProperties, "_ph", None)
 setattr(LightingProperties, "_ph", None)
 
+
+# -----------------------------------------------------------------------------
 
 # Step 2)
 # create methods to define the public .property.<extension> @property instances on each obj.properties container
@@ -128,6 +144,8 @@ def lighting_ph_properties(self):
         self._ph = LightingPhProperties(self.host)
     return self._ph
 
+
+# -----------------------------------------------------------------------------
 
 # Step 3)
 # add public .energy or .ph @property methods to the appropriate Properties classes
