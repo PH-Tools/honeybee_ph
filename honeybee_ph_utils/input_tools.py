@@ -88,6 +88,35 @@ def clean_get(_list, _i, _default=None):
             return _default
 
 
+def cleaner_get(_list, _i, _default):
+    # type: (List[T], int, T) -> T
+    """Get list item cleanly based on index pos. If IndexError, will try getting _list[0] instead.
+
+    This function *requires* a default values to be supplied, and therefor will never return None (unless
+    the default value is None). This is more type-safe than the 'clean_get' function.
+
+    This is useful for gh-components with multiple list inputs which are sometimes
+    the same length, and sometimes not the same length.
+
+    Arguments:
+    ---------
+        * _list: Any iterable to get the item from.
+        * _i: The index position to try and get
+        * _default: A required default value to use if _list[0] fails.
+
+    Returns:
+    --------
+        * Any
+    """
+    try:
+        return _list[_i]
+    except IndexError:
+        try:
+            return _list[0]
+        except IndexError:
+            return _default
+
+
 def memoize(func):
     """Simple caching decorator using function arguments as key.
 
