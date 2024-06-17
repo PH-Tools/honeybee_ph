@@ -332,27 +332,61 @@ class PhHvacHotWaterHeaterDistrict(PhHvacHotWaterHeater):
         return new_obj
 
 
-class PhHvacHotWaterHeaterHeatPump(PhHvacHotWaterHeater):
+class PhHvacHotWaterHeaterHeatPump_Monthly(PhHvacHotWaterHeater):
     def __init__(self):
-        super(PhHvacHotWaterHeaterHeatPump, self).__init__()
-        self.annual_COP = None
-        self.annual_system_perf_ratio = None
-        self.annual_energy_factor = None
+        super(PhHvacHotWaterHeaterHeatPump_Monthly, self).__init__()
+        self.COP_1 = 2.5
+        self.ambient_temp_1 = -8.333  # =17F
+        self.COP_2 = 2.5
+        self.ambient_temp_2 = 8.333  # =47F
 
     def to_dict(self, _include_properties=False):
         # type: (bool) -> Dict[str, Any]
-        d = super(PhHvacHotWaterHeaterHeatPump, self).to_dict()
+        d = super(PhHvacHotWaterHeaterHeatPump_Monthly, self).to_dict()
         d["heater_type"] = self.__class__.__name__
         d["percent_coverage"] = self.percent_coverage
         d["in_conditioned_space"] = self.in_conditioned_space
-        d["annual_COP"] = self.annual_COP
-        d["annual_system_perf_ratio"] = self.annual_system_perf_ratio
-        d["annual_energy_factor"] = self.annual_energy_factor
+        d["COP_1"] = self.COP_1
+        d["ambient_temp_1"] = self.ambient_temp_1
+        d["COP_2"] = self.COP_2
+        d["ambient_temp_2"] = self.ambient_temp_2
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
-        # type: (Dict[str, Any]) -> PhHvacHotWaterHeaterHeatPump
+        # type: (Dict[str, Any]) -> PhHvacHotWaterHeaterHeatPump_Monthly
+        new_obj = cls()
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.percent_coverage = _input_dict["percent_coverage"]
+        new_obj.in_conditioned_space = _input_dict["in_conditioned_space"]
+        new_obj.COP_1 = _input_dict["COP_1"]
+        new_obj.ambient_temp_1 = _input_dict["ambient_temp_1"]
+        new_obj.COP_2 = _input_dict["COP_2"]
+        new_obj.ambient_temp_2 = _input_dict["ambient_temp_2"]
+        return new_obj
+
+
+class PhHvacHotWaterHeaterHeatPump_Annual(PhHvacHotWaterHeater):
+    def __init__(self):
+        super(PhHvacHotWaterHeaterHeatPump_Annual, self).__init__()
+        self.annual_COP = None  # type: (float | None)
+        self.total_system_perf_ratio = None  # type: (float | None)
+
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Any]
+        d = super(PhHvacHotWaterHeaterHeatPump_Annual, self).to_dict()
+        d["heater_type"] = self.__class__.__name__
+        d["percent_coverage"] = self.percent_coverage
+        d["in_conditioned_space"] = self.in_conditioned_space
+        d["annual_COP"] = self.annual_COP
+        d["total_system_perf_ratio"] = self.total_system_perf_ratio
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhHvacHotWaterHeaterHeatPump_Annual
         new_obj = cls()
         new_obj.identifier = _input_dict["identifier"]
         new_obj.display_name = _input_dict["display_name"]
@@ -360,7 +394,39 @@ class PhHvacHotWaterHeaterHeatPump(PhHvacHotWaterHeater):
         new_obj.percent_coverage = _input_dict["percent_coverage"]
         new_obj.in_conditioned_space = _input_dict["in_conditioned_space"]
         new_obj.annual_COP = _input_dict["annual_COP"]
-        new_obj.annual_system_perf_ratio = _input_dict["annual_system_perf_ratio"]
+        new_obj.total_system_perf_ratio = _input_dict["total_system_perf_ratio"]
+        return new_obj
+
+
+class PhHvacHotWaterHeaterHeatPump_Inside(PhHvacHotWaterHeater):
+    def __init__(self):
+        super(PhHvacHotWaterHeaterHeatPump_Inside, self).__init__()
+        self.annual_COP = None  # type: (float | None)
+        self.total_system_perf_ratio = None  # type: (float | None)
+        self.annual_energy_factor = None  # type: (float | None)
+
+    def to_dict(self, _include_properties=False):
+        # type: (bool) -> Dict[str, Any]
+        d = super(PhHvacHotWaterHeaterHeatPump_Inside, self).to_dict()
+        d["heater_type"] = self.__class__.__name__
+        d["percent_coverage"] = self.percent_coverage
+        d["in_conditioned_space"] = self.in_conditioned_space
+        d["annual_COP"] = self.annual_COP
+        d["total_system_perf_ratio"] = self.total_system_perf_ratio
+        d["annual_energy_factor"] = self.annual_energy_factor
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> PhHvacHotWaterHeaterHeatPump_Inside
+        new_obj = cls()
+        new_obj.identifier = _input_dict["identifier"]
+        new_obj.display_name = _input_dict["display_name"]
+        new_obj.user_data = _input_dict.get("user_data", {})
+        new_obj.percent_coverage = _input_dict["percent_coverage"]
+        new_obj.in_conditioned_space = _input_dict["in_conditioned_space"]
+        new_obj.annual_COP = _input_dict["annual_COP"]
+        new_obj.total_system_perf_ratio = _input_dict["total_system_perf_ratio"]
         new_obj.annual_energy_factor = _input_dict["annual_energy_factor"]
         return new_obj
 
@@ -376,7 +442,9 @@ class PhHvacHotWaterHeaterBuilder(object):
         "PhHvacHotWaterHeaterBoiler": PhHvacHotWaterHeaterBoiler,
         "PhHvacHotWaterHeaterBoilerWood": PhHvacHotWaterHeaterBoilerWood,
         "PhHvacHotWaterHeaterDistrict": PhHvacHotWaterHeaterDistrict,
-        "PhHvacHotWaterHeaterHeatPump": PhHvacHotWaterHeaterHeatPump,
+        "PhHvacHotWaterHeaterHeatPump_Annual": PhHvacHotWaterHeaterHeatPump_Annual,
+        "PhHvacHotWaterHeaterHeatPump_Monthly": PhHvacHotWaterHeaterHeatPump_Monthly,
+        "PhHvacHotWaterHeaterHeatPump_Inside": PhHvacHotWaterHeaterHeatPump_Inside,
     }
 
     @classmethod

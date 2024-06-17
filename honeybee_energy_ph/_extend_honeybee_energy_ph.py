@@ -26,11 +26,6 @@ from honeybee_energy.properties.extension import (
 )
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
-
-# -----------------------------------------------------------------------------
-# -- Now import the relevant HB-PH classes
-
-from honeybee_ph.properties.space import SpaceProperties
 from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
@@ -45,6 +40,10 @@ from honeybee_energy_ph.properties.materials.opaque import (
 )
 from honeybee_energy_ph.properties.ruleset import ScheduleRulesetPhProperties
 from honeybee_energy_ph.properties.space import SpaceEnergyProperties
+from honeybee_ph.properties.space import SpaceProperties
+
+# -----------------------------------------------------------------------------
+# -- Now import the relevant HB-PH classes
 
 
 # -----------------------------------------------------------------------------

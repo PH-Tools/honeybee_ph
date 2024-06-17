@@ -27,12 +27,23 @@ def test_dict_roundtrip_direct_electric():
     assert "test_key" in s4.user_data
     assert s4.to_dict() == s3.to_dict()
 
+    # -- percent_covered
+    s3.percent_coverage = 0.5
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    assert s4.percent_coverage == 0.5
+
 
 def test_duplicate_direct_electric():
     s1 = heating.PhHeatingDirectElectric()
     s2 = s1.duplicate()
     assert s1.to_dict() == s2.to_dict()
     assert id(s1) != id(s2)
+
+    s2.percent_coverage = 0.5
+    s3 = s2.duplicate()
+    assert s2.to_dict() == s3.to_dict()
+    assert id(s2) != id(s3)
 
 
 def test_dict_roundtrip_fossil_boiler():
@@ -53,6 +64,12 @@ def test_dict_roundtrip_fossil_boiler():
     assert "test_key" in s4.user_data
     assert s4.to_dict() == s3.to_dict()
 
+    # -- percent_covered
+    s3.percent_coverage = 0.5
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    assert s4.percent_coverage == 0.5
+
 
 def test_duplicate_fossil_boiler():
     s1 = heating.PhHeatingFossilBoiler()
@@ -61,6 +78,12 @@ def test_duplicate_fossil_boiler():
     s2 = s1.duplicate()
     assert s1.to_dict() == s2.to_dict()
     assert id(s1) != id(s2)
+
+    # -- percent_covered
+    s2.percent_coverage = 0.5
+    s3 = s2.duplicate()
+    assert s2.to_dict() == s3.to_dict()
+    assert id(s2) != id(s3)
 
 
 def test_dict_roundtrip_wood_boiler():
@@ -81,6 +104,12 @@ def test_dict_roundtrip_wood_boiler():
     assert "test_key" in s4.user_data
     assert s4.to_dict() == s3.to_dict()
 
+    # -- percent_covered
+    s3.percent_coverage = 0.5
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    assert s4.percent_coverage == 0.5
+
 
 def test_duplicate_wood_boiler():
     s1 = heating.PhHeatingWoodBoiler()
@@ -90,6 +119,12 @@ def test_duplicate_wood_boiler():
     s2 = s1.duplicate()
     assert s1.to_dict() == s2.to_dict()
     assert id(s1) != id(s2)
+
+    # -- percent_covered
+    s2.percent_coverage = 0.5
+    s3 = s2.duplicate()
+    assert s2.to_dict() == s3.to_dict()
+    assert id(s2) != id(s3)
 
 
 def test_dict_roundtrip_district_heat():
@@ -111,6 +146,12 @@ def test_dict_roundtrip_district_heat():
     assert "test_key" in s4.user_data
     assert s4.to_dict() == s3.to_dict()
 
+    # -- percent_covered
+    s3.percent_coverage = 0.5
+    d1 = s3.to_dict()
+    s4 = heating.PhHeatingSystemBuilder.from_dict(d1)
+    assert s4.percent_coverage == 0.5
+
 
 def test_duplicate_district_heat():
     s1 = heating.PhHeatingDistrict()
@@ -119,3 +160,9 @@ def test_duplicate_district_heat():
     s2 = s1.duplicate()
     assert s1.to_dict() == s2.to_dict()
     assert id(s1) != id(s2)
+
+    # -- percent_covered
+    s2.percent_coverage = 0.5
+    s3 = s2.duplicate()
+    assert s2.to_dict() == s3.to_dict()
+    assert id(s2) != id(s3)

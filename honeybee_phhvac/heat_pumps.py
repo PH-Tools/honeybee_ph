@@ -449,6 +449,7 @@ class PhHeatPumpAnnual(PhHeatPumpSystem):
         new_obj = PhHeatPumpAnnual()
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
+        new_obj.percent_coverage = self.percent_coverage
         new_obj.user_data = self.user_data
         new_obj.annual_COP = self.annual_COP
         new_obj.total_system_perf_ratio = self.total_system_perf_ratio
@@ -525,6 +526,7 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
         new_obj = PhHeatPumpRatedMonthly()
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
+        new_obj.percent_coverage = self.percent_coverage
         new_obj.user_data = self.user_data
         new_obj.COP_1 = self.COP_1
         new_obj.ambient_temp_1 = self.ambient_temp_1

@@ -158,6 +158,7 @@ class PhHeatingDirectElectric(PhHeatingSystem):
         obj = PhHeatingDirectElectric()
         obj.identifier = self.identifier
         obj.display_name = self.display_name
+        obj.percent_coverage = self.percent_coverage
         obj.user_data = copy(self.user_data)
         return obj
 
@@ -220,6 +221,7 @@ class PhHeatingFossilBoiler(PhHeatingSystem):
         obj = PhHeatingFossilBoiler()
         obj.identifier = self.identifier
         obj.display_name = self.display_name
+        obj.percent_coverage = self.percent_coverage
         obj.user_data = copy(self.user_data)
         obj.fuel = self.fuel
         obj.condensing = self.condensing
@@ -311,6 +313,7 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
         obj = PhHeatingWoodBoiler()
         obj.identifier = self.identifier
         obj.display_name = self.display_name
+        obj.percent_coverage = self.percent_coverage
         obj.user_data = copy(self.user_data)
         obj.fuel = self.fuel
         obj.in_conditioned_space = self.in_conditioned_space
@@ -362,6 +365,7 @@ class PhHeatingDistrict(PhHeatingSystem):
         obj = PhHeatingDistrict()
         obj.identifier = self.identifier
         obj.display_name = self.display_name
+        obj.percent_coverage = self.percent_coverage
         obj.user_data = copy(self.user_data)
         obj.fuel = self.fuel
         obj.util_factor_of_heat_transfer_station = self.util_factor_of_heat_transfer_station
