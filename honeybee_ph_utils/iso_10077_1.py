@@ -128,7 +128,19 @@ class ISO100771Data:
     @property
     def area_glazing(self):
         # type: () -> float
+        """Return the area of the glazing."""
         return self.side_interior_length("right") * self.side_interior_length("top")
+
+    @property
+    def area_frame(self):
+        # type: () -> float
+        """Return the total area of all the frames."""
+        return self.area_window - self.area_glazing
+
+    def frame_element(self, _side):
+        # type: (str) -> window.PhWindowFrameElement
+        """Return a specific frame element for the given side."""
+        return getattr(self.frame, _side)
 
     def side_interior_length(self, _side):
         # type: (str) -> float
@@ -150,48 +162,48 @@ class ISO100771Data:
         }
         return side_lengths[_side]
 
-    def corner_area(self, _side):
-        # type: (str) -> float
-        """Correct for the overlap / 45 degrees at the corners"""
-
+    def get_adjacent_frame(self, _side):
+        # type: (str) -> tuple[window.PhWindowFrameElement, window.PhWindowFrameElement]
+        """Get the adjacent frames for the given side (ie: top -> (left, right) )."""
         adjacent_frames = {
             "top": {"adj_1": "left", "adj_2": "right"},
             "right": {"adj_1": "top", "adj_2": "bottom"},
             "bottom": {"adj_1": "left", "adj_2": "right"},
             "left": {"adj_1": "top", "adj_2": "bottom"},
         }
+        adjacent_frame_1 = getattr(self.frame, adjacent_frames[_side]["adj_1"])  # type: window.PhWindowFrameElement
+        adjacent_frame_2 = getattr(self.frame, adjacent_frames[_side]["adj_2"])  # type: window.PhWindowFrameElement
+        return adjacent_frame_1, adjacent_frame_2
 
-        base_frame = getattr(self.frame, _side)
-        adjacent_frame_1 = getattr(self.frame, adjacent_frames[_side]["adj_1"])
-        adjacent_frame_2 = getattr(self.frame, adjacent_frames[_side]["adj_2"])
+    def corner_area(self, _side):
+        # type: (str) -> float
+        """Get the area at the corners of the frames.
 
-        left_corner_area = base_frame.width * adjacent_frame_1.width
-        right_corner_area = base_frame.width * adjacent_frame_2.width
-        corner_area = ((left_corner_area) / 2) + ((right_corner_area) / 2)
-
+        This will return 1/2 to the total area of both corners.
+        """
+        base_frame = self.frame_element(_side)
+        adjacent_frame_1, adjacent_frame_2 = self.get_adjacent_frame(_side)
+        corner_area_1 = base_frame.width * adjacent_frame_1.width
+        corner_area_2 = base_frame.width * adjacent_frame_2.width
+        corner_area = ((corner_area_1) / 2) + ((corner_area_2) / 2)
         return corner_area
 
     def side_area(self, _side):
         # type: (str) -> float
-        frame_element = getattr(self.frame, _side)
-        # -- base area
-        base_area = frame_element.width * self.side_interior_length(_side)
-        return base_area + self.corner_area(_side)
+        center_area = self.frame_element(_side).width * self.side_interior_length(_side)
+        return center_area + self.corner_area(_side)
 
     def side_frame_heat_loss(self, _side):
         # type: (str) -> float
-        frame_element = getattr(self.frame, _side)
-        return frame_element.u_factor * self.side_area(_side)
+        return self.frame_element(_side).u_factor * self.side_area(_side)
 
     def side_psi_glazing_heat_lost(self, _side):
         # type: (str) -> float
-        frame_element = getattr(self.frame, _side)
-        return frame_element.psi_glazing * self.side_interior_length(_side)
+        return self.frame_element(_side).psi_glazing * self.side_interior_length(_side)
 
     def side_psi_install_heat_lost(self, _side):
         # type: (str) -> float
-        frame_element = getattr(self.frame, _side)
-        return frame_element.psi_install * self.side_exterior_length(_side)
+        return self.frame_element(_side).psi_install * self.side_exterior_length(_side)
 
     @property
     def heat_loss_frame(self):
@@ -240,6 +252,71 @@ class ISO100771Data:
         return (
             self.heat_loss_glazing + self.heat_loss_frame + self.heat_loss_psi_glazing + self.heat_loss_psi_install
         ) / self.area_window
+
+    @property
+    def wufi_passive_uw(self):
+        # type: () -> float
+        """Implemented following the WUFI-Passive C# method as closely as possible.
+
+        Note that in this case, the top and bottom frame areas are extended to the corners,
+        while the left and right frame areas are cut short at the corners. This is different than
+        the `uw` method implemented above which cuts the corners at a 45° angle.
+        """
+
+        # --
+        glazing_edge_length = 2 * (
+            self.win_width
+            - self.frame.left.width
+            - self.frame.right.width
+            + self.win_height
+            - self.frame.bottom.width
+            - self.frame.top.width
+        )
+
+        # ---
+        glazing_edge_left = self.win_height - self.frame.bottom.width - self.frame.top.width
+        glazing_edge_right = self.win_height - self.frame.bottom.width - self.frame.top.width
+        glazing_edge_top = self.win_width - self.frame.left.width - self.frame.right.width
+        glazing_edge_bottom = self.win_width - self.frame.left.width - self.frame.right.width
+        average_psi_glazing_w_m_k = (
+            (self.frame.left.psi_glazing * glazing_edge_left)
+            + (self.frame.right.psi_glazing * glazing_edge_right)
+            + (self.frame.top.psi_glazing * glazing_edge_top)
+            + (self.frame.bottom.psi_glazing * glazing_edge_bottom)
+        ) / (glazing_edge_left + glazing_edge_right + glazing_edge_top + glazing_edge_bottom)
+
+        # ---
+        install_edge_length = (self.win_height * 2) + (self.win_width * 2)
+        average_psi_frame_w_m_k = (
+            (self.frame.left.psi_install * self.win_height)
+            + (self.frame.right.psi_install * self.win_height)
+            + (self.frame.top.psi_install * self.win_width)
+            + (self.frame.bottom.psi_install * self.win_width)
+        ) / install_edge_length
+
+        # ---
+        frame_area_left = glazing_edge_left * self.frame.left.width
+        frame_area_right = glazing_edge_right * self.frame.right.width
+        frame_area_top = self.win_width * self.frame.top.width
+        frame_area_bottom = self.win_width * self.frame.bottom.width
+        total_frame_area = frame_area_left + frame_area_right + frame_area_top + frame_area_bottom
+        average_u_value_frame_w_m2k = (
+            (self.frame.left.u_factor * frame_area_left)
+            + (self.frame.right.u_factor * frame_area_right)
+            + (self.frame.top.u_factor * frame_area_top)
+            + (self.frame.bottom.u_factor * frame_area_bottom)
+        ) / total_frame_area
+
+        # ---
+        window_area = self.win_width * self.win_height
+        glazing_area = glazing_edge_left * glazing_edge_top
+        frame_area = window_area - glazing_area
+        return (
+            (self.glazing.u_factor * glazing_area)
+            + (average_u_value_frame_w_m2k * frame_area)
+            + (average_psi_glazing_w_m_k * glazing_edge_length)
+            + (average_psi_frame_w_m_k * install_edge_length)
+        ) / window_area
 
 
 def build_standard_window(_frame, _glazing):
@@ -298,7 +375,11 @@ def calculate_hb_aperture_uw(_hb_aperture):
 def calculate_lbt_Face3D_uw(_hb_face3d, _ph_frame, _ph_glazing):
     # type: (face.Face3D, window.PhWindowFrame, window.PhWindowGlazing) -> float
     """Calculate U-w (W/m2k) for a 'ladybug_geometry.geometry3d.face.Face3D' as per ISO 10077-2:2006
+
     This value includes the impact of the frame, glazing, glazing-spacers, and the psi-install heat loss.
+    Note that in this case, the frame-areas are calculated by splitting them at a 45°
+    angle at the corner. This is slightly different than the WUFI-Passive implementation that
+    extends the top and bottom frames, while cutting the left and right frames short.
     """
 
     window = ISO100771Data.from_lbt_Face3D(_hb_face3d, _ph_frame, _ph_glazing)
