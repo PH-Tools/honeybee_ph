@@ -10,5 +10,5 @@ Rhino-stubs
 setuptools
 Sphinx
 sphinx-bootstrap-theme
-twine
+twine!=5.1.0
 wheel
