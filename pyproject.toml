@@ -32,4 +32,3 @@ directory = "_coverage_html"
 line-length = 120
 
 [tool.setuptools_scm]
-# fuck
