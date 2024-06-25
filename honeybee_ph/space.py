@@ -34,6 +34,7 @@ class SpaceFloorSegment(_base._Base):
         super(SpaceFloorSegment, self).__init__()
         self.geometry = None  # type: Optional[LBFace3D]
         self.weighting_factor = 1.0
+        self.net_area_factor = 1.0
 
         # -- Reference Point Note: Usually this is just the center, although for
         # -- more complex shaped like 'L' and 'U' it cannot just be the center.
@@ -60,6 +61,18 @@ class SpaceFloorSegment(_base._Base):
         else:
             return 0
 
+    @property
+    def net_floor_area(self):
+        # type: () -> float
+        """The net area of the floor segment"""
+        return self.floor_area * self.net_area_factor
+
+    @property
+    def weighted_net_floor_area(self):
+        # type: () -> float
+        """The net area of the floor segment weighted by any reduction factors (iFCA, TFA)"""
+        return self.floor_area * self.net_area_factor * self.weighting_factor
+
     def to_dict(self, include_mesh=False, *args, **kwargs):
         # type: (bool, list, dict) -> Dict[str, Any]
         d = {}
@@ -68,8 +81,14 @@ class SpaceFloorSegment(_base._Base):
         d["display_name"] = self.display_name
         d["user_data"] = copy(self.user_data)
         d["weighting_factor"] = self.weighting_factor
+        d["net_area_factor"] = self.net_area_factor
+
+        # -- serialize the properties as well, in case they are needed by the user
+        # -- outside the 3D model (ie: in a web-API, etc..)
         d["floor_area"] = self.floor_area
         d["weighted_floor_area"] = self.weighted_floor_area
+        d["net_floor_area"] = self.net_floor_area
+        d["weighted_net_floor_area"] = self.weighted_net_floor_area
 
         if self.reference_point:
             d["reference_point"] = self.reference_point.to_dict()
@@ -92,8 +111,8 @@ class SpaceFloorSegment(_base._Base):
         new_obj.identifier = _input_dict["identifier"]
         new_obj.display_name = _input_dict["display_name"]
         new_obj.user_data = _input_dict["user_data"]
-
         new_obj.weighting_factor = _input_dict.get("weighting_factor", 1.0)
+        new_obj.net_area_factor = _input_dict.get("net_area_factor", 1.0)
 
         geom_dict = _input_dict.get("geometry", None)
         if geom_dict:
@@ -120,6 +139,7 @@ class SpaceFloorSegment(_base._Base):
             new_obj.reference_point = self.reference_point.duplicate()
 
         new_obj.weighting_factor = self.weighting_factor
+        new_obj.net_area_factor = self.net_area_factor
 
         return new_obj
 
@@ -231,11 +251,12 @@ class SpaceFloorSegment(_base._Base):
         return dup_floor_seg
 
     def __str__(self):
-        return "{}(weighting_factor={!r}, geometry={!r}, reference_point={!r})".format(
+        return "{}(weighting_factor={!r}, geometry={!r}, reference_point={!r}, net_area_factor={!r})".format(
             self.__class__.__name__,
             self.weighting_factor,
             self.geometry,
             self.reference_point,
+            self.net_area_factor,
         )
 
     def __repr__(self):
@@ -268,6 +289,18 @@ class SpaceFloor(_base._Base):
         # type: () ->  float
         """The total floor area of all floor segments, UN-weighted by any reduction factors (iFCA, TFA)"""
         return sum((seg.floor_area for seg in self.floor_segments))
+
+    @property
+    def net_floor_area(self):
+        # type: () ->  float
+        """The total net floor area of all floor segments"""
+        return sum((seg.net_floor_area for seg in self.floor_segments))
+
+    @property
+    def weighted_net_floor_area(self):
+        # type: () ->  float
+        """The total net floor area of all floor segments, weighted by any reduction factors (iFCA, TFA)"""
+        return sum((seg.weighted_net_floor_area for seg in self.floor_segments))
 
     def add_floor_segment(self, _floor_seg):
         # type: (SpaceFloorSegment) -> None
@@ -470,7 +503,8 @@ class SpaceVolume(_base._Base):
     @property
     def net_volume(self):
         # type: () -> float
-        return self.floor_area * self.avg_ceiling_height
+        """The Interior Net Volume (Vn50)."""
+        return self.net_floor_area * self.avg_ceiling_height
 
     @property
     def weighted_floor_area(self):
@@ -483,6 +517,18 @@ class SpaceVolume(_base._Base):
         # type: () -> float
         """The total floor area of all floor segments in the Volume, UN-weighted by any reduction factors (iFCA, TFA)"""
         return self.floor.floor_area
+
+    @property
+    def net_floor_area(self):
+        # type: () -> float
+        """The total net floor area of all floor segments in the Volume"""
+        return self.floor.net_floor_area
+
+    @property
+    def weighted_net_floor_area(self):
+        # type: () -> float
+        """The total net floor area of all floor segments in the Volume, weighted by any reduction factors (iFCA, TFA)"""
+        return self.floor.weighted_net_floor_area
 
     @property
     def reference_points(self):
@@ -681,7 +727,7 @@ class Space(_base._Base):
     @property
     def net_volume(self):
         # type: () -> float
-        """The total volume (m3) of all Volumes in the Space."""
+        """The total interior net volume (m3) of all Volumes in the Space."""
         return sum([vol.net_volume for vol in self.volumes])
 
     @property
@@ -708,10 +754,28 @@ class Space(_base._Base):
         return sum((vol.floor_area for vol in self.volumes))
 
     @property
+    def net_floor_area(self):
+        # type: () -> float
+        """The total net floor area of all floor segments in the Space"""
+        return sum((vol.net_floor_area for vol in self.volumes))
+
+    @property
+    def weighted_net_floor_area(self):
+        # type: () -> float
+        """The total net floor area of all floor segments in the Space, weighted by any reduction factors (iFCA, TFA)"""
+        return sum((vol.weighted_net_floor_area for vol in self.volumes))
+
+    @property
     def average_floor_weighting_factor(self):
         # type: () -> float
         """Returns the average weighting factor (TFA/iCFA) for the Space's floor-segments."""
         return self.weighted_floor_area / self.floor_area
+
+    @property
+    def average_floor_net_area_factor(self):
+        # type: () -> float
+        """Returns the average net area factor for the Space's floor-segments."""
+        return self.net_floor_area / self.floor_area
 
     @property
     def reference_points(self):

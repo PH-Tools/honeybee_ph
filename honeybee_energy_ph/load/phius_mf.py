@@ -302,20 +302,20 @@ class PhiusNonResRoom(object):
         self.multiplier = 1
         self.occupancy_sensor = "N"
         self.name = "_unnamed_phius_nonres_room"
-        self.icfa_m2 = 0.0
+        self.reference_floor_area_m2 = 0.0
         self.misc_mel = 0.0  # kWh/yr
         self.program_type = PhiusNonResProgram()
 
     @property
-    def icfa_ft2(self):
+    def reference_floor_area_ft2(self):
         # type: () -> float
-        return self.icfa_m2 * 10.7639
+        return self.reference_floor_area_m2 * 10.7639
 
     @property
     def mel_kWh_yr(self):
         # type: () -> float
         """Total yearly MEL kWh EXCLUDING the Misc MEL"""
-        return self.icfa_m2 * self.program_type.mel_kWh_m2_yr
+        return self.reference_floor_area_m2 * self.program_type.mel_kWh_m2_yr
 
     @property
     def mel_w_m2(self):
@@ -335,7 +335,7 @@ class PhiusNonResRoom(object):
             self.program_type.usage_days_yr
             * self.program_type.operating_hours_day
             * self.program_type.lighting_W_per_m2
-            * self.icfa_m2
+            * self.reference_floor_area_m2
         ) / 1000
 
     def to_phius_mf_workbook(self):
@@ -349,7 +349,7 @@ class PhiusNonResRoom(object):
                 str(self.name),
                 str(self.occupancy_sensor),
                 str(self.multiplier),
-                str(self.icfa_ft2),
+                str(self.reference_floor_area_ft2),
                 str(self.mel_w_m2),
             ]
         )
@@ -373,19 +373,19 @@ class PhiusNonResRoom(object):
         obj = cls()
 
         obj.name = _ph_space.full_name
-        obj.icfa_m2 = _ph_space.weighted_floor_area
+        obj.reference_floor_area_m2 = _ph_space.weighted_net_floor_area
         if _ph_space.host is not None:
             obj.program_type = PhiusNonResProgram.from_hb_room(_ph_space.host)
 
         return obj
 
     def __str__(self):
-        return "{}(name={}, program_type={}," "misc_mel={}, icfa={})".format(
+        return "{}(name={}, program_type={}," "misc_mel={}, ref_floor_area={}m2)".format(
             self.__class__.__name__,
             self.name,
             self.program_type,
             self.misc_mel,
-            self.icfa_m2,
+            self.reference_floor_area_m2,
         )
 
     def __repr__(self):

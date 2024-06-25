@@ -29,6 +29,19 @@ def test_basic_floor_segment_floor_area_weighting(floor_segment_geometry):
     assert seg.weighted_floor_area == 73.4
 
 
+def test_basic_floor_segment_net_area_factor(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.net_area_factor = 0.5
+    seg.weighting_factor = 1.0
+    assert seg.floor_area == 100
+    assert seg.weighted_net_floor_area == 50
+
+    seg.net_area_factor = 0.734
+    assert seg.floor_area == 100
+    assert seg.weighted_net_floor_area == 73.4
+
+
 def test_floor_segment_no_geometry():
     seg = space.SpaceFloorSegment()
     seg.weighting_factor = 1.0
@@ -71,6 +84,19 @@ def test_flr_seg_serialization_with_geom_and_mesh(floor_segment_geometry):
     assert d1 == d2
 
 
+def test_flr_seg_serialization_with_geom_and_net_area_factor(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.net_area_factor = 0.74
+
+    d1 = seg.to_dict()
+    assert d1["net_area_factor"] == 0.74
+    o = space.SpaceFloorSegment.from_dict(d1)
+    d2 = o.to_dict()
+    assert d1 == d2
+    assert d2["net_area_factor"] == 0.74
+
+
 # -- Duplication --
 
 
@@ -93,6 +119,18 @@ def test_flr_seg_duplication_with_geom(floor_segment_geometry):
     seg2 = seg.duplicate()
     assert seg.geometry == seg2.geometry
     assert seg.weighting_factor == seg2.weighting_factor
+    assert seg.reference_point == seg2.reference_point
+    assert seg.weighted_floor_area == seg2.weighted_floor_area
+
+
+def test_flr_seg_duplication_with_geom_and_net_area_factor(floor_segment_geometry):
+    seg = space.SpaceFloorSegment()
+    seg.geometry = floor_segment_geometry.flr_segment_1
+    seg.net_area_factor = 0.856
+
+    seg2 = seg.duplicate()
+    assert seg.geometry == seg2.geometry
+    assert seg.net_area_factor == seg2.net_area_factor
     assert seg.reference_point == seg2.reference_point
     assert seg.weighted_floor_area == seg2.weighted_floor_area
 
@@ -147,11 +185,25 @@ def test_floor_segment_scale_M_to_FOOT(floor_segment_geometry):
     seg = space.SpaceFloorSegment()
     seg.geometry = floor_segment_geometry.flr_segment_1
     seg.weighting_factor = 1.0
+    seg.net_area_factor = 1.0
     assert seg.floor_area == 100
+    assert seg.weighted_floor_area == 100
+    assert seg.weighted_net_floor_area == 100
 
     seg2 = seg.scale(3.28084)  # M --> FOOT
-    assert seg.floor_area == 100
     assert seg2.floor_area == pytest.approx(1_076.39111056)
+    assert seg2.weighted_floor_area == pytest.approx(1_076.39111056)
+    assert seg2.weighted_net_floor_area == pytest.approx(1_076.39111056)
+
+    seg.net_area_factor = 0.5
+    seg3 = seg.scale(3.28084)  # M --> FOOT
+    assert seg3.floor_area == pytest.approx(1_076.39111056)
+    assert seg3.weighted_floor_area == pytest.approx(1_076.39111056)
+    assert seg3.weighted_net_floor_area == pytest.approx(538.1956)
+
+    assert seg.floor_area == 100
+    assert seg.weighted_floor_area == 100
+    assert seg.weighted_net_floor_area == 50
 
 
 def test_floor_segment_scale_M_to_INCH(floor_segment_geometry):

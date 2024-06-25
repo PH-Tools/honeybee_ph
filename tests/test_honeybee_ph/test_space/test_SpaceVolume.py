@@ -18,9 +18,33 @@ def test_volume(floor_segment_geometry):
     # -- Volume
     vol1 = space.SpaceVolume()
     vol1.floor = flr1
+    vol1.avg_ceiling_height = 2.5
 
     assert vol1.floor_area == 100
     assert vol1.weighted_floor_area == 100
+    assert vol1.net_volume == 250
+
+
+def test_net_volume(floor_segment_geometry):
+    # -- Seg
+    seg1 = space.SpaceFloorSegment()
+    seg1.geometry = floor_segment_geometry.flr_segment_1
+    seg1.weighting_factor = 1.0
+    seg1.net_area_factor = 0.5
+
+    # -- Floor
+    flr1 = space.SpaceFloor()
+    flr1.add_floor_segment(seg1)
+    flr1.geometry = floor_segment_geometry.flr_segment_1
+
+    # -- Volume
+    vol1 = space.SpaceVolume()
+    vol1.floor = flr1
+    vol1.avg_ceiling_height = 2.5
+
+    assert vol1.floor_area == 100
+    assert vol1.weighted_floor_area == 100
+    assert vol1.net_volume == 125
 
 
 # -- Serialization --
