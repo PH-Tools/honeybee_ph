@@ -30,3 +30,5 @@ directory = "_coverage_html"
 
 [tool.black]
 line-length = 120
+
+[tool.setuptools_scm]
