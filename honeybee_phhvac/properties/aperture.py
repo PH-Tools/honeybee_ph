@@ -38,17 +38,18 @@ class AperturePhHvacProperties(object):
         # type: (bool) -> dict[str, dict]
         d = {}
         if abridged == False:
-            d["type"] = "AperturePhHvacPropertiesAbridged"
-        else:
             d["type"] = "AperturePhHvacProperties"
+        else:
+            d["type"] = "AperturePhHvacPropertiesAbridged"
         return {"ph_hvac": d}
 
     @classmethod
     def from_dict(cls, _dict, host):
         # type: (dict[str, Any], Any) -> AperturePhHvacProperties
-        assert _dict["type"] == "AperturePhHvacProperties", "Expected AperturePhHvacProperties. Got {}.".format(
-            _dict["type"]
-        )
+        if _dict["type"] not in ("AperturePhHvacProperties", "AperturePhHvacPropertiesAbridged"):
+            raise ValueError(
+                "Expected AperturePhHvacProperties or AperturePhHvacPropertiesAbridged. Got {}.".format(_dict["type"])
+            )
         new_prop = cls(host)
         return new_prop
 

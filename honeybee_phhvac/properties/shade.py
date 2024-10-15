@@ -38,9 +38,9 @@ class ShadePhHvacProperties(object):
         # type: (bool) -> dict[str, dict]
         d = {}
         if abridged == False:
-            d["type"] = "ShadePhHvacPropertiesAbridged"
-        else:
             d["type"] = "ShadePhHvacProperties"
+        else:
+            d["type"] = "ShadePhHvacPropertiesAbridged"
         return {"ph_hvac": d}
 
     @classmethod
