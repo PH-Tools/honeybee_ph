@@ -19,6 +19,7 @@ from honeybee_energy.properties.extension import (
     EnergyMaterialVegetationProperties,
     LightingProperties,
     OpaqueConstructionProperties,
+    AirBoundaryConstructionProperties,
     PeopleProperties,
     ServiceHotWaterProperties,
     WindowConstructionProperties,
@@ -27,6 +28,7 @@ from honeybee_energy.properties.extension import (
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
 from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
+from honeybee_energy_ph.properties.construction.air import AirBoundaryConstructionPhProperties
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
@@ -55,6 +57,7 @@ from honeybee_ph.properties.space import SpaceProperties
 setattr(SpaceProperties, "_energy", None)
 setattr(ScheduleRulesetProperties, "_ph", None)
 setattr(OpaqueConstructionProperties, "_ph", None)
+setattr(AirBoundaryConstructionProperties, "_ph", None)
 setattr(EnergyMaterialProperties, "_ph", None)
 setattr(EnergyMaterialNoMassProperties, "_ph", None)
 setattr(EnergyMaterialVegetationProperties, "_ph", None)
@@ -87,6 +90,12 @@ def schedule_ruleset_ph_properties(self):
 def opaque_construction_ph_properties(self):
     if self._ph is None:
         self._ph = OpaqueConstructionPhProperties()
+    return self._ph
+
+
+def air_boundary_construction_ph_properties(self):
+    if self._ph is None:
+        self._ph = AirBoundaryConstructionPhProperties()
     return self._ph
 
 
@@ -151,6 +160,7 @@ def lighting_ph_properties(self):
 setattr(SpaceProperties, "energy", property(space_energy_properties))
 setattr(ScheduleRulesetProperties, "ph", property(schedule_ruleset_ph_properties))
 setattr(OpaqueConstructionProperties, "ph", property(opaque_construction_ph_properties))
+setattr(AirBoundaryConstructionProperties, "ph", property(air_boundary_construction_ph_properties))
 setattr(WindowConstructionProperties, "ph", property(window_construction_ph_properties))
 setattr(
     WindowConstructionShadeProperties,
