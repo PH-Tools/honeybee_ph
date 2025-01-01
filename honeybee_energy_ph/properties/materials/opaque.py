@@ -4,6 +4,8 @@
 """Passive House properties for honeybee_energy.material.opaque.EnergyMaterial Objects"""
 
 
+from collections import defaultdict
+
 try:
     from typing import Any, Iterable, List, NoReturn, Optional
 except ImportError:
@@ -127,8 +129,8 @@ class PhDivisionGrid(object):
     @property
     def cells(self):
         # type: () -> List[PhDivisionCell]
-        """Return the list of all the cells in the grid."""
-        return self._cells
+        """Return the list of all the cells in the grid, sorted by row/column."""
+        return sorted(self._cells, key=lambda x: (x.row, x.column))
 
     def set_column_widths(self, _column_widths):
         # type: (Iterable[float]) -> None
@@ -201,14 +203,13 @@ class PhDivisionGrid(object):
             raise CellPositionError(msg)
 
         # -- See if the cell already exists, if so reset its material
-        # -- if not, create a new cell.
-        cell = self.get_cell(_column_num, _row_num)
-        if cell:
-            cell.material = _hbe_material
+        # -- if it does not exist, create a new cell.
+        existing_cell = self.get_cell(_column_num, _row_num)
+        if existing_cell:
+            existing_cell.material = _hbe_material
         else:
-            cell = PhDivisionCell(_row=_row_num, _column=_column_num, _hbe_material=_hbe_material)
-
-        self._cells.append(cell)
+            new_cell = PhDivisionCell(_row=_row_num, _column=_column_num, _hbe_material=_hbe_material)
+            self._cells.append(new_cell)
 
     def get_cell_material(self, _column_num, _row_num):
         # type: (int, int) -> Optional[opaque.EnergyMaterial]
@@ -217,6 +218,49 @@ class PhDivisionGrid(object):
             if cell.row == _row_num and cell.column == _column_num:
                 return cell.material
         return None
+
+    def get_cell_area(self, _column_num, _row_num):
+        # type: (int, int) -> float
+        """Get the area of a specific cell in the grid by its column/row position."""
+        if _column_num >= self.column_count:
+            return 0.0
+        if _row_num >= self.row_count:
+            return 0.0
+        return self._column_widths[_column_num] * self._row_heights[_row_num]
+
+    def get_base_material(self):
+        # type: () -> Optional[opaque.EnergyMaterial]
+        """Returns the 'base' material (the most common material in the grid, by area)."""
+        if not self._cells:
+            return None
+
+        # -- Collect all the cell areas
+        material_areas = defaultdict(float, default=0.0)
+        for cell in self.cells:
+            cell_area = self.get_cell_area(cell.column, cell.row)
+            material_areas[cell.material.identifier] += cell_area
+
+        # -- Find the material with the largest area. This is the 'base' material
+        base_material_id = sorted(material_areas.items(), key=lambda x: x[1])[-1][0]
+        for cell in self.cells:
+            if cell.material.identifier == base_material_id:
+                return cell.material
+
+        return None
+
+    def get_equivalent_conductivity(self):
+        # type: () -> float
+        """Return an area-weighted average of the conductivities of all materials in the grid."""
+        total_area = 0.0
+        total_conductivity = 0.0
+        for cell in self.cells:
+            cell_area = self.get_cell_area(cell.column, cell.row)
+            total_area += cell_area
+            total_conductivity += cell_area * cell.material.conductivity
+
+        if total_area > 0:
+            return total_conductivity / total_area
+        return 0.0
 
     def to_dict(self):
         # type: () -> dict[str, Any]
