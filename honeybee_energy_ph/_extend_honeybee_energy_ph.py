@@ -24,6 +24,7 @@ from honeybee_energy.properties.extension import (
     ServiceHotWaterProperties,
     WindowConstructionProperties,
     WindowConstructionShadeProperties,
+    ProcessProperties,
 )
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
@@ -35,6 +36,7 @@ from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPh
 from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
 from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
 from honeybee_energy_ph.properties.load.people import PeoplePhProperties
+from honeybee_energy_ph.properties.load.process import ProcessPhProperties
 from honeybee_energy_ph.properties.materials.opaque import (
     EnergyMaterialNoMassPhProperties,
     EnergyMaterialPhProperties,
@@ -67,7 +69,7 @@ setattr(ServiceHotWaterProperties, "_ph", None)
 setattr(ElectricEquipmentProperties, "_ph", None)
 setattr(PeopleProperties, "_ph", None)
 setattr(LightingProperties, "_ph", None)
-
+setattr(ProcessProperties, "_ph", None)
 
 # -----------------------------------------------------------------------------
 
@@ -153,6 +155,11 @@ def lighting_ph_properties(self):
     return self._ph
 
 
+def process_ph_properties(self):
+    if self._ph is None:
+        self._ph = ProcessPhProperties(self.host)
+    return self._ph
+
 # -----------------------------------------------------------------------------
 
 # Step 3)
@@ -178,3 +185,4 @@ setattr(ServiceHotWaterProperties, "ph", property(hot_water_program_ph_propertie
 setattr(ElectricEquipmentProperties, "ph", property(elec_equip_ph_properties))
 setattr(PeopleProperties, "ph", property(people_ph_properties))
 setattr(LightingProperties, "ph", property(lighting_ph_properties))
+setattr(ProcessProperties, "ph", property(process_ph_properties))

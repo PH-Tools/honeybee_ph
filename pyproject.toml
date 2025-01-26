@@ -16,7 +16,6 @@ source = [
     "honeybee_ph_utils",
     "honeybee_phhvac",
 ]
-# ---
 branch = true
 cover_pylib = false
 omit = ["*/__init__.py", "*.venv/*", "*.venv_mbair/*"]
@@ -27,6 +26,7 @@ fail_under = 100
 
 [tool.coverage.html]
 directory = "_coverage_html"
+
 
 [tool.black]
 line-length = 120

@@ -3,7 +3,7 @@
 
 """Default data for Residential PH Electrical Appliances (PHI and Phius)."""
 
-from honeybee_energy_ph.load.ph_equipment import (
+from honeybee_energy_ph.load._ph_equip_types import (
     PhClothesDryerType,
     PhClothesWasherType,
     PhCookingType,
@@ -130,8 +130,8 @@ ph_default_equip = {
             "quantity": 1,
             "in_conditioned_space": True,
             "reference_energy_norm": 1,  # Day
-            "energy_demand": 0,
-            "energy_demand_per_use": 0.88,
+            "energy_demand": 1.0795, # 394 kWh/year
+            "energy_demand_per_use": 0,
             "combined_energy_factor": 0,
         },
         "PHIUS": {
@@ -140,8 +140,8 @@ ph_default_equip = {
             "quantity": 1,
             "in_conditioned_space": True,
             "reference_energy_norm": 1,  # Day
-            "energy_demand": 0,
-            "energy_demand_per_use": 0.88,
+            "energy_demand": 1.0795, # 394 kWh/year
+            "energy_demand_per_use": 0,
             "combined_energy_factor": 0,
         },
     },

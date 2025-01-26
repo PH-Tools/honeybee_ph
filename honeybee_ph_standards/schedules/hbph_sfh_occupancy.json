@@ -1,0 +1,94 @@
+[
+    {
+        "identifier": "hbph_sfh_Occupant_Presence",
+        "type": "ScheduleRuleset",
+        "default_day_schedule": "hbph_sfh_Occupant_Presence_Day Schedule",
+        "day_schedules": [
+            {
+                "values": [
+                    1.0,
+                    0.90000000000000002,
+                    0.40000000000000002,
+                    0.25,
+                    0.55000000000000004,
+                    0.90000000000000002,
+                    1.0
+                ],
+                "interpolate": false,
+                "identifier": "hbph_sfh_Occupant_Presence_Day Schedule",
+                "times": [
+                    [
+                        0,
+                        0
+                    ],
+                    [
+                        8,
+                        0
+                    ],
+                    [
+                        9,
+                        0
+                    ],
+                    [
+                        10,
+                        0
+                    ],
+                    [
+                        17,
+                        0
+                    ],
+                    [
+                        18,
+                        0
+                    ],
+                    [
+                        21,
+                        0
+                    ]
+                ],
+                "type": "ScheduleDay"
+            }
+        ],
+        "schedule_type_limit": {
+            "numeric_type": "Continuous",
+            "upper_limit": 1.0,
+            "lower_limit": 0.0,
+            "unit_type": "Dimensionless",
+            "identifier": "Fractional",
+            "type": "ScheduleTypeLimit"
+        },
+        "properties": {}
+    },
+    {
+        "identifier": "hbph_sfh_Occupant_Activity",
+        "type": "ScheduleRuleset",
+        "default_day_schedule": "hbph_sfh_Occupant_Activity_Day Schedule",
+        "day_schedules": [
+            {
+                "values": [
+                    112.53934481000194
+                ],
+                "interpolate": false,
+                "identifier": "hbph_sfh_Occupant_Activity_Day Schedule",
+                "times": [
+                    [
+                        0,
+                        0
+                    ]
+                ],
+                "type": "ScheduleDay"
+            }
+        ],
+        "schedule_type_limit": {
+            "numeric_type": "Continuous",
+            "upper_limit": {
+                "type": "NoLimit"
+            },
+            "lower_limit": 0.0,
+            "unit_type": "ActivityLevel",
+            "identifier": "Activity Level",
+            "type": "ScheduleTypeLimit"
+        },
+        "properties": {}
+    }
+]

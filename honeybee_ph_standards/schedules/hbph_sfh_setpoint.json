@@ -1,0 +1,68 @@
+[
+    {
+        "default_day_schedule": "hbph_sfh_Cooling_Setpoint_Day Schedule",
+        "day_schedules": [
+            {
+                "values": [
+                    25.0
+                ],
+                "interpolate": false,
+                "identifier": "hbph_sfh_Cooling_Setpoint_Day Schedule",
+                "times": [
+                    [
+                        0,
+                        0
+                    ]
+                ],
+                "type": "ScheduleDay"
+            }
+        ],
+        "properties": {},
+        "identifier": "hbph_sfh_Cooling_Setpoint",
+        "display_name": "hbph_sfh_Cooling_Setpoint",
+        "schedule_type_limit": {
+            "numeric_type": "Continuous",
+            "upper_limit": {
+                "type": "NoLimit"
+            },
+            "lower_limit": -273.14999999999998,
+            "unit_type": "Temperature",
+            "identifier": "Temperature",
+            "type": "ScheduleTypeLimit"
+        },
+        "type": "ScheduleRuleset"
+    },
+    {
+        "default_day_schedule": "hbph_sfh_Heating_Setpoint_Day Schedule",
+        "day_schedules": [
+            {
+                "values": [
+                    20.0
+                ],
+                "interpolate": false,
+                "identifier": "hbph_sfh_Heating_Setpoint_Day Schedule",
+                "times": [
+                    [
+                        0,
+                        0
+                    ]
+                ],
+                "type": "ScheduleDay"
+            }
+        ],
+        "properties": {},
+        "identifier": "hbph_sfh_Heating_Setpoint",
+        "display_name": "hbph_sfh_Heating_Setpoint",
+        "schedule_type_limit": {
+            "numeric_type": "Continuous",
+            "upper_limit": {
+                "type": "NoLimit"
+            },
+            "lower_limit": -273.14999999999998,
+            "unit_type": "Temperature",
+            "identifier": "Temperature",
+            "type": "ScheduleTypeLimit"
+        },
+        "type": "ScheduleRuleset"
+    }
+]
