@@ -31,6 +31,7 @@ try:
     if TYPE_CHECKING:
         from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
         from honeybee_energy_ph.properties.load.process import ProcessPhProperties
+        from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
 except ImportError as e:
     pass  # IronPython
 
@@ -938,7 +939,7 @@ class PhEquipmentBuilder(object):
 
     @classmethod
     def from_dict(cls, _input_dict, _host=None):
-        # type: (dict, ProcessPhProperties | None) -> PhEquipment
+        # type: (dict, ProcessPhProperties | LightingPhProperties | None) -> PhEquipment
         """Find the right appliance constructor class from the module based on the 'type' name."""
 
         equipment_type = _input_dict["equipment_type"]
@@ -1042,7 +1043,7 @@ class PhEquipmentCollection(object):
         --------
             * (float): total Wattage of all installed PH-Equipment in the collection.
         """
-        return sum(equip.annual_avg_wattage(_hb_room) for equip in self.values())
+        return sum(equip.annual_avg_wattage(_hb_room) for equip in self.values()) # type: ignore
 
     def to_dict(self):
         # type: () -> dict
