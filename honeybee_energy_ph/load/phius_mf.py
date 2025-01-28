@@ -3,20 +3,16 @@
 
 """Classes for calculating Phius Multifamily Elec. Energy as per Phius Multifamily Calculator (v4.2)"""
 
+
 try:
-    from typing import Any, List, ValuesView
+    from typing import Any, ValuesView
 except ImportError:
     pass  # IronPython 2.7
 
 try:
-    from honeybee import room
+    from honeybee.room import Room
 except ImportError as e:
     raise ImportError("Failed to import honeybee: {}".format(e))
-
-try:
-    from honeybee_ph import space
-except ImportError as e:
-    raise ImportError("Failed to import honeybee_ph: {}".format(e))
 
 try:
     from honeybee_energy.load import equipment
@@ -25,30 +21,45 @@ try:
 except ImportError as e:
     raise ImportError("Failed to import honeybee_energy: {}".format(e))
 
+try:
+    from honeybee_energy_ph.load import phius_residential
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_energy_ph: {}".format(e))
+
+try:
+    from honeybee_ph import space
+except ImportError as e:
+    raise ImportError("Failed to import honeybee_ph: {}".format(e))
+
+try:
+    from ph_units.converter import convert
+except ImportError as e:
+    raise ImportError("Failed to import ph_units: {}".format(e))
+
 
 class PhiusResidentialStory(object):
     """Represents one Residential Story of the Phius Multifamily Calculator (v4.2)"""
+    LIGHTING_INT_HE_FRAC = 1.0
+    LIGHTING_EXT_HE_FRAC = 1.0
+    LIGHTING_GARAGE_HE_FRAC = 1.0
 
-    def __init__(self, hb_room_list):
-        # type: (List[room.Room]) -> None
-        self.phius_resnet_fraction = 0.8
-        self.lighting_int_HE_frac = 1.0
-        self.lighting_ext_HE_frac = 1.0
-        self.lighting_garage_HE_frac = 1.0
+    def __init__(self, _hb_rooms, _area_unit):
+        # type: (list[Room], str) -> None
 
         try:
-            self.story_number = hb_room_list[0].story
+            self.story_number = _hb_rooms[0].story
         except:
             self.story_number = 1
-        self.total_floor_area_m2 = self.calc_story_floor_area(hb_room_list)
-        self.total_number_dwellings = self.calc_num_dwellings(hb_room_list)
-        self.total_number_bedrooms = self.calc_story_bedrooms(hb_room_list)
 
-        self.design_occupancy = self.calc_design_occupancy(hb_room_list)
-        self.mel = self.calc_mel()
-        self.lighting_int = self.calc_lighting_int()
-        self.lighting_ext = self.calc_lighting_ext()
-        self.lighting_garage = self.calc_lighting_garage()
+        self.total_floor_area_ft2 = self.calc_story_floor_area_ft2(_hb_rooms, _area_unit)
+        self.total_number_dwellings = self.calc_num_dwellings(_hb_rooms)
+        self.total_number_bedrooms = self.calc_story_bedrooms(_hb_rooms)
+
+        self.design_occupancy = self.calc_passive_house_occupancy(_hb_rooms)
+        self.mel = phius_residential.misc_electrical(self.total_number_bedrooms, self.total_floor_area_ft2)
+        self.lighting_int = phius_residential.lighting_interior(self.total_floor_area_ft2, self.LIGHTING_INT_HE_FRAC)
+        self.lighting_ext = phius_residential.lighting_exterior(self.total_floor_area_ft2, self.LIGHTING_EXT_HE_FRAC)
+        self.lighting_garage = phius_residential.lighting_garage(self.LIGHTING_GARAGE_HE_FRAC)
 
     @property
     def story_number(self):
@@ -66,85 +77,28 @@ class PhiusResidentialStory(object):
         except ValueError:
             self._story_number = str(value)
 
-    @property
-    def total_floor_area_ft2(self):
-        # type: () -> float
-        """Return the total floor area of the story in ft2."""
-        FT2_PER_M2 = 10.7639
-        return self.total_floor_area_m2 * FT2_PER_M2
-
-    def calc_story_floor_area(self, _hb_rooms):
-        # type: (List[room.Room]) -> float
-        return sum(space.weighted_floor_area for rm in _hb_rooms for space in getattr(rm.properties, "ph").spaces)
+    def calc_story_floor_area_ft2(self, _hb_rooms, _area_unit):
+        # type: (list[Room], str) -> float 
+        area = sum(space.weighted_floor_area for rm in _hb_rooms for space in getattr(rm.properties, "ph").spaces)
+        area_ft2 = convert(area, _area_unit, "FT2")
+        if area_ft2 is None:
+            raise ValueError(
+                "Error: Failed to convert '{}' floor area from {} to FT2".format(area, _area_unit)
+            )
+        return area_ft2
 
     def calc_story_bedrooms(self, _hb_rooms):
-        # type: (List[room.Room]) -> int
+        # type: (list[Room]) -> int
         return sum(getattr(rm.properties, "energy").people.properties.ph.number_bedrooms for rm in _hb_rooms)
 
-    def calc_design_occupancy(self, _hb_rooms):
-        # type: (List[room.Room]) -> float
+    def calc_passive_house_occupancy(self, _hb_rooms):
+        # type: (list[Room]) -> float
         return sum(getattr(rm.properties, "energy").people.properties.ph.number_people for rm in _hb_rooms)
 
     def calc_num_dwellings(self, _hb_rooms):
-        # type: (List[room.Room]) -> int
-        return sum(getattr(rm.properties, "energy").people.properties.ph.number_dwelling_units for rm in _hb_rooms)
-
-    def calc_mel(self):
-        # type: () -> float
-        """Calculate the Phius MF Misc. Electrical Loads (MEL) for the story.
-
-        Resnet 2014
-        https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        """
-        TV_A_KWH = 413
-        RESIDUAL_MELS_KWH_FT2 = 0.91
-        TV_C_KWH = 69
-
-        a = TV_A_KWH * self.total_number_dwellings
-        b = RESIDUAL_MELS_KWH_FT2 * self.total_floor_area_ft2
-        c = TV_C_KWH * self.total_number_bedrooms
-
-        return (a + b + c) * self.phius_resnet_fraction
-
-    def calc_lighting_int(self):
-        # type: () -> float
-        """Calculate the Phius MF Interior Lighting for the story.
-
-        Resnet 2014
-        https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        """
-        INT_LIGHTING_KHW = 455
-        INT_LIGHTING_KWH_FT2 = 0.8
-
-        a = 0.2 + 0.8 * (4 - 3 * self.lighting_int_HE_frac) / 3.7
-        b = INT_LIGHTING_KHW * self.total_number_dwellings
-        c = INT_LIGHTING_KWH_FT2 * self.total_floor_area_ft2
-
-        return a * (b + c) * self.phius_resnet_fraction
-
-    def calc_lighting_ext(self):
-        # type: () -> float
-        """Calculate the Phius MF Exterior Lighting for the story.
-
-        Resnet 2014
-        https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        """
-        EXT_LIGHTING_KHW = 100
-        EXT_LIGHTING_KWH_FT2 = 0.05
-
-        a = EXT_LIGHTING_KHW * self.total_number_dwellings
-        b = EXT_LIGHTING_KWH_FT2 * self.total_floor_area_ft2
-        e = 1 - 0.75 * self.lighting_ext_HE_frac
-
-        return e * (a + b) * self.phius_resnet_fraction
-
-    def calc_lighting_garage(self):
-        # type: () -> float
-        """Calculate the Phius MF Garage Lighting for the story."""
-        GARAGE_LIGHTING_KHW = 100
-        a = GARAGE_LIGHTING_KHW * (1 - self.lighting_garage_HE_frac) + 25 * self.lighting_garage_HE_frac
-
-        return self.total_number_dwellings * a * self.phius_resnet_fraction
+        # type: (list[Room]) -> int
+        ph_dwelling_objs = {r.properties.energy.people.properties.ph.dwellings for r in _hb_rooms} # type: ignore
+        return sum(d.num_dwellings for d in ph_dwelling_objs)
 
     def __lt__(self, other):
         # type: (PhiusResidentialStory) -> bool
@@ -155,9 +109,9 @@ class PhiusResidentialStory(object):
         return self.story_number == other.story_number
 
     def __str__(self):
-        return "{}(total_floor_area_m2={}, total_number_dwellings={}, total_number_bedrooms={})".format(
+        return "{}(total_floor_area_ft2={}, total_number_dwellings={}, total_number_bedrooms={})".format(
             self.__class__.__name__,
-            self.total_floor_area_m2,
+            self.total_floor_area_ft2,
             self.total_number_dwellings,
             self.total_number_bedrooms,
         )
@@ -209,7 +163,7 @@ class PhiusNonResProgram(object):
 
     @classmethod
     def from_hb_room(cls, _hb_room):
-        # type: (room.Room) -> PhiusNonResProgram
+        # type: (Room) -> PhiusNonResProgram
         """Returns a new PhiusNonResProgram object with attributes based on an HBE-Room."""
         obj = cls()
 
@@ -290,7 +244,7 @@ class PhiusNonResProgramCollection(object):
         return self._collection[key]
 
     def to_phius_mf_workbook(self):
-        # type: () -> List[str]
+        # type: () -> list[str]
         """Returns a text block formatted to match the Phius MF Calculator."""
         return [prog.to_phius_mf_workbook() for prog in self.programs]
 

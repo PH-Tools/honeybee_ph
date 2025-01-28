@@ -52,8 +52,10 @@ try:
         PhClothesDryerType,
         PhCookingType,
     )
+    from honeybee_energy_ph.load import phius_residential
 except ImportError as e:
     raise ImportError("Failed to import PhEquipment types: {}".format(e))
+
 
 # -----------------------------------------------------------------------------
 # - Appliance Base
@@ -501,18 +503,13 @@ class PhCooktop(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        """Returns the annual energy use (kWh) of the equipment.
-
-        Assuming a number of meals as per Phius Guidebook V3.02, pg 73 footnote #31
-        """
+        """Return annual energy consumption [kWh] for a single dwelling."""
 
         _num_occupants = kwargs.get("_num_occupants", None)
         if _num_occupants is None:
             raise ValueError("'_num_occupants' input is required for the annual_energy_kWh method.")
-
-        annual_meals_per_occupant = 500
-        num_meals = _num_occupants * annual_meals_per_occupant
-        return self.energy_demand * num_meals
+        
+        return phius_residential.cooktop(_num_occupants, self.energy_demand)
 
 
 class PhPhiusMEL(PhEquipment):
@@ -538,19 +535,8 @@ class PhPhiusMEL(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        """Return the Phius Misc. Electrical Loads (MEL) for a single dwelling [kWh].
+        """Return annual energy consumption [kWh] for a single dwelling."""
         
-        ### Resnet 2014
-        - https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        - Section 4.2.2.5(1): Energy Rating Reference Home
-        - kWh = 413 + 0.91 * CFA + 69 * Nbr
-        
-        ### Phius Certification Guidebook v24.1.1 | Appendix N | N-7
-        - https://www.phius.org/phius-certification-guidebook
-        - "The basic protocol for lighting and miscellaneous electric loads is that they are calculated at 
-        80% of RESNET (2013) levels for the 'Rated Home'."
-        - kWh = (413 + 69 * Nbr + 0.91 * CFA) * 0.8
-        """
         _num_bedrooms = kwargs.get("_num_bedrooms", None)
         if _num_bedrooms is None:
             raise ValueError("'_num_bedrooms' input is required for the annual_energy_kWh method.")
@@ -559,16 +545,7 @@ class PhPhiusMEL(PhEquipment):
         if _floor_area_ft2 is None:
             raise ValueError("'_floor_area_ft2' input is required for the annual_energy_kWh method.")
         
-        DWELLING_TV_KWH_YR = 413
-        BEDROOM_TV_KWH_YR = 69
-        MELS_KWH_YR_FT2 = 0.91
-        PHIUS_RESNET_FRACTION = 0.8
-
-        a = DWELLING_TV_KWH_YR
-        b = BEDROOM_TV_KWH_YR * _num_bedrooms
-        c = MELS_KWH_YR_FT2 * _floor_area_ft2
-
-        return (a + b + c) * PHIUS_RESNET_FRACTION
+        return phius_residential.misc_electrical(_num_bedrooms, _floor_area_ft2)
 
 
 class PhPhiusLightingInterior(PhEquipment):
@@ -595,37 +572,13 @@ class PhPhiusLightingInterior(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        """Returns the Phius Interior Lighting energy consumption for a single dwelling [kWh].
+        """Return the annual energy consumption [kWh] for a single dwelling."""
 
-        ### Resnet 2014
-        - https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        - Section 4.2.2.5.2.2: Interior Lighting
-        - kWh/yr = 0.8 * [(4 - 3 * q_FFIL) / 3.7] * (455 + 0.8 * CFA) + 0.2 * (455 + 0.8 * CFA)
-        
-        ### Phius Certification Guidebook v24.1.1 | Appendix N | N-7
-        - https://www.phius.org/phius-certification-guidebook
-        - "The basic protocol for lighting and miscellaneous electric loads is that they are calculated at 
-        80% of RESNET (2013) levels for the 'Rated Home'. ... The RESNET lighting formulas have been expressed more 
-        compactly here but are algebraically equivalent to the published versions."
-        - kWh/yr = (0.2 + 0.8 * (4 - 3 * q_FFIL) / 3.7) * (455 + 0.8 * iCFA) * 0.8
-        """
-
-        _num_bedrooms = kwargs.get("_num_bedrooms", None)
-        if _num_bedrooms is None:
-            raise ValueError("'_num_bedrooms' input is required for the annual_energy_kWh method.")
-        
         _floor_area_ft2 = kwargs.get("_floor_area_ft2", None)
         if _floor_area_ft2 is None:
             raise ValueError("'_floor_area_ft2' input is required for the annual_energy_kWh method.")
         
-        INT_LIGHTING_W_PER_DWELLING = 455
-        INT_LIGHTING_W_FT2 = 0.8
-        PHIUS_RESNET_FRACTION = 0.8
-
-        a = 0.2 + 0.8 * (4 - 3 * self.frac_high_efficiency) / 3.7
-        b = INT_LIGHTING_W_PER_DWELLING + (INT_LIGHTING_W_FT2 * _floor_area_ft2)
-
-        return a * b * PHIUS_RESNET_FRACTION
+        return phius_residential.lighting_interior(_floor_area_ft2, self.frac_high_efficiency)
 
 
 class PhPhiusLightingExterior(PhEquipment):
@@ -654,20 +607,7 @@ class PhPhiusLightingExterior(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        """Returns the Phius Exterior Lighting energy consumption for a single dwelling [kWh].
-
-        ### Resnet 2014
-        - https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        - Section 4.2.2.5.2.3: Exterior Lighting
-        - kWh = (100+0.05*FCA)*(1-FF_El)+0.25*(100+0.05*CFA)*FF_EL
-
-        ### Phius Certification Guidebook v24.1.1 | Appendix N | N-7
-        - https://www.phius.org/phius-certification-guidebook
-        - "The basic protocol for lighting and miscellaneous electric loads is that they are calculated at 
-        80% of RESNET (2013) levels for the 'Rated Home'. ... The RESNET lighting formulas have been expressed more 
-        compactly here but are algebraically equivalent to the published versions."
-        - kWh/yr = (1 - 0.75 * q_FFIL) * (100 + 0.05 * iCFA) * 0.8
-        """
+        """Return the annual energy consumption [kWh] for a single dwelling."""
 
         _num_bedrooms = kwargs.get("_num_bedrooms", None)
         if _num_bedrooms is None:
@@ -677,15 +617,7 @@ class PhPhiusLightingExterior(PhEquipment):
         if _floor_area_ft2 is None:
             raise ValueError("'_floor_area_ft2' input is required for the annual_energy_kWh method.")
         
-        EXT_LIGHTING_KWH_YR_PER_DWELLING = 100
-        EXT_LIGHTING_KWH_YR_FT2 = 0.05
-        PHIUS_RESNET_FRACTION = 0.8
-
-        a = EXT_LIGHTING_KWH_YR_PER_DWELLING
-        b = EXT_LIGHTING_KWH_YR_FT2 * _floor_area_ft2
-        e = 1 - 0.75 * self.frac_high_efficiency
-
-        return e * (a + b) * PHIUS_RESNET_FRACTION
+        return phius_residential.lighting_exterior(_floor_area_ft2, self.frac_high_efficiency)
 
 
 class PhPhiusLightingGarage(PhEquipment):
@@ -713,26 +645,10 @@ class PhPhiusLightingGarage(PhEquipment):
     
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        """Returns the Phius Garage Lighting energy consumption for a single dwelling [kWh].
+        """Return the annual energy consumption [kWh] for a single dwelling."""
 
-        ### Resnet 2014
-        - https://codes.iccsafe.org/content/RESNET3012014P1/4-home-energy-rating-calculation-procedures-
-        - Section 4.2.2.5.1.3: Garage Lighting
-        - kWh = 100/dwelling
+        return phius_residential.lighting_garage(self.frac_high_efficiency)
 
-        ### Phius Certification Guidebook v24.1.1 | Appendix N | N-7
-        - https://www.phius.org/phius-certification-guidebook
-        - "The basic protocol for lighting and miscellaneous electric loads is that they are calculated at 
-        80% of RESNET (2013) levels for the 'Rated Home'. ... The RESNET lighting formulas have been expressed more 
-        compactly here but are algebraically equivalent to the published versions."
-        - kWh/yr = 100 * (1 - 0.75 * FFGL) * 0.8
-        """
-
-        GARAGE_LIGHTING_KWH_YR_PER_DWELLING = 100
-        PHIUS_RESNET_FRACTION = 0.8
-        e = 1 - 0.75 * self.frac_high_efficiency
-
-        return  GARAGE_LIGHTING_KWH_YR_PER_DWELLING * e * PHIUS_RESNET_FRACTION
 
 
 class PhCustomAnnualElectric(PhEquipment):
@@ -926,6 +842,17 @@ class PhElevatorGearlessTraction(PhEquipment):
         # type: (*Any, **Any) -> float
         """Returns the annual energy use (kWh) of the equipment."""
         return self.energy_demand
+
+
+def phius_elevator_by_stories(_num_of_stories):
+    # type: (int) -> Type[PhElevatorHydraulic | PhElevatorGearedTraction | PhElevatorGearlessTraction]
+    """Return the Elevator class, based on the number of stories."""
+    if _num_of_stories <= 6:
+        return PhElevatorHydraulic
+    elif _num_of_stories <= 20:
+        return PhElevatorGearedTraction
+    else:
+        return PhElevatorGearlessTraction
 
 
 # -----------------------------------------------------------------------------

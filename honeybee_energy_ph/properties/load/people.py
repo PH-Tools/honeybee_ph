@@ -6,7 +6,9 @@
 from uuid import uuid4
 
 try:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, TYPE_CHECKING
+    if TYPE_CHECKING:
+        from honeybee_energy.properties.extension import PeopleProperties
 except ImportError:
     pass  # Python 2.7
 
@@ -24,7 +26,7 @@ class PhDwellings(object):
 
     def __init__(self, _num_dwellings=0):
         # type: (int) -> None
-        self.identifier = uuid4()
+        self.identifier = str(uuid4())
         self._num_dwellings = _num_dwellings
 
     @property
@@ -83,6 +85,7 @@ class PeoplePhProperties(object):
     """Ph Properties Object for Honeybee-Energy People"""
 
     def __init__(self, _host):
+        # type: (PeopleProperties | None) -> None
         self._host = _host
         self.id_num = 0
         self.number_bedrooms = 0
@@ -90,7 +93,7 @@ class PeoplePhProperties(object):
         self.dwellings = PhDwellings.default()
 
     def duplicate(self, new_host=None):
-        # type: (Any) -> PeoplePhProperties
+        # type: (PeopleProperties | None) -> PeoplePhProperties
         _host = new_host or self._host
         new_properties_obj = self.__class__(_host)
         new_properties_obj.id_num = self.id_num
@@ -102,6 +105,7 @@ class PeoplePhProperties(object):
 
     @property
     def host(self):
+        # type: () -> PeopleProperties | None
         return self._host
 
     @property
@@ -112,10 +116,11 @@ class PeoplePhProperties(object):
 
     @property
     def is_dwelling_unit(self):
-        print(
-            "WARNING: The 'PeoplePhProperties' property 'is_dwelling_unit' is deprecated and should be replace with 'is_residential' from now on."
+        msg = (
+            "ERROR: The 'PeoplePhProperties.is_dwelling_unit' property is deprecated "
+            "and should be replace with 'is_residential' from now on."
         )
-        return self.is_residential
+        raise Exception(msg)
 
     @property
     def number_dwelling_units(self):
@@ -141,7 +146,7 @@ class PeoplePhProperties(object):
 
     @classmethod
     def from_dict(cls, data, host):
-        # type: (Dict[str, Any], Any) -> PeoplePhProperties
+        # type: (dict, PeopleProperties | None) -> PeoplePhProperties
         valid_types = ("PeoplePhProperties", "PeoplePhPropertiesAbridged")
         if data["type"] not in valid_types:
             raise PeoplePhProperties_FromDictError(valid_types, data["type"])
