@@ -130,7 +130,7 @@ ph_default_equip = {
             "quantity": 1,
             "in_conditioned_space": True,
             "reference_energy_norm": 1,  # Day
-            "energy_demand": 1.0795, # 394 kWh/year
+            "energy_demand": 1.0795,  # 394 kWh/year
             "energy_demand_per_use": 0,
             "combined_energy_factor": 0,
         },
@@ -140,7 +140,7 @@ ph_default_equip = {
             "quantity": 1,
             "in_conditioned_space": True,
             "reference_energy_norm": 1,  # Day
-            "energy_demand": 1.0795, # 394 kWh/year
+            "energy_demand": 1.0795,  # 394 kWh/year
             "energy_demand_per_use": 0,
             "combined_energy_factor": 0,
         },

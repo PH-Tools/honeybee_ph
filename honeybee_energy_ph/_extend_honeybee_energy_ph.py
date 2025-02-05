@@ -13,23 +13,23 @@
 
 import honeybee_energy
 from honeybee_energy.properties.extension import (
+    AirBoundaryConstructionProperties,
     ElectricEquipmentProperties,
     EnergyMaterialNoMassProperties,
     EnergyMaterialProperties,
     EnergyMaterialVegetationProperties,
     LightingProperties,
     OpaqueConstructionProperties,
-    AirBoundaryConstructionProperties,
     PeopleProperties,
+    ProcessProperties,
     ServiceHotWaterProperties,
     WindowConstructionProperties,
     WindowConstructionShadeProperties,
-    ProcessProperties,
 )
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
-from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
 from honeybee_energy_ph.properties.construction.air import AirBoundaryConstructionPhProperties
+from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
 from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
 from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
@@ -159,6 +159,7 @@ def process_ph_properties(self):
     if self._ph is None:
         self._ph = ProcessPhProperties(self.host)
     return self._ph
+
 
 # -----------------------------------------------------------------------------
 

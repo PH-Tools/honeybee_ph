@@ -6,7 +6,7 @@
 try:
     from typing import Dict, List
 except ImportError:
-    pass # -- IronPython 2.7
+    pass  # -- IronPython 2.7
 
 try:
     from honeybee.typing import clean_ep_string
@@ -14,12 +14,9 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee:\n\t{}".format(e))
 
 try:
-    from honeybee_energy.lib.programtypes import (
-        building_program_type_by_identifier, program_type_by_identifier)
-    from honeybee_energy.lib.scheduletypelimits import \
-        schedule_type_limit_by_identifier
-    from honeybee_energy.load import (equipment, hotwater, lighting, people,
-                                      ventilation)
+    from honeybee_energy.lib.programtypes import building_program_type_by_identifier, program_type_by_identifier
+    from honeybee_energy.lib.scheduletypelimits import schedule_type_limit_by_identifier
+    from honeybee_energy.load import equipment, hotwater, lighting, people, ventilation
     from honeybee_energy.programtype import ProgramType
     from honeybee_energy.schedule.ruleset import ScheduleRuleset
 except ImportError as e:
@@ -33,17 +30,15 @@ except ImportError as e:
 
 try:
     from honeybee_energy_ph.properties import ruleset
-    from honeybee_energy_ph.properties.load.lighting import \
-        LightingPhProperties
+    from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
 
 
 class MissingBaseProgramError(Exception):
     def __init__(self, _data):
-        self.msg = (
-            'Error: The Phius data set for "{}" appears to missing '
-            "a Honeybee base-program?".format(_data["name"])
+        self.msg = 'Error: The Phius data set for "{}" appears to missing ' "a Honeybee base-program?".format(
+            _data["name"]
         )
         super(MissingBaseProgramError, self).__init__(self.msg)
 
@@ -73,7 +68,7 @@ def load_data_from_Phius_standards(_search_key, _search_field="name", _protocol=
     if not _search_key:
         return []
 
-    prog_data = [] # type: List[Dict[str, Dict]]
+    prog_data = []  # type: List[Dict[str, Dict]]
     _search_key = _clean_str(_search_key)
     _protocol = _clean_str(_protocol)
     for data in PHIUS_programs.PHIUS_library.values():
@@ -97,7 +92,9 @@ def get_all_valid_protocol_names():
 def get_all_valid_program_names_of_protocol(_protocol_name):
     # type: (str) -> List[str]
     """Returns a list of all valid Phius program names for a given protocol."""
-    return list(set([data["name"] for data in PHIUS_programs.PHIUS_library.values() if _protocol_name in data["protocol"]]))
+    return list(
+        set([data["name"] for data in PHIUS_programs.PHIUS_library.values() if _protocol_name in data["protocol"]])
+    )
 
 
 def build_hb_people_from_Phius_data(_data):
@@ -193,14 +190,12 @@ def build_hb_lighting_from_Phius_data(_data):
     except KeyError:
         w_m2 = _data["loads"]["watts_per_m2"]
 
-    hb_lighting = lighting.Lighting(
-        _data["loads"]["name"], w_m2, lighting_sched, 0.0, 0.32, 0.25
-    )
+    hb_lighting = lighting.Lighting(_data["loads"]["name"], w_m2, lighting_sched, 0.0, 0.32, 0.25)
 
     # -- Set LightingPhProperties attributes
     hb_light_prop_ph = (
-        hb_lighting.properties.ph # type: ignore
-    )  # type: LightingPhProperties 
+        hb_lighting.properties.ph  # type: ignore
+    )  # type: LightingPhProperties
     hb_light_prop_ph.target_lux = _data["loads"]["target_lux"]
     hb_light_prop_ph.target_lux_height = _data["loads"]["target_lux_height"]
 
@@ -250,9 +245,7 @@ def build_hb_elec_equip_from_Phius_data(_data):
     except KeyError:
         w_m2 = _data["loads"]["watts_per_m2"]
 
-    hb_elec_equip = equipment.ElectricEquipment(
-        _data["loads"]["identifier"], w_m2, equip_sched
-    )
+    hb_elec_equip = equipment.ElectricEquipment(_data["loads"]["identifier"], w_m2, equip_sched)
 
     return hb_elec_equip
 
@@ -281,17 +274,13 @@ def build_hb_program_from_Phius_data(_data):
         base_program_ = program_type_by_identifier(base_program)
 
     program = base_program_.duplicate()
-    program.identifier = clean_ep_string(
-        "Phius_{}".format(_data["name"].replace(" ", "_"))
-    )
+    program.identifier = clean_ep_string("Phius_{}".format(_data["name"].replace(" ", "_")))
     program.display_name = "{}::{}".format(_data["protocol"], _data["name"])
 
     # -- Build and assign the sub-programs
     program.people = build_hb_people_from_Phius_data(_data["people"])
     program.lighting = build_hb_lighting_from_Phius_data(_data["lighting"])
-    program.electric_equipment = build_hb_elec_equip_from_Phius_data(
-        _data["elec_equipment"]
-    )
+    program.electric_equipment = build_hb_elec_equip_from_Phius_data(_data["elec_equipment"])
 
     # -- Ensure that that there is a HBE ventilation object
     if program.ventilation == None:

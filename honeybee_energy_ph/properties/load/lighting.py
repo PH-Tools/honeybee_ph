@@ -11,7 +11,7 @@ except ImportError:
 try:
     from honeybee_energy_ph.load.ph_equipment import PhEquipment, PhEquipmentBuilder
 except ImportError as e:
-    raise ImportError('Failed to import honeybee_energy_ph', e)
+    raise ImportError("Failed to import honeybee_energy_ph", e)
 
 
 class LightingPhProperties_FromDictError(Exception):
@@ -34,18 +34,18 @@ class LightingPhProperties(object):
     def ph_equipment(self):
         # type: () -> PhEquipment | None
         return self._ph_equipment
-    
+
     @ph_equipment.setter
     def ph_equipment(self, _equipment):
         # type: (PhEquipment) -> None
         if not isinstance(_equipment, PhEquipment):
             raise ValueError("Input must be of type PhEquipment")
         self._ph_equipment = _equipment
-    
+
     def duplicate(self, new_host=None):
         # type: (Any) -> LightingPhProperties
         return self.__copy__(new_host)
-    
+
     def __copy__(self, new_host=None):
         # type: (Any) -> LightingPhProperties
         _host = new_host or self._host
@@ -56,7 +56,7 @@ class LightingPhProperties(object):
         new_obj.target_lux_height = self.target_lux_height
         if self._ph_equipment:
             new_obj.ph_equipment = PhEquipmentBuilder.from_dict(self._ph_equipment.to_dict(), _host=new_obj)
-        
+
         return new_obj
 
     @property

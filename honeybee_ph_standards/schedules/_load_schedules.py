@@ -11,6 +11,7 @@ try:
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_energy:\n\t{}".format(e))
 
+
 def is_schedule(_json_object):
     # type: (dict) -> bool
     """Check if a JSON object is a valid 'ScheduleRuleset' dict."""

@@ -232,6 +232,7 @@ class RoomPhProperties(object):
             moving_vec3D: A Vector3D with the direction and distance to move the ray.
         """
         self._spaces = [space.move(moving_vec3D) for space in self.spaces]
+        self.ph_bldg_segment = self.ph_bldg_segment.move(moving_vec3D)
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> None
@@ -247,6 +248,7 @@ class RoomPhProperties(object):
             origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         """
         self._spaces = [space.rotate(axis_vec3D, angle_degrees, origin_pt3D) for space in self.spaces]
+        self.ph_bldg_segment = self.ph_bldg_segment.rotate(axis_vec3D, angle_degrees, origin_pt3D)
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> None
@@ -257,6 +259,7 @@ class RoomPhProperties(object):
             origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
         """
         self._spaces = [space.rotate_xy(angle_degrees, origin_pt3D) for space in self.spaces]
+        self.ph_bldg_segment = self.ph_bldg_segment.rotate_xy(angle_degrees, origin_pt3D)
 
     def reflect(self, plane):
         # type: (Plane) -> None
@@ -266,6 +269,7 @@ class RoomPhProperties(object):
             plane: A Plane representing the plane across which the object will be reflected.
         """
         self._spaces = [space.reflect(plane.n, plane.o) for space in self.spaces]
+        self.ph_bldg_segment = self.ph_bldg_segment.reflect(plane)
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> None
@@ -277,9 +281,9 @@ class RoomPhProperties(object):
                 If None, it will be scaled from the World origin_pt3D (0, 0, 0).
         """
         self._spaces = [space.scale(scale_factor, origin_pt3D) for space in self.spaces]
+        self.ph_bldg_segment = self.ph_bldg_segment.scale(scale_factor, origin_pt3D)
 
     # TODO: Transform Foundations....
-    # TODO: Building Segment (icfa/tfa overrides)....
 
 
 def get_ph_prop_from_room(_room):

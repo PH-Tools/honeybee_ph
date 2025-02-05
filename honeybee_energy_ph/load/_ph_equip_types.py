@@ -60,4 +60,3 @@ class PhCookingType(enumerables.CustomEnum):
     def __init__(self, _value=1):
         # type: (int | str) -> None
         super(PhCookingType, self).__init__(_value)
-

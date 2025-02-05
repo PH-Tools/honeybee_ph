@@ -21,7 +21,7 @@ except ImportError as e:
 try:
     from honeybee_energy_ph.load.ph_equipment import PhEquipment, PhEquipmentBuilder
 except ImportError as e:
-    raise ImportError('Failed to import honeybee_energy_ph', e)
+    raise ImportError("Failed to import honeybee_energy_ph", e)
 
 
 class ProcessPhProperties_FromDictError(Exception):
@@ -40,7 +40,7 @@ class ProcessPhProperties(object):
     def ph_equipment(self):
         # type: () -> PhEquipment | None
         return self._ph_equipment
-    
+
     @ph_equipment.setter
     def ph_equipment(self, _equipment):
         # type: (PhEquipment) -> None
@@ -61,7 +61,7 @@ class ProcessPhProperties(object):
             d["type"] = "ProcessPhPropertiesAbridged"
         else:
             d["type"] = "ProcessPhProperties"
-        
+
         if self._ph_equipment:
             d["equipment"] = self._ph_equipment.to_dict(_abridged=abridged)
 

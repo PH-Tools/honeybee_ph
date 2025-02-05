@@ -10,8 +10,17 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
-from honeybee_ph import _base
-from honeybee_ph_utils import enumerables
+try:
+    from ladybug_geometry.geometry3d.plane import Plane
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+except ImportError as e:
+    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
+
+try:
+    from honeybee_ph import _base
+    from honeybee_ph_utils import enumerables
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
 # -----------------------------------------------------------------------------
 
@@ -277,6 +286,7 @@ class _PHPPSettingsBase(object):
     """Base class with methods for use by PHPP-Settings objects."""
 
     phpp_version = 9  # default
+    tfa_override = None  # type: float | None
 
     def to_dict(self):
         # type: () -> Dict[str, int | str]
@@ -324,7 +334,6 @@ class PHPPSettings10(_PHPPSettingsBase):
     certification_type = EnumProperty("certification_type", phpp_version)
     primary_energy_type = EnumProperty("primary_energy_type", phpp_version)
     retrofit_type = EnumProperty("retrofit_type", phpp_version)
-    tfa_override = None  # type: Optional[float]
 
     def __init__(self):
         # -- Setup the enum defaults
@@ -351,7 +360,6 @@ class PHPPSettings9(_PHPPSettingsBase):
     primary_energy_type = EnumProperty("primary_energy_type", phpp_version)
     enerphit_type = EnumProperty("enerphit_type", phpp_version)
     retrofit_type = EnumProperty("retrofit_type", phpp_version)
-    tfa_override = None  # type: Optional[float]
 
     def __init__(self):
         # -- Setup the enum defaults
@@ -431,3 +439,64 @@ class PhiCertification(_base._Base):
     def duplicate(self):
         # type: () -> PhiCertification
         return self.__copy__()
+
+    def move(self, moving_vec3D):
+        # type: (Vector3D) -> PhiCertification
+        """Move the Phius Certification Object along a vector.
+
+        Args:
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        """
+        new_obj = self.duplicate()
+        return new_obj
+
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (Vector3D, float, Point3D) -> PhiCertification
+        """Rotate the Phius Certification Object by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        """
+        new_obj = self.duplicate()
+        return new_obj
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, Point3D) -> PhiCertification
+        """Rotate the Phius Certification Object counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        """
+        new_obj = self.duplicate()
+        return new_obj
+
+    def reflect(self, plane):
+        # type: (Plane) -> PhiCertification
+        """Reflected the Phius Certification Object across a plane.
+
+        Args:
+            normal_vec3D: A Plane representing the plane across which to reflect.
+        """
+        new_obj = self.duplicate()
+        return new_obj
+
+    def scale(self, scale_factor, origin_pt3D=None):
+        # type: (float, Point3D | None) -> PhiCertification
+        """Scale the Phius Certification Object by a factor from an origin point.
+
+        Args:
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        new_obj = self.duplicate()
+        if new_obj.attributes.tfa_override is not None:
+            new_obj.attributes.tfa_override = new_obj.attributes.tfa_override * scale_factor
+        return new_obj

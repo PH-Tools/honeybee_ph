@@ -10,10 +10,23 @@ try:
 except ImportError:
     pass  # Python2.7
 
-from honeybee_energy_ph.construction import thermal_bridge
-from honeybee_ph import _base, phi, phius, site
-from honeybee_ph_standards.sourcefactors import factors
-from honeybee_ph_utils import enumerables
+try:
+    from ladybug_geometry.geometry3d.plane import Plane
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+except ImportError as e:
+    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
+
+try:
+    from honeybee_energy_ph.construction.thermal_bridge import PhThermalBridge
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_energy_ph.construction:\n\t{}".format(e))
+
+try:
+    from honeybee_ph import _base, phi, phius, site
+    from honeybee_ph_standards.sourcefactors import factors
+    from honeybee_ph_utils import enumerables
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
 
 class PhVentilationSummerBypassMode(enumerables.CustomEnum):
@@ -100,12 +113,12 @@ class BldgSegment(_base._Base):
         self.set_points = SetPoints()
         self.mech_room_temp = 20.0
         self.non_combustible_materials = False
-        self.thermal_bridges = {}  # type: Dict[str, thermal_bridge.PhThermalBridge]
+        self.thermal_bridges = {}  # type: Dict[str, PhThermalBridge]
         self.wind_exposure_type = PhWindExposureType("1-SEVERAL_SIDES_EXPOSED_NO_SCREENING")
         self.summer_hrv_bypass_mode = PhVentilationSummerBypassMode("4-Always")
 
     def add_new_thermal_bridge(self, tb):
-        # type: (thermal_bridge.PhThermalBridge) -> None
+        # type: (PhThermalBridge) -> None
         self.thermal_bridges[tb.identifier] = tb
 
     def to_dict(self):
@@ -152,7 +165,7 @@ class BldgSegment(_base._Base):
         obj.mech_room_temp = _dict["mech_room_temp"]
         obj.non_combustible_materials = _dict.get("non_combustible_materials", False)
         for tb_dict in _dict.get("thermal_bridges", {}).values():
-            tb_obj = thermal_bridge.PhThermalBridge.from_dict(tb_dict)
+            tb_obj = PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
         obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_hrv_bypass_mode", {}))
         obj.wind_exposure_type = PhWindExposureType.from_dict(_dict.get("wind_exposure_type", {}))
@@ -182,3 +195,83 @@ class BldgSegment(_base._Base):
     def duplicate(self):
         # type () -> BldgSegment
         return self.__copy__()
+
+    def move(self, moving_vec3D):
+        # type: (Vector3D) -> BldgSegment
+        """Move the BldgSegment along a vector.
+
+        Args:
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        """
+        new_seg = self.duplicate()
+        for k, tb in new_seg.thermal_bridges.items():
+            new_seg.thermal_bridges[k] = tb.move(moving_vec3D)
+        new_seg.phius_certification = new_seg.phius_certification.move(moving_vec3D)
+        new_seg.phi_certification = new_seg.phi_certification.move(moving_vec3D)
+        return new_seg
+
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (Vector3D, float, Point3D) -> BldgSegment
+        """Rotate the BldgSegment by a certain angle around an axis_vec3D and origin_pt3D.
+
+        Right hand rule applies:
+        If axis_vec3D has a positive orientation, rotation will be clockwise.
+        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        """
+        new_seg = self.duplicate()
+        for k, tb in new_seg.thermal_bridges.items():
+            new_seg.thermal_bridges[k] = tb.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        new_seg.phius_certification = new_seg.phius_certification.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        new_seg.phi_certification = new_seg.phi_certification.rotate(axis_vec3D, angle_degrees, origin_pt3D)
+        return new_seg
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, Point3D) -> BldgSegment
+        """Rotate the BldgSegment counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        """
+        new_seg = self.duplicate()
+        for k, tb in new_seg.thermal_bridges.items():
+            new_seg.thermal_bridges[k] = tb.rotate_xy(angle_degrees, origin_pt3D)
+        new_seg.phius_certification = new_seg.phius_certification.rotate_xy(angle_degrees, origin_pt3D)
+        new_seg.phi_certification = new_seg.phi_certification.rotate_xy(angle_degrees, origin_pt3D)
+        return new_seg
+
+    def reflect(self, plane):
+        # type: (Plane) -> BldgSegment
+        """Reflected the BldgSegment across a plane with the input normal vector and origin_pt3D.
+
+        Args:
+            plane: A Plane representing the plane across which the object will be reflected.
+        """
+        new_seg = self.duplicate()
+        for k, tb in new_seg.thermal_bridges.items():
+            new_seg.thermal_bridges[k] = tb.reflect(plane)
+        new_seg.phius_certification = new_seg.phius_certification.reflect(plane)
+        new_seg.phi_certification = new_seg.phi_certification.reflect(plane)
+        return new_seg
+
+    def scale(self, scale_factor, origin_pt3D=None):
+        # type: (float, Point3D | None) -> BldgSegment
+        """Scale the BldgSegment a factor from an origin_pt3D point.
+
+        Args:
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
+                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        """
+        new_seg = self.duplicate()
+        for k, tb in new_seg.thermal_bridges.items():
+            new_seg.thermal_bridges[k] = tb.scale(scale_factor, origin_pt3D)
+        new_seg.phius_certification = new_seg.phius_certification.scale(scale_factor, origin_pt3D)
+        new_seg.phi_certification = new_seg.phi_certification.scale(scale_factor, origin_pt3D)
+
+        return new_seg

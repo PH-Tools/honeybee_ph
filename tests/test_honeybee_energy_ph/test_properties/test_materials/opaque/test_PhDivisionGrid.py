@@ -1,5 +1,6 @@
-from pytest import approx
 from honeybee_energy.material.opaque import EnergyMaterial
+from pytest import approx
+
 from honeybee_energy_ph.properties.materials.opaque import PhDivisionGrid
 
 

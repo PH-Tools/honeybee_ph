@@ -39,6 +39,7 @@ except ImportError as e:
 
 class PhiusResidentialStory(object):
     """Represents one Residential Story of the Phius Multifamily Calculator (v4.2)"""
+
     LIGHTING_INT_HE_FRAC = 1.0
     LIGHTING_EXT_HE_FRAC = 1.0
     LIGHTING_GARAGE_HE_FRAC = 1.0
@@ -78,13 +79,11 @@ class PhiusResidentialStory(object):
             self._story_number = str(value)
 
     def calc_story_floor_area_ft2(self, _hb_rooms, _area_unit):
-        # type: (list[Room], str) -> float 
+        # type: (list[Room], str) -> float
         area = sum(space.weighted_floor_area for rm in _hb_rooms for space in getattr(rm.properties, "ph").spaces)
         area_ft2 = convert(area, _area_unit, "FT2")
         if area_ft2 is None:
-            raise ValueError(
-                "Error: Failed to convert '{}' floor area from {} to FT2".format(area, _area_unit)
-            )
+            raise ValueError("Error: Failed to convert '{}' floor area from {} to FT2".format(area, _area_unit))
         return area_ft2
 
     def calc_story_bedrooms(self, _hb_rooms):
@@ -97,7 +96,7 @@ class PhiusResidentialStory(object):
 
     def calc_num_dwellings(self, _hb_rooms):
         # type: (list[Room]) -> int
-        ph_dwelling_objs = {r.properties.energy.people.properties.ph.dwellings for r in _hb_rooms} # type: ignore
+        ph_dwelling_objs = {r.properties.energy.people.properties.ph.dwellings for r in _hb_rooms}  # type: ignore
         return sum(d.num_dwellings for d in ph_dwelling_objs)
 
     def __lt__(self, other):

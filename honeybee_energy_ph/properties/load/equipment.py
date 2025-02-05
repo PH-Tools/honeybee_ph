@@ -23,9 +23,9 @@ class ElectricEquipmentPhProperties_FromDictError(Exception):
 class ElectricEquipmentPhProperties(object):
     def __init__(self, _host):
         self._host = _host
-        
+
         # TODO: Deprecate in favor of new (Jan 2025) 'Process' Load method
-        self.equipment_collection = ph_equipment.PhEquipmentCollection(self) 
+        self.equipment_collection = ph_equipment.PhEquipmentCollection(self)
 
     @property
     def host(self):

@@ -3,15 +3,29 @@
 
 """HBPH Thermal Bridge Objects"""
 
+from math import radians
+
 try:
     from typing import Any, Union
 except ImportError:
     pass  # IronPython 2.7
 
-from ladybug_geometry.geometry3d.polyline import LineSegment3D, Polyline3D
+try:
+    from ladybug_geometry.geometry3d.plane import Plane
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+    from ladybug_geometry.geometry3d.polyline import LineSegment3D, Polyline3D
+except ImportError as e:
+    raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
-from honeybee_energy_ph.construction import _base
-from honeybee_ph_utils import enumerables
+try:
+    from honeybee_energy_ph.construction import _base
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_energy_ph.construction:\n\t{}".format(e))
+
+try:
+    from honeybee_ph_utils import enumerables
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_ph_utils:\n\t{}".format(e))
 
 
 class PhThermalBridgeType(enumerables.CustomEnum):
@@ -133,3 +147,67 @@ class PhThermalBridge(_base._Base):
 
     def ToString(self):
         return str(self)
+
+    def move(self, moving_vec3D):
+        # type: (Vector3D) -> PhThermalBridge
+        """Move the TB-Geometry along a vector.
+
+        Args:
+            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        """
+        new_tb = self.duplicate()
+        new_tb.geometry = self.geometry.move(moving_vec3D)
+        return new_tb
+
+    def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
+        # type: (Vector3D, float, Point3D) -> PhThermalBridge
+        """Rotate the TB-Geometry by a certain angle around an axis and origin.
+
+        Right hand rule applies:
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
+
+        Args:
+            axis_vec3D: A Vector3D axis representing the axis of rotation.
+            angle_degrees: An angle for rotation in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        """
+        new_tb = self.duplicate()
+        new_tb.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
+        return new_tb
+
+    def rotate_xy(self, angle_degrees, origin_pt3D):
+        # type: (float, Point3D) -> PhThermalBridge
+        """Rotate the TB-Geometry counterclockwise in the XY plane by a certain angle.
+
+        Args:
+            angle_degrees: An angle in degrees.
+            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        """
+        new_tb = self.duplicate()
+        new_tb.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
+        return new_tb
+
+    def reflect(self, plane):
+        # type: (Plane) -> PhThermalBridge
+        """Reflected the TB-Geometry across a plane.
+
+        Args:
+            normal_vec3D: A Plane representing the plane across which to reflect.
+        """
+        new_tb = self.duplicate()
+        new_tb.geometry = self.geometry.reflect(plane.n, plane.o)
+        return new_tb
+
+    def scale(self, scale_factor, origin_pt3D=None):
+        # type: (float, Point3D | None) -> PhThermalBridge
+        """Scale the TB-Geometry by a factor from an origin point.
+
+        Args:
+            scale_factor: A number representing how much the line segment should be scaled.
+            origin_pt3D: A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        new_tb = self.duplicate()
+        new_tb.geometry = self.geometry.scale(scale_factor, origin_pt3D)
+        return new_tb

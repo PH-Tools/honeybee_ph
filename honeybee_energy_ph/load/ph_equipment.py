@@ -6,7 +6,7 @@
 import sys
 
 try:
-    from typing import Any, Type, Iterator, ValuesView, ItemsView, KeysView
+    from typing import Any, ItemsView, Iterator, KeysView, Type, ValuesView
 except ImportError:
     pass  # IronPython
 
@@ -30,8 +30,8 @@ try:
 
     if TYPE_CHECKING:
         from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
-        from honeybee_energy_ph.properties.load.process import ProcessPhProperties
         from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
+        from honeybee_energy_ph.properties.load.process import ProcessPhProperties
 except ImportError as e:
     pass  # IronPython
 
@@ -46,13 +46,13 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph_standards:\n\t{}".format(e))
 
 try:
-    from honeybee_energy_ph.load._ph_equip_types import (
-        PhDishwasherType,
-        PhClothesWasherType,
-        PhClothesDryerType,
-        PhCookingType,
-    )
     from honeybee_energy_ph.load import phius_residential
+    from honeybee_energy_ph.load._ph_equip_types import (
+        PhClothesDryerType,
+        PhClothesWasherType,
+        PhCookingType,
+        PhDishwasherType,
+    )
 except ImportError as e:
     raise ImportError("Failed to import PhEquipment types: {}".format(e))
 
@@ -111,7 +111,7 @@ class PhEquipment(_base._Base):
         d["combined_energy_factor"] = self.combined_energy_factor
 
         return d
-    
+
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (dict) -> PhEquipment
@@ -184,14 +184,14 @@ class PhEquipment(_base._Base):
     def annual_avg_wattage(self, _schedule=None, *args, **kwargs):
         # type: ( ScheduleRuleset | None, *Any, **Any) -> float
         """Returns the annual average wattage of the equipment."""
-        
+
         if _schedule is not None:
-            # -- Consider the host schedule.... 
+            # -- Consider the host schedule....
             sched_factor_sum = sum(_schedule.values())
         else:
             sched_factor_sum = 8760
 
-        annual_energy_Wh = (self.annual_energy_kWh(*args, **kwargs) * 1000)
+        annual_energy_Wh = self.annual_energy_kWh(*args, **kwargs) * 1000
         return annual_energy_Wh / sched_factor_sum
 
     def __str__(self):
@@ -201,11 +201,11 @@ class PhEquipment(_base._Base):
             self.display_name,
             ", ".join(["{}={}".format(str(k), str(v)) for k, v, in vars(self).items()]),
         )
-    
+
     def __repr__(self):
         # type: () -> str
         return str(self)
-    
+
     def ToString(self):
         # type: () -> str
         return str(self)
@@ -225,7 +225,7 @@ class PhEquipment(_base._Base):
         if not cls._phi_default:
             cls._phi_default = cls(_defaults=ph_default_equip[cls.__name__]["PHI"])
         return cls._phi_default
-    
+
 
 # -----------------------------------------------------------------------------
 # - Appliances
@@ -381,12 +381,14 @@ class PhClothesDryer(PhEquipment):
 
         _num_occupants = kwargs.get("_num_occupants", None)
         if _num_occupants is None:
-            raise ValueError("'_num_occupants' input is required for the annual_energy_kWh method. Got only: {}".format(kwargs))
+            raise ValueError(
+                "'_num_occupants' input is required for the annual_energy_kWh method. Got only: {}".format(kwargs)
+            )
         try:
-            return _num_occupants * ( 283 / 4.5 ) / self.combined_energy_factor * 8.45
+            return _num_occupants * (283 / 4.5) / self.combined_energy_factor * 8.45
         except ZeroDivisionError:
             return 0
-    
+
 
 class PhRefrigerator(PhEquipment):
     def __init__(self, _defaults={}):
@@ -508,7 +510,7 @@ class PhCooktop(PhEquipment):
         _num_occupants = kwargs.get("_num_occupants", None)
         if _num_occupants is None:
             raise ValueError("'_num_occupants' input is required for the annual_energy_kWh method.")
-        
+
         return phius_residential.cooktop(_num_occupants, self.energy_demand)
 
 
@@ -536,15 +538,15 @@ class PhPhiusMEL(PhEquipment):
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
         """Return annual energy consumption [kWh] for a single dwelling."""
-        
+
         _num_bedrooms = kwargs.get("_num_bedrooms", None)
         if _num_bedrooms is None:
             raise ValueError("'_num_bedrooms' input is required for the annual_energy_kWh method.")
-        
+
         _floor_area_ft2 = kwargs.get("_floor_area_ft2", None)
         if _floor_area_ft2 is None:
             raise ValueError("'_floor_area_ft2' input is required for the annual_energy_kWh method.")
-        
+
         return phius_residential.misc_electrical(_num_bedrooms, _floor_area_ft2)
 
 
@@ -577,7 +579,7 @@ class PhPhiusLightingInterior(PhEquipment):
         _floor_area_ft2 = kwargs.get("_floor_area_ft2", None)
         if _floor_area_ft2 is None:
             raise ValueError("'_floor_area_ft2' input is required for the annual_energy_kWh method.")
-        
+
         return phius_residential.lighting_interior(_floor_area_ft2, self.frac_high_efficiency)
 
 
@@ -612,11 +614,11 @@ class PhPhiusLightingExterior(PhEquipment):
         _num_bedrooms = kwargs.get("_num_bedrooms", None)
         if _num_bedrooms is None:
             raise ValueError("'_num_bedrooms' input is required for the annual_energy_kWh method.")
-        
+
         _floor_area_ft2 = kwargs.get("_floor_area_ft2", None)
         if _floor_area_ft2 is None:
             raise ValueError("'_floor_area_ft2' input is required for the annual_energy_kWh method.")
-        
+
         return phius_residential.lighting_exterior(_floor_area_ft2, self.frac_high_efficiency)
 
 
@@ -642,13 +644,12 @@ class PhPhiusLightingGarage(PhEquipment):
         super(PhPhiusLightingGarage, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         new_obj.frac_high_efficiency = _input_dict["frac_high_efficiency"]
         return new_obj
-    
+
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
         """Return the annual energy consumption [kWh] for a single dwelling."""
 
         return phius_residential.lighting_garage(self.frac_high_efficiency)
-
 
 
 class PhCustomAnnualElectric(PhEquipment):
@@ -763,11 +764,12 @@ class PhElevatorHydraulic(PhEquipment):
         new_obj = cls()
         super(PhElevatorHydraulic, new_obj).base_attrs_from_dict(new_obj, _input_dict)
         return new_obj
-    
+
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
         """Returns the annual energy use (kWh) of the equipment."""
         return self.energy_demand
+
 
 class PhElevatorGearedTraction(PhEquipment):
     def __init__(self, _num_dwellings=1):
@@ -805,6 +807,7 @@ class PhElevatorGearedTraction(PhEquipment):
         # type: (*Any, **Any) -> float
         """Returns the annual energy use (kWh) of the equipment."""
         return self.energy_demand
+
 
 class PhElevatorGearlessTraction(PhEquipment):
     def __init__(self, _num_dwellings=1):
@@ -858,8 +861,9 @@ def phius_elevator_by_stories(_num_of_stories):
 # -----------------------------------------------------------------------------
 # Collections
 
-# TODO: Deprecate these classes in favor of new the "Process Load" method. 
+# TODO: Deprecate these classes in favor of new the "Process Load" method.
 # See: honeybee_energy_ph.load.process.py
+
 
 class PhEquipmentBuilder(object):
     """Constructor class for PH Equipment objects"""
@@ -877,9 +881,9 @@ class PhEquipmentBuilder(object):
             )
             raise Exception(msg)
 
-        equipment_class = getattr(sys.modules[__name__], equipment_type) # type: Type[PhEquipment]
+        equipment_class = getattr(sys.modules[__name__], equipment_type)  # type: Type[PhEquipment]
         new_equipment = equipment_class.from_dict(_input_dict)
- 
+
         return new_equipment
 
     def __str__(self):
@@ -903,7 +907,7 @@ class PhEquipmentCollection(object):
 
     def __init__(self, _host=None):
         # type: (ElectricEquipmentPhProperties | None) -> None
-        self._equipment_set = {} # type: dict[str, PhEquipment]
+        self._equipment_set = {}  # type: dict[str, PhEquipment]
         self._host = _host
 
     @property
@@ -970,7 +974,7 @@ class PhEquipmentCollection(object):
         --------
             * (float): total Wattage of all installed PH-Equipment in the collection.
         """
-        return sum(equip.annual_avg_wattage(_hb_room) for equip in self.values()) # type: ignore
+        return sum(equip.annual_avg_wattage(_hb_room) for equip in self.values())  # type: ignore
 
     def to_dict(self):
         # type: () -> dict

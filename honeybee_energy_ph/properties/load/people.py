@@ -6,7 +6,8 @@
 from uuid import uuid4
 
 try:
-    from typing import Any, Dict, Optional, TYPE_CHECKING
+    from typing import TYPE_CHECKING, Any, Dict, Optional
+
     if TYPE_CHECKING:
         from honeybee_energy.properties.extension import PeopleProperties
 except ImportError:
