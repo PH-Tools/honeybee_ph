@@ -444,6 +444,7 @@ class EnergyMaterialNoMassPhProperties(object):
         self.id_num = 0
         self._ph_color = None  # type: Optional[PhColor]
         self.user_data = {}
+        self.divisions = None
 
     @property
     def ph_color(self):
@@ -460,6 +461,7 @@ class EnergyMaterialNoMassPhProperties(object):
         d = {}
         d["id_num"] = self.id_num
         d["user_data"] = self.user_data
+        d['divisions'] = self.divisions
 
         if self.ph_color:
             d["ph_color"] = self.ph_color.to_dict()
@@ -473,6 +475,7 @@ class EnergyMaterialNoMassPhProperties(object):
         new_prop.id_num = _input_dict["id_num"]
         new_prop._ph_color = PhColor.from_dict(_input_dict.get("ph_color", None))
         new_prop.user_data = _input_dict.get("user_data", {})
+        new_prop.divisions = _input_dict["divisions"]
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
@@ -485,6 +488,7 @@ class EnergyMaterialNoMassPhProperties(object):
         new_obj = EnergyMaterialNoMassPhProperties(_host)
         new_obj.id_num = self.id_num
         new_obj.user_data = self.user_data.copy()
+        new_obj.divisions = self.divisions
         if self.ph_color:
             new_obj.ph_color = self.ph_color.duplicate()
         return new_obj
@@ -510,6 +514,7 @@ class EnergyMaterialVegetationPhProperties(object):
         self.id_num = 0
         self._ph_color = None  # type: Optional[PhColor]
         self.user_data = {}
+        self.divisions = None
 
     @property
     def ph_color(self):
@@ -526,6 +531,7 @@ class EnergyMaterialVegetationPhProperties(object):
         d = {}
         d["id_num"] = self.id_num
         d["user_data"] = self.user_data
+        d['divisions'] = self.divisions
 
         if self.ph_color:
             d["ph_color"] = self.ph_color.to_dict()
@@ -539,6 +545,7 @@ class EnergyMaterialVegetationPhProperties(object):
         new_prop.id_num = _input_dict["id_num"]
         new_prop._ph_color = PhColor.from_dict(_input_dict.get("ph_color", None))
         new_prop.user_data = _input_dict.get("user_data", {})
+        new_prop.divisions = _input_dict["divisions"]
         return new_prop
 
     def apply_properties_from_dict(self, abridged_data):
@@ -550,6 +557,7 @@ class EnergyMaterialVegetationPhProperties(object):
         new_obj = EnergyMaterialVegetationPhProperties(_host)
         new_obj.id_num = self.id_num
         new_obj.user_data = self.user_data.copy()
+        new_obj.divisions = self.divisions
         if self.ph_color:
             new_obj.ph_color = self.ph_color.duplicate()
         return new_obj
