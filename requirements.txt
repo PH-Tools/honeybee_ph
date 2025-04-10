@@ -1,5 +1,5 @@
-honeybee-core>=1.61.6
-honeybee-energy>=1.112.11
+honeybee-core>=1.61.12
+honeybee-energy>=1.113.2
 ladybug-rhino>=1.43.7
-PH-units>=1.5.23
+PH-units>=1.5.25
 plotly>=5.24.1
