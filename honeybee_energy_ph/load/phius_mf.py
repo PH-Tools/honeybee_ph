@@ -57,10 +57,18 @@ class PhiusResidentialStory(object):
         self.total_number_bedrooms = self.calc_story_bedrooms(_hb_rooms)
 
         self.design_occupancy = self.calc_passive_house_occupancy(_hb_rooms)
-        self.mel = phius_residential.misc_electrical(self.total_number_bedrooms, self.total_floor_area_ft2, self.total_number_dwellings)
-        self.lighting_int = phius_residential.lighting_interior(self.total_floor_area_ft2, self.LIGHTING_INT_HE_FRAC, self.total_number_dwellings)
-        self.lighting_ext = phius_residential.lighting_exterior(self.total_floor_area_ft2, self.LIGHTING_EXT_HE_FRAC, self.total_number_dwellings)
-        self.lighting_garage = phius_residential.lighting_garage(self.LIGHTING_GARAGE_HE_FRAC, self.total_number_dwellings)
+        self.mel = phius_residential.misc_electrical(
+            self.total_number_bedrooms, self.total_floor_area_ft2, self.total_number_dwellings
+        )
+        self.lighting_int = phius_residential.lighting_interior(
+            self.total_floor_area_ft2, self.LIGHTING_INT_HE_FRAC, self.total_number_dwellings
+        )
+        self.lighting_ext = phius_residential.lighting_exterior(
+            self.total_floor_area_ft2, self.LIGHTING_EXT_HE_FRAC, self.total_number_dwellings
+        )
+        self.lighting_garage = phius_residential.lighting_garage(
+            self.LIGHTING_GARAGE_HE_FRAC, self.total_number_dwellings
+        )
 
     @property
     def story_number(self):

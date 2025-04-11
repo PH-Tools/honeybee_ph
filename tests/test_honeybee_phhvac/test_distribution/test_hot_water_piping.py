@@ -371,6 +371,7 @@ def test_PhPipeTrunk_dict_round_trip():
     # -- Build the Trunk
     trunk1 = hot_water_piping.PhHvacPipeTrunk()
     trunk1.pipe_element = ele1
+    trunk1.demand_recirculation = True
     trunk1.add_branch(branch1)
     d1 = trunk1.to_dict()
 

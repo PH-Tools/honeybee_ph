@@ -461,7 +461,7 @@ class EnergyMaterialNoMassPhProperties(object):
         d = {}
         d["id_num"] = self.id_num
         d["user_data"] = self.user_data
-        d['divisions'] = self.divisions
+        d["divisions"] = self.divisions
 
         if self.ph_color:
             d["ph_color"] = self.ph_color.to_dict()
@@ -531,7 +531,7 @@ class EnergyMaterialVegetationPhProperties(object):
         d = {}
         d["id_num"] = self.id_num
         d["user_data"] = self.user_data
-        d['divisions'] = self.divisions
+        d["divisions"] = self.divisions
 
         if self.ph_color:
             d["ph_color"] = self.ph_color.to_dict()

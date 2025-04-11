@@ -35,7 +35,7 @@ def misc_electrical(_num_bedrooms, _floor_area_ft2, _num_dwellings=1):
     MELS_KWH_YR_FT2 = 0.91
     PHIUS_RESNET_FRACTION = 0.8
 
-    a =  DWELLING_TV_KWH_YR * _num_dwellings
+    a = DWELLING_TV_KWH_YR * _num_dwellings
     b = BEDROOM_TV_KWH_YR * _num_bedrooms
     c = MELS_KWH_YR_FT2 * _floor_area_ft2
 

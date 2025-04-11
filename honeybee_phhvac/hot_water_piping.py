@@ -728,6 +728,7 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         self.pipe_element = PhHvacPipeElement()
         self.multiplier = 1  # type: int
         self.branches = []  # type: (List[PhHvacPipeBranch])
+        self.demand_recirculation = False  # type: bool
 
     @property
     def material_name(self):
@@ -804,6 +805,8 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         new_obj.user_data = self.user_data
         new_obj.pipe_element = self.pipe_element.duplicate()
         new_obj.multiplier = self.multiplier
+        new_obj.demand_recirculation = self.demand_recirculation
+
         for branch in self.branches:
             new_obj.add_branch(branch.duplicate())
 
@@ -818,6 +821,7 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         d = super(PhHvacPipeTrunk, self).to_dict()
         d["pipe_element"] = self.pipe_element.to_dict(_include_properties)
         d["multiplier"] = self.multiplier
+        d["demand_recirculation"] = self.demand_recirculation
         d["branches"] = {}
         for branch in self.branches:
             d["branches"][branch.identifier] = branch.to_dict(_include_properties)
@@ -841,6 +845,7 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
         new_obj.user_data = _input_dict["user_data"]
         new_obj.pipe_element = PhHvacPipeElement.from_dict(_input_dict["pipe_element"])
         new_obj.multiplier = _input_dict["multiplier"]
+        new_obj.demand_recirculation = _input_dict.get("demand_recirculation", False)
         for branch_dict in _input_dict["branches"].values():
             new_obj.add_branch(PhHvacPipeBranch.from_dict(branch_dict))
 
@@ -848,10 +853,11 @@ class PhHvacPipeTrunk(_base._PhHVACBase):
 
     def __str__(self):
         # type: () -> str
-        return "{}: (display_name={}, identifier={} multiplier={}) [{} segments, len={:.1f}, {} branches connected]".format(
+        return "{}: (display_name={}, identifier={}, demand_recirculation={}, multiplier={}) [{} segments, len={:.1f}, {} branches connected]".format(
             self.__class__.__name__,
             self.display_name,
             self.identifier_short,
+            self.demand_recirculation,
             self.multiplier,
             len(self.segments),
             float(self.length),
