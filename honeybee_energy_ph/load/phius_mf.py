@@ -328,13 +328,13 @@ class PhiusNonResRoom(object):
         )
 
     @classmethod
-    def from_ph_space(cls, _ph_space):
-        # type: (space.Space) -> PhiusNonResRoom
+    def from_ph_space(cls, _ph_space, _area_unit):
+        # type: (space.Space, str) -> PhiusNonResRoom
         """Returns a new PhiusNonResSpace with properties based on a PH-Space."""
         obj = cls()
 
         obj.name = _ph_space.full_name
-        obj.reference_floor_area_m2 = _ph_space.weighted_net_floor_area
+        obj.reference_floor_area_m2 = convert(_ph_space.weighted_net_floor_area, _area_unit, "M2") or 0.0
         if _ph_space.host is not None:
             obj.program_type = PhiusNonResProgram.from_hb_room(_ph_space.host)
 
