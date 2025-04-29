@@ -605,7 +605,7 @@ class PHPPCodes(_base._Base):
         self,
         _country_code="US-United States of America",
         _region_code="New York",
-        _dataset_name="US0055b-New York",
+        _dataset_name="US0055c-New York",
     ):
         # type: (str, str, str) -> None
         super(PHPPCodes, self).__init__()
