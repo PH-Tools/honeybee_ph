@@ -95,6 +95,7 @@ class PhDivisionGrid(object):
         self._row_heights = []  # type: List[float]
         self._column_widths = []  # type: List[float]
         self._cells = []  # type: List[PhDivisionCell]
+        self.is_a_steel_stud_cavity = False
 
     @property
     def column_widths(self):
@@ -270,6 +271,7 @@ class PhDivisionGrid(object):
         d["cells"] = []
         for cell in self._cells:
             d["cells"].append(cell.to_dict())
+        d["is_a_steel_stud_cavity"] = self.is_a_steel_stud_cavity
         return d
 
     @classmethod
@@ -284,6 +286,7 @@ class PhDivisionGrid(object):
                 cell_dict["row"],
                 opaque.EnergyMaterial.from_dict(cell_dict["material"]),
             )
+        new_grid.is_a_steel_stud_cavity = _input_dict.get("is_a_steel_stud_cavity", False)
         return new_grid
 
     def duplicate(self):
@@ -294,6 +297,7 @@ class PhDivisionGrid(object):
         new_grid.set_row_heights(self.row_heights)
         for cell in self._cells:
             new_grid.set_cell_material(cell.column, cell.row, cell.material.duplicate())
+        new_grid.is_a_steel_stud_cavity = self.is_a_steel_stud_cavity
         return new_grid
 
     def __copy__(self):
@@ -305,6 +309,7 @@ class PhDivisionGrid(object):
             self.__class__.__name__,
             self.column_count,
             self.row_count,
+            self.is_a_steel_stud_cavity,
         )
 
     def __repr__(self):
@@ -424,7 +429,7 @@ class EnergyMaterialPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return "{}(id_num={!r}, ph_color={!r})".format(
+        return "{}(id_num={!r}, ph_color={!r}, is_a_steel_stud_cavity={})".format(
             self.__class__.__name__,
             self.id_num,
             self.ph_color,

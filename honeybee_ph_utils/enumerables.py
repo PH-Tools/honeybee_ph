@@ -18,6 +18,27 @@ class ValueNotAllowedError(Exception):
 
 
 class CustomEnum(object):
+    """A simplified custom Enum class since IronPython doesn't have an enum.
+
+    Example usage:
+    ```python
+    class PhFoundationType(enumerables.CustomEnum):
+        allowed = [
+            "1-HEATED_BASEMENT",
+            "2-UNHEATED_BASEMENT",
+            "3-SLAB_ON_GRADE",
+            "4-VENTED_CRAWLSPACE",
+            "5-NONE",
+        ]
+
+        def __init__(self, _value=1):
+            # type: (Union[str, int]) -> None
+            super(PhFoundationType, self).__init__(_value)
+
+    new_foundation_type = PhFoundationType("1-HEATED_BASEMENT")
+    ```
+    """
+
     allowed = []  # type: list[str]
 
     def __init__(self, _value="", _index_offset=-1):
@@ -86,3 +107,7 @@ class CustomEnum(object):
     def __eq__(self, other):
         # type: (CustomEnum) -> bool
         return self.value == other.value and self.__class__ == other.__class__
+
+    def __hash__(self):
+        # type: () -> int
+        return hash(self.value) + hash(self.__class__)

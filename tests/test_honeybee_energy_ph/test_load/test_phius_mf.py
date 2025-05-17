@@ -1,6 +1,6 @@
 from pytest import approx
 
-from honeybee_energy_ph.load.phius_mf import PhiusResidentialStory, PhiusNonResRoom
+from honeybee_energy_ph.load.phius_mf import PhiusNonResRoom, PhiusResidentialStory
 from honeybee_ph import space
 
 
@@ -41,7 +41,7 @@ def test_phius_mf_non_res_from_space(floor_segment_geometry):
     # Build the Floor Segments
     flr_seg_1 = space.SpaceFloorSegment()
     flr_seg_1.geometry = floor_segment_geometry.flr_segment_1
-   
+
     # Build the Floors
     floor_1 = space.SpaceFloor()
     floor_1.add_floor_segment(flr_seg_1)
@@ -51,7 +51,7 @@ def test_phius_mf_non_res_from_space(floor_segment_geometry):
     vol_1 = space.SpaceVolume()
     vol_1.floor = floor_1
     vol_1.avg_ceiling_height = 2.5
-    
+
     sp.add_new_volumes([vol_1])
 
     a = PhiusNonResRoom.from_ph_space(sp, "M2")
