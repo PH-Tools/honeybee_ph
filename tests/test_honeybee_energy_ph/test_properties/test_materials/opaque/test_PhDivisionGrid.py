@@ -23,7 +23,7 @@ def test_populated_ph_division_grid_dict_round_trip():
     mat_2 = EnergyMaterial("mat_2", thickness=1, conductivity=1, density=999, specific_heat=999)
     grid_1.set_cell_material(0, 1, mat_2)
 
-    grid_1.is_a_steel_stud_cavity = True
+    grid_1.steel_stud_spacing_mm = 406.4
 
     # --
     d = grid_1.to_dict()
@@ -48,7 +48,7 @@ def test_ph_division_grid_duplicate():
     mat_2 = EnergyMaterial("mat_2", thickness=1, conductivity=1, density=999, specific_heat=999)
     grid_1.set_cell_material(0, 1, mat_2)
 
-    grid_1.is_a_steel_stud_cavity = True
+    grid_1.steel_stud_spacing_mm = 600
 
     grid_2 = grid_1.duplicate()
     assert grid_1.to_dict() == grid_2.to_dict()

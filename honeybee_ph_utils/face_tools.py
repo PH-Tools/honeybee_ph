@@ -3,7 +3,7 @@
 
 """Tools for working with Honeybee.face.Face objects."""
 
-
+import logging
 import math
 from collections import defaultdict
 
@@ -24,8 +24,11 @@ except ImportError as e:
 
 try:
     from ladybug_geometry.geometry3d import pointvector
+    from ladybug_geometry.geometry3d.plane import Plane
 except ImportError:
     raise ImportError("Failed to import ladybug_geometry")
+
+logger = logging.getLogger(__name__)
 
 
 def _hb_face_type_unique_key(_hb_face):
@@ -41,11 +44,14 @@ def _hb_face_type_unique_key(_hb_face):
 def sort_hb_faces_by_type(_faces):
     # type: (Sequence[T]) -> List[List[T]]
     """Group HB-Faces by their type."""
+    logger.debug("sort_hb_faces_by_type(_faces=[{}])".format(len(_faces)))
 
     d = defaultdict(list)
     for face in _faces:
         key = _hb_face_type_unique_key(face)
         d[key].append(face.duplicate())
+    
+    logger.debug("Returning: [{}] Groups".format(len(d.values())))
     return list(d.values())
 
 
@@ -59,8 +65,11 @@ def sort_hb_faces_by_co_planar(_faces, _tolerance, _angle_tolerance_radians):
     Returns:
         (List[List[Face | Shade]]) A list of lists of HB-Faces that are co-planar.
     """
+    logger.debug("sort_hb_faces_by_co_planar(_faces=[{}], _tolerance={:.4f}, _angle_tolerance_radians={:.4f})".format(
+        len(_faces), _tolerance, _angle_tolerance_radians
+    ))
 
-    groups = {}
+    groups = {} # type: dict[Plane, List[T]]
     for face in _faces:
         for group_plane, group_faces in groups.items():
             if face.geometry.plane.is_coplanar_tolerance(group_plane, _tolerance, _angle_tolerance_radians):
@@ -68,6 +77,15 @@ def sort_hb_faces_by_co_planar(_faces, _tolerance, _angle_tolerance_radians):
                 break
         else:
             groups[face.geometry.plane] = [face]
+    
+    # for k in sorted(groups.keys(), key=lambda p: p.n.x):
+    #     logger.debug("Group {}".format(k.n))
+    #     for face in groups[k]:
+    #         face_type = getattr(face, "type", "shade")
+    #         const_name = getattr(face.properties, "energy").construction.display_name
+    #         logger.debug("  {} | {} | {}".format(face.display_name, face_type, const_name))
+    
+    logger.debug("Returning: [{}] Groups".format(len(groups.values())))
     return list(groups.values())
 
 
@@ -104,6 +122,8 @@ def find_connected_HB_Faces(_hb_faces, _tolerance):
     """Initialize an empty set called visited to keep track of which faces have 
     been visited during the search, and an empty list called components to store 
     the connected component groups."""
+    logger.debug("find_connected_HB_Faces(_hb_faces=[{}], _tolerance={:.4f})".format(len(_hb_faces), _tolerance))
+    
     visited = set()
     components = []
 
@@ -133,6 +153,14 @@ def find_connected_HB_Faces(_hb_faces, _tolerance):
             depth_first_search(hb_face, component)
             components.append(component)
 
+    # for component in components:
+    #     logger.debug("Component with {} faces:".format(len(component)))
+    #     for face in component:
+    #         face_type = getattr(face, "type", "shade")
+    #         const_name = getattr(face.properties, "energy").construction.display_name
+    #         logger.debug("  {} | {} | {}".format(face.display_name, face_type, const_name))
+    
+    logger.debug("Returning: [{}] Groups".format(len(components)))
     return components
 
 
@@ -147,11 +175,12 @@ def group_hb_faces(_hb_faces, _tolerance, _angle_tolerance_degrees):
     Returns:
         (List[List[Face | Shade]]) A list of lists of HB-Faces that are similar, planar, and connected.
     """
+    logger.debug("group_hb_faces()")
 
     face_groups_by_type = sort_hb_faces_by_type(_hb_faces)
-    angle_tolerance_radians = math.radians(_angle_tolerance_degrees)
 
     face_groups_coplanar = []
+    angle_tolerance_radians = math.radians(_angle_tolerance_degrees)
     for face_group in face_groups_by_type:
         face_groups_coplanar.extend(sort_hb_faces_by_co_planar(face_group, _tolerance, angle_tolerance_radians))
 

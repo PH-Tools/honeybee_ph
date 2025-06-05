@@ -95,7 +95,7 @@ class PhDivisionGrid(object):
         self._row_heights = []  # type: List[float]
         self._column_widths = []  # type: List[float]
         self._cells = []  # type: List[PhDivisionCell]
-        self.is_a_steel_stud_cavity = False
+        self.steel_stud_spacing_mm = None # type: float | None
 
     @property
     def column_widths(self):
@@ -132,6 +132,12 @@ class PhDivisionGrid(object):
         # type: () -> List[PhDivisionCell]
         """Return the list of all the cells in the grid, sorted by row/column."""
         return sorted(self._cells, key=lambda x: (x.row, x.column))
+
+    @property
+    def is_a_steel_stud_cavity(self):
+        # type: () -> bool
+        """Check if the grid is a steel stud cavity by checking if the spacing is set."""
+        return self.steel_stud_spacing_mm is not None and self.steel_stud_spacing_mm > 0
 
     def set_column_widths(self, _column_widths):
         # type: (Iterable[float]) -> None
@@ -271,7 +277,7 @@ class PhDivisionGrid(object):
         d["cells"] = []
         for cell in self._cells:
             d["cells"].append(cell.to_dict())
-        d["is_a_steel_stud_cavity"] = self.is_a_steel_stud_cavity
+        d["steel_stud_spacing_mm"] = self.steel_stud_spacing_mm
         return d
 
     @classmethod
@@ -286,7 +292,7 @@ class PhDivisionGrid(object):
                 cell_dict["row"],
                 opaque.EnergyMaterial.from_dict(cell_dict["material"]),
             )
-        new_grid.is_a_steel_stud_cavity = _input_dict.get("is_a_steel_stud_cavity", False)
+        new_grid.steel_stud_spacing_mm = _input_dict.get("steel_stud_spacing_mm", None)
         return new_grid
 
     def duplicate(self):
@@ -297,7 +303,7 @@ class PhDivisionGrid(object):
         new_grid.set_row_heights(self.row_heights)
         for cell in self._cells:
             new_grid.set_cell_material(cell.column, cell.row, cell.material.duplicate())
-        new_grid.is_a_steel_stud_cavity = self.is_a_steel_stud_cavity
+        new_grid.steel_stud_spacing_mm = self.steel_stud_spacing_mm
         return new_grid
 
     def __copy__(self):
@@ -309,7 +315,7 @@ class PhDivisionGrid(object):
             self.__class__.__name__,
             self.column_count,
             self.row_count,
-            self.is_a_steel_stud_cavity,
+            self.steel_stud_spacing_mm,
         )
 
     def __repr__(self):
@@ -328,7 +334,6 @@ class EnergyMaterialPhProperties(object):
         self.id_num = 0
         self._ph_color = None  # type: Optional[PhColor]
         self.user_data = {}
-        self.base_material = None  # type: Optional[opaque.EnergyMaterial]
         self.divisions = PhDivisionGrid()
 
     # -------------------------------------------------------------------------
@@ -346,6 +351,19 @@ class EnergyMaterialPhProperties(object):
         # type: (Any) -> NoReturn
         raise DeprecationWarning(
             "The 'percentage_of_assembly' property is deprecated. Please use the 'divisions' for mixed materials."
+        )
+
+    @property
+    def base_material(self):
+        raise DeprecationWarning(
+            "The 'base_material' property is deprecated. Please use the 'divisions' for mixed materials."
+        )
+    
+    @base_material.setter
+    def base_material(self, _material):
+        # type: (Any) -> NoReturn
+        raise DeprecationWarning(
+            "The 'base_material' property is deprecated. Please use the 'divisions' for mixed materials."
         )
 
     @property
