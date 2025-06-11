@@ -50,7 +50,7 @@ def sort_hb_faces_by_type(_faces):
     for face in _faces:
         key = _hb_face_type_unique_key(face)
         d[key].append(face.duplicate())
-    
+
     logger.debug("Returning: [{}] Groups".format(len(d.values())))
     return list(d.values())
 
@@ -65,11 +65,13 @@ def sort_hb_faces_by_co_planar(_faces, _tolerance, _angle_tolerance_radians):
     Returns:
         (List[List[Face | Shade]]) A list of lists of HB-Faces that are co-planar.
     """
-    logger.debug("sort_hb_faces_by_co_planar(_faces=[{}], _tolerance={:.4f}, _angle_tolerance_radians={:.4f})".format(
-        len(_faces), _tolerance, _angle_tolerance_radians
-    ))
+    logger.debug(
+        "sort_hb_faces_by_co_planar(_faces=[{}], _tolerance={:.4f}, _angle_tolerance_radians={:.4f})".format(
+            len(_faces), _tolerance, _angle_tolerance_radians
+        )
+    )
 
-    groups = {} # type: dict[Plane, List[T]]
+    groups = {}  # type: dict[Plane, List[T]]
     for face in _faces:
         for group_plane, group_faces in groups.items():
             if face.geometry.plane.is_coplanar_tolerance(group_plane, _tolerance, _angle_tolerance_radians):
@@ -77,14 +79,14 @@ def sort_hb_faces_by_co_planar(_faces, _tolerance, _angle_tolerance_radians):
                 break
         else:
             groups[face.geometry.plane] = [face]
-    
+
     # for k in sorted(groups.keys(), key=lambda p: p.n.x):
     #     logger.debug("Group {}".format(k.n))
     #     for face in groups[k]:
     #         face_type = getattr(face, "type", "shade")
     #         const_name = getattr(face.properties, "energy").construction.display_name
     #         logger.debug("  {} | {} | {}".format(face.display_name, face_type, const_name))
-    
+
     logger.debug("Returning: [{}] Groups".format(len(groups.values())))
     return list(groups.values())
 
@@ -123,7 +125,7 @@ def find_connected_HB_Faces(_hb_faces, _tolerance):
     been visited during the search, and an empty list called components to store 
     the connected component groups."""
     logger.debug("find_connected_HB_Faces(_hb_faces=[{}], _tolerance={:.4f})".format(len(_hb_faces), _tolerance))
-    
+
     visited = set()
     components = []
 
@@ -159,7 +161,7 @@ def find_connected_HB_Faces(_hb_faces, _tolerance):
     #         face_type = getattr(face, "type", "shade")
     #         const_name = getattr(face.properties, "energy").construction.display_name
     #         logger.debug("  {} | {} | {}".format(face.display_name, face_type, const_name))
-    
+
     logger.debug("Returning: [{}] Groups".format(len(components)))
     return components
 

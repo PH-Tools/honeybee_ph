@@ -95,7 +95,7 @@ class PhDivisionGrid(object):
         self._row_heights = []  # type: List[float]
         self._column_widths = []  # type: List[float]
         self._cells = []  # type: List[PhDivisionCell]
-        self.steel_stud_spacing_mm = None # type: float | None
+        self.steel_stud_spacing_mm = None  # type: float | None
 
     @property
     def column_widths(self):
@@ -235,6 +235,22 @@ class PhDivisionGrid(object):
             return 0.0
         return self._column_widths[_column_num] * self._row_heights[_row_num]
 
+    def get_cell_width_m(self, _cell):
+        # type: (PhDivisionCell) -> float
+        """Get the width (mm) of a specific cell."""
+        try:
+            return self._column_widths[_cell.column]
+        except IndexError:
+            return 0.0
+
+    def get_cell_height_m(self, _cell):
+        # type: (PhDivisionCell) -> float
+        """Get the height (mm) of a specific cell."""
+        try:
+            return self._row_heights[_cell.row]
+        except IndexError:
+            return 0.0
+
     def get_base_material(self):
         # type: () -> Optional[opaque.EnergyMaterial]
         """Returns the 'base' material (the most common material in the grid, by area)."""
@@ -358,7 +374,7 @@ class EnergyMaterialPhProperties(object):
         raise DeprecationWarning(
             "The 'base_material' property is deprecated. Please use the 'divisions' for mixed materials."
         )
-    
+
     @base_material.setter
     def base_material(self, _material):
         # type: (Any) -> NoReturn

@@ -135,3 +135,67 @@ def test_ph_divisions_get_equivalent_conductivity_2():
     grid.set_cell_material(1, 1, mat_2)
 
     assert grid.get_equivalent_conductivity() == approx(0.3714285714285714)
+
+
+def test_ph_divisions_get_width_m():
+    grid = PhDivisionGrid()
+    grid.set_column_widths([2.4, 0.4])
+    grid.set_row_heights([1.2, 0.8])
+
+    mat_1 = EnergyMaterial("mat_1", thickness=1, conductivity=0.2, density=999, specific_heat=999)
+    grid.set_cell_material(0, 0, mat_1)
+    grid.set_cell_material(0, 1, mat_1)
+
+    mat_2 = EnergyMaterial("mat_2", thickness=1, conductivity=1.4, density=999, specific_heat=999)
+    grid.set_cell_material(1, 0, mat_2)
+    grid.set_cell_material(1, 1, mat_2)
+
+    # Test Column 1
+    cell_0_0 = grid.get_cell(0, 0)
+    assert cell_0_0 is not None
+    assert grid.get_cell_width_m(cell_0_0) == 2.4
+
+    cell_0_1 = grid.get_cell(0, 1)
+    assert cell_0_1 is not None
+    assert grid.get_cell_width_m(cell_0_1) == 2.4
+
+    # Test Column 2
+    cell_1_0 = grid.get_cell(1, 0)
+    assert cell_1_0 is not None
+    assert grid.get_cell_width_m(cell_1_0) == 0.4
+
+    cell_1_1 = grid.get_cell(1, 1)
+    assert cell_1_1 is not None
+    assert grid.get_cell_width_m(cell_1_1) == 0.4
+
+
+def test_ph_divisions_get_height_m():
+    grid = PhDivisionGrid()
+    grid.set_column_widths([2.4, 0.4])
+    grid.set_row_heights([1.2, 0.8])
+
+    mat_1 = EnergyMaterial("mat_1", thickness=1, conductivity=0.2, density=999, specific_heat=999)
+    grid.set_cell_material(0, 0, mat_1)
+    grid.set_cell_material(0, 1, mat_1)
+
+    mat_2 = EnergyMaterial("mat_2", thickness=1, conductivity=1.4, density=999, specific_heat=999)
+    grid.set_cell_material(1, 0, mat_2)
+    grid.set_cell_material(1, 1, mat_2)
+
+    # Test Row 1
+    cell_0_0 = grid.get_cell(0, 0)
+    assert cell_0_0 is not None
+    assert grid.get_cell_height_m(cell_0_0) == 1.2
+
+    cell_1_0 = grid.get_cell(1, 0)
+    assert cell_1_0 is not None
+    assert grid.get_cell_height_m(cell_1_0) == 1.2
+
+    # Test Row 2
+    cell_0_1 = grid.get_cell(0, 1)
+    assert cell_0_1 is not None
+    assert grid.get_cell_height_m(cell_0_1) == 0.8
+
+    cell_1_1 = grid.get_cell(1, 1)
+    assert cell_1_1 is not None
+    assert grid.get_cell_height_m(cell_1_1) == 0.8
