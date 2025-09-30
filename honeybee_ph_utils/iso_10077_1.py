@@ -105,10 +105,10 @@ class ISO100771Data:
         )
 
     @classmethod
-    def from_lbt_Face3D(cls, _hb_face3d, _ph_frame, _ph_glazing):
-        # type: (face.Face3D, window.PhWindowFrame, window.PhWindowGlazing) -> ISO100771Data
+    def from_lbt_Face3D(cls, _IGH, _hb_face3d, _ph_frame, _ph_glazing):
+        # type: (gh_io.IGH, face.Face3D, window.PhWindowFrame, window.PhWindowGlazing) -> ISO100771Data
         """Create an ISO100771Data object from a ladybug_geometry.geometry3d.face.Face3D object."""
-
+        raise NotImplementedError("Error: This classmethod is not yet implemented. Need to add unit-support....")
         (
             w,
             h,

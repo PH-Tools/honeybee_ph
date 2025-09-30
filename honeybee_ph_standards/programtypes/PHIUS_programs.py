@@ -2004,10 +2004,10 @@ PHIUS_MF_Calculator = {
         },
     },
     "2021::PHIUS_MF::Storage_or_Equip": {
-        "name": "Storage / Equipment",
+        "name": "Storage/Equip Room",
         "hb_base_program": "2019::LargeOffice::Storage",
         "protocol": "PHIUS_MultiFamily",
-        "description": "Storage / Equipment",
+        "description": "Storage/Equip Room",
         "source": [
             "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
             "2019::LargeOffice::Storage",
@@ -2215,11 +2215,11 @@ PHIUS_MF_Calculator = {
             },
         },
     },
-    "2021::PHIUS_MF::Workout": {
-        "name": "Workout",
+    "2021::PHIUS_MF::Workout_Room": {
+        "name": "Workout Room",
         "hb_base_program": "2019::PrimarySchool::Gym",
         "protocol": "PHIUS_MultiFamily",
-        "description": "Workout",
+        "description": "Workout Room",
         "source": [
             "PHIUS_Multi-Family_Calculator- 021.03.23.xls",
             "2019::PrimarySchool::Gym",
@@ -2317,7 +2317,7 @@ PHIUS_MF_Calculator = {
                 "watts_per_m2": 0.0,
             },
         },
-    },
+    },  
 }
 
 # -- Full Library
