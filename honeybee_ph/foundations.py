@@ -265,7 +265,7 @@ class PhSlabOnGrade(PhFoundation):
         super(PhSlabOnGrade, self).__init__()
         self.foundation_type = PhFoundationType("3-SLAB_ON_GRADE")
         self.floor_slab_area_m2 = 0.0
-        self.floor_slab_u_value = 1.0
+        self.floor_slab_u_value = None # type: Union[float, None]
         self.floor_slab_exposed_perimeter_m = 0.0
         self._perim_insulation_position = PhSlabEdgeInsulationPosition("3-VERTICAL")
         self.perim_insulation_width_or_depth_m = 0.300
@@ -297,7 +297,7 @@ class PhSlabOnGrade(PhFoundation):
         return obj
 
     def duplicate(self):
-        # type: () -> PhSlabOnGrad
+        # type: () -> PhSlabOnGrade
         return self.__copy__()
 
     def to_dict(self):
