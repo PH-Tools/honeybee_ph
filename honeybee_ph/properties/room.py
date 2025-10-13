@@ -53,10 +53,18 @@ class PhSpecificHeatCapacity(enumerables.CustomEnum):
         "1-LIGHTWEIGHT",
         "2-MIXED",
         "3-MASSIVE",
+        "4",
+        "5",
+        "6-USER_DEFINED",
     ]
 
     def __init__(self, _value=1):
         # type: (Union[str, int]) -> None
+        if _value==4 or _value==5:
+            raise enumerables.ValueNotAllowedError(
+                _in=_value,
+                _enum=self,
+            )
         super(PhSpecificHeatCapacity, self).__init__(_value)
 
 
@@ -72,6 +80,7 @@ class RoomPhProperties(object):
         self.ph_bldg_segment = BldgSegment()
         self._ph_foundations = {}  # type: Dict[str, PhFoundation]
         self.specific_heat_capacity = PhSpecificHeatCapacity("1-LIGHTWEIGHT")
+        self.specific_heat_capacity_wh_m2k = None # type: None | int
 
     @property
     def spaces(self):
@@ -99,6 +108,7 @@ class RoomPhProperties(object):
         new_obj = RoomPhProperties(_host)
         new_obj.id_num = self.id_num
         new_obj.specific_heat_capacity = PhSpecificHeatCapacity(self.specific_heat_capacity.value)
+        new_obj.specific_heat_capacity_wh_m2k = self.specific_heat_capacity_wh_m2k
 
         if include_spaces:
             for sp in self._spaces:
@@ -123,6 +133,7 @@ class RoomPhProperties(object):
 
         d["spaces"] = [sp.to_dict() for sp in self.spaces]
         d["specific_heat_capacity"] = self.specific_heat_capacity.value
+        d["specific_heat_capacity_wh_m2k"] = self.specific_heat_capacity_wh_m2k
 
         if abridged == False:
             d["type"] = "RoomPhProperties"
@@ -148,6 +159,7 @@ class RoomPhProperties(object):
         new_prop.specific_heat_capacity = PhSpecificHeatCapacity(
             _input_dict.get("specific_heat_capacity", new_prop.specific_heat_capacity.value)
         )
+        new_prop.specific_heat_capacity_wh_m2k = _input_dict.get("specific_heat_capacity_wh_m2k", None)
 
         if "ph_bldg_segment" in _input_dict.keys():
             new_prop.ph_bldg_segment = BldgSegment.from_dict(_input_dict.get("ph_bldg_segment", {}))
@@ -184,6 +196,7 @@ class RoomPhProperties(object):
         self.specific_heat_capacity = PhSpecificHeatCapacity(
             room_prop_dict.get("specific_heat_capacity", self.specific_heat_capacity.value)
         )
+        self.specific_heat_capacity_wh_m2k = room_prop_dict.get("specific_heat_capacity_wh_m2k", None)
 
         # -- Set the bldg-segment attributes from the values stored at the 'Model' level
         room_ph_bldg_segment_id = room_prop_dict.get("ph_bldg_segment_id", None)
