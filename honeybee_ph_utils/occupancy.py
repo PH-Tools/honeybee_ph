@@ -5,8 +5,6 @@
 
 import statistics
 
-from honeybee import room
-
 
 def hb_room_ppl_per_area(_hb_room):
     # type: (room.Room) -> float

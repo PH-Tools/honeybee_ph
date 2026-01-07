@@ -26,6 +26,7 @@ def test_load_phius_2021_library() -> None:
     assert len(new_factor_collection.factors) == 16
     assert new_factor_collection.get_factor("ELECTRICITY_MIX").value == 1.8
 
+
 def test_load_phius_2024_library() -> None:
     # -- build the factors from the library
     factor_list = factors.build_factors_from_library(phius_source_energy_factors.factors_2024)
@@ -37,4 +38,3 @@ def test_load_phius_2024_library() -> None:
         new_factor_collection.add_factor(factor)
     assert len(new_factor_collection.factors) == 16
     assert new_factor_collection.get_factor("ELECTRICITY_MIX").value == 2.0
-

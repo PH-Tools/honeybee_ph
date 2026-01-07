@@ -2317,7 +2317,7 @@ PHIUS_MF_Calculator = {
                 "watts_per_m2": 0.0,
             },
         },
-    },  
+    },
 }
 
 # -- Full Library

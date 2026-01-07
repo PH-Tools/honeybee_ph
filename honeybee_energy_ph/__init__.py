@@ -3,7 +3,7 @@
 
 """Package: Honeybee-PH-Energy
 
-These classes are designed to be used within a Honeybee-editing environment, such as Rhino or 
+These classes are designed to be used within a Honeybee-editing environment, such as Rhino or
 Grasshopper. These classes will allow for the extension of the Honeybee-Energy objects in order
 to add relevant Passive House fields and functions.
 """

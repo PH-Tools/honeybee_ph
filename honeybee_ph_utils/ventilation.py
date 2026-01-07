@@ -3,7 +3,6 @@
 
 """Utility functions for working with Honeybee-Energy Ventilation Loads and Schedules."""
 
-from honeybee import room
 
 from honeybee_ph_utils import occupancy
 

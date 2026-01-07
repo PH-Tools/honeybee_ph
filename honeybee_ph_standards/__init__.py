@@ -3,7 +3,7 @@
 
 """Package: Honeybee-PH-Standards
 
-These classes are designed to be used within a Honeybee-editing environment, such as Rhino or 
+These classes are designed to be used within a Honeybee-editing environment, such as Rhino or
 Grasshopper. These modules include various program standards used for Passive House buildings.
 """
 

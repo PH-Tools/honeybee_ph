@@ -331,7 +331,6 @@ class PhDivisionGrid(object):
             self.__class__.__name__,
             self.column_count,
             self.row_count,
-            self.steel_stud_spacing_mm,
         )
 
     def __repr__(self):

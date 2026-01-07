@@ -6,12 +6,12 @@ AISI S250-21 | “North American Standard for Thermal Transmittance of Building 
 
 https://www.steel.org/2021/09/aisi-publishes-aisi-s250-21-north-american-standard-for-thermal-transmittance-of-building-envelopes-with-cold-formed-steel-framing-2021-edition/
 
-Thermal transmittance (U-factors) of above-grade wall assemblies constructed with standard Cshape studs and track, 
-where the framing spacing is 6, 12, 16 or 24 inches on-center, shall be determined in accordance with Equation 
-B3.1.8-1 using Sections B3.1.1 through B3.1.8 or shall be determined in accordance with Appendix 1. Where a 
-non-standard designation thickness for the cold-formed steel framing member is applicable, values for the OTZ coefficients 
-from Table B3.1.11 and thermal conductivity from Table B3.1.3-1 shall be based on linear interpolation for the 
-intermediate value of designation thickness or shall be based on the next larger standard designation thickness. 
+Thermal transmittance (U-factors) of above-grade wall assemblies constructed with standard Cshape studs and track,
+where the framing spacing is 6, 12, 16 or 24 inches on-center, shall be determined in accordance with Equation
+B3.1.8-1 using Sections B3.1.1 through B3.1.8 or shall be determined in accordance with Appendix 1. Where a
+non-standard designation thickness for the cold-formed steel framing member is applicable, values for the OTZ coefficients
+from Table B3.1.11 and thermal conductivity from Table B3.1.3-1 shall be based on linear interpolation for the
+intermediate value of designation thickness or shall be based on the next larger standard designation thickness.
 Extrapolation is not permitted.
 
 NOTE: AISI does not provide an 'SI' version of the coefficients in Table B3.1.11. therefor

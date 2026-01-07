@@ -44,7 +44,7 @@ def input_to_int(_input_value, _default=None):
             _input_value, type(_input_value)
         )
         raise Exception(msg)
-    except AttributeError as e:
+    except AttributeError:
         # If no 'group', ie: no int part supplied in the string
         msg = 'Error trying to find the integer input part of input: "{}", type: {}'.format(
             _input_value, type(_input_value)

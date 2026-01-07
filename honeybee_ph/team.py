@@ -3,7 +3,6 @@
 
 """Project Team-Member Classes."""
 
-from copy import copy
 
 try:
     from typing import Any, Dict, Optional

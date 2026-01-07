@@ -60,7 +60,7 @@ class PhSpecificHeatCapacity(enumerables.CustomEnum):
 
     def __init__(self, _value=1):
         # type: (Union[str, int]) -> None
-        if _value==4 or _value==5:
+        if _value == 4 or _value == 5:
             raise enumerables.ValueNotAllowedError(
                 _in=_value,
                 _enum=self,
@@ -80,7 +80,7 @@ class RoomPhProperties(object):
         self.ph_bldg_segment = BldgSegment()
         self._ph_foundations = {}  # type: Dict[str, PhFoundation]
         self.specific_heat_capacity = PhSpecificHeatCapacity("1-LIGHTWEIGHT")
-        self.specific_heat_capacity_wh_m2k = None # type: None | int
+        self.specific_heat_capacity_wh_m2k = None  # type: None | int
 
     @property
     def spaces(self):

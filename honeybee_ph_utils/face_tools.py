@@ -19,7 +19,7 @@ except Exception:
 
 try:
     from honeybee import face, shade
-except ImportError as e:
+except ImportError:
     raise ImportError("Failed to import honeybee")
 
 try:

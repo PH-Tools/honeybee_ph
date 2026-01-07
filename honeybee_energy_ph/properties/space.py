@@ -4,7 +4,7 @@
 """PH Properties classes for Space objects."""
 
 try:
-    from typing import Any, Optional
+    pass
 except:
     pass  # IronPython
 

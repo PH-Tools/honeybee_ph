@@ -4,7 +4,7 @@
 """Process Equipment PH-Properties"""
 
 try:
-    from typing import Any
+    pass
 except:
     pass  # IronPython
 
@@ -14,7 +14,7 @@ try:
 
     if TYPE_CHECKING:
         from honeybee_energy.properties.extension import ProcessProperties
-except ImportError as e:
+except ImportError:
     pass  # IronPython
 
 

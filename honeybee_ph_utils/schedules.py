@@ -3,7 +3,6 @@
 
 """Utility functions for converting Honeybee schedules into WUFI schedules."""
 
-from honeybee import room
 
 from honeybee_ph_utils import histogram, ventilation
 

@@ -32,7 +32,7 @@ try:
         from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
         from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
         from honeybee_energy_ph.properties.load.process import ProcessPhProperties
-except ImportError as e:
+except ImportError:
     pass  # IronPython
 
 try:

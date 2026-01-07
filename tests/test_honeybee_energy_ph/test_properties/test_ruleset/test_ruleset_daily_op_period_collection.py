@@ -1,5 +1,3 @@
-import pytest
-
 from honeybee_energy_ph.properties import ruleset
 
 

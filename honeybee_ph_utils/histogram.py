@@ -4,7 +4,7 @@
 """Utility function for creating a simple Histrogram from a data set."""
 
 try:
-    from typing import Collection
+    pass
 except:
     pass  # IronPython
 

@@ -7,7 +7,7 @@ from copy import copy
 from math import radians
 
 try:
-    from typing import Any, Dict, List, Optional, Union
+    pass
 except:
     pass  # IronPython
 

@@ -4,7 +4,7 @@
 """Electric Equipment"""
 
 try:
-    from typing import Any
+    pass
 except:
     pass  # IronPython
 

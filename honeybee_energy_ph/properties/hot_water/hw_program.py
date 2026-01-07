@@ -4,7 +4,7 @@
 """Honeybee-Energy-PH Properties Extension for ServiceHotWater (Program) objects."""
 
 try:
-    from typing import Any, Optional
+    pass
 except:
     pass  # IronPython
 

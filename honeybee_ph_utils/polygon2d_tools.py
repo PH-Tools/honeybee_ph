@@ -106,7 +106,7 @@ def merge_polygon_2ds(_lbt_polygon_2ds, _tolerance):
 
     try:
         merged_polygon2Ds = Polygon2D.boolean_union_all(_lbt_polygon_2ds, _tolerance)
-    except Exception as e:
+    except Exception:
         merged_polygon2Ds = _lbt_polygon_2ds
 
     return merged_polygon2Ds
@@ -130,7 +130,7 @@ def merge_lbt_face_polygons(_lbt_face3Ds, _tolerance):
         # ---------------------------------------------------------------------
         # -- Try and merge all the new Polygon2Ds together into a single one.
         merged_polygon2Ds = Polygon2D.boolean_union_all(translated_polygon2Ds, _tolerance)
-    except Exception as e:
+    except Exception:
         merged_polygon2Ds = list(lbt_face3D_polygon2Ds)
 
     return merged_polygon2Ds

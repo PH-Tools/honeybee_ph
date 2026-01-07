@@ -1,9 +1,7 @@
-from ladybug_geometry.geometry3d.face import Face3D
-from ladybug_geometry.geometry3d.pointvector import Point3D
 from pytest import approx
 
 from honeybee_energy_ph.construction import window
-from honeybee_ph_utils.iso_10077_1 import ISO100771Data, calculate_lbt_Face3D_uw
+from honeybee_ph_utils.iso_10077_1 import ISO100771Data
 
 
 def test_default_frame_and_glass():

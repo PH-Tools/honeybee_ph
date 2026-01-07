@@ -11,7 +11,8 @@
 ## https://discourse.pollination.cloud/t/honeybee-ph-causing-error/
 
 
-import honeybee_energy
+import honeybee.boundarycondition as hbc
+import honeybee_energy  # noqa: F401  # pyright: ignore[reportUnusedImport]
 from honeybee_energy.properties.extension import (
     AirBoundaryConstructionProperties,
     ElectricEquipmentProperties,
@@ -28,6 +29,7 @@ from honeybee_energy.properties.extension import (
 )
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
+from honeybee_energy_ph.boundarycondition import PhAdditionalZone
 from honeybee_energy_ph.properties.construction.air import AirBoundaryConstructionPhProperties
 from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
 from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
@@ -187,3 +189,9 @@ setattr(ElectricEquipmentProperties, "ph", property(elec_equip_ph_properties))
 setattr(PeopleProperties, "ph", property(people_ph_properties))
 setattr(LightingProperties, "ph", property(lighting_ph_properties))
 setattr(ProcessProperties, "ph", property(process_ph_properties))
+
+
+# extend boundary conditions
+setattr(hbc, "PhAdditionalZone", PhAdditionalZone)
+setattr(hbc._BoundaryConditions, "_ph_additional_zone", PhAdditionalZone())
+setattr(hbc._BoundaryConditions, "ph_additional_zone", property(lambda self: self._ph_additional_zone))

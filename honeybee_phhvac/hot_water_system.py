@@ -4,7 +4,7 @@
 """Honeybee-PH-HVAC: Hot Water System."""
 
 try:
-    from typing import Any, Dict, Optional, Union, ValuesView
+    pass
 except:
     pass  # IronPython
 

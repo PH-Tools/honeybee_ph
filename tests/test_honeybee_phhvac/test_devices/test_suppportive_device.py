@@ -1,5 +1,3 @@
-import pytest
-
 from honeybee_phhvac.supportive_device import PhSupportiveDevice
 
 

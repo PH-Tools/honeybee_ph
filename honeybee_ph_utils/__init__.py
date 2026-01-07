@@ -3,7 +3,7 @@
 
 """Package: Honeybee-PH-Utils
 
-These classes are designed to be used within a Honeybee-editing environment, such as Rhino or 
+These classes are designed to be used within a Honeybee-editing environment, such as Rhino or
 Grasshopper. These modules include a variety of helper functions used throughout HBPH.
 """
 

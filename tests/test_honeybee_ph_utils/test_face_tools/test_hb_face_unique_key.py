@@ -1,7 +1,7 @@
 from honeybee.boundarycondition import Ground, Outdoors
 from honeybee.face import Face, Face3D
 from honeybee.facetype import AirBoundary, Floor, RoofCeiling, Wall
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+from ladybug_geometry.geometry3d.pointvector import Point3D
 
 from honeybee_ph_utils.face_tools import _hb_face_type_unique_key
 

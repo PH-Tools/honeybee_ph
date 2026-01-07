@@ -7,17 +7,17 @@ import warnings
 
 try:
     from ladybug_geometry.geometry3d import LineSegment3D, face
-except ImportError as e:
+except ImportError:
     raise ImportError("Failed to import ladybug_geometry from ladybug_geometry.")
 
 try:
     from honeybee import aperture
-except ImportError as e:
+except ImportError:
     raise ImportError("Failed to import honeybee from honeybee.")
 
 try:
     from honeybee_energy_ph.construction import window
-except ImportError as e:
+except ImportError:
     raise ImportError("Failed to import honeybee_energy_ph from honeybee_energy_ph.")
 
 

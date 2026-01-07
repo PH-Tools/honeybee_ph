@@ -4,14 +4,17 @@
 """Properties classes for PH-ScheduleRuleset objects."""
 
 try:
-    from typing import Any, Generator, Optional
+    pass
 except:
     pass  # IronPython
 
 
 class ScheduleRulesetPhProperties_FromDictError(Exception):
     def __init__(self, _expected_types, _input_type):
-        self.msg = 'Error: Expected type of "{}". Got: {}'.format(_expected_types[0], _expected_types[1], _input_type)
+        self.msg = 'Error: Expected type of "{}". Got: {}'.format(
+            _expected_types[0],
+            _expected_types[1],
+        )
         super(ScheduleRulesetPhProperties_FromDictError, self).__init__(self.msg)
 
 
