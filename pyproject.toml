@@ -59,6 +59,9 @@ exclude = [
     "diagrams*",
 ]
 
+[tool.setuptools.package-data]
+"honeybee_ph_standards" = ["**/*.json"]
+
 # -- Version Bump Configuration ---
 [tool.bumpversion]
 current_version = "1.32.6"
