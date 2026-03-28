@@ -1,3 +1,78 @@
+# -- Build System ---
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# -- Project Metadata ---
+[project]
+name = "honeybee-ph"
+version = "1.32.0"
+description = "Plugin for Honeybee to enable Passive House modeling."
+readme = "README.md"
+license = {text = "GPL-3.0-or-later"}
+requires-python = ">=3.10"
+authors = [
+    {name = "PH-Tools", email = "phtools@bldgtyp.com"},
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "honeybee-core>=1.64.9",
+    "honeybee-energy>=1.116.103",
+    "PH-units>=1.5.26",
+]
+
+[project.urls]
+Homepage = "https://github.com/PH-Tools/honeybee_ph"
+
+# -- Optional Dependencies ---
+[project.optional-dependencies]
+dev = [
+    "black",
+    "coverage",
+    "GH-IO-stubs",
+    "GH-Util-stubs",
+    "Grasshopper-stubs",
+    "pytest",
+    "pytest-cov",
+    "Rhino-stubs",
+]
+
+# -- Setuptools Configuration ---
+[tool.setuptools.packages.find]
+include = [
+    "honeybee_ph*",
+    "honeybee_energy_ph*",
+    "honeybee_ph_standards*",
+    "honeybee_ph_utils*",
+    "honeybee_phhvac*",
+]
+exclude = [
+    "tests*",
+    "docs*",
+    "diagrams*",
+]
+
+# -- Version Bump Configuration ---
+[tool.bumpversion]
+current_version = "1.32.0"
+commit = true
+tag = true
+tag_name = "v{new_version}"
+commit_message = "bump: version {current_version} -> {new_version} [skip ci]"
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = "version = \"{current_version}\""
+replace = "version = \"{new_version}\""
+
+# -- Testing Configuration ---
 [tool.pytest.ini_options]
 filterwarnings = [
     "error",
@@ -5,9 +80,8 @@ filterwarnings = [
     'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
 
-
+# -- Coverage Configuration ---
 [tool.coverage.run]
-# --- For testing...
 command_line = "-m pytest tests"
 source = [
     "honeybee_ph",
@@ -27,8 +101,6 @@ fail_under = 100
 [tool.coverage.html]
 directory = "_coverage_html"
 
-
+# -- Code Formatting ---
 [tool.black]
 line-length = 120
-
-[tool.setuptools_scm]
