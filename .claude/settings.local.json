@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Python(*)",
+      "mcp__ide__executeCode",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}

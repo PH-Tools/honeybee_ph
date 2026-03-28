@@ -18,6 +18,48 @@ jobs:
       - run: pip install '.[dev]'
       - run: python -m pytest tests/
 
+  docs:
+    name: Deploy docs
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install '.[dev]'
+          pip install Sphinx sphinxcontrib-fulltoc sphinx_bootstrap_theme
+
+      - name: Generate API docs
+        run: |
+          sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_ph
+          sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_energy_ph
+          sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_phhvac
+          sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_ph_utils
+          sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_ph_standards
+
+      - name: Build HTML
+        run: sphinx-build -b html ./docs/api_docs ./docs/api_docs/_build/docs
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs/api_docs/_build/docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
   bump-and-release:
     name: Bump version and publish
     needs: test

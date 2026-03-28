@@ -1,0 +1,19 @@
+__pycache__/
+.env
+*.doctree
+*.pickle
+pytest-coverage.txt
+*.venv/*
+.DS_Store
+.vscode
+_coverage_html
+dist/*
+*.egg-*
+*.eggs*
+build/
+!docs/build_docs.sh
+
+# Sphinx build output (auto-generated .rst/.html files)
+docs/api_docs/_build/
+docs/api_docs/honeybee_*.rst
+docs/api_docs/modules.rst

@@ -1,15 +1,33 @@
-## Usage
-For generating the documents locally use commands below from the root folder. 
+## Building the Documentation
+
+### Install dependencies
 
 ```shell
-# install dependencies
 pip install Sphinx sphinxcontrib-fulltoc sphinx_bootstrap_theme
-
-# generate rst files for modules
-sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_energy_ph
-sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_ph
-sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_ph_standards
-sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_ph_utils
-# build the documentation under _build/docs folder
-sphinx-build -b html ./docs ./docs/_build/docs
 ```
+
+### Generate the docs
+
+From the **repository root folder**, run:
+
+```shell
+# Generate .rst files for each package
+sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_ph
+sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_energy_ph
+sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_phhvac
+sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_ph_utils
+sphinx-apidoc -f -e -d 4 -o ./docs/api_docs ./honeybee_ph_standards
+
+# Build the HTML documentation
+sphinx-build -b html ./docs/api_docs ./docs/api_docs/_build/docs
+```
+
+Or use the convenience script:
+
+```shell
+./docs/build_docs.sh
+```
+
+### View the docs
+
+Open `./docs/api_docs/_build/docs/index.html` in a browser.
