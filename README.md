@@ -21,5 +21,5 @@ http://www.PassiveHouseTools.com
 
 In most cases, once the detailed Passive House style data has been added to the Ladybug-Tools / Honeybee model, practitioners will then want to export the model data out to either the Passive House Planning Package (PHPP) or WUFI-Passive. The Passive House Exchange (PHX) library has been created for this purpose. For more information on model data input / output, see the [PHX package](https://github.com/PH-Tools/PHX).
 
-![Tests](https://github.com/PH-Tools/honeybee_ph/actions/workflows/ci.yaml/badge.svg)
+![Tests](https://github.com/PH-Tools/honeybee_ph/actions/workflows/ci.yml/badge.svg)
 [![IronPython](https://img.shields.io/badge/ironpython-2.7-red.svg)](https://github.com/IronLanguages/ironpython2/releases/tag/ipy-2.7.8/)
