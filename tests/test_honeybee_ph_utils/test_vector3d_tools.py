@@ -4,7 +4,9 @@ import pytest
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 
-from honeybee_ph_utils.vector3d_tools import angle_between_2D_vectors, cross_product, dot_product, magnitude, normalize
+from honeybee_ph_utils.vector3d_tools import (angle_between_2D_vectors,
+                                              cross_product, dot_product,
+                                              magnitude, normalize)
 
 
 def test_cross_product() -> None:

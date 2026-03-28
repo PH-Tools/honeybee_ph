@@ -2,8 +2,10 @@ import pytest
 
 from honeybee_energy_ph.properties.hvac.allair import AllAirSystemPhProperties
 from honeybee_energy_ph.properties.hvac.doas import DOASSystemPhProperties
-from honeybee_energy_ph.properties.hvac.heatcool import HeatCoolSystemPhProperties
-from honeybee_energy_ph.properties.hvac.idealair import IdealAirSystemPhProperties
+from honeybee_energy_ph.properties.hvac.heatcool import \
+    HeatCoolSystemPhProperties
+from honeybee_energy_ph.properties.hvac.idealair import \
+    IdealAirSystemPhProperties
 
 
 def test_all_air_system_raises_exception():

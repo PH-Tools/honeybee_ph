@@ -1,12 +1,10 @@
 import pytest
 
-from honeybee_energy_ph.hvac.heating import (
-    PhHeatingDirectElectric,
-    PhHeatingDistrict,
-    PhHeatingFossilBoiler,
-    PhHeatingSystemBuilder,
-    PhHeatingWoodBoiler,
-)
+from honeybee_energy_ph.hvac.heating import (PhHeatingDirectElectric,
+                                             PhHeatingDistrict,
+                                             PhHeatingFossilBoiler,
+                                             PhHeatingSystemBuilder,
+                                             PhHeatingWoodBoiler)
 
 
 def test_ph_heating_direct_electric():

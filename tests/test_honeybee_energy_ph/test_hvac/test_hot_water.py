@@ -1,22 +1,15 @@
 import pytest
 
-from honeybee_energy_ph.hvac.hot_water import (
-    PhHotWaterHeater,
-    PhPipeBranch,
-    PhPipeDiameter,
-    PhPipeElement,
-    PhPipeMaterial,
-    PhPipeSegment,
-    PhPipeTrunk,
-    PhSHWHeaterBoiler,
-    PhSHWHeaterBoilerWood,
-    PhSHWHeaterBuilder,
-    PhSHWHeaterDistrict,
-    PhSHWHeaterElectric,
-    PhSHWHeaterHeatPump,
-    PhSHWTank,
-    PhSHWTankType,
-)
+from honeybee_energy_ph.hvac.hot_water import (PhHotWaterHeater, PhPipeBranch,
+                                               PhPipeDiameter, PhPipeElement,
+                                               PhPipeMaterial, PhPipeSegment,
+                                               PhPipeTrunk, PhSHWHeaterBoiler,
+                                               PhSHWHeaterBoilerWood,
+                                               PhSHWHeaterBuilder,
+                                               PhSHWHeaterDistrict,
+                                               PhSHWHeaterElectric,
+                                               PhSHWHeaterHeatPump, PhSHWTank,
+                                               PhSHWTankType)
 
 
 def test_PipeDiameter_raises_exception():

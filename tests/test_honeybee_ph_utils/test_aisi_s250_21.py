@@ -1,19 +1,11 @@
 import pytest
 
 from honeybee_ph_utils.aisi_s250_21 import (
-    OTZ_COEFFICIENTS,
-    StudSpacingInches,
-    StudThicknessMil,
-    calculate_stud_cavity_effective_u_value,
-    framing_factor,
-    overall_thermal_zone,
-    overall_thermal_zone_framing_factor,
-    r_value_series_cavity_path,
-    r_value_series_stud_path,
-    stud_web_r_value,
-    u_value_at_stud,
-    u_value_total,
-)
+    OTZ_COEFFICIENTS, StudSpacingInches, StudThicknessMil,
+    calculate_stud_cavity_effective_u_value, framing_factor,
+    overall_thermal_zone, overall_thermal_zone_framing_factor,
+    r_value_series_cavity_path, r_value_series_stud_path, stud_web_r_value,
+    u_value_at_stud, u_value_total)
 
 
 def test_calculation_steps_no_ext_insulation():

@@ -1,10 +1,8 @@
 import pytest
 
-from honeybee_phhvac.renewable_devices import (
-    PhPhotovoltaicDevice,
-    PhRenewableEnergyDevice,
-    PhRenewableEnergyDeviceBuilder,
-)
+from honeybee_phhvac.renewable_devices import (PhPhotovoltaicDevice,
+                                               PhRenewableEnergyDevice,
+                                               PhRenewableEnergyDeviceBuilder)
 
 
 def test_base_class():

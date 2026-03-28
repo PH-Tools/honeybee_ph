@@ -1,4 +1,5 @@
-from honeybee_energy_ph.properties.materials.opaque import EnergyMaterialVegetationPhProperties
+from honeybee_energy_ph.properties.materials.opaque import \
+    EnergyMaterialVegetationPhProperties
 from honeybee_ph_utils.color import PhColor
 
 

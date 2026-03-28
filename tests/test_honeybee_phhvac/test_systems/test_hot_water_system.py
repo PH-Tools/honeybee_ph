@@ -6,7 +6,8 @@ from ladybug_geometry.geometry3d.polyline import LineSegment3D
 
 from honeybee_phhvac import hot_water_piping as hwp
 from honeybee_phhvac import hot_water_system as hws
-from honeybee_phhvac.hot_water_devices import PhHvacHotWaterHeaterElectric, PhHvacHotWaterTank
+from honeybee_phhvac.hot_water_devices import (PhHvacHotWaterHeaterElectric,
+                                               PhHvacHotWaterTank)
 
 
 def test_basic_HotWaterSystem_round_trip():

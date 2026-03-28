@@ -19,7 +19,8 @@ except ImportError:
 
 
 try:
-    from honeybee_energy_ph.load.ph_equipment import PhEquipment, PhEquipmentBuilder
+    from honeybee_energy_ph.load.ph_equipment import (PhEquipment,
+                                                      PhEquipmentBuilder)
 except ImportError as e:
     raise ImportError("Failed to import honeybee_energy_ph", e)
 

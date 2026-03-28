@@ -1,7 +1,9 @@
 from ladybug_geometry.geometry3d import LineSegment3D, Point3D
 
 from honeybee_energy_ph.construction.thermal_bridge import PhThermalBridge
-from honeybee_ph.bldg_segment import BldgSegment, PhVentilationSummerBypassMode, PhWindExposureType, SetPoints
+from honeybee_ph.bldg_segment import (BldgSegment,
+                                      PhVentilationSummerBypassMode,
+                                      PhWindExposureType, SetPoints)
 
 
 def test_set_points_round_trip():
