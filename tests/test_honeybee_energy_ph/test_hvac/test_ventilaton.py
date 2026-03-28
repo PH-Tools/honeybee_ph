@@ -1,12 +1,14 @@
 import pytest
 
-from honeybee_energy_ph.hvac.ventilation import (ExhaustVentDryer,
-                                                 ExhaustVentKitchenHood,
-                                                 ExhaustVentUserDefined,
-                                                 PhExhaustDeviceBuilder,
-                                                 PhVentilationSystem,
-                                                 Ventilator,
-                                                 _ExhaustVentilatorBase)
+from honeybee_energy_ph.hvac.ventilation import (
+    ExhaustVentDryer,
+    ExhaustVentKitchenHood,
+    ExhaustVentUserDefined,
+    PhExhaustDeviceBuilder,
+    PhVentilationSystem,
+    Ventilator,
+    _ExhaustVentilatorBase,
+)
 
 
 def test_Ventilator_raises_exception():

@@ -1,7 +1,6 @@
 import pytest
 
-from honeybee_energy_ph.properties.materials.opaque import \
-    EnergyMaterialPhProperties
+from honeybee_energy_ph.properties.materials.opaque import EnergyMaterialPhProperties
 from honeybee_ph_utils.color import PhColor
 
 

@@ -1,8 +1,7 @@
 import pytest
 
 from honeybee_energy_ph.load.ph_equipment import PhDishwasher
-from honeybee_energy_ph.properties.load.process import (
-    ProcessPhProperties, ProcessPhProperties_FromDictError)
+from honeybee_energy_ph.properties.load.process import ProcessPhProperties, ProcessPhProperties_FromDictError
 
 
 def test_Process():

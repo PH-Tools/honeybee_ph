@@ -29,12 +29,9 @@ try:
     from typing import TYPE_CHECKING
 
     if TYPE_CHECKING:
-        from honeybee_energy_ph.properties.load.equipment import \
-            ElectricEquipmentPhProperties
-        from honeybee_energy_ph.properties.load.lighting import \
-            LightingPhProperties
-        from honeybee_energy_ph.properties.load.process import \
-            ProcessPhProperties
+        from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
+        from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
+        from honeybee_energy_ph.properties.load.process import ProcessPhProperties
 except ImportError:
     pass  # IronPython
 
@@ -44,17 +41,18 @@ except ImportError as e:
     raise ImportError("Failed to import honeybee_ph_utils: {}".format(e))
 
 try:
-    from honeybee_ph_standards.programtypes.default_elec_equip import \
-        ph_default_equip
+    from honeybee_ph_standards.programtypes.default_elec_equip import ph_default_equip
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph_standards:\n\t{}".format(e))
 
 try:
     from honeybee_energy_ph.load import phius_residential
-    from honeybee_energy_ph.load._ph_equip_types import (PhClothesDryerType,
-                                                         PhClothesWasherType,
-                                                         PhCookingType,
-                                                         PhDishwasherType)
+    from honeybee_energy_ph.load._ph_equip_types import (
+        PhClothesDryerType,
+        PhClothesWasherType,
+        PhCookingType,
+        PhDishwasherType,
+    )
 except ImportError as e:
     raise ImportError("Failed to import PhEquipment types: {}".format(e))
 

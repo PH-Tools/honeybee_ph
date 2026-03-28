@@ -4,8 +4,7 @@ import pytest
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
-from honeybee_ph_utils.polygon2d_tools import \
-    counterclockwise_angle_between_2_Planes
+from honeybee_ph_utils.polygon2d_tools import counterclockwise_angle_between_2_Planes
 from honeybee_ph_utils.vector3d_tools import vector_equal
 
 TOL = 0.001

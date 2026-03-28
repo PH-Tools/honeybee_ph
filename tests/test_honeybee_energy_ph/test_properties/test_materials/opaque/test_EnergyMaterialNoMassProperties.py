@@ -1,5 +1,4 @@
-from honeybee_energy_ph.properties.materials.opaque import \
-    EnergyMaterialNoMassPhProperties
+from honeybee_energy_ph.properties.materials.opaque import EnergyMaterialNoMassPhProperties
 from honeybee_ph_utils.color import PhColor
 
 

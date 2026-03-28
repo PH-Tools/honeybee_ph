@@ -1,11 +1,18 @@
 import pytest
 
 from honeybee_energy_ph.hvac.heat_pumps import (
-    PhHeatPumpAnnual, PhHeatPumpCombined, PhHeatPumpCoolingParams,
-    PhHeatPumpCoolingParams_Base, PhHeatPumpCoolingParams_Dehumidification,
-    PhHeatPumpCoolingParams_Panel, PhHeatPumpCoolingParams_Recirculation,
-    PhHeatPumpCoolingParams_Ventilation, PhHeatPumpRatedMonthly,
-    PhHeatPumpSystem, PhHeatPumpSystemBuilder)
+    PhHeatPumpAnnual,
+    PhHeatPumpCombined,
+    PhHeatPumpCoolingParams,
+    PhHeatPumpCoolingParams_Base,
+    PhHeatPumpCoolingParams_Dehumidification,
+    PhHeatPumpCoolingParams_Panel,
+    PhHeatPumpCoolingParams_Recirculation,
+    PhHeatPumpCoolingParams_Ventilation,
+    PhHeatPumpRatedMonthly,
+    PhHeatPumpSystem,
+    PhHeatPumpSystemBuilder,
+)
 
 
 def test_ph_heat_pump_system_raises_exception():

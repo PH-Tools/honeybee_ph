@@ -1,7 +1,6 @@
 import pytest
 
-from honeybee_energy_ph.construction.window import (PhWindowFrame,
-                                                    PhWindowGlazing)
+from honeybee_energy_ph.construction.window import PhWindowFrame, PhWindowGlazing
 from honeybee_energy_ph.properties.construction import window
 
 

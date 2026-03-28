@@ -3,10 +3,12 @@
 
 """Default data for Residential PH Electrical Appliances (PHI and Phius)."""
 
-from honeybee_energy_ph.load._ph_equip_types import (PhClothesDryerType,
-                                                     PhClothesWasherType,
-                                                     PhCookingType,
-                                                     PhDishwasherType)
+from honeybee_energy_ph.load._ph_equip_types import (
+    PhClothesDryerType,
+    PhClothesWasherType,
+    PhCookingType,
+    PhDishwasherType,
+)
 
 ph_default_equip = {
     "PhDishwasher": {

@@ -1,8 +1,10 @@
 import pytest
 
 from honeybee_energy_ph.hvac.renewable_devices import (
-    PhPhotovoltaicDevice, PhRenewableEnergyDevice,
-    PhRenewableEnergyDeviceBuilder)
+    PhPhotovoltaicDevice,
+    PhRenewableEnergyDevice,
+    PhRenewableEnergyDeviceBuilder,
+)
 
 
 def test_PhRenewableEnergyDevice_raises_exception():

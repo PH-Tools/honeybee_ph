@@ -14,33 +14,36 @@
 import honeybee.boundarycondition as hbc
 import honeybee_energy  # noqa: F401  # pyright: ignore[reportUnusedImport]
 from honeybee_energy.properties.extension import (
-    AirBoundaryConstructionProperties, ElectricEquipmentProperties,
-    EnergyMaterialNoMassProperties, EnergyMaterialProperties,
-    EnergyMaterialVegetationProperties, LightingProperties,
-    OpaqueConstructionProperties, PeopleProperties, ProcessProperties,
-    ServiceHotWaterProperties, WindowConstructionProperties,
-    WindowConstructionShadeProperties)
+    AirBoundaryConstructionProperties,
+    ElectricEquipmentProperties,
+    EnergyMaterialNoMassProperties,
+    EnergyMaterialProperties,
+    EnergyMaterialVegetationProperties,
+    LightingProperties,
+    OpaqueConstructionProperties,
+    PeopleProperties,
+    ProcessProperties,
+    ServiceHotWaterProperties,
+    WindowConstructionProperties,
+    WindowConstructionShadeProperties,
+)
 from honeybee_energy.schedule.ruleset import ScheduleRulesetProperties
 
 from honeybee_energy_ph.boundarycondition import PhAdditionalZone
-from honeybee_energy_ph.properties.construction.air import \
-    AirBoundaryConstructionPhProperties
-from honeybee_energy_ph.properties.construction.opaque import \
-    OpaqueConstructionPhProperties
-from honeybee_energy_ph.properties.construction.window import \
-    WindowConstructionPhProperties
-from honeybee_energy_ph.properties.construction.windowshade import \
-    WindowConstructionShadePhProperties
-from honeybee_energy_ph.properties.hot_water.hw_program import \
-    ServiceHotWaterPhProperties
-from honeybee_energy_ph.properties.load.equipment import \
-    ElectricEquipmentPhProperties
+from honeybee_energy_ph.properties.construction.air import AirBoundaryConstructionPhProperties
+from honeybee_energy_ph.properties.construction.opaque import OpaqueConstructionPhProperties
+from honeybee_energy_ph.properties.construction.window import WindowConstructionPhProperties
+from honeybee_energy_ph.properties.construction.windowshade import WindowConstructionShadePhProperties
+from honeybee_energy_ph.properties.hot_water.hw_program import ServiceHotWaterPhProperties
+from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
 from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
 from honeybee_energy_ph.properties.load.people import PeoplePhProperties
 from honeybee_energy_ph.properties.load.process import ProcessPhProperties
 from honeybee_energy_ph.properties.materials.opaque import (
-    EnergyMaterialNoMassPhProperties, EnergyMaterialPhProperties,
-    EnergyMaterialVegetationPhProperties)
+    EnergyMaterialNoMassPhProperties,
+    EnergyMaterialPhProperties,
+    EnergyMaterialVegetationPhProperties,
+)
 from honeybee_energy_ph.properties.ruleset import ScheduleRulesetPhProperties
 from honeybee_energy_ph.properties.space import SpaceEnergyProperties
 from honeybee_ph.properties.space import SpaceProperties

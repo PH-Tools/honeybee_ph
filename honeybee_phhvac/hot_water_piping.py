@@ -83,7 +83,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         _water_temp_c=60.0,
         _material=2,
         *args,
-        **kwargs
+        **kwargs,
     ):
         # type: (LineSegment3D, float, float, float, bool, None, float, float, int, *Any, **Any) -> None
         super(PhHvacPipeSegment, self).__init__()

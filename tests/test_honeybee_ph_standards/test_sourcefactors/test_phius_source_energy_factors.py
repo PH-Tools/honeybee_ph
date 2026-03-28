@@ -1,5 +1,4 @@
-from honeybee_ph_standards.sourcefactors import (factors,
-                                                 phius_source_energy_factors)
+from honeybee_ph_standards.sourcefactors import factors, phius_source_energy_factors
 
 
 def test_load_phius_2018_library() -> None:

@@ -1,5 +1,4 @@
-from honeybee_energy_ph.load.phius_mf import (PhiusNonResRoom,
-                                              PhiusResidentialStory)
+from honeybee_energy_ph.load.phius_mf import PhiusNonResRoom, PhiusResidentialStory
 from honeybee_ph import space
 
 
