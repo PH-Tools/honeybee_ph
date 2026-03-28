@@ -1,3 +1,0 @@
-honeybee-core>=1.64.9
-honeybee-energy>=1.116.103
-PH-units>=1.5.26
