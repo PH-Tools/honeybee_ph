@@ -40,7 +40,7 @@ class ModelPhProperties(object):
     def host(self):
         return self._host
 
-    def duplicate(self, new_host=None):
+    def __copy__(self, new_host=None):
         # type: (Any) -> ModelPhProperties
         _host = new_host or self._host
         new_properties_obj = ModelPhProperties(_host)
@@ -48,6 +48,10 @@ class ModelPhProperties(object):
         new_properties_obj.team = self.team.duplicate()
 
         return new_properties_obj
+
+    def duplicate(self, new_host=None):
+        # type: (Any) -> ModelPhProperties
+        return self.__copy__(new_host=new_host)
 
     def __str__(self):
         return "Model Passive House Properties: [host: {}]".format(self.host.display_name)

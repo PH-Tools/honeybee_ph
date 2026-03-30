@@ -17,13 +17,17 @@ class ShadePhProperties(object):
     def host(self):
         return self._host
 
-    def duplicate(self, new_host=None):
+    def __copy__(self, new_host=None):
         # type: (Any) -> ShadePhProperties
         _host = new_host or self._host
         new_properties_obj = ShadePhProperties(_host)
         new_properties_obj.id_num = self.id_num
 
         return new_properties_obj
+
+    def duplicate(self, new_host=None):
+        # type: (Any) -> ShadePhProperties
+        return self.__copy__(new_host=new_host)
 
     def ToString(self):
         return self.__repr__()

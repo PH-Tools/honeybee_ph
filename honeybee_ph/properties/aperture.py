@@ -26,7 +26,7 @@ class ShadingDimensions(object):
         self.o_over = None  # type: Optional[float]
         self.d_over = None  # type: Optional[float]
 
-    def duplicate(self, new_host):
+    def __copy__(self, new_host=None):
         # type: (Any) -> ShadingDimensions
 
         new_obj = ShadingDimensions()
@@ -39,6 +39,10 @@ class ShadingDimensions(object):
         new_obj.o_over = self.o_over
 
         return new_obj
+
+    def duplicate(self, new_host=None):
+        # type: (Any) -> ShadingDimensions
+        return self.__copy__(new_host=new_host)
 
     def to_dict(self):
         # type: () -> Dict[str, Any]

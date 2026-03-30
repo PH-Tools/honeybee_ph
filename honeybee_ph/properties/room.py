@@ -102,6 +102,10 @@ class RoomPhProperties(object):
         # type: () -> List[PhFoundation]
         return list(self._ph_foundations.values())
 
+    def __copy__(self, new_host=None):
+        # type: (Any, bool) -> RoomPhProperties
+        return self.duplicate(new_host=new_host, include_spaces=True)
+
     def duplicate(self, new_host=None, include_spaces=True):
         # type: (Any, bool) -> RoomPhProperties
         _host = new_host or self._host

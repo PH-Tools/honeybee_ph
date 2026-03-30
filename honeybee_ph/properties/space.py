@@ -184,7 +184,7 @@ class SpacePhProperties(object):
             return None
         return max([self._v_sup or 0, self._v_eta or 0, self._v_tran or 0])
 
-    def duplicate(self, new_host=None):
+    def __copy__(self, new_host=None):
         # type: (Any) -> SpacePhProperties
         _host = new_host or self._host
         new_properties_obj = SpacePhProperties(_host)
@@ -195,6 +195,10 @@ class SpacePhProperties(object):
         new_properties_obj._v_tran = self._v_tran
 
         return new_properties_obj
+
+    def duplicate(self, new_host=None):
+        # type: (Any) -> SpacePhProperties
+        return self.__copy__(new_host=new_host)
 
     def __str__(self):
         return "{}(host={}, v_eta={}, v_sup={}, v_tran={})".format(
