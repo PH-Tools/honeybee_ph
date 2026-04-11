@@ -59,6 +59,17 @@ class PhWindExposureType(enumerables.CustomEnum):
         super(PhWindExposureType, self).__init__(_value)
 
 
+class PhSummerVentilationExtractSystemControl(enumerables.CustomEnum):
+    allowed = [
+        "1-TEMPERATURE_CONTROLLED",
+        "2-HUMIDITY_CONTROLLED",
+    ]
+
+    def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
+        super(PhSummerVentilationExtractSystemControl, self).__init__(_value)
+
+
 ## --------------------------------------------------------------------------------------
 ## -- Data Classes
 
@@ -74,11 +85,11 @@ class SummerVentilation(_base._Base):
         _nighttime_extract_system_ach=0.0,
         _nighttime_extract_system_fan_power_wh_m3=0.0,
         _nighttime_extract_system_heat_fraction=0.0,
-        _nighttime_extract_system_control=0.0,
+        _nighttime_extract_system_control="1-TEMPERATURE_CONTROLLED",
         _nighttime_window_ach=0.0,
         _nighttime_minimum_indoor_temp_C=0.0,
     ):
-        # type: (float | None, int | str, float, float, float, float, float, float, float, float, float) -> None
+        # type: (float | None, int | str, float, float, float, float, float, float, int | str, float, float) -> None
         super(SummerVentilation, self).__init__()
         self.ventilation_system_ach = _ventilation_system_ach
         self.summer_bypass_mode = PhVentilationSummerBypassMode(_ventilation_system_summer_bypass_mode)
@@ -88,7 +99,9 @@ class SummerVentilation(_base._Base):
         self.nighttime_extract_system_ach = _nighttime_extract_system_ach
         self.nighttime_extract_system_fan_power_wh_m3 = _nighttime_extract_system_fan_power_wh_m3
         self.nighttime_extract_system_heat_fraction = _nighttime_extract_system_heat_fraction
-        self.nighttime_extract_system_control = _nighttime_extract_system_control
+        self.nighttime_extract_system_control = PhSummerVentilationExtractSystemControl(
+            _nighttime_extract_system_control
+        )
         self.nighttime_window_ach = _nighttime_window_ach
         self.nighttime_minimum_indoor_temp_C = _nighttime_minimum_indoor_temp_C
 
@@ -107,7 +120,7 @@ class SummerVentilation(_base._Base):
         d["nighttime_extract_system_ach"] = self.nighttime_extract_system_ach
         d["nighttime_extract_system_fan_power_wh_m3"] = self.nighttime_extract_system_fan_power_wh_m3
         d["nighttime_extract_system_heat_fraction"] = self.nighttime_extract_system_heat_fraction
-        d["nighttime_extract_system_control"] = self.nighttime_extract_system_control
+        d["nighttime_extract_system_control"] = self.nighttime_extract_system_control.to_dict()
         d["nighttime_window_ach"] = self.nighttime_window_ach
         d["nighttime_minimum_indoor_temp_C"] = self.nighttime_minimum_indoor_temp_C
 
@@ -122,14 +135,16 @@ class SummerVentilation(_base._Base):
         obj.user_data = _dict.get("user_data", {})
         obj.display_name = _dict.get("display_name")
         obj.ventilation_system_ach = _dict.get("ventilation_system_ach")
-        obj.summer_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_bypass_mode", {}))
+        obj.summer_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_bypass_mode", "4-Always"))
         obj.daytime_extract_system_ach = _dict.get("daytime_extract_system_ach")
         obj.daytime_extract_system_fan_power_wh_m3 = _dict.get("daytime_extract_system_fan_power_wh_m3")
         obj.daytime_window_ach = _dict.get("daytime_window_ach")
         obj.nighttime_extract_system_ach = _dict.get("nighttime_extract_system_ach")
         obj.nighttime_extract_system_fan_power_wh_m3 = _dict.get("nighttime_extract_system_fan_power_wh_m3")
         obj.nighttime_extract_system_heat_fraction = _dict.get("nighttime_extract_system_heat_fraction")
-        obj.nighttime_extract_system_control = _dict.get("nighttime_extract_system_control")
+        obj.nighttime_extract_system_control = PhSummerVentilationExtractSystemControl.from_dict(
+            _dict.get("nighttime_extract_system_control", {"value": "1-TEMPERATURE_CONTROLLED"})
+        )
         obj.nighttime_window_ach = _dict.get("nighttime_window_ach")
         obj.nighttime_minimum_indoor_temp_C = _dict.get("nighttime_minimum_indoor_temp_C")
 
@@ -148,7 +163,9 @@ class SummerVentilation(_base._Base):
         obj.nighttime_extract_system_ach = self.nighttime_extract_system_ach
         obj.nighttime_extract_system_fan_power_wh_m3 = self.nighttime_extract_system_fan_power_wh_m3
         obj.nighttime_extract_system_heat_fraction = self.nighttime_extract_system_heat_fraction
-        obj.nighttime_extract_system_control = self.nighttime_extract_system_control
+        obj.nighttime_extract_system_control = PhSummerVentilationExtractSystemControl(
+            self.nighttime_extract_system_control.value
+        )
         obj.nighttime_window_ach = self.nighttime_window_ach
         obj.nighttime_minimum_indoor_temp_C = self.nighttime_minimum_indoor_temp_C
 

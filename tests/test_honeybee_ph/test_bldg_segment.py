@@ -5,6 +5,7 @@ from ladybug_geometry.geometry3d import LineSegment3D, Point3D
 from honeybee_energy_ph.construction.thermal_bridge import PhThermalBridge
 from honeybee_ph.bldg_segment import (
     BldgSegment,
+    PhSummerVentilationExtractSystemControl,
     PhVentilationSummerBypassMode,
     PhWindExposureType,
     SetPoints,
@@ -51,7 +52,7 @@ def test_summer_ventilation_default():
     assert sv.nighttime_extract_system_ach == 0.0
     assert sv.nighttime_extract_system_fan_power_wh_m3 == 0.0
     assert sv.nighttime_extract_system_heat_fraction == 0.0
-    assert sv.nighttime_extract_system_control == 0.0
+    assert sv.nighttime_extract_system_control.value == "1-TEMPERATURE_CONTROLLED"
     assert sv.nighttime_window_ach == 0.0
     assert sv.nighttime_minimum_indoor_temp_C == 0.0
 
@@ -66,7 +67,7 @@ def test_summer_ventilation_init_with_args():
         _nighttime_extract_system_ach=0.6,
         _nighttime_extract_system_fan_power_wh_m3=0.55,
         _nighttime_extract_system_heat_fraction=0.7,
-        _nighttime_extract_system_control=0.8,
+        _nighttime_extract_system_control="2-HUMIDITY_CONTROLLED",
         _nighttime_window_ach=0.9,
         _nighttime_minimum_indoor_temp_C=18.0,
     )
@@ -78,7 +79,7 @@ def test_summer_ventilation_init_with_args():
     assert sv.nighttime_extract_system_ach == 0.6
     assert sv.nighttime_extract_system_fan_power_wh_m3 == 0.55
     assert sv.nighttime_extract_system_heat_fraction == 0.7
-    assert sv.nighttime_extract_system_control == 0.8
+    assert sv.nighttime_extract_system_control.value == "2-HUMIDITY_CONTROLLED"
     assert sv.nighttime_window_ach == 0.9
     assert sv.nighttime_minimum_indoor_temp_C == 18.0
 
@@ -102,7 +103,7 @@ def test_summer_ventilation_round_trip_custom():
     sv1.nighttime_extract_system_ach = 0.7
     sv1.nighttime_extract_system_fan_power_wh_m3 = 0.65
     sv1.nighttime_extract_system_heat_fraction = 0.8
-    sv1.nighttime_extract_system_control = 0.9
+    sv1.nighttime_extract_system_control = PhSummerVentilationExtractSystemControl("2-HUMIDITY_CONTROLLED")
     sv1.nighttime_window_ach = 1.0
     sv1.nighttime_minimum_indoor_temp_C = 16.0
 
@@ -117,7 +118,7 @@ def test_summer_ventilation_round_trip_custom():
     assert sv2.nighttime_extract_system_ach == 0.7
     assert sv2.nighttime_extract_system_fan_power_wh_m3 == 0.65
     assert sv2.nighttime_extract_system_heat_fraction == 0.8
-    assert sv2.nighttime_extract_system_control == 0.9
+    assert sv2.nighttime_extract_system_control.value == "2-HUMIDITY_CONTROLLED"
     assert sv2.nighttime_window_ach == 1.0
     assert sv2.nighttime_minimum_indoor_temp_C == 16.0
     assert sv2.to_dict() == d1
@@ -133,7 +134,7 @@ def test_summer_ventilation_duplicate():
     sv1.nighttime_extract_system_ach = 0.6
     sv1.nighttime_extract_system_fan_power_wh_m3 = 0.7
     sv1.nighttime_extract_system_heat_fraction = 0.8
-    sv1.nighttime_extract_system_control = 0.9
+    sv1.nighttime_extract_system_control = PhSummerVentilationExtractSystemControl("2-HUMIDITY_CONTROLLED")
     sv1.nighttime_window_ach = 1.0
     sv1.nighttime_minimum_indoor_temp_C = 15.0
 
