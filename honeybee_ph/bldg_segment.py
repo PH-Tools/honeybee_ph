@@ -3,7 +3,9 @@
 
 """Building 'Segment' Level Data Attributes"""
 
+import warnings
 from copy import copy
+
 
 try:
     from typing import Any, Dict, Union
@@ -29,6 +31,10 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
 
+## --------------------------------------------------------------------------------------
+## -- Enums
+
+
 class PhVentilationSummerBypassMode(enumerables.CustomEnum):
     allowed = ["1-None", "2-Temperature Controlled", "3-Enthalpy Controlled", "4-Always"]
 
@@ -51,6 +57,106 @@ class PhWindExposureType(enumerables.CustomEnum):
     def __init__(self, _value=1):
         # type: (Union[str, int]) -> None
         super(PhWindExposureType, self).__init__(_value)
+
+
+## --------------------------------------------------------------------------------------
+## -- Data Classes
+
+
+class SummerVentilation(_base._Base):
+    def __init__(
+        self,
+        _ventilation_system_ach=None,
+        _ventilation_system_summer_bypass_mode="4-Always",
+        _daytime_extract_system_ach=0.0,
+        _daytime_extract_system_fan_power_wh_m3=0.0,
+        _daytime_window_ach=0.0,
+        _nighttime_extract_system_ach=0.0,
+        _nighttime_extract_system_fan_power_wh_m3=0.0,
+        _nighttime_extract_system_heat_fraction=0.0,
+        _nighttime_extract_system_control=0.0,
+        _nighttime_window_ach=0.0,
+        _nighttime_minimum_indoor_temp_C=0.0,
+    ):
+        # type: (float | None, int | str, float, float, float, float, float, float, float, float, float) -> None
+        super(SummerVentilation, self).__init__()
+        self.ventilation_system_ach = _ventilation_system_ach
+        self.summer_bypass_mode = PhVentilationSummerBypassMode(_ventilation_system_summer_bypass_mode)
+        self.daytime_extract_system_ach = _daytime_extract_system_ach
+        self.daytime_extract_system_fan_power_wh_m3 = _daytime_extract_system_fan_power_wh_m3
+        self.daytime_window_ach = _daytime_window_ach
+        self.nighttime_extract_system_ach = _nighttime_extract_system_ach
+        self.nighttime_extract_system_fan_power_wh_m3 = _nighttime_extract_system_fan_power_wh_m3
+        self.nighttime_extract_system_heat_fraction = _nighttime_extract_system_heat_fraction
+        self.nighttime_extract_system_control = _nighttime_extract_system_control
+        self.nighttime_window_ach = _nighttime_window_ach
+        self.nighttime_minimum_indoor_temp_C = _nighttime_minimum_indoor_temp_C
+
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        d = {}
+
+        d["identifier"] = self.identifier
+        d["user_data"] = copy(self.user_data)
+        d["display_name"] = self.display_name
+        d["summer_bypass_mode"] = self.summer_bypass_mode.to_dict()
+        d["ventilation_system_ach"] = self.ventilation_system_ach
+        d["daytime_extract_system_ach"] = self.daytime_extract_system_ach
+        d["daytime_extract_system_fan_power_wh_m3"] = self.daytime_extract_system_fan_power_wh_m3
+        d["daytime_window_ach"] = self.daytime_window_ach
+        d["nighttime_extract_system_ach"] = self.nighttime_extract_system_ach
+        d["nighttime_extract_system_fan_power_wh_m3"] = self.nighttime_extract_system_fan_power_wh_m3
+        d["nighttime_extract_system_heat_fraction"] = self.nighttime_extract_system_heat_fraction
+        d["nighttime_extract_system_control"] = self.nighttime_extract_system_control
+        d["nighttime_window_ach"] = self.nighttime_window_ach
+        d["nighttime_minimum_indoor_temp_C"] = self.nighttime_minimum_indoor_temp_C
+
+        return d
+
+    @classmethod
+    def from_dict(cls, _dict):
+        # type: (Dict[str, Any]) -> SummerVentilation
+        obj = cls()
+
+        obj.identifier = _dict.get("identifier")
+        obj.user_data = _dict.get("user_data", {})
+        obj.display_name = _dict.get("display_name")
+        obj.ventilation_system_ach = _dict.get("ventilation_system_ach")
+        obj.summer_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_bypass_mode", {}))
+        obj.daytime_extract_system_ach = _dict.get("daytime_extract_system_ach")
+        obj.daytime_extract_system_fan_power_wh_m3 = _dict.get("daytime_extract_system_fan_power_wh_m3")
+        obj.daytime_window_ach = _dict.get("daytime_window_ach")
+        obj.nighttime_extract_system_ach = _dict.get("nighttime_extract_system_ach")
+        obj.nighttime_extract_system_fan_power_wh_m3 = _dict.get("nighttime_extract_system_fan_power_wh_m3")
+        obj.nighttime_extract_system_heat_fraction = _dict.get("nighttime_extract_system_heat_fraction")
+        obj.nighttime_extract_system_control = _dict.get("nighttime_extract_system_control")
+        obj.nighttime_window_ach = _dict.get("nighttime_window_ach")
+        obj.nighttime_minimum_indoor_temp_C = _dict.get("nighttime_minimum_indoor_temp_C")
+
+        return obj
+
+    def __copy__(self):
+        # type: () -> SummerVentilation
+        obj = SummerVentilation()
+        obj.set_base_attrs_from_source(self)
+        obj.user_data = self.user_data
+        obj.summer_bypass_mode = PhVentilationSummerBypassMode(self.summer_bypass_mode.value)
+        obj.ventilation_system_ach = self.ventilation_system_ach
+        obj.daytime_extract_system_ach = self.daytime_extract_system_ach
+        obj.daytime_extract_system_fan_power_wh_m3 = self.daytime_extract_system_fan_power_wh_m3
+        obj.daytime_window_ach = self.daytime_window_ach
+        obj.nighttime_extract_system_ach = self.nighttime_extract_system_ach
+        obj.nighttime_extract_system_fan_power_wh_m3 = self.nighttime_extract_system_fan_power_wh_m3
+        obj.nighttime_extract_system_heat_fraction = self.nighttime_extract_system_heat_fraction
+        obj.nighttime_extract_system_control = self.nighttime_extract_system_control
+        obj.nighttime_window_ach = self.nighttime_window_ach
+        obj.nighttime_minimum_indoor_temp_C = self.nighttime_minimum_indoor_temp_C
+
+        return obj
+
+    def duplicate(self):
+        # type: () -> SummerVentilation
+        return self.__copy__()
 
 
 class SetPoints(_base._Base):
@@ -99,6 +205,10 @@ class SetPoints(_base._Base):
         return self.__copy__()
 
 
+## --------------------------------------------------------------------------------------
+## -- Building Segment Class
+
+
 class BldgSegment(_base._Base):
     def __init__(self):
         super(BldgSegment, self).__init__()
@@ -115,7 +225,29 @@ class BldgSegment(_base._Base):
         self.non_combustible_materials = False
         self.thermal_bridges = {}  # type: Dict[str, PhThermalBridge]
         self.wind_exposure_type = PhWindExposureType("1-SEVERAL_SIDES_EXPOSED_NO_SCREENING")
-        self.summer_hrv_bypass_mode = PhVentilationSummerBypassMode("4-Always")
+        self.summer_ventilation = SummerVentilation()
+
+    @property
+    def summer_hrv_bypass_mode(self):
+        ## Provide user-warning to use the new `summer_ventilation` attribute instead of the old `summer_hrv_bypass_mode` attribute"""
+        warnings.warn(
+            "The summer_hrv_bypass_mode attribute is now part of the summer_ventilation attribute. Please use the summer_ventilation attribute instead.",
+            DeprecationWarning,
+        )
+        return self.summer_ventilation.summer_bypass_mode
+
+    @summer_hrv_bypass_mode.setter
+    def summer_hrv_bypass_mode(self, value):
+        # type: (Union[str, int, PhVentilationSummerBypassMode]) -> None
+        ## Provide user-warning to use the new `summer_ventilation` attribute instead of the old `summer_hrv_bypass_mode` attribute
+        warnings.warn(
+            "The summer_hrv_bypass_mode attribute is now part of the summer_ventilation attribute. Please use the summer_ventilation attribute instead.",
+            DeprecationWarning,
+        )
+        if isinstance(value, PhVentilationSummerBypassMode):
+            self.summer_ventilation.summer_bypass_mode = value
+        else:
+            self.summer_ventilation.summer_bypass_mode = PhVentilationSummerBypassMode(value)
 
     def add_new_thermal_bridge(self, tb):
         # type: (PhThermalBridge) -> None
@@ -142,7 +274,7 @@ class BldgSegment(_base._Base):
         d["thermal_bridges"] = {}
         for tb in self.thermal_bridges.values():
             d["thermal_bridges"][str(tb.identifier)] = tb.to_dict()
-        d["summer_hrv_bypass_mode"] = self.summer_hrv_bypass_mode.to_dict()
+        d["summer_ventilation"] = self.summer_ventilation.to_dict()
         d["wind_exposure_type"] = self.wind_exposure_type.to_dict()
         return d
 
@@ -167,8 +299,13 @@ class BldgSegment(_base._Base):
         for tb_dict in _dict.get("thermal_bridges", {}).values():
             tb_obj = PhThermalBridge.from_dict(tb_dict)
             obj.thermal_bridges[tb_obj.identifier] = tb_obj
-        obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict.get("summer_hrv_bypass_mode", {}))
+        # Support both new and old serialization formats
+        if "summer_ventilation" in _dict:
+            obj.summer_ventilation = SummerVentilation.from_dict(_dict["summer_ventilation"])
+        elif "summer_hrv_bypass_mode" in _dict:
+            obj.summer_ventilation.summer_bypass_mode = PhVentilationSummerBypassMode.from_dict(_dict["summer_hrv_bypass_mode"])  # type: ignore
         obj.wind_exposure_type = PhWindExposureType.from_dict(_dict.get("wind_exposure_type", {}))
+
         return obj
 
     def __copy__(self):
@@ -188,7 +325,7 @@ class BldgSegment(_base._Base):
         new_obj.thermal_bridges = {}
         for tb_k, tb_v in self.thermal_bridges.items():
             new_obj.thermal_bridges[tb_k] = tb_v.duplicate()
-        new_obj.summer_hrv_bypass_mode = PhVentilationSummerBypassMode(self.summer_hrv_bypass_mode.value)
+        new_obj.summer_ventilation = self.summer_ventilation.duplicate()
         new_obj.wind_exposure_type = PhWindExposureType(self.wind_exposure_type.value)
         return new_obj
 
