@@ -26,6 +26,7 @@ class PhSupportiveDevice(_base._PhHVACBase):
         self.in_conditioned_space = True
         self.norm_energy_demand_W = 1.0
         self.annual_period_operation_khrs = 8.760  # 100% of the year
+        self.ihg_utilization_factor = 1.0  # Fraction of energy that becomes IHG inside envelope [0.0-1.0]
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -37,6 +38,7 @@ class PhSupportiveDevice(_base._PhHVACBase):
         d["in_conditioned_space"] = self.in_conditioned_space
         d["norm_energy_demand_W"] = self.norm_energy_demand_W
         d["annual_period_operation_khrs"] = self.annual_period_operation_khrs
+        d["ihg_utilization_factor"] = self.ihg_utilization_factor
         return d
 
     def base_attrs_from_dict(self, _input_dict):
@@ -49,6 +51,7 @@ class PhSupportiveDevice(_base._PhHVACBase):
         self.in_conditioned_space = _input_dict["in_conditioned_space"]
         self.norm_energy_demand_W = _input_dict["norm_energy_demand_W"]
         self.annual_period_operation_khrs = _input_dict["annual_period_operation_khrs"]
+        self.ihg_utilization_factor = _input_dict.get("ihg_utilization_factor", 1.0)
         return self
 
     def check_dict_type(self, _input_dict):
@@ -150,4 +153,5 @@ class PhSupportiveDevice(_base._PhHVACBase):
         obj.in_conditioned_space = self.in_conditioned_space
         obj.norm_energy_demand_W = self.norm_energy_demand_W
         obj.annual_period_operation_khrs = self.annual_period_operation_khrs
+        obj.ihg_utilization_factor = self.ihg_utilization_factor
         return obj

@@ -6,7 +6,6 @@
 import warnings
 from copy import copy
 
-
 try:
     from typing import Any, Dict, Union
 except ImportError:
