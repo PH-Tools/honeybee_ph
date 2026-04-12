@@ -63,7 +63,7 @@ class PhSupportiveDevice(_base._PhHVACBase):
         )
         assert device_class_name == str(self.__class__.__name__), msg
         return None
-
+    
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict[str, Any]) -> PhSupportiveDevice

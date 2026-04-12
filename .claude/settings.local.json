@@ -6,5 +6,20 @@
       "mcp__ide__executeCode",
       "WebFetch(domain:github.com)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/em/Dropbox/bldgtyp-00/00_PH_Tools/honeybee_ph/.claude/fsdeploy-hook.sh",
+            "timeout": 10,
+            "statusMessage": "Deploying to targets..."
+          }
+        ]
+      }
+    ]
   }
 }
