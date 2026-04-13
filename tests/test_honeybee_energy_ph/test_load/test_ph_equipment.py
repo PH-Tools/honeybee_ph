@@ -447,3 +447,52 @@ def test_average_wattage():
 
     e = ph_equipment.PhCustomAnnualMEL.phius_default()
     assert e.annual_avg_wattage(**d) == approx(0)
+
+
+# -- IHG Utilization Factor defaults
+
+
+def test_ihg_utilization_factor_defaults():
+    """Each appliance type should have the correct PHPP availability factor."""
+    assert ph_equipment.PhDishwasher().ihg_utilization_factor == 0.30
+    assert ph_equipment.PhClothesWasher().ihg_utilization_factor == 0.30
+    assert ph_equipment.PhClothesDryer().ihg_utilization_factor == 0.70
+    assert ph_equipment.PhCooktop().ihg_utilization_factor == 0.50
+    assert ph_equipment.PhRefrigerator().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhFreezer().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhFridgeFreezer().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhPhiusMEL().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhPhiusLightingInterior().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhPhiusLightingExterior().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhPhiusLightingGarage().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhCustomAnnualElectric().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhCustomAnnualLighting().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhCustomAnnualMEL().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhElevatorHydraulic().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhElevatorGearedTraction().ihg_utilization_factor == 1.0
+    assert ph_equipment.PhElevatorGearlessTraction().ihg_utilization_factor == 1.0
+
+
+def test_ihg_utilization_factor_in_to_dict():
+    """The ihg_utilization_factor should appear in serialized output."""
+    e = ph_equipment.PhCooktop()
+    d = e.to_dict()
+    assert d["ihg_utilization_factor"] == 0.50
+
+
+def test_ihg_utilization_factor_round_trip():
+    """The ihg_utilization_factor should survive a to_dict/from_dict cycle."""
+    e1 = ph_equipment.PhDishwasher()
+    e1.ihg_utilization_factor = 0.45
+    d = e1.to_dict()
+    e2 = ph_equipment.PhEquipmentBuilder.from_dict(d)
+    assert e2.ihg_utilization_factor == 0.45
+
+
+def test_ihg_utilization_factor_backwards_compat():
+    """Old serialized data without ihg_utilization_factor should default to 1.0."""
+    e = ph_equipment.PhCustomAnnualElectric()
+    d = e.to_dict()
+    del d["ihg_utilization_factor"]
+    e2 = ph_equipment.PhEquipmentBuilder.from_dict(d)
+    assert e2.ihg_utilization_factor == 1.0

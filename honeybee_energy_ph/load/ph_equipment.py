@@ -81,6 +81,7 @@ class PhEquipment(_base._Base):
         self.energy_demand = 0.0  # kwh
         self.energy_demand_per_use = 0.0  # kwh/use
         self.combined_energy_factor = 0.0  # CEF
+        self.ihg_utilization_factor = 1.0  # Fraction of energy that becomes IHG inside envelope [0.0-1.0]
 
     def apply_default_attr_values(self, _defaults={}):
         # type: (dict[str, Any]) -> None
@@ -109,6 +110,7 @@ class PhEquipment(_base._Base):
         d["energy_demand"] = self.energy_demand
         d["energy_demand_per_use"] = self.energy_demand_per_use
         d["combined_energy_factor"] = self.combined_energy_factor
+        d["ihg_utilization_factor"] = self.ihg_utilization_factor
 
         return d
 
@@ -235,6 +237,7 @@ class PhDishwasher(PhEquipment):
     def __init__(self, _defaults={}):
         super(PhDishwasher, self).__init__()
         self.display_name = "Kitchen dishwasher"
+        self.ihg_utilization_factor = 0.30
         self.capacity_type = 1
         self.capacity = 12
         self._water_connection = PhDishwasherType("1-DHW CONNECTION")
@@ -281,6 +284,7 @@ class PhClothesWasher(PhEquipment):
     def __init__(self, _defaults={}):
         super(PhClothesWasher, self).__init__()
         self.display_name = "Laundry - washer"
+        self.ihg_utilization_factor = 0.30
         self.capacity = 0.1274
         self.modified_energy_factor = 2.7
         self._water_connection = PhClothesWasherType("1-DHW CONNECTION")
@@ -330,6 +334,7 @@ class PhClothesDryer(PhEquipment):
     def __init__(self, _defaults={}):
         super(PhClothesDryer, self).__init__()
         self.display_name = "Laundry - dryer"
+        self.ihg_utilization_factor = 0.70
         self._dryer_type = PhClothesDryerType("5-ELECTRIC EXHAUST AIR DRYER")
         self.gas_consumption = 0
         self.gas_efficiency_factor = 2.67
@@ -472,6 +477,7 @@ class PhCooktop(PhEquipment):
     def __init__(self, _defaults={}):
         super(PhCooktop, self).__init__()
         self.display_name = "Kitchen cooking"
+        self.ihg_utilization_factor = 0.50
         self._cooktop_type = PhCookingType("1-ELECTRICITY")
         self.apply_default_attr_values(_defaults)
 
