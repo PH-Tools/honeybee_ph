@@ -1,0 +1,21 @@
+# When docs/ changes on main, it fires a repository_dispatch event to ph-docs,
+# triggering a rebuild of the unified documentation site.
+
+name: Notify Docs Hub
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**']
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify hub
+        run: |
+          curl -X POST \
+            -H 'Authorization: token ${{ secrets.HUB_DISPATCH_TOKEN }}' \
+            -H 'Accept: application/vnd.github.v3+json' \
+            https://api.github.com/repos/PH-Tools/ph-docs/dispatches \
+            -d '{"event_type": "docs-updated", "client_payload": {"source": "${{ github.repository }}"}}'
