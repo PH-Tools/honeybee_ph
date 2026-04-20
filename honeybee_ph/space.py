@@ -30,6 +30,24 @@ except ImportError as e:
 
 
 class SpaceFloorSegment(_base._Base):
+    """A single floor area polygon within a PH Space.
+
+    Represents one contiguous floor region with its own geometry, weighting
+    factor (for iCFA/TFA calculations), and net area factor. A Space contains
+    one or more SpaceFloorSegments via SpaceFloor and SpaceVolume.
+
+    Attributes:
+        geometry (Optional[LBFace3D]): The planar 3D geometry of this segment.
+            None if not yet assigned.
+        weighting_factor (float): Multiplier for iCFA/TFA area calculation.
+            Default: 1.0 (no reduction).
+        net_area_factor (float): Multiplier for net usable area calculation.
+            Default: 1.0 (full area counts).
+        reference_point (Optional[Point3D]): Point used for spatial containment
+            testing (is this segment inside an HB-Room?). Usually the face
+            centroid, but adjusted for non-convex shapes (L, U).
+    """
+
     def __init__(self):
         super(SpaceFloorSegment, self).__init__()
         self.geometry = None  # type: Optional[LBFace3D]
@@ -159,10 +177,13 @@ class SpaceFloorSegment(_base._Base):
         # type: (Vector3D) -> SpaceFloorSegment
         """Move the SpaceFloorSegment along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): The direction and distance to move.
+
         Returns:
-            A new SpaceFloorSegment object with the move applied.
+        --------
+            * SpaceFloorSegment: A new SpaceFloorSegment with the move applied.
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
@@ -173,18 +194,21 @@ class SpaceFloorSegment(_base._Base):
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> SpaceFloorSegment
-        """Rotate the SpaceFloorSegment by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the SpaceFloorSegment by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): The axis of rotation.
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new SpaceFloorSegment object with the rotation applied.
+        --------
+            * SpaceFloorSegment: A new SpaceFloorSegment with the rotation applied.
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
@@ -196,13 +220,16 @@ class SpaceFloorSegment(_base._Base):
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> SpaceFloorSegment
-        """Rotate the SpaceFloorSegment counterclockwise in the XY plane by a certain angle.
+        """Rotate the SpaceFloorSegment counterclockwise in the XY plane.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new SpaceFloorSegment object with the rotation applied.
+        --------
+            * SpaceFloorSegment: A new SpaceFloorSegment with the rotation applied.
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
@@ -214,14 +241,17 @@ class SpaceFloorSegment(_base._Base):
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> SpaceFloorSegment
-        """Reflected the SpaceFloorSegment across a plane with the input normal vector and origin_pt3D.
+        """Reflect the SpaceFloorSegment across a plane.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): The normal vector for the reflection plane.
+                Must be normalized.
+            * origin_pt3D (Point3D): The origin of the reflection plane.
+
         Returns:
-            A new SpaceFloorSegment object with the reflection applied.
+        --------
+            * SpaceFloorSegment: A new SpaceFloorSegment with the reflection applied.
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
@@ -233,14 +263,17 @@ class SpaceFloorSegment(_base._Base):
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> SpaceFloorSegment
-        """Scale the SpaceFloorSegment by a factor from an origin_pt3D point.
+        """Scale the SpaceFloorSegment by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): The scaling factor.
+            * origin_pt3D (Optional[Point3D]): The origin from which to scale.
+                If None, scales from the World origin (0, 0, 0).
+
         Returns:
-            A new SpaceFloorSegment object with the scaling applied.
+        --------
+            * SpaceFloorSegment: A new SpaceFloorSegment with the scaling applied.
         """
         dup_floor_seg = self.duplicate()
         if self.geometry:
@@ -267,6 +300,16 @@ class SpaceFloorSegment(_base._Base):
 
 
 class SpaceFloor(_base._Base):
+    """A collection of SpaceFloorSegments representing one floor level.
+
+    Contains one or more floor segments and optional merged geometry
+    representing the full floor outline.
+
+    Attributes:
+        geometry (Optional[LBFace3D]): The merged 3D face for this floor level.
+            None if not yet assigned.
+    """
+
     def __init__(self):
         super(SpaceFloor, self).__init__()
         self._floor_segments = list()  # type: List[SpaceFloorSegment]
@@ -396,10 +439,13 @@ class SpaceFloor(_base._Base):
         # type: (Vector3D) -> SpaceFloor
         """Move the SpaceFloor along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): The direction and distance to move.
+
         Returns:
-            A new SpaceFloor object with the move applied.
+        --------
+            * SpaceFloor: A new SpaceFloor with the move applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
         if self.geometry:
@@ -410,18 +456,21 @@ class SpaceFloor(_base._Base):
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> SpaceFloor
-        """Rotate the SpaceFloor by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the SpaceFloor by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): The axis of rotation.
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new SpaceFloor object with the rotation applied.
+        --------
+            * SpaceFloor: A new SpaceFloor with the rotation applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
         if self.geometry:
@@ -432,13 +481,16 @@ class SpaceFloor(_base._Base):
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> SpaceFloor
-        """Rotate the SpaceFloor counterclockwise in the XY plane by a certain angle.
+        """Rotate the SpaceFloor counterclockwise in the XY plane.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new SpaceFloor object with the rotation applied.
+        --------
+            * SpaceFloor: A new SpaceFloor with the rotation applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
         if self.geometry:
@@ -449,14 +501,17 @@ class SpaceFloor(_base._Base):
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> SpaceFloor
-        """Reflected the SpaceFloor across a plane with the input normal vector and origin_pt3D.
+        """Reflect the SpaceFloor across a plane.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): The normal vector for the reflection plane.
+                Must be normalized.
+            * origin_pt3D (Point3D): The origin of the reflection plane.
+
         Returns:
-            A new SpaceFloor object with the reflection applied.
+        --------
+            * SpaceFloor: A new SpaceFloor with the reflection applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
         if self.geometry:
@@ -467,14 +522,17 @@ class SpaceFloor(_base._Base):
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> SpaceFloor
-        """Scale the SpaceFloor by a factor from an origin_pt3D point.
+        """Scale the SpaceFloor by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): The scaling factor.
+            * origin_pt3D (Optional[Point3D]): The origin from which to scale.
+                If None, scales from the World origin (0, 0, 0).
+
         Returns:
-            A new SpaceFloor object with the scaling applied.
+        --------
+            * SpaceFloor: A new SpaceFloor with the scaling applied.
         """
         dup_floor = self.duplicate(_include_floor_segments=False)
         if self.geometry:
@@ -494,6 +552,19 @@ class SpaceFloor(_base._Base):
 
 
 class SpaceVolume(_base._Base):
+    """A 3D volume within a PH Space, defined by a floor and ceiling height.
+
+    Contains a SpaceFloor (with floor segments) and enclosing geometry faces.
+    A Space contains one or more SpaceVolumes to represent rooms with varying
+    ceiling heights.
+
+    Attributes:
+        avg_ceiling_height (float): Average clear ceiling height in meters.
+            Default: 2.5.
+        floor (SpaceFloor): The floor level for this volume.
+        geometry (List[LBFace3D]): The enclosing 3D face geometry.
+    """
+
     def __init__(self):
         super(SpaceVolume, self).__init__()
         self.avg_ceiling_height = 2.5  # m
@@ -613,10 +684,13 @@ class SpaceVolume(_base._Base):
         # type: (Vector3D) -> SpaceVolume
         """Move the SpaceVolume along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): The direction and distance to move.
+
         Returns:
-            A new SpaceVolume object with the move applied.
+        --------
+            * SpaceVolume: A new SpaceVolume with the move applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
         dup_volume.geometry = [f.move(moving_vec3D) for f in self.geometry]
@@ -625,18 +699,21 @@ class SpaceVolume(_base._Base):
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> SpaceVolume
-        """Rotate the SpaceVolume by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the SpaceVolume by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): The axis of rotation.
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new SpaceVolume object with the rotation applied.
+        --------
+            * SpaceVolume: A new SpaceVolume with the rotation applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
         dup_volume.geometry = [f.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D) for f in self.geometry]
@@ -645,13 +722,16 @@ class SpaceVolume(_base._Base):
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> SpaceVolume
-        """Rotate the SpaceVolume counterclockwise in the XY plane by a certain angle.
+        """Rotate the SpaceVolume counterclockwise in the XY plane.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new SpaceVolume object with the rotation applied.
+        --------
+            * SpaceVolume: A new SpaceVolume with the rotation applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
         dup_volume.geometry = [f.rotate_xy(radians(angle_degrees), origin_pt3D) for f in self.geometry]
@@ -660,14 +740,17 @@ class SpaceVolume(_base._Base):
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> SpaceVolume
-        """Reflected the SpaceVolume across a plane with the input normal vector and origin_pt3D.
+        """Reflect the SpaceVolume across a plane.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): The normal vector for the reflection plane.
+                Must be normalized.
+            * origin_pt3D (Point3D): The origin of the reflection plane.
+
         Returns:
-            A new SpaceVolume object with the reflection applied.
+        --------
+            * SpaceVolume: A new SpaceVolume with the reflection applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
         dup_volume.geometry = [f.reflect(normal_vec3D, origin_pt3D) for f in self.geometry]
@@ -676,14 +759,17 @@ class SpaceVolume(_base._Base):
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> SpaceVolume
-        """Scale the SpaceVolume by a factor from an origin_pt3D point.
+        """Scale the SpaceVolume by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): The scaling factor.
+            * origin_pt3D (Optional[Point3D]): The origin from which to scale.
+                If None, scales from the World origin (0, 0, 0).
+
         Returns:
-            A new SpaceVolume object with the scaling applied.
+        --------
+            * SpaceVolume: A new SpaceVolume with the scaling applied.
         """
         dup_volume = self.duplicate(_include_floor=False)
         dup_volume.geometry = [f.scale(scale_factor, origin_pt3D) for f in self.geometry]
@@ -702,6 +788,20 @@ class SpaceVolume(_base._Base):
 
 
 class Space(_base._Base):
+    """A Passive House Space representing an occupiable floor area.
+
+    A Space is the PH equivalent of a room-level unit for area and volume
+    accounting. It contains one or more SpaceVolumes, each with their own
+    floor segments and ceiling heights. Spaces are hosted inside HB-Rooms.
+
+    Attributes:
+        quantity (int): Number of identical spaces (for repetition). Default: 1.
+        wufi_type (int): WUFI-Passive space type code. Default: 99 (User-Defined).
+        name (str): User-facing space name.
+        number (str): Space number or identifier string.
+        host (Optional[room.Room]): The parent Honeybee Room hosting this space.
+    """
+
     def __init__(self, _host=None):
         # type: (Optional[room.Room]) -> None
         super(Space, self).__init__()
@@ -887,10 +987,13 @@ class Space(_base._Base):
         # type: (Vector3D) -> Space
         """Move the Space and its Volumes along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): The direction and distance to move.
+
         Returns:
-            A new Space object with the move applied.
+        --------
+            * Space: A new Space with the move applied.
         """
         dup_space = self.duplicate(self.host, _include_volumes=False)
         dup_space.add_new_volumes([vol.move(moving_vec3D) for vol in self.volumes])
@@ -899,18 +1002,21 @@ class Space(_base._Base):
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> Space
-        """Rotate the Space and its Volumes by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the Space and its Volumes around an axis and origin.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): The axis of rotation.
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new Space object with the rotation applied.
+        --------
+            * Space: A new Space with the rotation applied.
         """
         dup_space = self.duplicate(self.host, _include_volumes=False)
         dup_space.add_new_volumes([vol.rotate(axis_vec3D, angle_degrees, origin_pt3D) for vol in self.volumes])
@@ -919,13 +1025,16 @@ class Space(_base._Base):
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> Space
-        """Rotate the Space and its Volumes counterclockwise in the XY plane by a certain angle.
+        """Rotate the Space and its Volumes counterclockwise in the XY plane.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
         Returns:
-            A new Space object with the rotation applied.
+        --------
+            * Space: A new Space with the rotation applied.
         """
         dup_space = self.duplicate(self.host, _include_volumes=False)
         dup_space.add_new_volumes([vol.rotate_xy(angle_degrees, origin_pt3D) for vol in self.volumes])
@@ -934,14 +1043,17 @@ class Space(_base._Base):
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> Space
-        """Reflected the Space and its Volumes across a plane with the input normal vector and origin_pt3D.
+        """Reflect the Space and its Volumes across a plane.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): The normal vector for the reflection plane.
+                Must be normalized.
+            * origin_pt3D (Point3D): The origin of the reflection plane.
+
         Returns:
-            A new Space object with the reflection applied.
+        --------
+            * Space: A new Space with the reflection applied.
         """
         dup_space = self.duplicate(self.host, _include_volumes=False)
         dup_space.add_new_volumes([vol.reflect(normal_vec3D, origin_pt3D) for vol in self.volumes])
@@ -950,14 +1062,17 @@ class Space(_base._Base):
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> Space
-        """Scale the Space and its Volumes by a factor from an origin_pt3D point.
+        """Scale the Space and its Volumes by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): The scaling factor.
+            * origin_pt3D (Optional[Point3D]): The origin from which to scale.
+                If None, scales from the World origin (0, 0, 0).
+
         Returns:
-            A new Space object with the scaling applied.
+        --------
+            * Space: A new Space with the scaling applied.
         """
         dup_space = self.duplicate(self.host, _include_volumes=False)
         dup_space.add_new_volumes([volume.scale(scale_factor, origin_pt3D) for volume in self.volumes])

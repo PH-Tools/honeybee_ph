@@ -31,6 +31,12 @@ class EnumProperty(object):
     This Descriptor will create a new Enum type when it is called using the
     attribute name and the phpp_version #, This new enum will be used to manage
     the allowable values and clean / filter the user inputs.
+
+    Attributes:
+        allowed_inputs (Dict[str, Dict[int, List]]): Mapping of attribute names to PHPP version-specific allowed values.
+        attribute_name (str): The name of the attribute this descriptor manages.
+        phpp_version (int): The PHPP version number (9 or 10).
+        enum (Type[enumerables.CustomEnum]): The dynamically created enum class for validation.
     """
 
     allowed_inputs = {  # type: Dict[str, Dict[int, List]]
@@ -247,12 +253,12 @@ class EnumProperty(object):
 
     def __set__(self, instance, value):
         # type: (Any, Optional[Union[str, int]]) -> None
-        """Set the enum with the input value on the instance __dict__
+        """Set the enum with the input value on the instance __dict__.
 
         Arguments:
         ----------
-            * instance: The descriptor class variable.
-            * value: The value to validate and set.
+            * instance (Any): The descriptor class variable.
+            * value (Optional[Union[str, int]]): The value to validate and set.
         """
 
         if value:
@@ -264,14 +270,16 @@ class EnumProperty(object):
 
     def __get__(self, instance, owner):
         # type: (Any, Any) -> enumerables.CustomEnum
-        """
+        """Return the enum instance for the descriptor attribute.
+
         Arguments:
-        ---------
-            * instance: The descriptor class variable.
-            * owner: The Class which has the descriptor as a class variable.
+        ----------
+            * instance (Any): The descriptor class variable.
+            * owner (Any): The Class which has the descriptor as a class variable.
+
         Returns:
         --------
-            * (enumerables.CustomEnum): The Enum Instance object.
+            * enumerables.CustomEnum: The Enum Instance object.
         """
         return instance.__dict__[self.attribute_name]
 
@@ -283,7 +291,12 @@ class EnumProperty(object):
 
 
 class _PHPPSettingsBase(object):
-    """Base class with methods for use by PHPP-Settings objects."""
+    """Base class with methods for use by PHPP-Settings objects.
+
+    Attributes:
+        phpp_version (int): The PHPP version number (default 9).
+        tfa_override (Optional[float]): Optional override for the treated floor area.
+    """
 
     phpp_version = 9  # default
     tfa_override = None  # type: float | None
@@ -325,7 +338,18 @@ class _PHPPSettingsBase(object):
 
 
 class PHPPSettings10(_PHPPSettingsBase):
-    """Settings for PHPP v10"""
+    """Settings for PHPP v10.
+
+    Attributes:
+        phpp_version (int): The PHPP version number (10).
+        building_use_type (EnumProperty): The building use type classification.
+        ihg_type (EnumProperty): The internal heat gains calculation type.
+        certification_class (EnumProperty): The certification class (Classic, Plus, Premium).
+        certification_type (EnumProperty): The certification type (Passive House, EnerPHit, etc.).
+        primary_energy_type (EnumProperty): The primary energy evaluation type.
+        retrofit_type (EnumProperty): The retrofit category (New Building, Retrofit, Staged Retrofit).
+        tfa_override (Optional[float]): Optional override for the treated floor area.
+    """
 
     phpp_version = 10
     building_use_type = EnumProperty("building_use_type", phpp_version)
@@ -348,7 +372,21 @@ class PHPPSettings10(_PHPPSettingsBase):
 
 
 class PHPPSettings9(_PHPPSettingsBase):
-    """Settings for PHPP v9"""
+    """Settings for PHPP v9.
+
+    Attributes:
+        phpp_version (int): The PHPP version number (9).
+        building_category_type (EnumProperty): The building category (Residential or Non-Residential).
+        building_use_type (EnumProperty): The building use type classification.
+        ihg_type (EnumProperty): The internal heat gains calculation type.
+        occupancy_type (EnumProperty): The occupancy type (Standard or User Determined).
+        certification_type (EnumProperty): The certification type (Passive House, EnerPHit, etc.).
+        certification_class (EnumProperty): The certification class (Classic, Plus, Premium).
+        primary_energy_type (EnumProperty): The primary energy evaluation type.
+        enerphit_type (EnumProperty): The EnerPHit method (Component or Energy Demand).
+        retrofit_type (EnumProperty): The retrofit category (New Building, Retrofit, Step-by-Step Retrofit).
+        tfa_override (Optional[float]): Optional override for the treated floor area.
+    """
 
     phpp_version = 9
     building_category_type = EnumProperty("building_category_type", phpp_version)
@@ -377,7 +415,12 @@ class PHPPSettings9(_PHPPSettingsBase):
 
 
 class PhiCertification(_base._Base):
-    """PHI PHPP Certification object with Attributes that vary by version (9 | 10)"""
+    """PHI PHPP Certification object with Attributes that vary by version (9 | 10).
+
+    Attributes:
+        phpp_version (int): The PHPP version number (9 or 10).
+        attributes (Union[PHPPSettings9, PHPPSettings10]): Version-specific certification settings.
+    """
 
     def __init__(self, phpp_version=9):
         # type: (int) -> None
@@ -442,59 +485,84 @@ class PhiCertification(_base._Base):
 
     def move(self, moving_vec3D):
         # type: (Vector3D) -> PhiCertification
-        """Move the Phius Certification Object along a vector.
+        """Move the PHI Certification object along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the object.
+
+        Returns:
+        --------
+            * PhiCertification: A new duplicated PhiCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> PhiCertification
-        """Rotate the Phius Certification Object by a certain angle around an axis and origin.
+        """Rotate the PHI Certification object by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis representing the axis of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D axis representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhiCertification: A new duplicated PhiCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> PhiCertification
-        """Rotate the Phius Certification Object counterclockwise in the XY plane by a certain angle.
+        """Rotate the PHI Certification object counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhiCertification: A new duplicated PhiCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
 
     def reflect(self, plane):
         # type: (Plane) -> PhiCertification
-        """Reflected the Phius Certification Object across a plane.
+        """Reflect the PHI Certification object across a plane.
 
-        Args:
-            normal_vec3D: A Plane representing the plane across which to reflect.
+        Arguments:
+        ----------
+            * plane (Plane): A Plane representing the plane across which to reflect.
+
+        Returns:
+        --------
+            * PhiCertification: A new duplicated PhiCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Point3D | None) -> PhiCertification
-        """Scale the Phius Certification Object by a factor from an origin point.
+        """Scale the PHI Certification object by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the object should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * PhiCertification: A new duplicated PhiCertification object.
         """
         new_obj = self.duplicate()
         if new_obj.attributes.tfa_override is not None:

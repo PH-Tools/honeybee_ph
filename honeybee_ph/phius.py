@@ -27,6 +27,19 @@ except ImportError as e:
 
 
 class PhiusBuildingCertificationProgram(enumerables.CustomEnum):
+    """Phius building certification program type enumeration.
+
+    Values:
+        1-Default: Default (unspecified) certification program.
+        2-PHIUS 2015: PHIUS 2015 standard.
+        3-PHIUS 2018: PHIUS 2018 standard.
+        4-Italian: Italian certification standard.
+        5-PHIUS 2018 CORE: PHIUS 2018 CORE standard.
+        6-PHIUS 2018 ZERO: PHIUS 2018 ZERO standard.
+        7-PHIUS 2021 CORE: PHIUS 2021 CORE standard.
+        8-PHIUS 2021 ZERO: PHIUS 2021 ZERO standard.
+    """
+
     allowed = [
         "1-Default",
         "2-PHIUS 2015",
@@ -44,6 +57,13 @@ class PhiusBuildingCertificationProgram(enumerables.CustomEnum):
 
 
 class PhiusBuildingCategoryType(enumerables.CustomEnum):
+    """Phius building category type enumeration.
+
+    Values:
+        1-RESIDENTIAL BUILDING: Residential building category.
+        2-NON-RESIDENTIAL BUILDING: Non-residential building category.
+    """
+
     allowed = [
         "1-RESIDENTIAL BUILDING",
         "2-NON-RESIDENTIAL BUILDING",
@@ -55,6 +75,16 @@ class PhiusBuildingCategoryType(enumerables.CustomEnum):
 
 
 class PhiusBuildingUseType(enumerables.CustomEnum):
+    """Phius building use type enumeration.
+
+    Values:
+        1-RESIDENTIAL: Residential use.
+        4-OFFICE/ADMINISTRATIVE BUILDING: Office or administrative building use.
+        5-SCHOOL: School use.
+        6-OTHER: Other use type.
+        7-UNDEFINED/UNFINISHED: Undefined or unfinished use type.
+    """
+
     allowed = [
         "1-RESIDENTIAL",
         "",
@@ -75,6 +105,14 @@ class PhiusBuildingUseType(enumerables.CustomEnum):
 
 
 class PhiusBuildingStatus(enumerables.CustomEnum):
+    """Phius building status enumeration.
+
+    Values:
+        1-IN_PLANNING: Building is in the planning phase.
+        2-UNDER_CONSTRUCTION: Building is under construction.
+        3-COMPLETE: Building is complete.
+    """
+
     allowed = [
         "1-IN_PLANNING",
         "2-UNDER_CONSTRUCTION",
@@ -87,6 +125,14 @@ class PhiusBuildingStatus(enumerables.CustomEnum):
 
 
 class PhiusBuildingType(enumerables.CustomEnum):
+    """Phius building type enumeration.
+
+    Values:
+        1-NEW_CONSTRUCTION: New construction project.
+        2-RETROFIT: Retrofit of an existing building.
+        3-MIXED: Mixed new construction and retrofit.
+    """
+
     allowed = [
         "1-NEW_CONSTRUCTION",
         "2-RETROFIT",
@@ -102,6 +148,23 @@ class PhiusBuildingType(enumerables.CustomEnum):
 
 
 class PhiusCertification(_base._Base):
+    """Phius certification configuration and performance targets for a building.
+
+    Attributes:
+        localization_selection_type (int): Localization selection type identifier.
+        PHIUS2021_heating_demand (float): PHIUS 2021 heating demand target (kBtu/ft2/yr).
+        PHIUS2021_cooling_demand (float): PHIUS 2021 cooling demand target (kBtu/ft2/yr).
+        PHIUS2021_heating_load (float): PHIUS 2021 heating load target (Btu/h/ft2).
+        PHIUS2021_cooling_load (float): PHIUS 2021 cooling load target (Btu/h/ft2).
+        int_gains_evap_per_person (int): Evaporative internal gains per person (W/person).
+        int_gains_flush_heat_loss (bool): Whether to account for flush heat loss.
+        int_gains_num_toilets (int): Number of toilets in the building.
+        int_gains_toilet_room_util_pat (Optional[str]): Toilet room utilization pattern name.
+        int_gains_use_school_defaults (bool): Whether to use school default internal gains.
+        int_gains_dhw_marginal_perf_ratio (Optional[float]): DHW marginal performance ratio.
+        icfa_override (Optional[float]): Manual override for interior conditioned floor area.
+    """
+
     def __init__(self):
         super(PhiusCertification, self).__init__()
         self.localization_selection_type = 2
@@ -129,6 +192,7 @@ class PhiusCertification(_base._Base):
     @property
     def certification_program(self):
         # type: () -> PhiusBuildingCertificationProgram
+        """The Phius certification program for this building."""
         return self._certification_program
 
     @certification_program.setter
@@ -140,6 +204,7 @@ class PhiusCertification(_base._Base):
     @property
     def building_category_type(self):
         # type: () -> PhiusBuildingCategoryType
+        """The Phius building category type (residential or non-residential)."""
         return self._building_category_type
 
     @building_category_type.setter
@@ -151,6 +216,7 @@ class PhiusCertification(_base._Base):
     @property
     def building_use_type(self):
         # type: () -> PhiusBuildingUseType
+        """The Phius building use type (residential, school, office, etc.)."""
         return self._building_use_type
 
     @building_use_type.setter
@@ -162,6 +228,7 @@ class PhiusCertification(_base._Base):
     @property
     def building_status(self):
         # type: () -> PhiusBuildingStatus
+        """The Phius building status (planning, construction, or complete)."""
         return self._building_status
 
     @building_status.setter
@@ -173,6 +240,7 @@ class PhiusCertification(_base._Base):
     @property
     def building_type(self):
         # type: () -> PhiusBuildingType
+        """The Phius building type (new construction, retrofit, or mixed)."""
         return self._building_type
 
     @building_type.setter
@@ -292,8 +360,13 @@ class PhiusCertification(_base._Base):
         # type: (Vector3D) -> PhiusCertification
         """Move the Phius Certification Object along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * PhiusCertification: A new duplicated PhiusCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
@@ -306,10 +379,15 @@ class PhiusCertification(_base._Base):
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis representing the axis of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D axis representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhiusCertification: A new duplicated PhiusCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
@@ -318,31 +396,46 @@ class PhiusCertification(_base._Base):
         # type: (float, Point3D) -> PhiusCertification
         """Rotate the Phius Certification Object counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhiusCertification: A new duplicated PhiusCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
 
     def reflect(self, plane):
         # type: (Plane) -> PhiusCertification
-        """Reflected the Phius Certification Object across a plane.
+        """Reflect the Phius Certification Object across a plane.
 
-        Args:
-            normal_vec3D: A Plane representing the plane across which to reflect.
+        Arguments:
+        ----------
+            * plane (Plane): A Plane representing the plane across which to reflect.
+
+        Returns:
+        --------
+            * PhiusCertification: A new duplicated PhiusCertification object.
         """
         new_obj = self.duplicate()
         return new_obj
 
     def scale(self, scale_factor, origin_pt3D=None):
-        # type: (float, Point3D | None) -> PhiusCertification
+        # type: (float, Optional[Point3D]) -> PhiusCertification
         """Scale the Phius Certification Object by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the object should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * PhiusCertification: A new duplicated PhiusCertification object with scaled icfa_override.
         """
         new_obj = self.duplicate()
         if new_obj.icfa_override is not None:

@@ -19,7 +19,25 @@ from honeybee_ph import _base
 
 
 class Climate_MonthlyValueSet(_base._Base):
-    """A set of 12 monthly values (temp, radiation, etc)."""
+    """A set of 12 monthly climate values (temperature, radiation, etc.).
+
+    Stores one value per calendar month. Used as a building block for
+    temperature, radiation, and other monthly climate data collections.
+
+    Attributes:
+        january (float): January value.
+        february (float): February value.
+        march (float): March value.
+        april (float): April value.
+        may (float): May value.
+        june (float): June value.
+        july (float): July value.
+        august (float): August value.
+        september (float): September value.
+        october (float): October value.
+        november (float): November value.
+        december (float): December value.
+    """
 
     january = 0.0
     february = 0.0
@@ -111,7 +129,14 @@ class Climate_MonthlyValueSet(_base._Base):
 
 
 class Climate_MonthlyTempCollection(_base._Base):
-    """Collection class to organize monthly temperature values"""
+    """Collection of monthly temperature data sets.
+
+    Attributes:
+        air_temps (Climate_MonthlyValueSet): Monthly air temperatures in degrees C.
+        dewpoints (Climate_MonthlyValueSet): Monthly dewpoint temperatures in degrees C.
+        sky_temps (Climate_MonthlyValueSet): Monthly sky temperatures in degrees C.
+        ground_temps (Climate_MonthlyValueSet): Monthly ground temperatures in degrees C.
+    """
 
     def __init__(
         self,
@@ -175,6 +200,15 @@ class Climate_MonthlyTempCollection(_base._Base):
 
 
 class Climate_MonthlyRadiationCollection(_base._Base):
+    """Collection of monthly solar radiation data by orientation.
+
+    Attributes:
+        north (Climate_MonthlyValueSet): Monthly north-facing radiation in kWh/m2.
+        east (Climate_MonthlyValueSet): Monthly east-facing radiation in kWh/m2.
+        south (Climate_MonthlyValueSet): Monthly south-facing radiation in kWh/m2.
+        west (Climate_MonthlyValueSet): Monthly west-facing radiation in kWh/m2.
+        glob (Climate_MonthlyValueSet): Monthly global horizontal radiation in kWh/m2.
+    """
 
     def __init__(
         self,
@@ -242,7 +276,19 @@ class Climate_MonthlyRadiationCollection(_base._Base):
 
 
 class Climate_PeakLoadValueSet(_base._Base):
-    """A set of Peak Load data."""
+    """A set of peak load climate data for a single design condition.
+
+    Attributes:
+        temp (float): Design temperature in degrees C.
+        rad_north (float): North-facing radiation in W/m2.
+        rad_east (float): East-facing radiation in W/m2.
+        rad_south (float): South-facing radiation in W/m2.
+        rad_west (float): West-facing radiation in W/m2.
+        rad_global (float): Global horizontal radiation in W/m2.
+        dewpoint (Optional[float]): Dewpoint temperature in degrees C.
+        sky_temp (Optional[float]): Sky temperature in degrees C.
+        ground_temp (Optional[float]): Ground temperature in degrees C.
+    """
 
     def __init__(
         self,
@@ -332,7 +378,14 @@ class Climate_PeakLoadValueSet(_base._Base):
 
 
 class Climate_PeakLoadCollection(_base._Base):
-    """A Collection of Peak Loads (Heating and Cooling)."""
+    """Collection of peak heating and cooling load design conditions.
+
+    Attributes:
+        heat_load_1 (Climate_PeakLoadValueSet): Primary heating design condition.
+        heat_load_2 (Climate_PeakLoadValueSet): Secondary heating design condition.
+        cooling_load_1 (Climate_PeakLoadValueSet): Primary cooling design condition.
+        cooling_load_2 (Climate_PeakLoadValueSet): Secondary cooling design condition.
+    """
 
     def __init__(
         self,
@@ -397,6 +450,20 @@ class Climate_PeakLoadCollection(_base._Base):
 
 
 class Climate_Ground(_base._Base):
+    """Ground thermal properties for foundation heat loss calculations.
+
+    Attributes:
+        ground_thermal_conductivity (float): Thermal conductivity in W/(mK).
+            Default: 2.
+        ground_heat_capacity (float): Specific heat capacity in J/(kgK).
+            Default: 1000.
+        ground_density (float): Density in kg/m3. Default: 2000.
+        depth_groundwater (float): Depth to groundwater table in meters.
+            Default: 3.
+        flow_rate_groundwater (float): Groundwater flow rate in m/day.
+            Default: 0.05.
+    """
+
     def __init__(self):
         # type: () -> None
         super(Climate_Ground, self).__init__()
@@ -455,6 +522,22 @@ class Climate_Ground(_base._Base):
 
 
 class Climate(_base._Base):
+    """Complete climate dataset for PH energy modeling.
+
+    Contains monthly temperatures, monthly radiation, peak load conditions,
+    and ground thermal properties.
+
+    Attributes:
+        station_elevation (float): Weather station elevation in meters.
+        summer_daily_temperature_swing (float): Daily temperature swing in K.
+            Default: 8.0.
+        average_wind_speed (float): Average wind speed in m/s. Default: 4.0.
+        ground (Climate_Ground): Ground thermal properties.
+        monthly_temps (Climate_MonthlyTempCollection): Monthly temperature data.
+        monthly_radiation (Climate_MonthlyRadiationCollection): Monthly radiation data.
+        peak_loads (Climate_PeakLoadCollection): Peak load design conditions.
+    """
+
     def __init__(
         self,
         _display_name="New York",
@@ -530,7 +613,15 @@ class Climate(_base._Base):
 
 
 class Location(_base._Base):
-    """Geographic Location Information."""
+    """Geographic location data for the building site.
+
+    Attributes:
+        latitude (float): Site latitude in decimal degrees. Default: 40.6.
+        longitude (float): Site longitude in decimal degrees. Default: -73.8.
+        site_elevation (Optional[float]): Site elevation in meters above sea level.
+        climate_zone (int): ASHRAE climate zone number. Default: 1.
+        hours_from_UTC (int): Time zone offset from UTC in hours. Default: -4.
+    """
 
     def __init__(
         self,
@@ -599,7 +690,17 @@ class Location(_base._Base):
 
 
 class PHPPCodes(_base._Base):
-    """Settings / names if using Pre-loaded PHPP Library Data"""
+    """PHPP climate library reference codes.
+
+    Identifies a specific climate dataset in the PHPP library by country,
+    region, and dataset name.
+
+    Attributes:
+        country_code (str): PHPP country code string.
+            Default: "US-United States of America".
+        region_code (str): PHPP region code string. Default: "New York".
+        dataset_name (str): PHPP dataset identifier. Default: "US0055c-New York".
+    """
 
     def __init__(
         self,
@@ -657,7 +758,13 @@ class PHPPCodes(_base._Base):
 
 
 class Site(_base._Base):
-    """Location and Climate data for the building site."""
+    """Complete site data combining location, climate, and PHPP library codes.
+
+    Attributes:
+        location (Location): Geographic location data.
+        climate (Climate): Climate dataset for energy modeling.
+        phpp_library_codes (PHPPCodes): PHPP climate library reference codes.
+    """
 
     def __init__(
         self,

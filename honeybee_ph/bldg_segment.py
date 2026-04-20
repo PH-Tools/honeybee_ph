@@ -352,6 +352,16 @@ class BldgSegment(_base._Base):
 
     def add_new_thermal_bridge(self, tb):
         # type: (PhThermalBridge) -> None
+        """Add a thermal bridge to this building segment.
+
+        Arguments:
+        ----------
+            * tb (PhThermalBridge): The thermal bridge to add.
+
+        Returns:
+        --------
+            * None
+        """
         self.thermal_bridges[tb.identifier] = tb
 
     def to_dict(self):
@@ -438,8 +448,13 @@ class BldgSegment(_base._Base):
         # type: (Vector3D) -> BldgSegment
         """Move the BldgSegment along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): The direction and distance to move.
+
+        Returns:
+        --------
+            * BldgSegment: A new BldgSegment with the move applied.
         """
         new_seg = self.duplicate()
         for k, tb in new_seg.thermal_bridges.items():
@@ -450,16 +465,21 @@ class BldgSegment(_base._Base):
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Vector3D, float, Point3D) -> BldgSegment
-        """Rotate the BldgSegment by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the BldgSegment by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): The axis of rotation.
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
+        Returns:
+        --------
+            * BldgSegment: A new BldgSegment with the rotation applied.
         """
         new_seg = self.duplicate()
         for k, tb in new_seg.thermal_bridges.items():
@@ -472,9 +492,14 @@ class BldgSegment(_base._Base):
         # type: (float, Point3D) -> BldgSegment
         """Rotate the BldgSegment counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): The rotation angle in degrees.
+            * origin_pt3D (Point3D): The origin around which to rotate.
+
+        Returns:
+        --------
+            * BldgSegment: A new BldgSegment with the rotation applied.
         """
         new_seg = self.duplicate()
         for k, tb in new_seg.thermal_bridges.items():
@@ -485,10 +510,15 @@ class BldgSegment(_base._Base):
 
     def reflect(self, plane):
         # type: (Plane) -> BldgSegment
-        """Reflected the BldgSegment across a plane with the input normal vector and origin_pt3D.
+        """Reflect the BldgSegment across a plane.
 
-        Args:
-            plane: A Plane representing the plane across which the object will be reflected.
+        Arguments:
+        ----------
+            * plane (Plane): The plane across which to reflect.
+
+        Returns:
+        --------
+            * BldgSegment: A new BldgSegment with the reflection applied.
         """
         new_seg = self.duplicate()
         for k, tb in new_seg.thermal_bridges.items():
@@ -499,12 +529,17 @@ class BldgSegment(_base._Base):
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Point3D | None) -> BldgSegment
-        """Scale the BldgSegment a factor from an origin_pt3D point.
+        """Scale the BldgSegment by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): The scaling factor.
+            * origin_pt3D (Optional[Point3D]): The origin from which to scale.
+                If None, scales from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * BldgSegment: A new BldgSegment with the scaling applied.
         """
         new_seg = self.duplicate()
         for k, tb in new_seg.thermal_bridges.items():
