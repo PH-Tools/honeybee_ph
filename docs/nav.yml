@@ -1,2 +1,23 @@
 nav:
   - Overview: index.md
+  - API Reference:
+    - base: api/base.md
+    - space: api/space.md
+    - foundations: api/foundations.md
+    - bldg_segment: api/bldg_segment.md
+    - site: api/site.md
+    - team: api/team.md
+    - phi: api/phi.md
+    - phius: api/phius.md
+    - HVAC:
+      - base: api/hvac/base.md
+      - ventilation: api/hvac/ventilation.md
+      - heating: api/hvac/heating.md
+      - heat_pumps: api/hvac/heat_pumps.md
+      - hot_water_devices: api/hvac/hot_water_devices.md
+      - hot_water_system: api/hvac/hot_water_system.md
+      - hot_water_piping: api/hvac/hot_water_piping.md
+      - ducting: api/hvac/ducting.md
+      - renewable_devices: api/hvac/renewable_devices.md
+      - supportive_device: api/hvac/supportive_device.md
+      - fuels: api/hvac/fuels.md
