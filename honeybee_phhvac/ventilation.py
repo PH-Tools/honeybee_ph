@@ -26,6 +26,8 @@ except ImportError as e:
 
 
 class UnknownPhExhaustVentTypeError(Exception):
+    """Raised when an unrecognized exhaust ventilation device type is encountered."""
+
     def __init__(self, _device_types, _received_type):
         # type: (list[str], str) -> None
         self.msg = 'Error: Unknown HBPH-Exhaust Ventilation type? Got: "{}"\
@@ -40,6 +42,20 @@ class UnknownPhExhaustVentTypeError(Exception):
 
 
 class Ventilator(_base._PhHVACBase):
+    """A Passive House ventilation heat-recovery unit (ERV/HRV).
+
+    Attributes:
+        display_name (str): User-facing name for the ventilator.
+        id_num (int): Numeric identifier for the ventilator.
+        quantity (int): Number of identical units.
+        sensible_heat_recovery (float): Sensible heat recovery efficiency (0-1).
+        latent_heat_recovery (float): Latent heat recovery efficiency (0-1).
+        electric_efficiency (float): Specific electric power in Wh/m3.
+        frost_protection_reqd (bool): Whether frost protection is required.
+        temperature_below_defrost_used (float): Temperature threshold for defrost activation (C).
+        in_conditioned_space (bool): Whether the unit is located in conditioned space.
+    """
+
     def __init__(self):
         super(Ventilator, self).__init__()
         self.display_name = "_unnamed_ventilator_"  # type: str
@@ -114,7 +130,15 @@ class Ventilator(_base._PhHVACBase):
 
 
 class PhVentilationSystem(_base._PhHVACBase):
-    """Passive House Fresh-Air Ventilation System."""
+    """Passive House Fresh-Air Ventilation System.
+
+    Attributes:
+        display_name (str): User-facing name for the ventilation system.
+        sys_type (int): System type identifier (1 = Balanced PH ventilation with HR).
+        supply_ducting (List[PhDuctElement]): Supply-air duct elements.
+        exhaust_ducting (List[PhDuctElement]): Exhaust-air duct elements.
+        id_num (int): Numeric identifier for the system.
+    """
 
     def __init__(self):
         # type: () -> None
@@ -129,6 +153,7 @@ class PhVentilationSystem(_base._PhHVACBase):
     @property
     def ventilation_unit(self):
         # type: () -> Optional[Ventilator]
+        """Return the Ventilator (ERV/HRV) assigned to this system."""
         return self._ventilation_unit
 
     @ventilation_unit.setter
@@ -145,12 +170,22 @@ class PhVentilationSystem(_base._PhHVACBase):
 
     def add_supply_duct_element(self, _duct_element):
         # type: (ducting.PhDuctElement) -> None
-        """Add a supply-air duct element to the ventilation system."""
+        """Add a supply-air duct element to the ventilation system.
+
+        Arguments:
+        ----------
+            * _duct_element (PhDuctElement): The duct element to add.
+        """
         self.supply_ducting.append(_duct_element)
 
     def add_exhaust_duct_element(self, _duct_element):
         # type: (ducting.PhDuctElement) -> None
-        """Add an exhaust-air duct element to the ventilation system."""
+        """Add an exhaust-air duct element to the ventilation system.
+
+        Arguments:
+        ----------
+            * _duct_element (PhDuctElement): The duct element to add.
+        """
         self.exhaust_ducting.append(_duct_element)
 
     @property
@@ -252,8 +287,13 @@ class PhVentilationSystem(_base._PhHVACBase):
     def move(self, moving_vec3D):
         """Move the System's ducts along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * PhVentilationSystem: A new system with moved ducts.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -268,10 +308,15 @@ class PhVentilationSystem(_base._PhHVACBase):
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis representing the axis of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D axis representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhVentilationSystem: A new system with rotated ducts.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -286,9 +331,14 @@ class PhVentilationSystem(_base._PhHVACBase):
     def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the System's ducts counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhVentilationSystem: A new system with rotated ducts.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -301,12 +351,16 @@ class PhVentilationSystem(_base._PhHVACBase):
         return new_system
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        """Reflected the System's ducts across a plane with the input normal vector and origin.
+        """Reflect the System's ducts across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A normalized Vector3D representing the plane normal.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
+
+        Returns:
+        --------
+            * PhVentilationSystem: A new system with reflected ducts.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -322,10 +376,15 @@ class PhVentilationSystem(_base._PhHVACBase):
         # type: (float, Optional[Point3D]) -> PhVentilationSystem
         """Scale the System's ducts by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the ducts should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * PhVentilationSystem: A new system with scaled ducts.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -392,51 +451,55 @@ class _ExhaustVentilatorBase(_base._PhHVACBase):
     def move(self, moving_vec3D):
         """Move the device's elements along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move.
         """
         pass
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        """Rotate the device's elements by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the device's elements by a certain angle around an axis and origin.
 
         Right hand rule applies:
-        If axis_vec3D has a positive orientation, rotation will be clockwise.
-        If axis_vec3D has a negative orientation, rotation will be counterclockwise.
+        If axis has a positive orientation, rotation will be clockwise.
+        If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
         """
         pass
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the device's elements counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
         """
         pass
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        """Reflected the device's elements across a plane with the input normal vector and origin_pt3D.
+        """Reflect the device's elements across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A normalized Vector3D representing the plane normal.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
         """
         pass
 
     def scale(self, scale_factor, origin_pt3D=None):
-        """Scale the device's elements by a factor from an origin_pt3D point.
+        """Scale the device's elements by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the device should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
         """
         pass
 
@@ -450,6 +513,8 @@ class _ExhaustVentilatorBase(_base._PhHVACBase):
 
 
 class ExhaustVentDryer(_ExhaustVentilatorBase):
+    """Exhaust ventilation device representing a clothes dryer."""
+
     def __init__(self):
         super(ExhaustVentDryer, self).__init__()
         self.display_name = "_unnamed_dryer_exh_"
@@ -472,6 +537,8 @@ class ExhaustVentDryer(_ExhaustVentilatorBase):
 
 
 class ExhaustVentKitchenHood(_ExhaustVentilatorBase):
+    """Exhaust ventilation device representing a kitchen range hood."""
+
     def __init__(self):
         super(ExhaustVentKitchenHood, self).__init__()
         self.display_name = "_unnamed_kitchen_hood_exh_"
@@ -494,6 +561,8 @@ class ExhaustVentKitchenHood(_ExhaustVentilatorBase):
 
 
 class ExhaustVentUserDefined(_ExhaustVentilatorBase):
+    """Exhaust ventilation device with user-defined parameters."""
+
     def __init__(self):
         super(ExhaustVentUserDefined, self).__init__()
         self.display_name = "_unnamed_user_defined_exh_"

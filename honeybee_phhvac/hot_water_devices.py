@@ -33,6 +33,14 @@ class UnknownPhHvacHotWaterHeaterTypeError(Exception):
 
 
 class PhHvacHotWaterTankType(enumerables.CustomEnum):
+    """Enumeration of hot water storage tank types.
+
+    Values:
+        0-No storage tank: No storage tank present.
+        1-DHW and heating: Tank serves both domestic hot water and heating.
+        2-DHW only: Tank serves domestic hot water only.
+    """
+
     allowed = ["0-No storage tank", "1-DHW and heating", "2-DHW only"]
 
     def __init__(self, _value=1, _index_offset=0):
@@ -41,6 +49,22 @@ class PhHvacHotWaterTankType(enumerables.CustomEnum):
 
 
 class PhHvacHotWaterTank(_base._PhHVACBase):
+    """A Passive House hot water storage tank.
+
+    Attributes:
+        display_name (str): User-facing name for the tank.
+        quantity (int): Number of identical tanks.
+        in_conditioned_space (bool): True if the tank is inside conditioned space.
+        solar_connection (bool): True if the tank has a solar thermal connection.
+        solar_losses (float): Solar thermal losses (W).
+        storage_loss_rate (float): Storage heat loss rate (W/K).
+        storage_capacity (float): Tank volume in liters.
+        standby_losses (float): Standby heat losses (W/K).
+        standby_fraction (float): Fraction of standby losses contributing to heating.
+        room_temp (float): Ambient room temperature surrounding the tank (deg-C).
+        water_temp (float): Hot water storage temperature (deg-C).
+    """
+
     def __init__(self):
         super(PhHvacHotWaterTank, self).__init__()
         self.display_name = "_unnamed_hw_tank_"  # type: str
@@ -58,7 +82,8 @@ class PhHvacHotWaterTank(_base._PhHVACBase):
 
     @property
     def tank_type(self):
-        # type () -> str
+        # type: () -> str
+        """The active tank type value string."""
         return self._tank_type.value
 
     @tank_type.setter
@@ -144,7 +169,12 @@ class PhHvacHotWaterTank(_base._PhHVACBase):
 
 
 class PhHvacHotWaterHeater(_base._PhHVACBase):
-    """Base class for all PH Hot-Water Heaters."""
+    """Base class for all PH hot water heater devices.
+
+    Attributes:
+        percent_coverage (float): Fraction of hot water demand covered by this heater (0.0-1.0).
+        in_conditioned_space (bool): True if the heater is located inside conditioned space.
+    """
 
     def __init__(self):
         super(PhHvacHotWaterHeater, self).__init__()
@@ -187,6 +217,8 @@ class PhHvacHotWaterHeater(_base._PhHVACBase):
 
 
 class PhHvacHotWaterHeaterElectric(PhHvacHotWaterHeater):
+    """An electric resistance hot water heater."""
+
     def __init__(self):
         super(PhHvacHotWaterHeaterElectric, self).__init__()
 
@@ -211,6 +243,19 @@ class PhHvacHotWaterHeaterElectric(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterBoiler(PhHvacHotWaterHeater):
+    """A fossil-fuel (gas/oil) boiler hot water heater.
+
+    Attributes:
+        fuel (int): Fuel type identifier (1=Gas, 2=Oil).
+        condensing (bool): True if the boiler is a condensing type.
+        effic_at_30_perc_load (float): Efficiency at 30-percent part-load.
+        effic_at_nominal_load (float): Efficiency at nominal (full) load.
+        avg_return_temp_at_30_perc_load (float): Average return temperature at 30-percent load (deg-C).
+        avg_boiler_temp_at_70_55 (float): Average boiler temperature at 70/55 supply/return (deg-C).
+        avg_boiler_temp_at_55_45 (float): Average boiler temperature at 55/45 supply/return (deg-C).
+        avg_boiler_temp_at_35_28 (float): Average boiler temperature at 35/28 supply/return (deg-C).
+    """
+
     def __init__(self):
         super(PhHvacHotWaterHeaterBoiler, self).__init__()
         self.fuel = 1  # Gas
@@ -259,6 +304,16 @@ class PhHvacHotWaterHeaterBoiler(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterBoilerWood(PhHvacHotWaterHeater):
+    """A wood-fuel (pellet/log) boiler hot water heater.
+
+    Attributes:
+        fuel (int): Fuel type identifier (1=Pellet, 2=Log).
+        effic_in_basic_cycle (float): Efficiency during the basic heating cycle.
+        effic_in_const_operation (float): Efficiency during constant operation.
+        avg_frac_heat_released (float): Average fraction of heat released to the space.
+        on_off_temp_diff (float): Temperature differential for on/off cycling (deg-C).
+    """
+
     def __init__(self):
         # type: () -> None
         super(PhHvacHotWaterHeaterBoilerWood, self).__init__()
@@ -299,6 +354,14 @@ class PhHvacHotWaterHeaterBoilerWood(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterDistrict(PhHvacHotWaterHeater):
+    """A district heating hot water heater connection.
+
+    Attributes:
+        energy_carrier (int): Energy carrier type identifier.
+        solar_fraction (float): Fraction of energy supplied by solar thermal.
+        util_fact_heat_transfer (float): Utilization factor for heat transfer.
+    """
+
     def __init__(self):
         super(PhHvacHotWaterHeaterDistrict, self).__init__()
         self.energy_carrier = 1
@@ -333,6 +396,15 @@ class PhHvacHotWaterHeaterDistrict(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterHeatPump_Monthly(PhHvacHotWaterHeater):
+    """A heat pump hot water heater using monthly COP values at two test points.
+
+    Attributes:
+        COP_1 (float): Coefficient of performance at test condition 1.
+        ambient_temp_1 (float): Ambient temperature for test condition 1 (deg-C).
+        COP_2 (float): Coefficient of performance at test condition 2.
+        ambient_temp_2 (float): Ambient temperature for test condition 2 (deg-C).
+    """
+
     def __init__(self):
         super(PhHvacHotWaterHeaterHeatPump_Monthly, self).__init__()
         self.COP_1 = 2.5
@@ -369,6 +441,13 @@ class PhHvacHotWaterHeaterHeatPump_Monthly(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterHeatPump_Annual(PhHvacHotWaterHeater):
+    """A heat pump hot water heater using a single annual COP value.
+
+    Attributes:
+        annual_COP (Optional[float]): Annual coefficient of performance.
+        total_system_perf_ratio (Optional[float]): Total system performance ratio.
+    """
+
     def __init__(self):
         super(PhHvacHotWaterHeaterHeatPump_Annual, self).__init__()
         self.annual_COP = None  # type: (float | None)
@@ -399,6 +478,14 @@ class PhHvacHotWaterHeaterHeatPump_Annual(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterHeatPump_Inside(PhHvacHotWaterHeater):
+    """A heat pump hot water heater located inside conditioned space, rated by annual energy factor.
+
+    Attributes:
+        annual_COP (Optional[float]): Annual coefficient of performance.
+        total_system_perf_ratio (Optional[float]): Total system performance ratio.
+        annual_energy_factor (Optional[float]): Annual energy factor (UEF or EF).
+    """
+
     def __init__(self):
         super(PhHvacHotWaterHeaterHeatPump_Inside, self).__init__()
         self.annual_COP = None  # type: (float | None)
@@ -435,7 +522,11 @@ class PhHvacHotWaterHeaterHeatPump_Inside(PhHvacHotWaterHeater):
 
 
 class PhHvacHotWaterHeaterBuilder(object):
-    """Constructor class for Hot-Water-Heater objects"""
+    """Factory class for constructing PhHvacHotWaterHeater objects from dictionaries.
+
+    Attributes:
+        heaters (Dict[str, type]): Mapping of heater type name strings to their classes.
+    """
 
     heaters = {
         "PhHvacHotWaterHeaterElectric": PhHvacHotWaterHeaterElectric,

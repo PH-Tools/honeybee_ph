@@ -18,6 +18,12 @@ except ImportError as e:
 
 
 class UnknownPhHeatingTypeError(Exception):
+    """Raised when an unrecognized PH heating system type is encountered.
+
+    Attributes:
+        msg (str): Human-readable error message describing the invalid type.
+    """
+
     def __init__(self, _heater_types, _received_type):
         # type: (list[str], str) -> None
         self.msg = 'Error: Unknown HBPH-Heating-SubSystem type? Got: "{}" but only types: {} are allowed?'.format(
@@ -27,7 +33,12 @@ class UnknownPhHeatingTypeError(Exception):
 
 
 class PhHeatingSystem(_base._PhHVACBase):
-    """Base class for all PH-Heating Systems (elec, boiler, etc...)"""
+    """Base class for all PH-Heating Systems (elec, boiler, etc...).
+
+    Attributes:
+        heating_type (str): The class name of the heating system type.
+        percent_coverage (float): Fraction of total heating load covered by this system (0.0-1.0).
+    """
 
     def __init__(self):
         super(PhHeatingSystem, self).__init__()
@@ -52,7 +63,16 @@ class PhHeatingSystem(_base._PhHVACBase):
 
     def check_dict_type(self, _input_dict):
         # type: (dict) -> None
-        """Check that the input dict type is correct for the Heating System being constructed."""
+        """Check that the input dict type is correct for the Heating System being constructed.
+
+        Arguments:
+        ----------
+            * _input_dict (dict): Serialized heating system dictionary with a 'heating_type' key.
+
+        Returns:
+        --------
+            * None
+        """
         heating_type = _input_dict["heating_type"]
         msg = "Error creating Heating System from dict. Expected '{}' but got '{}'".format(
             self.__class__.__name__, heating_type
@@ -71,8 +91,13 @@ class PhHeatingSystem(_base._PhHVACBase):
     def move(self, moving_vec3D):
         """Move the System's elements along a vector.
 
-        Args:
-            moving_vec: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
@@ -83,39 +108,59 @@ class PhHeatingSystem(_base._PhHVACBase):
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis: A Vector3D axis representing the axis of rotation.
-            angle: An angle for rotation in degrees.
-            origin: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D axis representing the axis of rotation.
+            * angle_degree (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def rotate_xy(self, angle_degree, origin_pt3D):
         """Rotate the System's elements counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle: An angle in degrees.
-            origin: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degree (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        """Reflected the System's elements across a plane with the input normal vector and origin.
+        """Reflect the System's elements across a plane with the input normal vector and origin.
 
-        Args:
-            normal: A Vector3D representing the normal vector for the plane across
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin: A Point3D representing the origin from which to reflect.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def scale(self, scale_factor, origin=None):
         """Scale the System's elements by a factor from an origin point.
 
-        Args:
-            factor: A number representing how much the line segment should be scaled.
-            origin: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the line segment should be scaled.
+            * origin (Optional[Point3D]): A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * None
         """
         pass
 
@@ -132,7 +177,12 @@ class PhHeatingSystem(_base._PhHVACBase):
 
 
 class PhHeatingDirectElectric(PhHeatingSystem):
-    """Heating via direct-electric (resistance heating)."""
+    """Heating via direct-electric (resistance heating).
+
+    Attributes:
+        heating_type (str): The class name of the heating system type.
+        percent_coverage (float): Fraction of total heating load covered by this system (0.0-1.0).
+    """
 
     def __init__(self):
         super(PhHeatingDirectElectric, self).__init__()
@@ -164,7 +214,19 @@ class PhHeatingDirectElectric(PhHeatingSystem):
 
 
 class PhHeatingFossilBoiler(PhHeatingSystem):
-    """Heating via boiler using fossil-fuel (gas, oil)"""
+    """Heating via boiler using fossil-fuel (gas, oil).
+
+    Attributes:
+        fuel (str): Fuel type constant from the fuels module.
+        condensing (bool): True if the boiler is a condensing type.
+        in_conditioned_space (bool): True if the boiler is located within conditioned space.
+        effic_at_30_percent_load (float): Boiler efficiency at 30 percent part-load.
+        effic_at_nominal_load (float): Boiler efficiency at nominal (full) load.
+        avg_rtrn_temp_at_30_percent_load (float): Average return temperature at 30 percent load (deg C).
+        avg_temp_at_70C_55C (float): Average boiler temperature at 70C/55C flow/return (deg C).
+        avg_temp_at_55C_45C (float): Average boiler temperature at 55C/45C flow/return (deg C).
+        avg_temp_at_32C_28C (float): Average boiler temperature at 32C/28C flow/return (deg C).
+    """
 
     def __init__(self):
         super(PhHeatingFossilBoiler, self).__init__()
@@ -236,7 +298,23 @@ class PhHeatingFossilBoiler(PhHeatingSystem):
 
 
 class PhHeatingWoodBoiler(PhHeatingSystem):
-    """Heating via boiler using wood (log, pellet)."""
+    """Heating via boiler using wood (log, pellet).
+
+    Attributes:
+        fuel (str): Fuel type constant from the fuels module.
+        in_conditioned_space (bool): True if the boiler is located within conditioned space.
+        effic_in_basic_cycle (float): Efficiency during the basic heating cycle.
+        effic_in_const_operation (float): Efficiency during constant operation.
+        avg_frac_heat_output (float): Average fraction of rated heat output.
+        temp_diff_on_off (float): Temperature difference between on and off cycles (deg C).
+        rated_capacity (float): Rated heating capacity in kW.
+        demand_basic_cycle (float): Energy demand per basic cycle in kWh.
+        power_stationary_run (float): Electrical power during stationary run in W.
+        power_standard_run (Optional[float]): Electrical power during standard run in W.
+        no_transport_pellets (Optional[bool]): True if no pellet transport mechanism is used.
+        only_control (Optional[bool]): True if only control power is consumed.
+        area_mech_room (Optional[float]): Mechanical room area in m2.
+    """
 
     def __init__(self):
         super(PhHeatingWoodBoiler, self).__init__()
@@ -256,10 +334,14 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
 
     @property
     def useful_heat_output(self):
+        # type: () -> float
+        """Useful heat output (90 percent of rated capacity) in kWh."""
         return 0.9 * self.rated_capacity  # kWH
 
     @property
     def avg_power_output(self):
+        # type: () -> float
+        """Average power output (50 percent of rated capacity) in kW."""
         return 0.5 * self.rated_capacity  # kW
 
     def to_dict(self):
@@ -332,7 +414,12 @@ class PhHeatingWoodBoiler(PhHeatingSystem):
 
 
 class PhHeatingDistrict(PhHeatingSystem):
-    """Heating via district-heat."""
+    """Heating via district-heat.
+
+    Attributes:
+        fuel (str): District energy carrier constant from the fuels module.
+        util_factor_of_heat_transfer_station (float): Utilization factor of the heat transfer station.
+    """
 
     def __init__(self):
         super(PhHeatingDistrict, self).__init__()
@@ -376,7 +463,11 @@ class PhHeatingDistrict(PhHeatingSystem):
 
 
 class PhHeatingSystemBuilder(object):
-    """Constructor class for PH-HeatingSystems"""
+    """Constructor class for PH-HeatingSystems.
+
+    Provides a factory method to instantiate the correct PhHeatingSystem subclass
+    from a serialized dictionary.
+    """
 
     @classmethod
     def from_dict(cls, _input_dict):

@@ -17,6 +17,18 @@ except ImportError as e:
 
 
 class PhSupportiveDevice(_base._PhHVACBase):
+    """Auxiliary energy supportive device for Passive House HVAC systems.
+
+    Attributes:
+        display_name (str): Human-readable name for the device.
+        device_type (int): Numeric code identifying the device type.
+        quantity (int): Number of identical devices.
+        in_conditioned_space (bool): Whether the device is located inside the thermal envelope.
+        norm_energy_demand_W (float): Normalized energy demand in Watts.
+        annual_period_operation_khrs (float): Annual operating period in thousands of hours.
+        ihg_utilization_factor (float): Fraction of energy that becomes internal heat gain inside the envelope (0.0-1.0).
+    """
+
     def __init__(self):
         # type: () -> None
         super(PhSupportiveDevice, self).__init__()
@@ -56,7 +68,16 @@ class PhSupportiveDevice(_base._PhHVACBase):
 
     def check_dict_type(self, _input_dict):
         # type: (Dict[str, Any]) -> None
-        """Check that the input dict type is correct for the Supportive Device being constructed."""
+        """Check that the input dict type is correct for the Supportive Device being constructed.
+
+        Arguments:
+        ----------
+            * _input_dict (Dict[str, Any]): The dictionary to validate.
+
+        Returns:
+        --------
+            * None
+        """
         device_class_name = _input_dict["device_class_name"]
         msg = "Error creating Supportive Device from dict. Expected '{}' but got '{}'".format(
             self.__class__.__name__, device_class_name
@@ -90,51 +111,76 @@ class PhSupportiveDevice(_base._PhHVACBase):
     def move(self, moving_vec3D):
         """Move the device's elements along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        """Rotate the device's elements by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the device's elements by a certain angle around an axis and origin point.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the device's elements counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        """Reflected the device's elements across a plane with the input normal vector and origin_pt3D.
+        """Reflect the device's elements across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A normalized Vector3D representing the normal vector for the
+                plane across which the element will be reflected.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def scale(self, scale_factor, origin_pt3D=None):
-        """Scale the device's elements by a factor from an origin_pt3D point.
+        """Scale the device's elements by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the element should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * None
         """
         pass
 

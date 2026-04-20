@@ -23,9 +23,18 @@ except ImportError as e:
 
 
 class PhDuctSegment(_base._PhHVACBase):
-    """A single duct segment (linear) with geometry and a attributes.
+    """A single duct segment (linear) with geometry and attributes.
 
     Note: All geometric information is in the model's unit-type (meters by default).
+
+    Attributes:
+        geometry (LineSegment3D): The 3D line segment representing the duct centerline.
+        insulation_thickness (float): Insulation thickness in model-units (default 0.0254 m).
+        insulation_conductivity (float): Insulation thermal conductivity in W/(m-K) (default 0.04).
+        insulation_reflective (bool): True if insulation has a reflective facing.
+        diameter (float): Duct diameter in model-units (default 0.160 m), used for round ducts.
+        height (Optional[float]): Rectangular duct height in model-units, or None for round.
+        width (Optional[float]): Rectangular duct width in model-units, or None for round.
     """
 
     def __init__(
@@ -57,6 +66,7 @@ class PhDuctSegment(_base._PhHVACBase):
     @property
     def shape_type(self):
         # type: () -> int
+        """Return the shape type integer (1=round, 2=rectangular)."""
         if (self.height is not None) and (self.width is not None):
             return 2  # Rectangular Duct
         else:
@@ -65,6 +75,7 @@ class PhDuctSegment(_base._PhHVACBase):
     @property
     def is_round_duct(self):
         # type: () -> bool
+        """Return True if the duct segment is round."""
         return self.shape_type == 1
 
     @property
@@ -79,7 +90,12 @@ class PhDuctSegment(_base._PhHVACBase):
     @classmethod
     def default(cls):
         # type: () -> PhDuctSegment
-        """Return a default Duct segment with a length of 1.0"""
+        """Return a default PhDuctSegment with a length of 1.0 along the X-axis.
+
+        Returns:
+        --------
+            * PhDuctSegment: A new segment with default insulation and diameter values.
+        """
 
         pt1 = Point3D(0, 0, 0)
         pt2 = Point3D(1, 0, 0)
@@ -151,8 +167,13 @@ class PhDuctSegment(_base._PhHVACBase):
         # type: (Point3D) -> PhDuctSegment
         """Move the duct segment along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * PhDuctSegment: A new moved duct segment.
         """
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.move(moving_vec3D)
@@ -166,10 +187,15 @@ class PhDuctSegment(_base._PhHVACBase):
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis representing the axis of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D axis representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhDuctSegment: A new rotated duct segment.
         """
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
@@ -179,9 +205,14 @@ class PhDuctSegment(_base._PhHVACBase):
         # type: (float, Point3D) -> PhDuctSegment
         """Rotate the duct segment counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhDuctSegment: A new rotated duct segment.
         """
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
@@ -189,12 +220,17 @@ class PhDuctSegment(_base._PhHVACBase):
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Point3D, Point3D) -> PhDuctSegment
-        """Reflected the duct segment across a plane with the input normal vector and origin.
+        """Reflect the duct segment across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin from which to reflect.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
+
+        Returns:
+        --------
+            * PhDuctSegment: A new reflected duct segment.
         """
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
@@ -204,10 +240,15 @@ class PhDuctSegment(_base._PhHVACBase):
         # type: (float, Optional[Point3D]) -> PhDuctSegment
         """Scale the duct segment by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the line segment should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * PhDuctSegment: A new scaled duct segment.
         """
         new_segment = self.duplicate()
         new_segment.geometry = self.geometry.scale(scale_factor, origin_pt3D)
@@ -222,6 +263,10 @@ class PhDuctElement(_base._PhHVACBase):
     """A Duct Element made up of one or more individual Duct Segments.
 
     Note: All geometric information is in the model's unit-type (meters by default).
+
+    Attributes:
+        display_name (str): User-facing name for this duct element.
+        duct_type (int): Duct type integer (1=supply, 2=exhaust).
     """
 
     def __init__(self, _display_name=None, _duct_type=1, *args, **kwargs):
@@ -246,11 +291,13 @@ class PhDuctElement(_base._PhHVACBase):
     @property
     def is_round_duct(self):
         # type: () -> bool
+        """Return True if the duct element contains round segments."""
         return self.shape_type == 1
 
     @property
     def shape_type(self):
         # type: () -> Optional[int]
+        """Return the shape type integer (1=round, 2=rectangular) or None if no segments."""
         segment_types = {s.shape_type for s in self.segments}
         if len(segment_types) == 0:
             return None
@@ -262,6 +309,7 @@ class PhDuctElement(_base._PhHVACBase):
     @property
     def shape_type_description(self):
         # type: () -> Optional[str]
+        """Return a string describing the duct dimensions, or None if no segments."""
         descriptions = {s.shape_type_description for s in self.segments}
         if len(descriptions) == 0:
             return None
@@ -273,7 +321,12 @@ class PhDuctElement(_base._PhHVACBase):
     @classmethod
     def default_supply_duct(cls, *args, **kwargs):
         # type: (*Any, **Any) -> PhDuctElement
-        """Returns a default PhDuctElement with a single segment and a length of 1.0"""
+        """Return a default supply PhDuctElement with a single segment and a length of 1.0.
+
+        Returns:
+        --------
+            * PhDuctElement: A new supply duct element (duct_type=1) with one default segment.
+        """
 
         duct_element = cls(*args, **kwargs)
         duct_element.duct_type = 1
@@ -283,7 +336,12 @@ class PhDuctElement(_base._PhHVACBase):
     @classmethod
     def default_exhaust_duct(cls, *args, **kwargs):
         # type: (*Any, **Any) -> PhDuctElement
-        """Returns a default PhDuctElement with a single segment and a length of 1.0"""
+        """Return a default exhaust PhDuctElement with a single segment and a length of 1.0.
+
+        Returns:
+        --------
+            * PhDuctElement: A new exhaust duct element (duct_type=2) with one default segment.
+        """
 
         duct_element = cls(*args, **kwargs)
         duct_element.duct_type = 2
@@ -292,7 +350,17 @@ class PhDuctElement(_base._PhHVACBase):
 
     def add_segment(self, _segment):
         # type: (PhDuctSegment) -> None
-        """Add a new PhDuctSegment to the Duct Element."""
+        """Add a new PhDuctSegment to the Duct Element.
+
+        Arguments:
+        ----------
+            * _segment (PhDuctSegment): The duct segment to add. Must match the existing
+                shape type (round or rectangular) if segments already exist.
+
+        Returns:
+        --------
+            * None
+        """
         # -- Check that the new segment is the right shape type
         if len(self.segments) > 0:
             if not _segment.shape_type == self.shape_type:
@@ -364,10 +432,15 @@ class PhDuctElement(_base._PhHVACBase):
         return self.__repr__()
 
     def move(self, moving_vec3D):
-        """Move the duct element's segment along a vector.
+        """Move the duct element's segments along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * PhDuctElement: A new moved duct element.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
@@ -376,16 +449,21 @@ class PhDuctElement(_base._PhHVACBase):
         return new_element
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        """Rotate the duct element's segment by a certain angle around an axis and origin.
+        """Rotate the duct element's segments by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis representing the axis of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D axis representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhDuctElement: A new rotated duct element.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
@@ -394,11 +472,16 @@ class PhDuctElement(_base._PhHVACBase):
         return new_element
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
-        """Rotate the duct element's segment counterclockwise in the XY plane by a certain angle.
+        """Rotate the duct element's segments counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degree: An angle in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * PhDuctElement: A new rotated duct element.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
@@ -407,12 +490,17 @@ class PhDuctElement(_base._PhHVACBase):
         return new_element
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        """Reflected the duct element's segment across a plane with the input normal vector and origin.
+        """Reflect the duct element's segments across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A Vector3D representing the normal vector for the plane across
                 which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin from which to reflect.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
+
+        Returns:
+        --------
+            * PhDuctElement: A new reflected duct element.
         """
         new_element = self.duplicate()
         new_element.clear_segments()
@@ -424,10 +512,15 @@ class PhDuctElement(_base._PhHVACBase):
         # type: (float, Optional[Point3D]) -> PhDuctElement
         """Scale the duct element's segments by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the line segment should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * PhDuctElement: A new scaled duct element.
         """
         new_element = self.duplicate()
         new_element.clear_segments()

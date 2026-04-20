@@ -13,7 +13,14 @@ except ImportError:
 
 
 class _PhHVACBase(object):
-    """Base class for any HB-Energy-PH HVAC Objects"""
+    """Base class for all Honeybee-PH HVAC equipment objects.
+
+    Provides a unique identifier, user-facing display name, and user_data
+    dictionary. All PH-HVAC device and system classes inherit from this.
+
+    Attributes:
+        user_data (Dict): Arbitrary user-supplied metadata dictionary.
+    """
 
     def __init__(self):
         self._identifier = uuid.uuid4()
@@ -22,6 +29,8 @@ class _PhHVACBase(object):
 
     @property
     def identifier(self):
+        # type: () -> str
+        """The globally unique identifier string for this object."""
         return str(self._identifier)
 
     @identifier.setter
@@ -30,8 +39,10 @@ class _PhHVACBase(object):
 
     @property
     def display_name(self):
-        """Get or set a string for the object name without any character restrictions.
-        If not set, this will be equal to the identifier.
+        # type: () -> str
+        """User-facing name for this object, without character restrictions.
+
+        If not set, defaults to the identifier.
         """
         return self._display_name
 
@@ -45,10 +56,13 @@ class _PhHVACBase(object):
     @property
     def identifier_short(self):
         # type: () -> str
+        """The first segment of the identifier (before the first hyphen)."""
         return str(self.identifier).split("-")[0]
 
     @property
     def key(self):
+        # type: () -> str
+        """The dictionary key for this object (same as identifier)."""
         return self.identifier
 
     def __hash__(self):

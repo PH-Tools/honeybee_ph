@@ -29,7 +29,17 @@ class PhHotWaterSystem_FromDictError(Exception):
 
 
 class PhHotWaterSystem(object):
-    """PH-HVAC: Hot Water System."""
+    """A Passive House hot water system with tanks, heaters, distribution and recirculation piping.
+
+    Attributes:
+        identifier (str): Unique identifier for the system.
+        id_num (int): Numeric identifier for the system.
+        display_name (str): User-facing display name for the system.
+        tank_1 (Optional[PhHvacHotWaterTank]): Primary hot water tank.
+        tank_2 (Optional[PhHvacHotWaterTank]): Secondary hot water tank.
+        tank_buffer (Optional[PhHvacHotWaterTank]): Buffer tank.
+        tank_solar (Optional[PhHvacHotWaterTank]): Solar tank.
+    """
 
     def __init__(self):
         self.identifier = str(uuid4())
@@ -112,11 +122,17 @@ class PhHotWaterSystem(object):
         return self._heaters.values()
 
     def clear_heaters(self):
+        """Remove all heaters from the system."""
         self._heaters = {}
 
     def add_heater(self, _heater):
         # type: (Optional[hwd.PhHvacHotWaterHeater]) -> None
-        """Adds a new hot-water heater to the system."""
+        """Add a new hot-water heater to the system.
+
+        Arguments:
+        ----------
+            * _heater (Optional[PhHvacHotWaterHeater]): The heater to add. If None, no action is taken.
+        """
         if not _heater:
             return
 
@@ -129,6 +145,11 @@ class PhHotWaterSystem(object):
 
         If a branch or fixture pipe is passed, a 0-length trunk will be created and the
         branch or fixture will be added to it before adding to the system.
+
+        Arguments:
+        ----------
+            * _distribution_piping (Union[PhHvacPipeTrunk, PhHvacPipeBranch, PhHvacPipeElement]): The piping to add.
+            * _key (Optional[str]): An optional key to use for storing the trunk.
         """
 
         if isinstance(_distribution_piping, hwp.PhHvacPipeTrunk):
@@ -165,9 +186,17 @@ class PhHotWaterSystem(object):
 
     def add_recirc_piping(self, _recirc_piping, _key=None):
         # type: (hwp.PhHvacPipeElement, Optional[str]) -> None
+        """Add a new recirculation pipe element to the system.
+
+        Arguments:
+        ----------
+            * _recirc_piping (PhHvacPipeElement): The recirculation pipe element to add.
+            * _key (Optional[str]): An optional key to use for storing the pipe element.
+        """
         self._recirc_piping[_key or _recirc_piping.identifier] = _recirc_piping
 
     def clear_recirc_piping(self):
+        """Remove all recirculation piping from the system."""
         self._recirc_piping = {}
 
     @property
@@ -393,10 +422,13 @@ class PhHotWaterSystem(object):
         # type: (Point3D) -> PhHotWaterSystem
         """Move the System's piping along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
-        Reflect:
-            A new PhHotWaterSystem object with the moved piping.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A vector with the direction and distance to move.
+
+        Returns:
+        --------
+            * PhHotWaterSystem: A new PhHotWaterSystem object with the moved piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -419,12 +451,15 @@ class PhHotWaterSystem(object):
         If axis has a positive orientation, rotation will be clockwise.
         If axis has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis representing the axis of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A vector representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): The origin around which the object will be rotated.
+
         Returns:
-            A new PhHotWaterSystem object with the rotated piping.
+        --------
+            * PhHotWaterSystem: A new PhHotWaterSystem object with the rotated piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -443,11 +478,14 @@ class PhHotWaterSystem(object):
         # type: (float, Point3D) -> PhHotWaterSystem
         """Rotate the System's piping counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): The origin around which the object will be rotated.
+
         Returns:
-            A new PhHotWaterSystem object with the rotated piping.
+        --------
+            * PhHotWaterSystem: A new PhHotWaterSystem object with the rotated piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -464,14 +502,16 @@ class PhHotWaterSystem(object):
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Vector3D, Point3D) -> PhHotWaterSystem
-        """Reflected the System's piping across a plane with the input normal vector and origin.
+        """Reflect the System's piping across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): The normal vector for the reflection plane. THIS VECTOR MUST BE NORMALIZED.
+            * origin_pt3D (Point3D): The origin from which to reflect.
+
         Returns:
-            A new PhHotWaterSystem object with the reflected piping.
+        --------
+            * PhHotWaterSystem: A new PhHotWaterSystem object with the reflected piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier
@@ -490,12 +530,15 @@ class PhHotWaterSystem(object):
         # type: (float, Optional[Point3D]) -> PhHotWaterSystem
         """Scale the System's piping by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin from which to scale.
+        Arguments:
+        ----------
+            * scale_factor (float): How much the piping should be scaled.
+            * origin_pt3D (Optional[Point3D]): The origin from which to scale.
                 If None, it will be scaled from the World origin (0, 0, 0).
+
         Returns:
-            A new PhHotWaterSystem object with the scaled piping.
+        --------
+            * PhHotWaterSystem: A new PhHotWaterSystem object with the scaled piping.
         """
         new_system = self.duplicate()
         new_system.identifier = self.identifier

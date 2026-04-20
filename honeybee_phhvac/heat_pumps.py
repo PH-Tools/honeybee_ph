@@ -20,6 +20,12 @@ except ImportError as e:
 
 
 class UnknownPhHeatPumpTypeError(Exception):
+    """Error raised when an unrecognized heat-pump type name is encountered.
+
+    Attributes:
+        msg (str): Formatted error message including the received type and valid options.
+    """
+
     def __init__(self, _heater_types, _received_type):
         # type: (List[str], str) -> None
         self.msg = 'Error: Unknown HBPH-Heat-pump system type? Got: "{}" but only types: {} are allowed?'.format(
@@ -29,7 +35,13 @@ class UnknownPhHeatPumpTypeError(Exception):
 
 
 class PhHeatPumpSystem(_base._PhHVACBase):
-    """Base class for all HBPH-Cooling-Systems."""
+    """Base class for all HBPH heat-pump systems.
+
+    Attributes:
+        heat_pump_class_name (str): The class name of the heat-pump type.
+        percent_coverage (float): Fractional coverage of the heating load (0.0-1.0).
+        cooling_params (PhHeatPumpCoolingParams): Cooling parameter collection for this heat pump.
+    """
 
     def __init__(self):
         super(PhHeatPumpSystem, self).__init__()
@@ -55,7 +67,16 @@ class PhHeatPumpSystem(_base._PhHVACBase):
 
     def check_dict_type(self, _input_dict):
         # type: (Dict[str, Any]) -> None
-        """Check that the input dict type is correct for the Heat Pump System being constructed."""
+        """Check that the input dict type is correct for the Heat Pump System being constructed.
+
+        Arguments:
+        ----------
+            * _input_dict (Dict[str, Any]): The dictionary to validate.
+
+        Returns:
+        --------
+            * None
+        """
         heat_pump_class_name = _input_dict["heat_pump_class_name"]
         msg = "Error creating Heat Pump System from dict. Expected '{}' but got '{}'".format(
             self.__class__.__name__, heat_pump_class_name
@@ -75,51 +96,76 @@ class PhHeatPumpSystem(_base._PhHVACBase):
     def move(self, moving_vec3D):
         """Move the System's elements along a vector.
 
-        Args:
-            moving_vec3D: A Vector3D with the direction and distance to move the ray.
+        Arguments:
+        ----------
+            * moving_vec3D (Vector3D): A Vector3D with the direction and distance to move the ray.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
-        """Rotate the System's elements by a certain angle around an axis_vec3D and origin_pt3D.
+        """Rotate the System's elements by a certain angle around an axis and origin.
 
         Right hand rule applies:
         If axis_vec3D has a positive orientation, rotation will be clockwise.
         If axis_vec3D has a negative orientation, rotation will be counterclockwise.
 
-        Args:
-            axis_vec3D: A Vector3D axis_vec3D representing the axis_vec3D of rotation.
-            angle_degrees: An angle for rotation in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * axis_vec3D (Vector3D): A Vector3D representing the axis of rotation.
+            * angle_degrees (float): An angle for rotation in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         """Rotate the System's elements counterclockwise in the XY plane by a certain angle.
 
-        Args:
-            angle_degrees: An angle in degrees.
-            origin_pt3D: A Point3D for the origin_pt3D around which the object will be rotated.
+        Arguments:
+        ----------
+            * angle_degrees (float): An angle in degrees.
+            * origin_pt3D (Point3D): A Point3D for the origin around which the object will be rotated.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def reflect(self, normal_vec3D, origin_pt3D):
-        """Reflected the System's elements across a plane with the input normal vector and origin_pt3D.
+        """Reflect the System's elements across a plane with the input normal vector and origin.
 
-        Args:
-            normal_vec3D: A Vector3D representing the normal vector for the plane across
-                which the line segment will be reflected. THIS VECTOR MUST BE NORMALIZED.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to reflect.
+        Arguments:
+        ----------
+            * normal_vec3D (Vector3D): A normalized Vector3D representing the normal for the
+                plane across which elements will be reflected.
+            * origin_pt3D (Point3D): A Point3D representing the origin from which to reflect.
+
+        Returns:
+        --------
+            * None
         """
         pass
 
     def scale(self, scale_factor, origin_pt3D=None):
-        """Scale the System's elements by a factor from an origin_pt3D point.
+        """Scale the System's elements by a factor from an origin point.
 
-        Args:
-            scale_factor: A number representing how much the line segment should be scaled.
-            origin_pt3D: A Point3D representing the origin_pt3D from which to scale.
-                If None, it will be scaled from the World origin_pt3D (0, 0, 0).
+        Arguments:
+        ----------
+            * scale_factor (float): A number representing how much the elements should be scaled.
+            * origin_pt3D (Optional[Point3D]): A Point3D representing the origin from which to scale.
+                If None, it will be scaled from the World origin (0, 0, 0).
+
+        Returns:
+        --------
+            * None
         """
         pass
 
@@ -138,7 +184,11 @@ class PhHeatPumpSystem(_base._PhHVACBase):
 
 
 class PhHeatPumpCoolingParams_Base(_base._PhHVACBase):
-    """Base class for all HBPH-Cooling-Parameters."""
+    """Base class for all HBPH cooling parameters.
+
+    Attributes:
+        used (bool): Whether this cooling mode is active.
+    """
 
     def __init__(self):
         super(PhHeatPumpCoolingParams_Base, self).__init__()
@@ -175,7 +225,14 @@ class PhHeatPumpCoolingParams_Base(_base._PhHVACBase):
 
 
 class PhHeatPumpCoolingParams_Ventilation(PhHeatPumpCoolingParams_Base):
-    """Cooling via the Fresh-Air Ventilation System (ERV)."""
+    """Cooling via the fresh-air ventilation system (ERV).
+
+    Attributes:
+        single_speed (bool): Whether the system operates at a single speed only.
+        min_coil_temp (float): Minimum coil temperature in degrees Celsius.
+        capacity (float): Cooling capacity in kW.
+        annual_COP (float): Annual coefficient of performance.
+    """
 
     def __init__(self):
         super(PhHeatPumpCoolingParams_Ventilation, self).__init__()
@@ -222,7 +279,16 @@ class PhHeatPumpCoolingParams_Ventilation(PhHeatPumpCoolingParams_Base):
 
 
 class PhHeatPumpCoolingParams_Recirculation(PhHeatPumpCoolingParams_Base):
-    """Cooling via a 'recirculation' system (typical AC)."""
+    """Cooling via a recirculation system (typical AC).
+
+    Attributes:
+        single_speed (bool): Whether the system operates at a single speed only.
+        min_coil_temp (float): Minimum coil temperature in degrees Celsius.
+        flow_rate_m3_hr (float): Airflow rate in cubic meters per hour.
+        flow_rate_variable (bool): Whether the flow rate is variable.
+        capacity (float): Cooling capacity in kW.
+        annual_COP (float): Annual coefficient of performance.
+    """
 
     def __init__(self):
         super(PhHeatPumpCoolingParams_Recirculation, self).__init__()
@@ -277,7 +343,12 @@ class PhHeatPumpCoolingParams_Recirculation(PhHeatPumpCoolingParams_Base):
 
 
 class PhHeatPumpCoolingParams_Dehumidification(PhHeatPumpCoolingParams_Base):
-    """Cooling via dedicated dehumidification system."""
+    """Cooling via a dedicated dehumidification system.
+
+    Attributes:
+        useful_heat_loss (bool): Whether heat loss from dehumidification is considered useful.
+        annual_COP (float): Annual coefficient of performance.
+    """
 
     def __init__(self):
         super(PhHeatPumpCoolingParams_Dehumidification, self).__init__()
@@ -316,7 +387,11 @@ class PhHeatPumpCoolingParams_Dehumidification(PhHeatPumpCoolingParams_Base):
 
 
 class PhHeatPumpCoolingParams_Panel(PhHeatPumpCoolingParams_Base):
-    """Cooling via radiant panels."""
+    """Cooling via radiant panels.
+
+    Attributes:
+        annual_COP (float): Annual coefficient of performance.
+    """
 
     def __init__(self):
         super(PhHeatPumpCoolingParams_Panel, self).__init__()
@@ -351,7 +426,15 @@ class PhHeatPumpCoolingParams_Panel(PhHeatPumpCoolingParams_Base):
 
 
 class PhHeatPumpCoolingParams:
-    """A Collection of Cooling Parameters for various types of systems."""
+    """A collection of cooling parameters for various types of cooling systems.
+
+    Attributes:
+        percent_coverage (float): Fractional coverage of the cooling load (0.0-1.0).
+        ventilation (PhHeatPumpCoolingParams_Ventilation): Ventilation-based cooling parameters.
+        recirculation (PhHeatPumpCoolingParams_Recirculation): Recirculation-based cooling parameters.
+        dehumidification (PhHeatPumpCoolingParams_Dehumidification): Dehumidification-based cooling parameters.
+        panel (PhHeatPumpCoolingParams_Panel): Radiant-panel-based cooling parameters.
+    """
 
     def __init__(self):
         self.percent_coverage = 1.0
@@ -415,7 +498,12 @@ class PhHeatPumpCoolingParams:
 
 
 class PhHeatPumpAnnual(PhHeatPumpSystem):
-    """Electric heat-pump with only Annual performance values."""
+    """Electric heat pump with only annual performance values.
+
+    Attributes:
+        annual_COP (float): Annual coefficient of performance.
+        total_system_perf_ratio (float): Total system performance ratio.
+    """
 
     def __init__(self):
         super(PhHeatPumpAnnual, self).__init__()
@@ -458,7 +546,14 @@ class PhHeatPumpAnnual(PhHeatPumpSystem):
 
 
 class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
-    """Electric heat-pump with 2 separate monthly performance values."""
+    """Electric heat pump with two separate monthly rated performance values.
+
+    Attributes:
+        COP_1 (float): Coefficient of performance at the first rating point.
+        ambient_temp_1 (float): Ambient temperature for the first rating point in degrees Celsius.
+        COP_2 (float): Coefficient of performance at the second rating point.
+        ambient_temp_2 (float): Ambient temperature for the second rating point in degrees Celsius.
+    """
 
     def __init__(self):
         super(PhHeatPumpRatedMonthly, self).__init__()
@@ -469,6 +564,8 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
 
     @property
     def monthly_COPS(self):
+        # type: () -> List[float]
+        """The two monthly COP rating values."""
         return [self.COP_1, self.COP_2]
 
     @monthly_COPS.setter
@@ -483,6 +580,8 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
 
     @property
     def monthly_temps(self):
+        # type: () -> List[float]
+        """The two monthly ambient temperature rating values in degrees Celsius."""
         return [self.ambient_temp_1, self.ambient_temp_2]
 
     @monthly_temps.setter
@@ -537,6 +636,8 @@ class PhHeatPumpRatedMonthly(PhHeatPumpSystem):
 
 
 class PhHeatPumpCombined(PhHeatPumpSystem):
+    """Combined heat pump system (not yet implemented)."""
+
     def __init__(self):
         msg = "Sorry, Combined Heat Pumps are not yet supported in HBPH."
         raise NotImplementedError(msg)
@@ -546,7 +647,7 @@ class PhHeatPumpCombined(PhHeatPumpSystem):
 
 
 class PhHeatPumpSystemBuilder(object):
-    """Constructor class for HBPH-CoolingSystems"""
+    """Factory class for constructing the correct PhHeatPumpSystem subclass from a dictionary."""
 
     @classmethod
     def from_dict(cls, _input_dict):
