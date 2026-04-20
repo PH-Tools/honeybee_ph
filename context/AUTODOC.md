@@ -934,32 +934,40 @@ Add an "API Reference" top-level group to your spoke's `docs/nav.yml`. The entri
 
 #### honeybee-ph `nav.yml` entries
 
-Add this group to `docs/nav.yml` (after existing groups):
+Add this group to `docs/nav.yml` (after existing groups). Use a nested "HVAC" group for the second source package:
 
 ```yaml
   - API Reference:
-    - _base: api/_base.md
-    - bldg_segment: api/bldg_segment.md
+    - base: api/base.md
+    - space: api/space.md
     - foundations: api/foundations.md
+    - bldg_segment: api/bldg_segment.md
+    - site: api/site.md
+    - team: api/team.md
     - phi: api/phi.md
     - phius: api/phius.md
-    - site: api/site.md
-    - space: api/space.md
-    - team: api/team.md
-    - ducting: api/hvac/ducting.md
-    - heat_pumps: api/hvac/heat_pumps.md
-    - heating: api/hvac/heating.md
-    - hot_water_devices: api/hvac/hot_water_devices.md
-    - hot_water_piping: api/hvac/hot_water_piping.md
-    - hot_water_system: api/hvac/hot_water_system.md
-    - renewable_devices: api/hvac/renewable_devices.md
-    - supportive_device: api/hvac/supportive_device.md
-    - ventilation: api/hvac/ventilation.md
+    - HVAC:
+      - base: api/hvac/base.md
+      - ventilation: api/hvac/ventilation.md
+      - heating: api/hvac/heating.md
+      - heat_pumps: api/hvac/heat_pumps.md
+      - hot_water_devices: api/hvac/hot_water_devices.md
+      - hot_water_system: api/hvac/hot_water_system.md
+      - hot_water_piping: api/hvac/hot_water_piping.md
+      - ducting: api/hvac/ducting.md
+      - renewable_devices: api/hvac/renewable_devices.md
+      - supportive_device: api/hvac/supportive_device.md
+      - fuels: api/hvac/fuels.md
 ```
+
+**Notes:**
+- `_base.py` files map to `base.md` (underscore stripped in the output filename).
+- The HVAC group creates a collapsible sidebar section for the second source package.
+- `fuels.py` contains only module-level constants (no classes) — the generator should emit a minimal page listing the constants, or the nav entry should be removed if it produces nothing.
 
 These paths correspond 1:1 to the source modules the generator processes:
 - `api/*.md` → files from `honeybee_ph/` (first `source_path`)
-- `api/hvac/*.md` → files from `honeybee_phhvac/` (second `source_path`, common prefix stripped → `hvac/`)
+- `api/hvac/*.md` → files from `honeybee_phhvac/` (second `source_path`, prefix stripped → `hvac/`)
 
 ---
 
@@ -1030,3 +1038,93 @@ class SpaceFloorSegment(_base._Base):
 ```
 
 Note: The `# type:` comments on `weighting_factor` and `net_area_factor` are optional (the generator can infer `float` from the literal), but including them is good practice for consistency.
+
+---
+
+## 18. Implementation Lessons (from honeybee-ph upgrade)
+
+This section captures practical lessons from the first spoke upgrade. Other spoke libraries should review these before starting.
+
+### 18.1 Workflow Order
+
+1. **Set up `docs/nav.yml` first** — add all API Reference entries before starting docstring work. The generator degrades gracefully for undocumented modules (produces stubs), so the site still builds.
+2. **Work module by module** — complete one file fully before moving to the next. Run that module's tests after each file.
+3. **Run the full test suite** at phase boundaries (after all core modules, after all HVAC modules).
+
+### 18.2 Files to Skip Entirely
+
+Not all `.py` files need docstring work:
+
+- **Module-level constant files** (e.g., `fuels.py`): If a file contains only constants and no classes, there's nothing to document. The generator may need special handling for these (emit a constants table, or skip and don't generate a page). Be cautious with nav entries for such files.
+- **`_extend_*.py` files**: Internal honeybee extension wiring. These register properties on honeybee objects but expose no public API.
+- **`__init__.py` files**: Usually just imports.
+- **`properties/` directories**: Internal plumbing for the honeybee extension system.
+
+### 18.3 Type Comment Pitfalls to Fix
+
+While upgrading docstrings, you'll encounter broken `# type:` comments. Fix these as you go:
+
+| Problem | Fix |
+|---------|-----|
+| `# type () -> str` (missing colon) | `# type: () -> str` |
+| `# type: (float, Point3D \| None) -> X` (Py3 union) | `# type: (float, Optional[Point3D]) -> X` |
+| `# type:float` (missing space) | `# type: float` |
+
+The generator parses these via regex, so formatting must be exact.
+
+### 18.4 Deprecated APIs
+
+If a property or method has a `DeprecationWarning`, **skip it** — don't add AUTODOC-formatted docstrings. The API is going away and documenting it promotes usage. If it already has a docstring, leave it as-is.
+
+### 18.5 Setter Properties
+
+Only the **getter** needs a docstring. Setters don't get separate documentation. The generator reads the getter's docstring and `# type:` comment to describe the property. If the setter has validation logic worth noting, mention it in the getter's docstring.
+
+### 18.6 Geometry Transform Methods
+
+These 5 methods appear on nearly every geometry-bearing class:
+
+- `move(moving_vec3D)`
+- `rotate(axis_vec3D, angle_degrees, origin_pt3D)`
+- `rotate_xy(angle_degrees, origin_pt3D)`
+- `reflect(normal_vec3D, origin_pt3D)` or `reflect(plane)`
+- `scale(scale_factor, origin_pt3D=None)`
+
+Use a consistent format across all classes. The pattern is:
+
+```python
+def move(self, moving_vec3D):
+    # type: (Vector3D) -> ClassName
+    """Move the ClassName along a vector.
+
+    Arguments:
+    ----------
+        * moving_vec3D (Vector3D): The direction and distance to move.
+
+    Returns:
+    --------
+        * ClassName: A new ClassName with the move applied.
+    """
+```
+
+Replace `ClassName` with the actual class. Keep the summary line short. The detailed descriptions in `Arguments:` don't need to repeat what the type already says.
+
+### 18.7 Error/Exception Classes
+
+Document custom exception classes with a brief class docstring. They're part of the public API (users may catch them). Use `Attributes:` if the exception stores useful attributes beyond `msg`.
+
+### 18.8 Attribute `# type:` Comments — Optional
+
+We decided **not** to add `# type:` comments to `__init__` attribute assignments during this upgrade. The generator can infer types from literals (`1.0` → `float`, `""` → `str`, `True` → `bool`). Only add explicit `# type:` where inference fails:
+- `None` assignments (could be anything)
+- Custom class instantiations where the class name isn't obvious
+- Collection types where the element type matters
+
+This can be done in a follow-up pass if needed.
+
+### 18.9 Descriptor / Meta-programming Patterns
+
+Some spokes use Python descriptors (e.g., `EnumProperty` in `phi.py`). These are valid public API:
+- Document the descriptor class itself with `Attributes:`.
+- Document `__get__` and `__set__` with `Arguments:` / `Returns:` (they ARE the public interface).
+- Don't skip them just because they're dunder methods — they're not boilerplate like `__str__`.
