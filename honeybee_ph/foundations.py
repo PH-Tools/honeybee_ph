@@ -25,6 +25,16 @@ except ImportError as e:
 
 
 class PhFoundationType(enumerables.CustomEnum):
+    """Classification of foundation types for PH certification.
+
+    Values:
+        1-HEATED_BASEMENT: Fully conditioned basement.
+        2-UNHEATED_BASEMENT: Unconditioned basement below thermal envelope.
+        3-SLAB_ON_GRADE: Foundation slab directly on soil.
+        4-VENTED_CRAWLSPACE: Ventilated crawlspace below floor.
+        5-NONE: No foundation modeled.
+    """
+
     allowed = [
         "1-HEATED_BASEMENT",
         "2-UNHEATED_BASEMENT",
@@ -39,6 +49,14 @@ class PhFoundationType(enumerables.CustomEnum):
 
 
 class PhSlabEdgeInsulationPosition(enumerables.CustomEnum):
+    """Position of perimeter slab edge insulation.
+
+    Values:
+        1-UNDEFINED: Undefined or not specified.
+        2-HORIZONTAL: Horizontal insulation extending outward from slab edge.
+        3-VERTICAL: Vertical insulation extending downward from slab edge.
+    """
+
     allowed = [
         "1-UNDEFINED",
         "2-HORIZONTAL",
@@ -55,6 +73,16 @@ class PhSlabEdgeInsulationPosition(enumerables.CustomEnum):
 
 
 class PhFoundation(_base._Base):
+    """Base class for all PH foundation types.
+
+    Subclassed by specific foundation geometries (heated basement, slab-on-grade,
+    etc.). Use PhFoundationFactory to instantiate the correct subclass from a dict.
+
+    Attributes:
+        foundation_type (PhFoundationType): The foundation classification.
+            Default: "5-NONE".
+    """
+
     def __init__(self):
         super(PhFoundation, self).__init__()
         self.foundation_type = PhFoundationType("5-NONE")
@@ -137,6 +165,18 @@ class PhFoundation(_base._Base):
 
 
 class PhHeatedBasement(PhFoundation):
+    """Heated (conditioned) basement foundation.
+
+    Attributes:
+        floor_slab_area_m2 (float): Floor slab area in square meters.
+        floor_slab_u_value (float): Floor slab U-value in W/(m2K). Default: 1.0.
+        floor_slab_exposed_perimeter_m (float): Exposed perimeter length in meters.
+        slab_depth_below_grade_m (float): Depth of slab below grade in meters.
+            Default: 2.5.
+        basement_wall_u_value (float): Basement wall U-value in W/(m2K).
+            Default: 1.0.
+    """
+
     def __init__(self):
         super(PhHeatedBasement, self).__init__()
         self.foundation_type = PhFoundationType("1-HEATED_BASEMENT")
@@ -189,6 +229,23 @@ class PhHeatedBasement(PhFoundation):
 
 
 class PhUnheatedBasement(PhFoundation):
+    """Unheated (unconditioned) basement foundation.
+
+    Attributes:
+        floor_ceiling_area_m2 (float): Area of ceiling above the basement in m2.
+        ceiling_u_value (float): Ceiling U-value in W/(m2K). Default: 1.0.
+        floor_slab_exposed_perimeter_m (float): Exposed perimeter length in meters.
+        slab_depth_below_grade_m (float): Depth of slab below grade in meters.
+        basement_wall_height_above_grade_m (float): Wall height above grade in meters.
+        basement_wall_uValue_below_grade (float): Below-grade wall U-value in W/(m2K).
+            Default: 1.0.
+        basement_wall_uValue_above_grade (float): Above-grade wall U-value in W/(m2K).
+            Default: 1.0.
+        floor_slab_u_value (float): Floor slab U-value in W/(m2K). Default: 1.0.
+        basement_volume_m3 (float): Basement air volume in cubic meters.
+        basement_ventilation_ach (float): Basement ventilation rate in ACH.
+    """
+
     def __init__(self):
         super(PhUnheatedBasement, self).__init__()
         self.foundation_type = PhFoundationType("2-UNHEATED_BASEMENT")
@@ -261,6 +318,21 @@ class PhUnheatedBasement(PhFoundation):
 
 
 class PhSlabOnGrade(PhFoundation):
+    """Slab-on-grade foundation.
+
+    Attributes:
+        floor_slab_area_m2 (float): Floor slab area in square meters.
+        floor_slab_u_value (Optional[float]): Floor slab U-value in W/(m2K).
+            None if not set.
+        floor_slab_exposed_perimeter_m (float): Exposed perimeter length in meters.
+        perim_insulation_width_or_depth_m (float): Insulation width or depth in
+            meters. Default: 0.300.
+        perim_insulation_thickness_m (float): Insulation thickness in meters.
+            Default: 0.050.
+        perim_insulation_conductivity (float): Insulation thermal conductivity
+            in W/(mK). Default: 0.04.
+    """
+
     def __init__(self):
         super(PhSlabOnGrade, self).__init__()
         self.foundation_type = PhFoundationType("3-SLAB_ON_GRADE")
@@ -274,6 +346,8 @@ class PhSlabOnGrade(PhFoundation):
 
     @property
     def perim_insulation_position(self):
+        # type: () -> PhSlabEdgeInsulationPosition
+        """The perimeter insulation position (horizontal or vertical)."""
         return self._perim_insulation_position
 
     @perim_insulation_position.setter
@@ -329,6 +403,23 @@ class PhSlabOnGrade(PhFoundation):
 
 
 class PhVentedCrawlspace(PhFoundation):
+    """Ventilated crawlspace foundation.
+
+    Attributes:
+        crawlspace_floor_slab_area_m2 (float): Crawlspace floor slab area in m2.
+        ceiling_above_crawlspace_u_value (float): Ceiling U-value above
+            crawlspace in W/(m2K). Default: 1.0.
+        crawlspace_floor_exposed_perimeter_m (float): Exposed perimeter in meters.
+            Default: 2.5.
+        crawlspace_wall_height_above_grade_m (float): Crawlspace wall height
+            above grade in meters.
+        crawlspace_floor_u_value (float): Crawlspace floor U-value in W/(m2K).
+            Default: 1.0.
+        crawlspace_vent_opening_are_m2 (float): Ventilation opening area in m2.
+        crawlspace_wall_u_value (float): Crawlspace wall U-value in W/(m2K).
+            Default: 1.0.
+    """
+
     def __init__(self):
         super(PhVentedCrawlspace, self).__init__()
         self.foundation_type = PhFoundationType("4-VENTED_CRAWLSPACE")
@@ -393,7 +484,18 @@ class PhVentedCrawlspace(PhFoundation):
 
 
 class PhFoundationFactory(object):
-    """Factory class to build any PhFoundation from an input dictionary."""
+    """Factory class to build PhFoundation objects from dictionaries.
+
+    Uses the foundation_type_value key in the input dict to determine
+    which subclass to instantiate.
+
+    Type Map:
+        1-HEATED_BASEMENT: PhHeatedBasement
+        2-UNHEATED_BASEMENT: PhUnheatedBasement
+        3-SLAB_ON_GRADE: PhSlabOnGrade
+        4-VENTED_CRAWLSPACE: PhVentedCrawlspace
+        5-NONE: PhFoundation
+    """
 
     type_map = {
         # enum-value: foundation class,

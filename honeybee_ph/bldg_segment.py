@@ -35,6 +35,15 @@ except ImportError as e:
 
 
 class PhVentilationSummerBypassMode(enumerables.CustomEnum):
+    """Summer bypass control mode for the ventilation system heat exchanger.
+
+    Values:
+        1-None: No bypass.
+        2-Temperature Controlled: Bypass activated by temperature difference.
+        3-Enthalpy Controlled: Bypass activated by enthalpy difference.
+        4-Always: Bypass always active in summer.
+    """
+
     allowed = ["1-None", "2-Temperature Controlled", "3-Enthalpy Controlled", "4-Always"]
 
     def __init__(self, _value=1):
@@ -43,6 +52,18 @@ class PhVentilationSummerBypassMode(enumerables.CustomEnum):
 
 
 class PhWindExposureType(enumerables.CustomEnum):
+    """Wind exposure classification for infiltration calculations.
+
+    Values:
+        1-SEVERAL_SIDES_EXPOSED_NO_SCREENING: Multiple exposed sides, no screening.
+        2-SEVERAL_SIDES_EXPOSED_MODERATE_SCREENING: Multiple exposed sides, moderate screening.
+        3-SEVERAL_SIDES_EXPOSED_HIGH_SCREENING: Multiple exposed sides, high screening.
+        4-ONE_SIDE_EXPOSED_NO_SCREENING: One exposed side, no screening.
+        5-ONE_SIDE_EXPOSED_MODERATE_SCREENING: One exposed side, moderate screening.
+        6-USER_DEFINED: User-defined wind exposure coefficient.
+        7-ONE_SIDE_EXPOSED_HIGH_SCREENING: One exposed side, high screening.
+    """
+
     allowed = [
         "1-SEVERAL_SIDES_EXPOSED_NO_SCREENING",
         "2-SEVERAL_SIDES_EXPOSED_MODERATE_SCREENING",
@@ -59,6 +80,13 @@ class PhWindExposureType(enumerables.CustomEnum):
 
 
 class PhSummerVentilationExtractSystemControl(enumerables.CustomEnum):
+    """Control mode for summer nighttime extract ventilation system.
+
+    Values:
+        1-TEMPERATURE_CONTROLLED: Controlled by temperature setpoint.
+        2-HUMIDITY_CONTROLLED: Controlled by humidity setpoint.
+    """
+
     allowed = [
         "1-TEMPERATURE_CONTROLLED",
         "2-HUMIDITY_CONTROLLED",
@@ -74,6 +102,31 @@ class PhSummerVentilationExtractSystemControl(enumerables.CustomEnum):
 
 
 class SummerVentilation(_base._Base):
+    """Summer ventilation settings for a building segment.
+
+    Controls bypass mode, daytime/nighttime extract ventilation, and
+    window ventilation parameters used in overheating calculations.
+
+    Attributes:
+        ventilation_system_ach (Optional[float]): Ventilation system air change rate.
+        summer_bypass_mode (PhVentilationSummerBypassMode): HRV bypass control mode.
+            Default: "4-Always".
+        daytime_extract_system_ach (float): Daytime extract system ACH.
+        daytime_extract_system_fan_power_wh_m3 (float): Daytime extract fan specific
+            power in Wh/m3.
+        daytime_window_ach (float): Daytime window ventilation ACH.
+        nighttime_extract_system_ach (float): Nighttime extract system ACH.
+        nighttime_extract_system_fan_power_wh_m3 (float): Nighttime extract fan
+            specific power in Wh/m3.
+        nighttime_extract_system_heat_fraction (float): Nighttime extract heat
+            recovery fraction.
+        nighttime_extract_system_control (PhSummerVentilationExtractSystemControl):
+            Nighttime extract system control mode. Default: "1-TEMPERATURE_CONTROLLED".
+        nighttime_window_ach (float): Nighttime window ventilation ACH.
+        nighttime_minimum_indoor_temp_C (float): Minimum indoor temperature for
+            nighttime ventilation in degrees Celsius.
+    """
+
     def __init__(
         self,
         _ventilation_system_ach=None,
@@ -176,6 +229,13 @@ class SummerVentilation(_base._Base):
 
 
 class SetPoints(_base._Base):
+    """Heating and cooling temperature setpoints for a building segment.
+
+    Attributes:
+        winter (float): Winter heating setpoint in degrees Celsius. Default: 20.0.
+        summer (float): Summer cooling setpoint in degrees Celsius. Default: 25.0.
+    """
+
     def __init__(self):
         super(SetPoints, self).__init__()
         self.winter = 20.0
@@ -226,6 +286,31 @@ class SetPoints(_base._Base):
 
 
 class BldgSegment(_base._Base):
+    """A building segment representing one thermally distinct zone for PH certification.
+
+    Contains site/climate data, certification settings, setpoints, thermal bridges,
+    and summer ventilation parameters. Typically one per building, but multi-zone
+    models may have several.
+
+    Attributes:
+        num_floor_levels (int): Number of above-grade floor levels. Default: 1.
+        num_dwelling_units (int): Number of dwelling units. Default: 1.
+        site (Site): Climate and location data for this segment.
+        source_energy_factors (FactorCollection): Source energy conversion factors.
+        co2e_factors (FactorCollection): CO2-equivalent emission factors.
+        phius_certification (PhiusCertification): Phius certification settings.
+        phi_certification (PhiCertification): PHI certification settings.
+        set_points (SetPoints): Heating/cooling temperature setpoints.
+        mech_room_temp (float): Mechanical room temperature in degrees Celsius.
+            Default: 20.0.
+        non_combustible_materials (bool): True if non-combustible construction.
+            Default: False.
+        thermal_bridges (Dict[str, PhThermalBridge]): Thermal bridges keyed by
+            identifier.
+        wind_exposure_type (PhWindExposureType): Wind exposure classification.
+        summer_ventilation (SummerVentilation): Summer ventilation parameters.
+    """
+
     def __init__(self):
         super(BldgSegment, self).__init__()
         self.display_name = "Unnamed_Bldg_Segment"

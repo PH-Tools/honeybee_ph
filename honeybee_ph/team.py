@@ -13,6 +13,18 @@ from honeybee_ph import _base
 
 
 class ProjectTeamMember(_base._Base):
+    """A single member of the project team (client, owner, designer, etc.).
+
+    Attributes:
+        name (Optional[str]): Full name of the team member.
+        street (Optional[str]): Street address.
+        city (Optional[str]): City name.
+        post_code (Optional[str]): Postal or ZIP code.
+        telephone (Optional[str]): Phone number.
+        email (Optional[str]): Email address.
+        license_number (Optional[str]): Professional license number.
+    """
+
     def __init__(
         self,
         _name=None,
@@ -90,6 +102,22 @@ class ProjectTeamMember(_base._Base):
 
 
 class ProjectTeam(_base._Base):
+    """The collection of team members associated with a Passive House project.
+
+    Holds references to the customer, building contact, owner, and designer.
+    Each role is represented by a ProjectTeamMember instance.
+
+    Attributes:
+        customer (ProjectTeamMember): The customer or client contact.
+        building (ProjectTeamMember): The building contact.
+        owner (ProjectTeamMember): The building owner.
+        designer (ProjectTeamMember): The project designer or architect.
+        project_date (str): The project date string. Default: "".
+        owner_is_client (bool): True if the owner is also the client. Default: False.
+        year_constructed (int): Year the building was constructed. Default: 0.
+        image (Optional[Any]): Project image data. Default: None.
+    """
+
     def __init__(self):
         # type: () -> None
         super(ProjectTeam, self).__init__()
