@@ -1,6 +1,6 @@
 nav:
   - API Reference:
-    - base: api/base.md
+    - _base: api/_base.md
     - space: api/space.md
     - foundations: api/foundations.md
     - bldg_segment: api/bldg_segment.md
@@ -9,7 +9,7 @@ nav:
     - phi: api/phi.md
     - phius: api/phius.md
     - HVAC:
-      - base: api/hvac/base.md
+      - _base: api/hvac/_base.md
       - ventilation: api/hvac/ventilation.md
       - heating: api/hvac/heating.md
       - heat_pumps: api/hvac/heat_pumps.md
