@@ -1,4 +1,8 @@
 nav:
+  - Getting Started:
+    - Overview: getting-started.md
+  - Packages:
+    - Overview: packages.md
   - API Reference:
     - _base: api/_base.md
     - space: api/space.md

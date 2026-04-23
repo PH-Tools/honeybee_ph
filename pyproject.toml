@@ -75,6 +75,16 @@ filename = "pyproject.toml"
 search = "version = \"{current_version}\""
 replace = "version = \"{new_version}\""
 
+[[tool.bumpversion.files]]
+filename = "docs/index.md"
+search = "version: \"{current_version}\""
+replace = "version: \"{new_version}\""
+
+[[tool.bumpversion.files]]
+filename = "docs/index.md"
+search = "v{current_version} — latest"
+replace = "v{new_version} — latest"
+
 # -- Testing Configuration ---
 [tool.pytest.ini_options]
 filterwarnings = [
