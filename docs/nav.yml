@@ -1,5 +1,4 @@
 nav:
-  - Overview: index.md
   - API Reference:
     - base: api/base.md
     - space: api/space.md
