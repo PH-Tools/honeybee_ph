@@ -18,7 +18,18 @@ except ImportError as e:
 
 def vector_equal(vector_a, vector_b, _tolerance):
     # type: (Vector3D, Vector3D, float) -> bool
-    """Return True if two Vector3Ds are equal within tolerance."""
+    """Return True if two Vector3Ds are equal within tolerance.
+
+    Arguments:
+    ----------
+        * vector_a (Vector3D): First vector.
+        * vector_b (Vector3D): Second vector.
+        * _tolerance (float): Per-component equality tolerance.
+
+    Returns:
+    --------
+        * bool
+    """
 
     return all(abs(vector_a[i] - vector_b[i]) <= _tolerance for i in range(len(vector_a)))
 
@@ -61,7 +72,17 @@ def normalize(vector):
 
 def angle_between_2D_vectors(_vector1, _vector2):
     # type: (Union[Vector3D, Vector2D], Union[Vector3D, Vector2D]) -> float
-    """Return the angle (in radians) between two 2D vectors."""
+    """Return the unsigned angle (in radians) between two 2D vectors.
+
+    Arguments:
+    ----------
+        * _vector1 (Union[Vector3D, Vector2D]): First vector.
+        * _vector2 (Union[Vector3D, Vector2D]): Second vector.
+
+    Returns:
+    --------
+        * float: Angle in radians (0 to pi).
+    """
 
     # Calculate the dot product between the X-axis vectors
     cos_theta = dot_product(_vector1, _vector2)

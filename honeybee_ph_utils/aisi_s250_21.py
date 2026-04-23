@@ -22,6 +22,15 @@ from honeybee_ph_utils.enumerables import CustomEnum
 
 
 class StudSpacingInches(CustomEnum):
+    """On-center stud spacing in inches per AISI S250-21.
+
+    Values:
+        6: 6-inch on-center spacing.
+        12: 12-inch on-center spacing.
+        16: 16-inch on-center spacing.
+        24: 24-inch on-center spacing.
+    """
+
     allowed = [
         "6",
         "12",
@@ -35,6 +44,15 @@ class StudSpacingInches(CustomEnum):
 
 
 class StudThicknessMil(CustomEnum):
+    """Cold-formed steel stud designation thickness in mils per AISI S250-21.
+
+    Values:
+        33: 33-mil designation thickness.
+        43: 43-mil designation thickness.
+        54: 54-mil designation thickness.
+        68: 68-mil designation thickness.
+    """
+
     allowed = [
         "33",
         "43",
@@ -331,6 +349,31 @@ def calculate_stud_cavity_effective_u_value(
     _r_si=0.68,
 ):
     # type: (float, float, float, float, StudSpacingInches, StudThicknessMil, float, float, float, float, float, float) -> float
+    """Calculate the effective U-value of a CFS stud cavity per AISI S250-21.
+
+    Runs the full AISI S250-21 calculation sequence (OTZ, framing factor,
+    parallel-path U-factor, series paths) and returns just the stud-cavity
+    U-value with exterior/interior layers stripped out.
+
+    Arguments:
+    ----------
+        * _r_ext_cladding (float): R-value of exterior cladding (h-ft2-F/Btu).
+        * _r_ext_insulation (float): R-value of exterior continuous insulation (h-ft2-F/Btu).
+        * _r_ext_sheathing (float): R-value of exterior sheathing (h-ft2-F/Btu).
+        * _r_cavity_insulation (float): R-value of cavity insulation (h-ft2-F/Btu).
+        * _stud_spacing_inch (StudSpacingInches): On-center stud spacing.
+        * _stud_thickness_mil (StudThicknessMil): Stud designation thickness.
+        * _stud_flange_width_inch (float): Stud flange width (inches).
+        * _stud_depth_inch (float): Stud web depth (inches).
+        * _steel_conductivity (float): Steel thermal conductivity (Btu/hr-ft2-F).
+        * _r_int_sheathing (float): R-value of interior sheathing (h-ft2-F/Btu).
+        * _r_se (float): R-value of outside air film. Default: 0.17.
+        * _r_si (float): R-value of inside air film. Default: 0.68.
+
+    Returns:
+    --------
+        * float: Effective cavity U-value (Btu/hr-ft2-F).
+    """
     try:
         C0, C1, C2, C3, C4, C5 = OTZ_COEFFICIENTS[_stud_spacing_inch][_stud_thickness_mil]
     except KeyError as e:

@@ -53,6 +53,18 @@ def input_to_int(_input_value, _default=None):
 
 
 def clean_tree_get(_tree, _i, _default=None):
+    """Get a Grasshopper DataTree branch by index, falling back to branch 0.
+
+    Arguments:
+    ---------
+        * _tree: A Grasshopper DataTree.
+        * _i (int): The branch index to retrieve.
+        * _default: Value to return if both lookups fail.
+
+    Returns:
+    --------
+        * The branch list, or _default.
+    """
     try:
         return _tree.Branch(_i)
     except:

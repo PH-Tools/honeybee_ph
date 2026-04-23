@@ -10,6 +10,13 @@ except ImportError:
 
 
 class ValueNotAllowedError(Exception):
+    """Error raised when a value is not in the allowed list of a CustomEnum.
+
+    Attributes:
+        message (str): Human-readable error message showing the invalid
+            value and the allowed options.
+    """
+
     def __init__(self, _in, _enum):
         self.message = "Value: {} not allowed for enum {}.\nValid input: {} ".format(
             str(_in), _enum.__class__.__name__, _enum.allowed
@@ -19,6 +26,14 @@ class ValueNotAllowedError(Exception):
 
 class CustomEnum(object):
     """A simplified custom Enum class since IronPython doesn't have an enum.
+
+    Subclass this and set ``allowed`` to a list of uppercase string values.
+    Values can be set by name or by 1-based integer index.
+
+    Attributes:
+        allowed (list[str]): Class-level list of permitted string values.
+        index_offset (int): Offset applied when converting integer input
+            to a list index. Default: -1 (1-based indexing).
 
     Example usage:
     ```python
@@ -53,11 +68,13 @@ class CustomEnum(object):
     @property
     def allowed_upper(self):
         # type: () -> list[str]
+        """Uppercase versions of all allowed values."""
         return [_.upper() for _ in self.allowed]
 
     @property
     def value(self):
         # type: () -> str
+        """The current enum value as an uppercase string."""
         return str(self._value)
 
     @value.setter

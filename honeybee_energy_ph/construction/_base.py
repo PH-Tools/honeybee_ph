@@ -12,6 +12,18 @@ from honeybee.typing import clean_ep_string, valid_ep_string
 
 
 class _Base(object):
+    """Base class for all honeybee_energy_ph construction objects.
+
+    Provides identifier, display_name, user_data, and serialization helpers.
+
+    Attributes:
+        id_num (int): Numeric ID for serialization ordering.
+        identifier (str): Unique EnergyPlus-safe text identifier.
+        display_name (str): Human-readable name (no character restrictions).
+            Falls back to identifier if not set.
+        user_data (dict): Optional metadata dictionary.
+    """
+
     def __init__(self, _identifier):
         self.id_num = 0
         self._identifier = _identifier  # type: str

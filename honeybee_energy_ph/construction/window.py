@@ -12,7 +12,15 @@ from honeybee_energy_ph.construction import _base
 
 
 class PhWindowFrameElement(_base._Base):
-    """An individual PhWindowFrameElement (side) which is part of a complete PhWindowFrame."""
+    """One side of a PH window frame (top, right, bottom, or left).
+
+    Attributes:
+        width (float): Frame element width (m). Default: 0.1.
+        u_factor (float): Frame U-value (W/m2K). Default: 1.0.
+        psi_glazing (float): Glazing-edge psi-value (W/mK). Default: 0.04.
+        psi_install (float): Installation psi-value (W/mK). Default: 0.04.
+        chi_value (float): Point thermal bridge chi-value (W/K). Default: 0.0.
+    """
 
     def __init__(self, _identifier):
         super(PhWindowFrameElement, self).__init__(_identifier)
@@ -77,7 +85,14 @@ class PhWindowFrameElement(_base._Base):
 
 
 class PhWindowFrame(_base._Base):
-    """A full PH window frame made of 4 PhWindowFrameElements."""
+    """A complete PH window frame with four side elements.
+
+    Attributes:
+        top (PhWindowFrameElement): Top frame element.
+        right (PhWindowFrameElement): Right frame element.
+        bottom (PhWindowFrameElement): Bottom frame element.
+        left (PhWindowFrameElement): Left frame element.
+    """
 
     def __init__(self, _identifier):
         super(PhWindowFrame, self).__init__(_identifier)
@@ -139,6 +154,13 @@ class PhWindowFrame(_base._Base):
 
 
 class PhWindowGlazing(_base._Base):
+    """PH-style glazing properties for a window unit.
+
+    Attributes:
+        u_factor (float): Center-of-glass U-value (W/m2K). Default: 1.0.
+        g_value (float): Solar heat gain coefficient (SHGC). Default: 0.4.
+    """
+
     def __init__(self, _identifier):
         super(PhWindowGlazing, self).__init__(_identifier)
         self.u_factor = 1.0

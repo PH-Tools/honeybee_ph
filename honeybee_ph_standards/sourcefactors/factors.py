@@ -12,6 +12,12 @@ from honeybee_ph import _base
 
 
 class FuelNotAllowedError(Exception):
+    """Raised when a fuel type is not in the allowed list for a factor collection.
+
+    Attributes:
+        msg (str): Human-readable error message.
+    """
+
     def __init__(self, _fuel_type_input):
         self.msg = "Error: Fuel type: '{}' not allowed.".format(_fuel_type_input)
         super(FuelNotAllowedError, self).__init__(self.msg)
@@ -46,7 +52,13 @@ def build_factors_from_library(_factor_dict):
 
 
 class Factor(_base._Base):
-    """Dataclass for site->other conversion factor"""
+    """A site-to-source or site-to-CO2 energy conversion factor.
+
+    Attributes:
+        fuel_name (str): Uppercase fuel identifier (e.g. "NATURAL_GAS").
+        value (float): Conversion factor value.
+        unit (str): Unit string (e.g. "KWH/KWH" or "G/KWH").
+    """
 
     def __init__(self, fuel_name="", value=0.0, unit=""):
         # type: (str, float, str) -> None
@@ -87,7 +99,12 @@ class Factor(_base._Base):
 
 
 class FactorCollection(_base._Base):
-    """Collection of conversion factors."""
+    """A named collection of energy conversion factors keyed by fuel type.
+
+    Attributes:
+        name (str): Collection name (e.g. "Phius 2024 Source Energy").
+        factors (List[Factor]): The conversion factors in this collection.
+    """
 
     def __init__(self, _name="", _factors=None):
         # type: (str, List[Factor] | None) -> None

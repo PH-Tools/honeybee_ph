@@ -17,6 +17,15 @@ except ImportError:
 
 
 class PhColor(object):
+    """An ARGB color with integer channel values in the range 0-255.
+
+    Attributes:
+        a (int): Alpha channel (0 = fully transparent, 255 = fully opaque).
+        r (int): Red channel.
+        g (int): Green channel.
+        b (int): Blue channel.
+    """
+
     def __init__(self):
         self.a = 0
         self.r = 0
@@ -26,6 +35,19 @@ class PhColor(object):
     @classmethod
     def from_argb(cls, a, r, g, b):
         # type: (int, int, int, int) -> PhColor
+        """Create a PhColor from explicit alpha, red, green, and blue values.
+
+        Arguments:
+        ----------
+            * a (int): Alpha channel value (clamped to 0-255).
+            * r (int): Red channel value (clamped to 0-255).
+            * g (int): Green channel value (clamped to 0-255).
+            * b (int): Blue channel value (clamped to 0-255).
+
+        Returns:
+        --------
+            * PhColor
+        """
         new_color = cls()
         new_color.a = int(max(0, min(a, 255)))
         new_color.r = int(max(0, min(r, 255)))
@@ -36,11 +58,33 @@ class PhColor(object):
     @classmethod
     def from_rgb(cls, r, g, b):
         # type: (int, int, int) -> PhColor
+        """Create a fully opaque PhColor from red, green, and blue values.
+
+        Arguments:
+        ----------
+            * r (int): Red channel value (clamped to 0-255).
+            * g (int): Green channel value (clamped to 0-255).
+            * b (int): Blue channel value (clamped to 0-255).
+
+        Returns:
+        --------
+            * PhColor
+        """
         return cls.from_argb(255, r, g, b)
 
     @classmethod
     def from_system_color(cls, color):
         # type: (Drawing.Color) -> PhColor
+        """Create a PhColor from a .NET System.Drawing.Color.
+
+        Arguments:
+        ----------
+            * color (System.Drawing.Color): The .NET color to convert.
+
+        Returns:
+        --------
+            * PhColor
+        """
         new_color = cls()
         new_color.a = int(max(0, min(color.A, 255)))
         new_color.r = int(max(0, min(color.R, 255)))

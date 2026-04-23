@@ -67,7 +67,17 @@ def get_honeybee_aperture_width_and_height(_hb_aperture):
 
 
 class ISO100771Data:
-    """Wrapper class used to calculate the ISO-10077-1 heat-loss values."""
+    """Window heat-loss calculator per ISO 10077-1.
+
+    Computes U-w, frame area, glazing area, and component heat losses
+    for a rectangular window with four-sided PH frame and glazing data.
+
+    Attributes:
+        win_width (float): Overall window width (m).
+        win_height (float): Overall window height (m).
+        frame (PhWindowFrame): PH-style frame with per-side elements.
+        glazing (PhWindowGlazing): PH-style glazing properties.
+    """
 
     def __init__(self, _win_width, _win_height, _frame, _glazing):
         # type: (float, float, window.PhWindowFrame, window.PhWindowGlazing) -> None
@@ -123,6 +133,7 @@ class ISO100771Data:
     @property
     def area_window(self):
         # type: () -> float
+        """Total window area including frame (m2)."""
         return self.side_exterior_length("right") * self.side_exterior_length("top")
 
     @property
@@ -144,6 +155,7 @@ class ISO100771Data:
 
     def side_interior_length(self, _side):
         # type: (str) -> float
+        """Return the glazing-opening length for the given side (m)."""
         side_lengths = {
             "top": (self.win_width - self.frame.right.width - self.frame.left.width),
             "right": (self.win_height - self.frame.top.width - self.frame.bottom.width),
@@ -154,6 +166,7 @@ class ISO100771Data:
 
     def side_exterior_length(self, _side):
         # type: (str) -> float
+        """Return the overall exterior length for the given side (m)."""
         side_lengths = {
             "top": self.win_width,
             "right": self.win_height,
@@ -190,24 +203,29 @@ class ISO100771Data:
 
     def side_area(self, _side):
         # type: (str) -> float
+        """Return the total frame area for the given side including half-corners (m2)."""
         center_area = self.frame_element(_side).width * self.side_interior_length(_side)
         return center_area + self.corner_area(_side)
 
     def side_frame_heat_loss(self, _side):
         # type: (str) -> float
+        """Return the frame conduction heat loss for the given side (W/K)."""
         return self.frame_element(_side).u_factor * self.side_area(_side)
 
     def side_psi_glazing_heat_lost(self, _side):
         # type: (str) -> float
+        """Return the glazing-edge psi heat loss for the given side (W/K)."""
         return self.frame_element(_side).psi_glazing * self.side_interior_length(_side)
 
     def side_psi_install_heat_lost(self, _side):
         # type: (str) -> float
+        """Return the installation psi heat loss for the given side (W/K)."""
         return self.frame_element(_side).psi_install * self.side_exterior_length(_side)
 
     @property
     def heat_loss_frame(self):
         # type: () -> float
+        """Total frame conduction heat loss across all four sides (W/K)."""
         return sum(
             [
                 self.side_frame_heat_loss("top"),
@@ -220,6 +238,7 @@ class ISO100771Data:
     @property
     def heat_loss_psi_glazing(self):
         # type: () -> float
+        """Total glazing-edge psi heat loss across all four sides (W/K)."""
         return sum(
             [
                 self.side_psi_glazing_heat_lost("top"),
@@ -232,6 +251,7 @@ class ISO100771Data:
     @property
     def heat_loss_psi_install(self):
         # type: () -> float
+        """Total installation psi heat loss across all four sides (W/K)."""
         return sum(
             [
                 self.side_psi_install_heat_lost("top"),
@@ -244,11 +264,13 @@ class ISO100771Data:
     @property
     def heat_loss_glazing(self):
         # type: () -> float
+        """Total glazing conduction heat loss (W/K)."""
         return self.area_glazing * self.glazing.u_factor
 
     @property
     def uw(self):
         # type: () -> float
+        """Installed window U-value (W/m2K) per ISO 10077-1 with 45-degree corner split."""
         return (
             self.heat_loss_glazing + self.heat_loss_frame + self.heat_loss_psi_glazing + self.heat_loss_psi_install
         ) / self.area_window

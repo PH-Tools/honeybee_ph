@@ -62,7 +62,25 @@ except ImportError as e:
 
 
 class PhEquipment(_base._Base):
-    """Base for PH Equipment / Appliances with the common attributes."""
+    """Base class for PH appliances with common energy and scheduling attributes.
+
+    Subclass this for each appliance type (dishwasher, refrigerator, etc.).
+    Override ``annual_energy_kWh()`` to provide type-specific calculations.
+
+    Attributes:
+        equipment_type (str): Class name used for serialization dispatch.
+        comment (str): Optional user comment.
+        reference_quantity (int): Reference quantity type (2 = zone occupants).
+        quantity (int): Number of this appliance installed.
+        in_conditioned_space (bool): Whether the appliance is inside the
+            thermal envelope. Default: True.
+        reference_energy_norm (int): Energy normalization period (2 = year).
+        energy_demand (float): Annual energy demand (kWh).
+        energy_demand_per_use (float): Energy per use cycle (kWh/use).
+        combined_energy_factor (float): Combined energy factor (CEF).
+        ihg_utilization_factor (float): Fraction of energy that becomes
+            internal heat gain inside the envelope (0.0-1.0). Default: 1.0.
+    """
 
     _phi_default = None
     _phius_default = None
@@ -234,6 +252,13 @@ class PhEquipment(_base._Base):
 
 
 class PhDishwasher(PhEquipment):
+    """PH kitchen dishwasher appliance.
+
+    Attributes:
+        capacity_type (int): Capacity classification. Default: 1.
+        capacity (int): Place-setting capacity. Default: 12.
+    """
+
     def __init__(self, _defaults={}):
         super(PhDishwasher, self).__init__()
         self.display_name = "Kitchen dishwasher"
@@ -281,6 +306,14 @@ class PhDishwasher(PhEquipment):
 
 
 class PhClothesWasher(PhEquipment):
+    """PH laundry clothes washer appliance.
+
+    Attributes:
+        capacity (float): Washer capacity (cu ft). Default: 0.1274.
+        modified_energy_factor (float): Modified energy factor. Default: 2.7.
+        utilization_factor (int): Utilization factor. Default: 1.
+    """
+
     def __init__(self, _defaults={}):
         super(PhClothesWasher, self).__init__()
         self.display_name = "Laundry - washer"
@@ -331,6 +364,15 @@ class PhClothesWasher(PhEquipment):
 
 
 class PhClothesDryer(PhEquipment):
+    """PH laundry clothes dryer appliance.
+
+    Attributes:
+        gas_consumption (float): Gas consumption rate. Default: 0.
+        gas_efficiency_factor (float): Gas efficiency factor. Default: 2.67.
+        field_utilization_factor_type (int): Utilization factor type. Default: 1.
+        field_utilization_factor (float): Field utilization factor. Default: 1.18.
+    """
+
     def __init__(self, _defaults={}):
         super(PhClothesDryer, self).__init__()
         self.display_name = "Laundry - dryer"
@@ -396,6 +438,8 @@ class PhClothesDryer(PhEquipment):
 
 
 class PhRefrigerator(PhEquipment):
+    """PH kitchen refrigerator (standalone, no freezer)."""
+
     def __init__(self, _defaults={}):
         super(PhRefrigerator, self).__init__()
         self.display_name = "Kitchen refrigerator"
@@ -422,6 +466,8 @@ class PhRefrigerator(PhEquipment):
 
 
 class PhFreezer(PhEquipment):
+    """PH kitchen standalone freezer."""
+
     def __init__(self, _defaults={}):
         super(PhFreezer, self).__init__()
         self.display_name = "Kitchen freezer"
@@ -448,6 +494,8 @@ class PhFreezer(PhEquipment):
 
 
 class PhFridgeFreezer(PhEquipment):
+    """PH kitchen combination refrigerator/freezer."""
+
     def __init__(self, _defaults={}):
         super(PhFridgeFreezer, self).__init__()
         self.display_name = "Kitchen fridge/freeze combo"
@@ -474,6 +522,8 @@ class PhFridgeFreezer(PhEquipment):
 
 
 class PhCooktop(PhEquipment):
+    """PH kitchen cooktop/range appliance."""
+
     def __init__(self, _defaults={}):
         super(PhCooktop, self).__init__()
         self.display_name = "Kitchen cooking"
@@ -521,6 +571,8 @@ class PhCooktop(PhEquipment):
 
 
 class PhPhiusMEL(PhEquipment):
+    """Phius miscellaneous electrical loads (MELs) per RESNET."""
+
     def __init__(self, _defaults={}):
         super(PhPhiusMEL, self).__init__()
         self.display_name = "PHIUS+ MELS"
@@ -557,6 +609,12 @@ class PhPhiusMEL(PhEquipment):
 
 
 class PhPhiusLightingInterior(PhEquipment):
+    """Phius interior lighting load per RESNET.
+
+    Attributes:
+        frac_high_efficiency (float): Fraction of high-efficiency fixtures. Default: 1.
+    """
+
     def __init__(self, _defaults={}):
         super(PhPhiusLightingInterior, self).__init__()
         self.display_name = "PHIUS+ Interior Lighting"
@@ -590,6 +648,12 @@ class PhPhiusLightingInterior(PhEquipment):
 
 
 class PhPhiusLightingExterior(PhEquipment):
+    """Phius exterior lighting load per RESNET.
+
+    Attributes:
+        frac_high_efficiency (float): Fraction of high-efficiency fixtures. Default: 1.
+    """
+
     def __init__(self, _defaults={}):
         # type: (dict[str, Any]) -> None
         super(PhPhiusLightingExterior, self).__init__()
@@ -629,6 +693,12 @@ class PhPhiusLightingExterior(PhEquipment):
 
 
 class PhPhiusLightingGarage(PhEquipment):
+    """Phius garage lighting load per RESNET.
+
+    Attributes:
+        frac_high_efficiency (float): Fraction of high-efficiency fixtures. Default: 1.
+    """
+
     def __init__(self, _defaults={}):
         super(PhPhiusLightingGarage, self).__init__()
         self.display_name = "PHIUS+ Garage Lighting"
@@ -659,6 +729,8 @@ class PhPhiusLightingGarage(PhEquipment):
 
 
 class PhCustomAnnualElectric(PhEquipment):
+    """User-defined annual electric equipment load."""
+
     def __init__(self, _defaults={}):
         super(PhCustomAnnualElectric, self).__init__()
         self.display_name = "User defined"
@@ -685,6 +757,8 @@ class PhCustomAnnualElectric(PhEquipment):
 
 
 class PhCustomAnnualLighting(PhEquipment):
+    """User-defined annual lighting load."""
+
     def __init__(self, _defaults={}):
         super(PhCustomAnnualLighting, self).__init__()
         self.display_name = "User defined - lighting"
@@ -711,6 +785,8 @@ class PhCustomAnnualLighting(PhEquipment):
 
 
 class PhCustomAnnualMEL(PhEquipment):
+    """User-defined annual miscellaneous electric load."""
+
     def __init__(self, _defaults={}):
         super(PhCustomAnnualMEL, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -740,6 +816,8 @@ class PhCustomAnnualMEL(PhEquipment):
 
 
 class PhElevatorHydraulic(PhEquipment):
+    """Hydraulic elevator (up to ~6 stories) per Phius/RESNET."""
+
     def __init__(self, _num_dwellings=1):
         super(PhElevatorHydraulic, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -778,6 +856,8 @@ class PhElevatorHydraulic(PhEquipment):
 
 
 class PhElevatorGearedTraction(PhEquipment):
+    """Geared traction elevator (7-20 stories) per Phius/RESNET."""
+
     def __init__(self, _num_dwellings=1):
         super(PhElevatorGearedTraction, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -816,6 +896,8 @@ class PhElevatorGearedTraction(PhEquipment):
 
 
 class PhElevatorGearlessTraction(PhEquipment):
+    """Gearless traction elevator (21+ stories) per Phius/RESNET."""
+
     def __init__(self, _num_dwellings=1):
         super(PhElevatorGearlessTraction, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -906,9 +988,13 @@ class PhEquipmentBuilder(object):
 
 
 class PhEquipmentCollection(object):
-    """A Collection of PH-Equipment / Appliances.
+    """A collection of PH appliances stored on a Honeybee-Room's energy properties.
 
-    This is stored on the Honeybee-Room's properties.energy.electric_equipment.properties.ph
+    Provides dict-like access (items, keys, values, iteration) to PhEquipment
+    instances keyed by their identifier.
+
+    Attributes:
+        host (ElectricEquipmentPhProperties | None): The parent properties object.
     """
 
     def __init__(self, _host=None):

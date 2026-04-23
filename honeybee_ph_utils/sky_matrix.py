@@ -57,7 +57,16 @@ PATCH_ROW_COEFF = {
 @memoize
 def create_analysis_period_hoys(_period):
     # type: (Tuple[int, int]) -> Tuple
-    """Return a new Ladybug Analysis Period HOYS."""
+    """Return the hours-of-year for a Ladybug AnalysisPeriod spanning the given months.
+
+    Arguments:
+    ----------
+        * _period (Tuple[int, int]): Start and end months (1-based).
+
+    Returns:
+    --------
+        * Tuple: Hours of the year within the period.
+    """
 
     anp = ap.AnalysisPeriod(
         st_month=_period[0],
@@ -73,19 +82,22 @@ def create_analysis_period_hoys(_period):
 
 
 def broadband_radiation(patch_row_str, row_number, wea_duration, sky_density=1):
+    # type: (str, int, float, int) -> float
     """Parse a row of gendaymtx RGB patch data in W/sr/m2 to radiation in kWh/m2.
 
-    This includes applying broadband weighting to the RGB bands, multiplication
-    by the steradians of each patch, and multiplying by the duration of time that
-    they sky matrix represents in hours.
+    Applies broadband weighting to the RGB bands, multiplies by the steradians
+    of each patch, and multiplies by the Wea duration in hours.
 
-    Args:
-        patch_row_str: Text string for a single row of RGB patch data.
-        row_number: Integer for the row number that the patch corresponds to.
-        sky_density: Integer (either 1 or 2) for the density.
-        wea_duration: Number for the duration of the Wea in hours. This is used
-            to convert between the average value output by the command and the
-            cumulative value that is needed for all ladybug analyses.
+    Arguments:
+    ----------
+        * patch_row_str (str): Text string for a single row of RGB patch data.
+        * row_number (int): The row number that the patch corresponds to.
+        * wea_duration (float): Duration of the Wea in hours.
+        * sky_density (int): Density setting (1 = Tregenza, 2 = Reinhart). Default: 1.
+
+    Returns:
+    --------
+        * float: Broadband radiation value in kWh/m2.
     """
     R, G, B = patch_row_str.split(" ")
     weight_val = 0.265074126 * float(R) + 0.670114631 * float(G) + 0.064811243 * float(B)
@@ -93,18 +105,21 @@ def broadband_radiation(patch_row_str, row_number, wea_duration, sky_density=1):
 
 
 def parse_mtx_data(data_str, wea_duration, sky_density=1):
+    # type: (str, float, int) -> list[float]
     """Parse a string of Radiance gendaymtx data to a list of radiation-per-patch.
 
-    This function handles the removing of the header and the conversion of the
-    RGB irradiance-=per-steraidian values to broadband radiation. It also removes
-    the first patch, which is the ground and is not used by Ladybug.
+    Removes the header, converts RGB irradiance-per-steradian values to broadband
+    radiation, and strips the ground patch (not used by Ladybug).
 
-    Args:
-        data_str: The string that has been output by gendaymtx to stdout.
-        wea_duration: Number for the duration of the Wea in hours. This is used
-            to convert between the average value output by the command and the
-            cumulative value that is needed for all ladybug analyses.
-        sky_density: Integer (either 1 or 2) for the density.
+    Arguments:
+    ----------
+        * data_str (str): Raw stdout string from gendaymtx.
+        * wea_duration (float): Duration of the Wea in hours.
+        * sky_density (int): Density setting (1 = Tregenza, 2 = Reinhart). Default: 1.
+
+    Returns:
+    --------
+        * list[float]: Broadband radiation values per sky patch in kWh/m2.
     """
     # split lines and remove the header, ground patch and last line break
     data_lines = data_str.split("\n")
@@ -124,6 +139,18 @@ def parse_mtx_data(data_str, wea_duration, sky_density=1):
 @memoize
 def gen_matrix(_epw_file, _period, _north):
     # type: (str, Tuple[int, int], Any) -> Any
+    """Generate a cumulative Radiance sky matrix from an EPW file.
+
+    Arguments:
+    ----------
+        * _epw_file (str): Path to the EPW weather file.
+        * _period (Tuple[int, int]): Start and end months (1-based) for filtering.
+        * _north (Any): North direction as a Vector2D or angle in degrees.
+
+    Returns:
+    --------
+        * Any: Objectified Ladybug sky matrix data (metadata, direct, diffuse).
+    """
 
     epw_data = epw.EPW(_epw_file)
     _location = epw_data.location

@@ -8,6 +8,13 @@ from honeybee_ph_utils import histogram, ventilation
 
 
 class SchedItem:
+    """A single period in a WUFI-style four-part ventilation schedule.
+
+    Attributes:
+        period_speed (float): Fan speed fraction for this period (0.0-1.0).
+        period_operating_hours (float): Hours per day at this speed.
+    """
+
     def __init__(self, _av, _fr):
         # type: (float, float) -> None
         self.period_speed = _av
@@ -23,6 +30,15 @@ class SchedItem:
 
 
 class FourPartSched:
+    """A WUFI-style four-part ventilation schedule (high / standard / basic / minimum).
+
+    Attributes:
+        high (SchedItem): High-speed period.
+        standard (SchedItem): Standard-speed period.
+        basic (SchedItem): Basic-speed period.
+        minimum (SchedItem): Minimum-speed period.
+    """
+
     def __init__(self, _h, _s, _b, _m):
         # type: (SchedItem, SchedItem, SchedItem, SchedItem) -> None
         self.high = _h

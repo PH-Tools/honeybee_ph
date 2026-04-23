@@ -29,6 +29,14 @@ except ImportError as e:
 
 
 class PhThermalBridgeType(enumerables.CustomEnum):
+    """Classification of thermal bridge geometry types for PH certification.
+
+    Values:
+        15-Ambient: Thermal bridge at ambient boundary.
+        16-Perimeter: Thermal bridge at perimeter/slab edge.
+        17-FS/BC: Thermal bridge at floor slab / boundary condition.
+    """
+
     allowed = [
         "",
         "",
@@ -56,7 +64,14 @@ class PhThermalBridgeType(enumerables.CustomEnum):
 
 
 class PhThermalBridge(_base._Base):
-    """A single PhThermalBridge object"""
+    """A linear thermal bridge with 3D geometry and PH thermal properties.
+
+    Attributes:
+        geometry (Union[Polyline3D, LineSegment3D]): The 3D line geometry.
+        quantity (float): Number of identical bridges. Default: 1.0.
+        psi_value (float): Linear thermal transmittance (W/mK). Default: 0.1.
+        fRsi_value (float): Temperature factor at the interior surface. Default: 0.75.
+    """
 
     def __init__(self, _identifier, _geometry):
         # type: (Any, Union[Polyline3D, LineSegment3D]) -> None
@@ -71,11 +86,13 @@ class PhThermalBridge(_base._Base):
     @property
     def length(self):
         # type: () -> float
+        """Total length of the thermal bridge geometry (model units)."""
         return self.geometry.length
 
     @property
     def group_type(self):
         # type: () -> PhThermalBridgeType
+        """The thermal bridge classification type."""
         return self._group_type
 
     @group_type.setter

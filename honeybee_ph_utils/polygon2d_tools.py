@@ -27,7 +27,18 @@ except ImportError as e:
 
 def counterclockwise_angle_between_2_Planes(_plane1, _plane2, _tolerance):
     # type: (Plane, Plane, float) -> float
-    """Return the counterclockwise angle (in radians) between two Plane's X-Axes."""
+    """Return the counterclockwise angle (in radians) between two Plane's X-Axes.
+
+    Arguments:
+    ----------
+        * _plane1 (Plane): The reference plane.
+        * _plane2 (Plane): The target plane (must share the same normal).
+        * _tolerance (float): Tolerance for normal-vector equality check.
+
+    Returns:
+    --------
+        * float: Counterclockwise angle in radians.
+    """
 
     if not vector3d_tools.vector_equal(_plane1.n, _plane2.n, _tolerance):
         msg = (
@@ -61,7 +72,19 @@ def move_vector_between_two_points(_point1, _point2):
 
 def translate_polygon2D(_polygon2D, _starting_plane, _target_plane, _tolerance):
     # type: (Polygon2D, Plane, Plane, float) -> Polygon2D
-    """Translate (move, rotate) one Polygon2D from its own Plane into another."""
+    """Translate (move, rotate) one Polygon2D from its own Plane into another.
+
+    Arguments:
+    ----------
+        * _polygon2D (Polygon2D): The polygon to transform.
+        * _starting_plane (Plane): The plane the polygon currently lives in.
+        * _target_plane (Plane): The plane to move the polygon into.
+        * _tolerance (float): Tolerance for plane-normal equality check.
+
+    Returns:
+    --------
+        * Polygon2D: The transformed polygon in the target plane's 2D space.
+    """
 
     # ------------------------------------------------------------------------
     # -- Create a Vector2D from the Polygon2D's origin to the _new_plane's
@@ -102,7 +125,17 @@ def get_lbt_Face3D_planes(_lbt_face3Ds):
 
 def merge_polygon_2ds(_lbt_polygon_2ds, _tolerance):
     # type: (List[Polygon2D], float) -> List[Polygon2D]
-    """Merge together a list of Polygon2Ds."""
+    """Merge together a list of Polygon2Ds via boolean union.
+
+    Arguments:
+    ----------
+        * _lbt_polygon_2ds (List[Polygon2D]): Polygons to merge.
+        * _tolerance (float): Boolean-union tolerance.
+
+    Returns:
+    --------
+        * List[Polygon2D]: Merged polygons, or the originals if union fails.
+    """
 
     try:
         merged_polygon2Ds = Polygon2D.boolean_union_all(_lbt_polygon_2ds, _tolerance)
@@ -114,7 +147,20 @@ def merge_polygon_2ds(_lbt_polygon_2ds, _tolerance):
 
 def merge_lbt_face_polygons(_lbt_face3Ds, _tolerance):
     # type: (List[Face3D], float) -> List[Polygon2D]
-    """Merge together the Polygon2Ds of a list of LBT-Face3Ds."""
+    """Merge together the Polygon2Ds of a list of LBT-Face3Ds.
+
+    Translates each Face3D's 2D polygon into a common reference plane,
+    then performs a boolean union.
+
+    Arguments:
+    ----------
+        * _lbt_face3Ds (List[Face3D]): The 3D faces whose 2D polygons to merge.
+        * _tolerance (float): Boolean-union tolerance.
+
+    Returns:
+    --------
+        * List[Polygon2D]: Merged polygons in the first face's plane space.
+    """
 
     lbt_face3D_polygon2Ds = get_lbt_Face3D_polygon2Ds(_lbt_face3Ds)
     lbt_face3D_planes = get_lbt_Face3D_planes(_lbt_face3Ds)

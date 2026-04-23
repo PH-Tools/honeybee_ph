@@ -38,7 +38,22 @@ except ImportError as e:
 
 
 class PhiusResidentialStory(object):
-    """Represents one Residential Story of the Phius Multifamily Calculator (v4.2)"""
+    """One residential story in the Phius Multifamily Calculator (v4.2).
+
+    Computes per-story MEL, lighting, and occupancy totals from a list
+    of Honeybee Rooms assigned to the same story.
+
+    Attributes:
+        story_number (str): Zero-padded story number string.
+        total_floor_area_ft2 (float): Weighted floor area in ft2.
+        total_number_dwellings (int): Count of dwelling units on this story.
+        total_number_bedrooms (int): Count of bedrooms on this story.
+        design_occupancy (float): PH design occupancy (number of people).
+        mel (float): Annual miscellaneous electrical load (kWh).
+        lighting_int (float): Annual interior lighting load (kWh).
+        lighting_ext (float): Annual exterior lighting load (kWh).
+        lighting_garage (float): Annual garage lighting load (kWh).
+    """
 
     LIGHTING_INT_HE_FRAC = 1.0
     LIGHTING_EXT_HE_FRAC = 1.0
@@ -135,7 +150,16 @@ class PhiusResidentialStory(object):
 
 
 class PhiusNonResProgram(object):
-    """An individual Phius Non-Res Program Type."""
+    """A Phius non-residential program type with lighting and MEL intensities.
+
+    Attributes:
+        name (str): Program type name.
+        usage_days_yr (int): Annual usage days. Default: 365.
+        operating_hours_day (float): Daily operating hours.
+        lighting_W_per_m2 (float): Lighting power density (W/m2).
+        mel_kWh_m2_yr (float): Annual MEL energy intensity (kWh/m2/yr).
+        mel_w_m2 (float): MEL power density (W/m2).
+    """
 
     def __init__(self):
         self.name = "__unnamed_nonres_program__"
@@ -148,11 +172,13 @@ class PhiusNonResProgram(object):
     @property
     def lighting_W_per_ft2(self):
         # type: () -> float
+        """Lighting power density converted to W/ft2."""
         return self.lighting_W_per_m2 * 0.09290304
 
     @property
     def mel_kWh_ft2_yr(self):
         # type: () -> float
+        """Annual MEL energy intensity converted to kWh/ft2/yr."""
         return self.mel_kWh_m2_yr * 0.09290304
 
     def to_phius_mf_workbook(self):
@@ -257,7 +283,16 @@ class PhiusNonResProgramCollection(object):
 
 
 class PhiusNonResRoom(object):
-    """A single Phius Non-Res Space."""
+    """A single non-residential space for the Phius MF Calculator.
+
+    Attributes:
+        multiplier (int): Space multiplier. Default: 1.
+        occupancy_sensor (str): Occupancy sensor flag ("Y"/"N"). Default: "N".
+        name (str): Space name.
+        reference_floor_area_m2 (float): Reference floor area (m2).
+        misc_mel (float): Additional miscellaneous MEL (kWh/yr).
+        program_type (PhiusNonResProgram): The assigned program type.
+    """
 
     def __init__(self):
         self.multiplier = 1
@@ -270,28 +305,31 @@ class PhiusNonResRoom(object):
     @property
     def reference_floor_area_ft2(self):
         # type: () -> float
+        """Reference floor area converted to ft2."""
         return self.reference_floor_area_m2 * 10.7639
 
     @property
     def mel_kWh_yr(self):
         # type: () -> float
-        """Total yearly MEL kWh EXCLUDING the Misc MEL"""
+        """Annual MEL energy (kWh) excluding miscellaneous MEL."""
         return self.reference_floor_area_m2 * self.program_type.mel_kWh_m2_yr
 
     @property
     def mel_w_m2(self):
         # type: () -> float
+        """MEL power density from the assigned program type (W/m2)."""
         return self.program_type.mel_w_m2
 
     @property
     def total_mel_kWh(self):
-        """Total yearly MEL kWh INCLUDING the Misc MEL"""
         # type: () -> float
+        """Annual MEL energy (kWh) including miscellaneous MEL."""
         return self.mel_kWh_yr + self.misc_mel
 
     @property
     def total_lighting_kWh(self):
         # type: () -> float
+        """Annual lighting energy (kWh)."""
         return (
             self.program_type.usage_days_yr
             * self.program_type.operating_hours_day

@@ -22,11 +22,18 @@ except ImportError as e:
 
 
 class PhAdditionalZone(OtherSideTemperature):
-    """For surfaces exposed to attached zones with different temperature settings.
+    """Boundary condition for surfaces exposed to attached PH zones.
 
-    This class extends the basic honeybee-energy OtherSideTemperature boundary condition
-    by adding properties specific to Passive House modeling, such as zone-name, zone-type,
-    and temperature-reduction-factor.
+    Extends OtherSideTemperature with Passive House zone properties
+    such as zone name, type, and temperature reduction factor.
+
+    Attributes:
+        identifier (str): Unique text identifier.
+        zone_name (str): Name of the adjacent zone.
+        zone_type (str): Classification of the adjacent zone.
+        zone_id_num (int): Numeric ID for the adjacent zone.
+        temperature_reduction_factor (float): Factor applied to the
+            temperature difference across this boundary. Default: 1.0.
     """
 
     __slots__ = ("identifier", "zone_name", "zone_type", "zone_id_num", "temperature_reduction_factor")

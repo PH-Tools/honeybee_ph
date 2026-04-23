@@ -36,6 +36,12 @@ except ImportError as e:
 
 
 class MissingBaseProgramError(Exception):
+    """Raised when a Phius dataset lacks a required Honeybee base program.
+
+    Attributes:
+        msg (str): Human-readable error message.
+    """
+
     def __init__(self, _data):
         self.msg = 'Error: The Phius data set for "{}" appears to missing ' "a Honeybee base-program?".format(
             _data["name"]

@@ -58,12 +58,16 @@ def sort_hb_faces_by_type(_faces):
 def sort_hb_faces_by_co_planar(_faces, _tolerance, _angle_tolerance_radians):
     # type: (List[T], float, float) -> List[List[T]]
     """Group HB-Faces with their co-planar neighbors.
-    Args:
-        _faces: (List[Face | Shade]) A list of HB-Faces to sort.
-        _tolerance: (Model units) The tolerance value for co-planarity test, in model units.
-        _angle_tolerance: (Radians) The tolerance for co-planarity, in radians.
+
+    Arguments:
+    ----------
+        * _faces (List[Face | Shade]): A list of HB-Faces to sort.
+        * _tolerance (float): The tolerance value for co-planarity test, in model units.
+        * _angle_tolerance_radians (float): The tolerance for co-planarity, in radians.
+
     Returns:
-        (List[List[Face | Shade]]) A list of lists of HB-Faces that are co-planar.
+    --------
+        * List[List[Face | Shade]]: A list of lists of HB-Faces that are co-planar.
     """
     logger.debug(
         "sort_hb_faces_by_co_planar(_faces=[{}], _tolerance={:.4f}, _angle_tolerance_radians={:.4f})".format(
@@ -111,14 +115,16 @@ def hb_faces_are_touching(_face_2, _face_1, _tolerance):
 
 def find_connected_HB_Faces(_hb_faces, _tolerance):
     # type: (List[face.Face], float) -> List[List[face.Face]]
-    """Finds 'connected' HB-Faces.
+    """Find groups of connected (touching) HB-Faces using depth-first search.
 
-    Args:
-        _hb_faces List[Face | Shade]: A list of Honeybee face or shades to search for connected components.
-        _tolerance: A tolerance value for determining whether two faces are touching.
+    Arguments:
+    ----------
+        * _hb_faces (List[Face | Shade]): A list of Honeybee faces or shades to search.
+        * _tolerance (float): Distance tolerance for the touching test, in model units.
 
     Returns:
-        A list of lists, where each inner list contains a connected component of touching faces.
+    --------
+        * List[List[Face | Shade]]: Groups of connected faces.
     """
 
     """Initialize an empty set called visited to keep track of which faces have 
@@ -168,14 +174,19 @@ def find_connected_HB_Faces(_hb_faces, _tolerance):
 
 def group_hb_faces(_hb_faces, _tolerance, _angle_tolerance_degrees):
     # type: (Sequence[T], float, float) -> List[List[T]]
-    """Sort HB-Faces into groups of similar, planar, connected faces.
+    """Sort HB-Faces into groups of similar, co-planar, connected faces.
 
-    Args:
-        _hb_faces: (List[Face | Shade]) A list of HB-Faces to sort.
-        _tolerance: (Model units) The tolerance value for co-planarity test, in model units.
-        _angle_tolerance_degrees: (Degrees) The tolerance for co-planarity, in degrees.
+    Groups by face type first, then by co-planarity, then by connectivity.
+
+    Arguments:
+    ----------
+        * _hb_faces (List[Face | Shade]): A list of HB-Faces to sort.
+        * _tolerance (float): The tolerance value for co-planarity test, in model units.
+        * _angle_tolerance_degrees (float): The tolerance for co-planarity, in degrees.
+
     Returns:
-        (List[List[Face | Shade]]) A list of lists of HB-Faces that are similar, planar, and connected.
+    --------
+        * List[List[Face | Shade]]: Groups of similar, co-planar, connected faces.
     """
     logger.debug("group_hb_faces()")
 
