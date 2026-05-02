@@ -1,0 +1,38 @@
+name: Notify Schema Repo
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse runtime release metadata
+        id: meta
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ -z "$TAG" ] || [ "$TAG" = "" ]; then
+            TAG="manual"
+          fi
+          VERSION="${TAG#v}"
+          echo "runtime_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "runtime_version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch runtime release to schema repo
+        run: |
+          curl -X POST \
+            -H 'Authorization: token ${{ secrets.SCHEMA_DISPATCH_TOKEN }}' \
+            -H 'Accept: application/vnd.github.v3+json' \
+            https://api.github.com/repos/PH-Tools/honeybee-ph-schema/dispatches \
+            -d '{
+              "event_type": "runtime-release",
+              "client_payload": {
+                "source_repo": "${{ github.repository }}",
+                "runtime_version": "${{ steps.meta.outputs.runtime_version }}",
+                "runtime_tag": "${{ steps.meta.outputs.runtime_tag }}",
+                "runtime_sha": "${{ github.sha }}"
+              }
+            }'
