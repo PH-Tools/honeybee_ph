@@ -54,6 +54,8 @@ class Ventilator(_base._PhHVACBase):
         frost_protection_reqd (bool): Whether frost protection is required.
         temperature_below_defrost_used (float): Temperature threshold for defrost activation (C).
         in_conditioned_space (bool): Whether the unit is located in conditioned space.
+        subsoil_heat_exchange_efficiency (Optional[float]): Ground-loop effectiveness coefficient (0-1).
+        preheated_intake_temperature_c (Optional[float]): Intake-air temperature after subsoil heat exchange (C).
     """
 
     def __init__(self):
@@ -67,6 +69,8 @@ class Ventilator(_base._PhHVACBase):
         self.frost_protection_reqd = True  # type: bool
         self.temperature_below_defrost_used = -5  # type: float
         self.in_conditioned_space = True  # type: bool
+        self.subsoil_heat_exchange_efficiency = None  # type: Optional[float]
+        self.preheated_intake_temperature_c = None  # type: Optional[float]
 
     def to_dict(self):
         # type: () -> dict[str, Any]
@@ -78,6 +82,10 @@ class Ventilator(_base._PhHVACBase):
         d["frost_protection_reqd"] = self.frost_protection_reqd
         d["temperature_below_defrost_used"] = self.temperature_below_defrost_used
         d["in_conditioned_space"] = self.in_conditioned_space
+        if self.subsoil_heat_exchange_efficiency is not None:
+            d["subsoil_heat_exchange_efficiency"] = self.subsoil_heat_exchange_efficiency
+        if self.preheated_intake_temperature_c is not None:
+            d["preheated_intake_temperature_c"] = self.preheated_intake_temperature_c
         return d
 
     @classmethod
@@ -94,6 +102,8 @@ class Ventilator(_base._PhHVACBase):
         obj.frost_protection_reqd = _input_dict["frost_protection_reqd"]
         obj.temperature_below_defrost_used = _input_dict["temperature_below_defrost_used"]
         obj.in_conditioned_space = _input_dict["in_conditioned_space"]
+        obj.subsoil_heat_exchange_efficiency = _input_dict.get("subsoil_heat_exchange_efficiency", None)
+        obj.preheated_intake_temperature_c = _input_dict.get("preheated_intake_temperature_c", None)
         return obj
 
     def duplicate(self):
@@ -110,6 +120,8 @@ class Ventilator(_base._PhHVACBase):
         new_obj.frost_protection_reqd = self.frost_protection_reqd
         new_obj.temperature_below_defrost_used = self.temperature_below_defrost_used
         new_obj.in_conditioned_space = self.in_conditioned_space
+        new_obj.subsoil_heat_exchange_efficiency = self.subsoil_heat_exchange_efficiency
+        new_obj.preheated_intake_temperature_c = self.preheated_intake_temperature_c
         return new_obj
 
     def __lt__(self, other):

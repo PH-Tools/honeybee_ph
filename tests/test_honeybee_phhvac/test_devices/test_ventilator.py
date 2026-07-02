@@ -15,6 +15,9 @@ def test_default_ventilator():
 def test_dict_round_trip_default_ventilator():
     o1 = ventilation.Ventilator()
     d1 = o1.to_dict()
+    assert "subsoil_heat_exchange_efficiency" not in d1
+    assert "preheated_intake_temperature_c" not in d1
+
     o2 = ventilation.Ventilator.from_dict(d1)
 
     assert o1.to_dict() == o2.to_dict()
@@ -73,9 +76,54 @@ def test_custom_ventilator():
     o1.frost_protection_reqd = False
     o1.temperature_below_defrost_used = -12
     o1.in_conditioned_space = False
+    o1.subsoil_heat_exchange_efficiency = 0.3
+    o1.preheated_intake_temperature_c = 8.0
 
     assert o1.ToString()
 
     d = o1.to_dict()
     o2 = ventilation.Ventilator.from_dict(d)
     assert o2.to_dict() == o1.to_dict()
+
+
+def test_default_ventilator_from_legacy_dict():
+    o1 = ventilation.Ventilator()
+    d1 = o1.to_dict()
+
+    o2 = ventilation.Ventilator.from_dict(d1)
+    assert o2.subsoil_heat_exchange_efficiency is None
+    assert o2.preheated_intake_temperature_c is None
+    assert o2.to_dict() == d1
+
+
+def test_subsoil_heat_exchange_round_trip():
+    o1 = ventilation.Ventilator()
+    o1.subsoil_heat_exchange_efficiency = 0.3
+    o1.preheated_intake_temperature_c = 8.0
+
+    o2 = o1.duplicate()
+    assert o2.subsoil_heat_exchange_efficiency == 0.3
+    assert o2.preheated_intake_temperature_c == 8.0
+
+    d1 = o2.to_dict()
+    assert d1["subsoil_heat_exchange_efficiency"] == 0.3
+    assert d1["preheated_intake_temperature_c"] == 8.0
+
+    o3 = ventilation.Ventilator.from_dict(d1)
+    assert o3.subsoil_heat_exchange_efficiency == 0.3
+    assert o3.preheated_intake_temperature_c == 8.0
+    assert o3.to_dict() == d1
+
+
+def test_zero_subsoil_heat_exchange_efficiency_is_serialized():
+    o1 = ventilation.Ventilator()
+    o1.subsoil_heat_exchange_efficiency = 0.0
+
+    d1 = o1.to_dict()
+    assert "subsoil_heat_exchange_efficiency" in d1
+    assert d1["subsoil_heat_exchange_efficiency"] == 0.0
+    assert "preheated_intake_temperature_c" not in d1
+
+    o2 = ventilation.Ventilator.from_dict(d1)
+    assert o2.subsoil_heat_exchange_efficiency == 0.0
+    assert o2.preheated_intake_temperature_c is None
