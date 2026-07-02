@@ -25,7 +25,7 @@ class PhWindowFrameElement(_base._Base):
             (Areas!AI40 -> Windows!O18). Default: 0.25 (PHPP default).
         thermal_emissivity (float): Exterior-surface long-wave thermal emissivity of
             the frame (fraction, 0.0-1.0). Used by PHPP's window-frame radiation balance
-            (Areas!AJ40 -> Windows!O19). Default: 0.6 (PHPP default).
+            (Areas!AJ40 -> Windows!O19). Default: 0.9 (PHPP default).
     """
 
     def __init__(self, _identifier):
@@ -36,7 +36,7 @@ class PhWindowFrameElement(_base._Base):
         self.psi_install = 0.04
         self.chi_value = 0.0
         self.solar_absorptance = 0.25
-        self.thermal_emissivity = 0.6
+        self.thermal_emissivity = 0.9
 
     def to_dict(self):
         # type: () -> dict[str, Any]
@@ -61,7 +61,7 @@ class PhWindowFrameElement(_base._Base):
         new_obj.psi_install = _input_dict["psi_install"]
         new_obj.chi_value = _input_dict["chi_value"]
         new_obj.solar_absorptance = _input_dict.get("solar_absorptance", 0.25)
-        new_obj.thermal_emissivity = _input_dict.get("thermal_emissivity", 0.6)
+        new_obj.thermal_emissivity = _input_dict.get("thermal_emissivity", 0.9)
         return new_obj
 
     def duplicate(self):

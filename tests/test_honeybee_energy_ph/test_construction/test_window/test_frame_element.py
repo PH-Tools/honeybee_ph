@@ -11,7 +11,7 @@ def test_default_PhWindowFrameElement():
     assert window_frame_element.psi_install == 0.04
     assert window_frame_element.chi_value == 0.0
     assert window_frame_element.solar_absorptance == 0.25
-    assert window_frame_element.thermal_emissivity == 0.6
+    assert window_frame_element.thermal_emissivity == 0.9
 
     assert window_frame_element
 
@@ -30,7 +30,7 @@ def test_default_PhWindowFrameElement_to_from_dict_roundtrip():
     assert new_window_frame_element.psi_install == 0.04
     assert new_window_frame_element.chi_value == 0.0
     assert new_window_frame_element.solar_absorptance == 0.25
-    assert new_window_frame_element.thermal_emissivity == 0.6
+    assert new_window_frame_element.thermal_emissivity == 0.9
     assert "test_key" in new_window_frame_element.user_data
 
 
@@ -54,7 +54,7 @@ def test_PhWindowFrameElement_from_legacy_dict_without_radiation_props():
 
     new_window_frame_element = window.PhWindowFrameElement.from_dict(d)
     assert new_window_frame_element.solar_absorptance == 0.25
-    assert new_window_frame_element.thermal_emissivity == 0.6
+    assert new_window_frame_element.thermal_emissivity == 0.9
 
 
 def test_duplicate_PhWindowFrameElement():
