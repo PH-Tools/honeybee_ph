@@ -71,6 +71,12 @@ class PhThermalBridge(_base._Base):
         quantity (float): Number of identical bridges. Default: 1.0.
         psi_value (float): Linear thermal transmittance (W/mK). Default: 0.1.
         fRsi_value (float): Temperature factor at the interior surface. Default: 0.75.
+        is_interior_pipe (bool): True if this bridge represents interior drain/vent
+            pipes (PHPP Areas row 145). When True, the bridge is still counted in the
+            transmission heat-loss total but is excluded from the thermal-bridge
+            radiative/convective conductance corrections and thermal-bridge solar gain.
+            Orthogonal to `group_type` (an interior pipe keeps its normal group).
+            Default: False.
     """
 
     def __init__(self, _identifier, _geometry):
@@ -82,6 +88,7 @@ class PhThermalBridge(_base._Base):
         self._group_type = PhThermalBridgeType(15)
         self.psi_value = 0.1
         self.fRsi_value = 0.75
+        self.is_interior_pipe = False
 
     @property
     def length(self):
@@ -107,6 +114,7 @@ class PhThermalBridge(_base._Base):
         d["_group_type"] = self._group_type.to_dict()
         d["psi_value"] = self.psi_value
         d["fRsi_value"] = self.fRsi_value
+        d["is_interior_pipe"] = self.is_interior_pipe
         d["geometry"] = self.geometry.to_dict()
         return d
 
@@ -131,6 +139,7 @@ class PhThermalBridge(_base._Base):
         new_obj._group_type = PhThermalBridgeType.from_dict(_input_dict["_group_type"])
         new_obj.psi_value = _input_dict["psi_value"]
         new_obj.fRsi_value = _input_dict["fRsi_value"]
+        new_obj.is_interior_pipe = _input_dict.get("is_interior_pipe", False)
         return new_obj
 
     def duplicate(self):
@@ -146,6 +155,7 @@ class PhThermalBridge(_base._Base):
         new_obj.group_type = self.group_type.value
         new_obj.psi_value = self.psi_value
         new_obj.fRsi_value = self.fRsi_value
+        new_obj.is_interior_pipe = self.is_interior_pipe
         return new_obj
 
     def __str__(self):

@@ -12,6 +12,7 @@ def test_default_PhThermalBridge():
     geometry = LineSegment3D(Point3D(0, 0, 0), Point3D(1, 0, 0))
     tb1 = thermal_bridge.PhThermalBridge(str(uuid4()), geometry)
     assert tb1.length == pytest.approx(1.0)
+    assert tb1.is_interior_pipe is False
 
 
 def test_PhThermalBridge_to_from_dict_roundtrip():
@@ -22,6 +23,7 @@ def test_PhThermalBridge_to_from_dict_roundtrip():
     tb1.group_type = "16-Perimeter"
     tb1.psi_value = 0.2
     tb1.fRsi_value = 0.8
+    tb1.is_interior_pipe = True
     tb1.user_data["test_key"] = "test_value"
 
     tb1_dict = tb1.to_dict()
@@ -39,8 +41,20 @@ def test_PhThermalBridge_to_from_dict_roundtrip():
     assert tb1.quantity == tb2.quantity
     assert tb1.psi_value == tb2.psi_value
     assert tb1.fRsi_value == tb2.fRsi_value
+    assert tb1.is_interior_pipe == tb2.is_interior_pipe
     assert tb1.group_type == tb2.group_type
     assert tb1.group_type.value == tb2.group_type.value
+
+
+def test_PhThermalBridge_from_legacy_dict_without_interior_pipe():
+    """Old HBJSON without the 'is_interior_pipe' key should default to False."""
+    geometry = LineSegment3D(Point3D(0, 0, 0), Point3D(1, 0, 0))
+    tb1 = thermal_bridge.PhThermalBridge(str(uuid4()), geometry)
+    tb1_dict = tb1.to_dict()
+    del tb1_dict["is_interior_pipe"]
+
+    tb2 = thermal_bridge.PhThermalBridge.from_dict(tb1_dict)
+    assert tb2.is_interior_pipe is False
 
 
 def test_PhThermalBridge_duplicate():
@@ -51,6 +65,7 @@ def test_PhThermalBridge_duplicate():
     tb1.group_type = "16-Perimeter"
     tb1.psi_value = 0.2
     tb1.fRsi_value = 0.8
+    tb1.is_interior_pipe = True
     tb1.user_data["test_key"] = "test_value"
 
     tb2 = tb1.duplicate()
@@ -63,6 +78,7 @@ def test_PhThermalBridge_duplicate():
     assert tb1.quantity == tb2.quantity
     assert tb1.psi_value == tb2.psi_value
     assert tb1.fRsi_value == tb2.fRsi_value
+    assert tb1.is_interior_pipe == tb2.is_interior_pipe
     assert tb1.group_type == tb2.group_type
     assert tb1.group_type.value == tb2.group_type.value
     assert tb1.identifier == tb2.identifier

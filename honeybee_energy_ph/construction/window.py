@@ -20,6 +20,12 @@ class PhWindowFrameElement(_base._Base):
         psi_glazing (float): Glazing-edge psi-value (W/mK). Default: 0.04.
         psi_install (float): Installation psi-value (W/mK). Default: 0.04.
         chi_value (float): Point thermal bridge chi-value (W/K). Default: 0.0.
+        solar_absorptance (float): Exterior-surface solar absorptance of the frame
+            (fraction, 0.0-1.0). Used by PHPP's window-frame radiation balance
+            (Areas!AI40 -> Windows!O18). Default: 0.25 (PHPP default).
+        thermal_emissivity (float): Exterior-surface long-wave thermal emissivity of
+            the frame (fraction, 0.0-1.0). Used by PHPP's window-frame radiation balance
+            (Areas!AJ40 -> Windows!O19). Default: 0.6 (PHPP default).
     """
 
     def __init__(self, _identifier):
@@ -29,6 +35,8 @@ class PhWindowFrameElement(_base._Base):
         self.psi_glazing = 0.04
         self.psi_install = 0.04
         self.chi_value = 0.0
+        self.solar_absorptance = 0.25
+        self.thermal_emissivity = 0.6
 
     def to_dict(self):
         # type: () -> dict[str, Any]
@@ -38,6 +46,8 @@ class PhWindowFrameElement(_base._Base):
         d["psi_glazing"] = self.psi_glazing
         d["psi_install"] = self.psi_install
         d["chi_value"] = self.chi_value
+        d["solar_absorptance"] = self.solar_absorptance
+        d["thermal_emissivity"] = self.thermal_emissivity
         return d
 
     @classmethod
@@ -50,6 +60,8 @@ class PhWindowFrameElement(_base._Base):
         new_obj.psi_glazing = _input_dict["psi_glazing"]
         new_obj.psi_install = _input_dict["psi_install"]
         new_obj.chi_value = _input_dict["chi_value"]
+        new_obj.solar_absorptance = _input_dict.get("solar_absorptance", 0.25)
+        new_obj.thermal_emissivity = _input_dict.get("thermal_emissivity", 0.6)
         return new_obj
 
     def duplicate(self):
@@ -65,16 +77,23 @@ class PhWindowFrameElement(_base._Base):
         new_obj.psi_glazing = self.psi_glazing
         new_obj.psi_install = self.psi_install
         new_obj.chi_value = self.chi_value
+        new_obj.solar_absorptance = self.solar_absorptance
+        new_obj.thermal_emissivity = self.thermal_emissivity
         return new_obj
 
     def __str__(self):
-        return "{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f}, chi_value={:.3f})".format(
-            self.__class__.__name__,
-            self.width,
-            self.u_factor,
-            self.psi_glazing,
-            self.psi_install,
-            self.chi_value,
+        return (
+            "{}(width={:.3f}, u_factor={:.3f}, psi_glazing={:.3f}, psi_install={:.3f}, "
+            "chi_value={:.3f}, solar_absorptance={:.3f}, thermal_emissivity={:.3f})".format(
+                self.__class__.__name__,
+                self.width,
+                self.u_factor,
+                self.psi_glazing,
+                self.psi_install,
+                self.chi_value,
+                self.solar_absorptance,
+                self.thermal_emissivity,
+            )
         )
 
     def __repr__(self):
