@@ -4,8 +4,8 @@
 """Honeybee-PH-HVAC: Hot Water System."""
 
 try:
-    pass
-except:
+    from typing import Optional, Dict
+except Exception:
     pass  # IronPython
 
 from uuid import uuid4

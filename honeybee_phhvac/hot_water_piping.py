@@ -73,6 +73,38 @@ class PhHvacPipeMaterial(enumerables.CustomEnum):
         return hash(self.value)
 
 
+class PhHvacPipeInsulationQuality(enumerables.CustomEnum):
+    """Enumeration of allowable pipe-mounting/fixing insulation-quality types.
+
+    Values:
+        1-NONE
+        2-MODERATE
+        3-GOOD
+    """
+
+    allowed = [
+        "1-NONE",
+        "2-MODERATE",
+        "3-GOOD",
+    ]
+        
+    def __init__(self, _value=1):
+        # type: (Union[str, int]) -> None
+        super(PhHvacPipeInsulationQuality, self).__init__(_value)    
+    
+    def __eq__(self, other):
+        # type: (PhHvacPipeInsulationQuality) -> bool
+        return self.value == other.value
+
+    def __ne__(self, other):
+        # type: (PhHvacPipeInsulationQuality) -> bool
+        return self.value != other.value
+
+    def __hash__(self):
+        # type: () -> int
+        return hash(self.value)
+
+
 # -- Piping -------------------------------------------------------------------
 
 
@@ -103,21 +135,21 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         _insul_thickness_mm=12.7,
         _insul_conductivity=0.04,
         _insul_refl=True,
-        _insul_quality=None,
+        _insul_quality=1,
         _daily_period=24,
         _water_temp_c=60.0,
         _material=2,
         *args,
         **kwargs
     ):  # fmt: on
-        # type: (LineSegment3D, float, float, float, bool, None, float, float, int, *Any, **Any) -> None
+        # type: (LineSegment3D, float, float, float, bool, int, float, float, int, *Any, **Any) -> None
         super(PhHvacPipeSegment, self).__init__()
         self.geometry = _geom
         self.diameter_mm = _diameter_mm
         self.insulation_thickness_mm = _insul_thickness_mm
         self.insulation_conductivity = _insul_conductivity
         self.insulation_reflective = _insul_refl
-        self.insulation_quality = _insul_quality
+        self.insulation_quality = PhHvacPipeInsulationQuality(_insul_quality)
         self.daily_period = _daily_period
         self.water_temp_c = _water_temp_c
         self.material = PhHvacPipeMaterial(_material)
@@ -171,7 +203,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         d["insulation_thickness_mm"] = self.insulation_thickness_mm
         d["insulation_conductivity"] = self.insulation_conductivity
         d["insulation_reflective"] = self.insulation_reflective
-        d["insulation_quality"] = self.insulation_quality
+        d["insulation_quality"] = self.insulation_quality.value
         d["daily_period"] = self.daily_period
         d["water_temp_c"] = self.water_temp_c
 
@@ -189,7 +221,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         new_obj.insulation_thickness_mm = _input_dict["insulation_thickness_mm"]
         new_obj.insulation_conductivity = _input_dict["insulation_conductivity"]
         new_obj.insulation_reflective = _input_dict["insulation_reflective"]
-        new_obj.insulation_quality = _input_dict["insulation_quality"]
+        new_obj.insulation_quality = PhHvacPipeInsulationQuality(_input_dict["insulation_quality"])
         new_obj.daily_period = _input_dict["daily_period"]
         new_obj.water_temp_c = _input_dict["water_temp_c"]
         new_obj.identifier = _input_dict["identifier"]
