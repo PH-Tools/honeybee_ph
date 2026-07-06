@@ -27,7 +27,7 @@ class PhWindowFrameElement(_base._Base):
             the frame (fraction, 0.0-1.0). Used by PHPP's window-frame radiation balance
             (Areas!AJ40 -> Windows!O19). Default: 0.9 (PHPP default).
     """
-
+    
     def __init__(self, _identifier):
         super(PhWindowFrameElement, self).__init__(_identifier)
         self.width = 0.1
