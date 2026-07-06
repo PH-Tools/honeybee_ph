@@ -222,7 +222,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         new_obj.insulation_thickness_mm = _input_dict["insulation_thickness_mm"]
         new_obj.insulation_conductivity = _input_dict["insulation_conductivity"]
         new_obj.insulation_reflective = _input_dict["insulation_reflective"]
-        new_obj.insulation_quality = PhHvacPipeInsulationQuality(_input_dict["insulation_quality"])
+        new_obj.insulation_quality = PhHvacPipeInsulationQuality(_input_dict.get("insulation_quality") or "2-MODERATE")
         new_obj.daily_period = _input_dict["daily_period"]
         new_obj.water_temp_c = _input_dict["water_temp_c"]
         new_obj.identifier = _input_dict["identifier"]
