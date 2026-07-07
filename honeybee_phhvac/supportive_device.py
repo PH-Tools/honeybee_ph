@@ -16,6 +16,31 @@ except ImportError as e:
     raise ImportError("\nFailed to import honeybee_phhvac:\n\t{}".format(e))
 
 
+# -- IHG usage-profile int codes. Shared contract across honeybee-ph / PHX /
+# -- OpenPH: which PHPP 'Aux Electricity' block (and therefore which season and
+# -- utilization period) a device's internal heat gain lands in.
+IHG_USAGE_PROFILE_ALL_YEAR = 1  # Other block (rows 71-79): both seasons, / 8.76 kh
+IHG_USAGE_PROFILE_WINTER = 2  # Heating/ventilation winter block (rows 15-31)
+IHG_USAGE_PROFILE_SUMMER = 3  # Cooling/ventilation summer + dehumidification (rows 35-57)
+IHG_USAGE_PROFILE_NONE = 4  # DHW block (rows 59-69): 0 IHG (already booked in DHW distribution)
+
+# -- Default IHG usage-profile keyed off device_type, so a DHW pump never
+# -- defaults into the cooling balance (the over-count OpenPH corrected).
+# -- Unlisted/custom device types fall back to ALL_YEAR.
+_DEFAULT_IHG_USAGE_PROFILE_BY_DEVICE_TYPE = {
+    4: IHG_USAGE_PROFILE_WINTER,  # Heat Circulation Pump
+    6: IHG_USAGE_PROFILE_NONE,  # DHW Circulation Pump
+    7: IHG_USAGE_PROFILE_NONE,  # DHW Storage Load Pump
+    10: IHG_USAGE_PROFILE_ALL_YEAR,  # Other / Custom
+}
+
+
+def default_ihg_usage_profile(device_type):
+    # type: (int) -> int
+    """Return the default IHG usage-profile int code for a supportive-device type."""
+    return _DEFAULT_IHG_USAGE_PROFILE_BY_DEVICE_TYPE.get(device_type, IHG_USAGE_PROFILE_ALL_YEAR)
+
+
 class PhSupportiveDevice(_base._PhHVACBase):
     """Auxiliary energy supportive device for Passive House HVAC systems.
 
@@ -27,18 +52,34 @@ class PhSupportiveDevice(_base._PhHVACBase):
         norm_energy_demand_W (float): Normalized energy demand in Watts.
         annual_period_operation_khrs (float): Annual operating period in thousands of hours.
         ihg_utilization_factor (float): Fraction of energy that becomes internal heat gain inside the envelope (0.0-1.0).
+        ihg_usage_profile (int): PHPP season/block the device's IHG lands in (1=all-year, 2=winter, 3=summer, 4=none/DHW).
     """
 
     def __init__(self):
         # type: () -> None
         super(PhSupportiveDevice, self).__init__()
         self.display_name = "__unnamed_device__"
-        self.device_type = 10
+        self.device_type = 10  # setter seeds ihg_usage_profile off this type
         self.quantity = 1
         self.in_conditioned_space = True
         self.norm_energy_demand_W = 1.0
         self.annual_period_operation_khrs = 8.760  # 100% of the year
         self.ihg_utilization_factor = 1.0  # Fraction of energy that becomes IHG inside envelope [0.0-1.0]
+
+    @property
+    def device_type(self):
+        # type: () -> int
+        return self._device_type
+
+    @device_type.setter
+    def device_type(self, value):
+        # type: (int) -> None
+        self._device_type = value
+        # Re-seed the IHG season/block default for the new type, so a DHW pump
+        # can never carry the all-year default into the cooling balance. Explicit
+        # ihg_usage_profile assignments must therefore follow device_type -- as
+        # __init__, base_attrs_from_dict, duplicate, and the GH factory all do.
+        self.ihg_usage_profile = default_ihg_usage_profile(value)
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -51,6 +92,7 @@ class PhSupportiveDevice(_base._PhHVACBase):
         d["norm_energy_demand_W"] = self.norm_energy_demand_W
         d["annual_period_operation_khrs"] = self.annual_period_operation_khrs
         d["ihg_utilization_factor"] = self.ihg_utilization_factor
+        d["ihg_usage_profile"] = self.ihg_usage_profile
         return d
 
     def base_attrs_from_dict(self, _input_dict):
@@ -64,6 +106,9 @@ class PhSupportiveDevice(_base._PhHVACBase):
         self.norm_energy_demand_W = _input_dict["norm_energy_demand_W"]
         self.annual_period_operation_khrs = _input_dict["annual_period_operation_khrs"]
         self.ihg_utilization_factor = _input_dict.get("ihg_utilization_factor", 1.0)
+        # -- Legacy dicts (pre-seasonal-IHG) have no profile; derive it from device_type
+        # -- so an old DHW pump stays NONE rather than defaulting into the cooling balance.
+        self.ihg_usage_profile = _input_dict.get("ihg_usage_profile", default_ihg_usage_profile(self.device_type))
         return self
 
     def check_dict_type(self, _input_dict):
@@ -200,4 +245,5 @@ class PhSupportiveDevice(_base._PhHVACBase):
         obj.norm_energy_demand_W = self.norm_energy_demand_W
         obj.annual_period_operation_khrs = self.annual_period_operation_khrs
         obj.ihg_utilization_factor = self.ihg_utilization_factor
+        obj.ihg_usage_profile = self.ihg_usage_profile
         return obj
