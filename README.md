@@ -6,13 +6,21 @@ This plugin  is designed to be used as a plugin for Ladybug-Tools v1.9 or higher
 
 ## Packages:
 
-- **honeybee_energy_ph:** Extend the Honeybee-Energy package with new Passive House style attributes for elements such as windows, hvac and construction assemblies.
-
 - **honeybee_ph:** Extend the basic Honeybee package with important new Passive House specific elements such as interior spaces and Passive House certification thresholds.
+
+- **honeybee_energy_ph:** Extend the Honeybee-Energy package with new Passive House style attributes for elements such as windows and construction assemblies (HVAC is migrating to `honeybee_phhvac`).
+
+- **honeybee_phhvac:** The dedicated Passive House HVAC model — ventilation, heating, heat-pumps, hot-water systems, ducting, and piping.
 
 - **honeybee_ph_standards:** Helpful new standards for programs and assemblies which are especially relevant to Passive House practitioners.
 
 - **honeybee_ph_utils:** Some additional misc. utilities used by the above packages.
+
+## Development:
+
+- **Requirements:** Code must run under both **IronPython 2.7** (the Rhino/Grasshopper runtime) and **CPython 3.10+**. See [`context/CODING_STANDARDS.md`](context/CODING_STANDARDS.md).
+- **Tests:** `python3 -m pytest` (100% coverage target).
+- **Agent/contributor orientation:** [`CLAUDE.md`](CLAUDE.md) and the [`context/`](context/) folder (PRD, architecture, tech stack, coding standards).
 
 # More Information:
 
