@@ -44,6 +44,29 @@ Every model class implements `to_dict()` / `from_dict()` (and usually `duplicate
 
 Runtime deps are deliberately minimal: `honeybee-core`, `honeybee-energy`, and `PH-units` (unit parsing/conversion). No heavy scientific stack — the code has to load in Rhino.
 
+## Grouping concepts: never overload a honeybee-core attribute
+
+An HB `Room` carries **no intrinsic semantics** — it is a geometry container, and its
+granularity is a modeling convenience. Every real grouping concept has its own explicit
+attribute:
+
+| Concept | Question it answers | Attribute | Owner |
+|---|---|---|---|
+| Dwelling | which rooms are one household? how many units? | `People.properties.ph.dwellings` (`PhDwellings`) | this repo |
+| E+ Thermal Zone | which rooms share one air node + one HVAC? | `Room.zone` | **honeybee-energy** |
+| Building Segment | which WUFI case / PHPP file? | `Room.properties.ph.ph_bldg_segment` | this repo |
+| TFA Space | which PHPP room? | `Room.properties.ph.spaces` | this repo |
+
+`honeybee_energy_ph/dwellings.py` is the single implementation of dwelling grouping,
+consumed by both `honeybee_grasshopper_ph` and `PHX`. Rooms in one dwelling share a
+`PhDwellings` **instance** (identity compared on `.identifier`); a Room holding several
+dwellings uses `num_dwellings > 1`.
+
+**Do not tag Honeybee-PH data onto honeybee-core attributes.** `Room.zone` was used as a
+dwelling tag while it was inert; honeybee-energy later gave it real E+ meaning, silently
+merging thermal zones and dropping HVAC systems. See
+[decision 0002](decisions/0002-dwelling-identity-not-room-zone.md).
+
 ## Where the boundaries are
 
 - Export/conversion logic → **PHX**, not here.

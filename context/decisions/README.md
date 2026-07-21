@@ -11,3 +11,4 @@ research (e.g. `planning/refactor/`).
 | # | Decision | Status |
 |---|---|---|
 | [0001](0001-no-multiple-ventilation-systems-per-room.md) | Do NOT add multiple ventilation systems per room (WUFI-Passive supports only one ventilator per space) | Decided 2026-07-14 |
+| [0002](0002-dwelling-identity-not-room-zone.md) | Dwelling identity lives on `PhDwellings`, NOT on `Room.zone` (which honeybee-energy reads as an E+ thermal-zone instruction) | Decided 2026-07-21 |

@@ -22,6 +22,7 @@ except ImportError as e:
     raise ImportError("Failed to import honeybee_energy: {}".format(e))
 
 try:
+    from honeybee_energy_ph.dwellings import total_dwelling_count
     from honeybee_energy_ph.load import phius_residential
 except ImportError as e:
     raise ImportError("Failed to import honeybee_energy_ph: {}".format(e))
@@ -119,8 +120,7 @@ class PhiusResidentialStory(object):
 
     def calc_num_dwellings(self, _hb_rooms):
         # type: (list[Room]) -> int
-        ph_dwelling_objs = {r.properties.energy.people.properties.ph.dwellings for r in _hb_rooms}  # type: ignore
-        return sum(d.num_dwellings for d in ph_dwelling_objs)
+        return total_dwelling_count(_hb_rooms)
 
     def __lt__(self, other):
         # type: (PhiusResidentialStory) -> bool
