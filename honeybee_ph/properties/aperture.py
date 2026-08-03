@@ -138,7 +138,7 @@ class AperturePhProperties(object):
         new_prop.variant_type = _input_dict["variant_type"]
 
         # Use get to ensure backwards compatibility for now
-        new_prop.install_depth = _input_dict.get("install_depth", 0.1)
+        new_prop.install_depth = _input_dict.get("install_depth", new_prop.install_depth)
 
         shading_dim_dict = _input_dict.get("shading_dims", None)
         if shading_dim_dict:

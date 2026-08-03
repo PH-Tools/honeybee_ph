@@ -27,7 +27,7 @@ class PhWindowFrameElement(_base._Base):
             the frame (fraction, 0.0-1.0). Used by PHPP's window-frame radiation balance
             (Areas!AJ40 -> Windows!O19). Default: 0.9 (PHPP default).
     """
-    
+
     def __init__(self, _identifier):
         super(PhWindowFrameElement, self).__init__(_identifier)
         self.width = 0.1
@@ -55,13 +55,13 @@ class PhWindowFrameElement(_base._Base):
         # type: (dict) -> PhWindowFrameElement
         new_obj = cls(_input_dict["identifier"])
         new_obj.set_base_attrs_from_dict(_input_dict)
-        new_obj.width = _input_dict["width"]
-        new_obj.u_factor = _input_dict["u_factor"]
-        new_obj.psi_glazing = _input_dict["psi_glazing"]
-        new_obj.psi_install = _input_dict["psi_install"]
-        new_obj.chi_value = _input_dict["chi_value"]
-        new_obj.solar_absorptance = _input_dict.get("solar_absorptance", 0.25)
-        new_obj.thermal_emissivity = _input_dict.get("thermal_emissivity", 0.9)
+        new_obj.width = _input_dict.get("width", new_obj.width)
+        new_obj.u_factor = _input_dict.get("u_factor", new_obj.u_factor)
+        new_obj.psi_glazing = _input_dict.get("psi_glazing", new_obj.psi_glazing)
+        new_obj.psi_install = _input_dict.get("psi_install", new_obj.psi_install)
+        new_obj.chi_value = _input_dict.get("chi_value", new_obj.chi_value)
+        new_obj.solar_absorptance = _input_dict.get("solar_absorptance", new_obj.solar_absorptance)
+        new_obj.thermal_emissivity = _input_dict.get("thermal_emissivity", new_obj.thermal_emissivity)
         return new_obj
 
     def duplicate(self):

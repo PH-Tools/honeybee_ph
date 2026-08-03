@@ -57,6 +57,21 @@ def test_PhWindowFrameElement_from_legacy_dict_without_radiation_props():
     assert new_window_frame_element.thermal_emissivity == 0.9
 
 
+def test_PhWindowFrameElement_from_legacy_dict_without_frame_props():
+    window_frame_element = window.PhWindowFrameElement(str(uuid4()))
+    d = window_frame_element.to_dict()
+    for key in ("width", "u_factor", "psi_glazing", "psi_install", "chi_value"):
+        del d[key]
+
+    new_window_frame_element = window.PhWindowFrameElement.from_dict(d)
+
+    assert new_window_frame_element.width == 0.1
+    assert new_window_frame_element.u_factor == 1.0
+    assert new_window_frame_element.psi_glazing == 0.04
+    assert new_window_frame_element.psi_install == 0.04
+    assert new_window_frame_element.chi_value == 0.0
+
+
 def test_duplicate_PhWindowFrameElement():
     window_frame_element = window.PhWindowFrameElement(str(uuid4()))
     window_frame_element.width = 0.5
