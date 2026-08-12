@@ -221,3 +221,64 @@ class PhWindowGlazing(_base._Base):
 
     def ToString(self):
         return str(self)
+
+
+class PhApertureInstallType(_base._Base):
+    """A named window-installation condition ('Install Type') with its psi-install value.
+
+    Install conditions (mid-wall, buried jamb, party wall, ...) are properties of where
+    a window sits, not of the window construction itself. Instances of this class are
+    assigned per-edge on an Aperture's PH properties to override the construction
+    frame-element's default 'psi_install' value without duplicating the construction.
+    A psi_install of 0.0 is the 'no install thermal bridge' state - there is no
+    separate on/off flag.
+
+    Attributes:
+        psi_install (float): Installation psi-value (W/mK). Default: 0.0.
+        source (str): Optional free-text provenance note (eg. 'Phius mid-wall',
+            'Flixo calc 2026-08-01'). Default: "".
+    """
+
+    def __init__(self, _identifier):
+        super(PhApertureInstallType, self).__init__(_identifier)
+        self.psi_install = 0.0
+        self.source = ""
+
+    def to_dict(self):
+        # type: () -> dict[str, Any]
+        d = super(PhApertureInstallType, self).to_dict()
+        d["psi_install"] = self.psi_install
+        d["source"] = self.source
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (dict) -> PhApertureInstallType
+        new_obj = cls(_input_dict["identifier"])
+        new_obj.set_base_attrs_from_dict(_input_dict)
+        new_obj.psi_install = _input_dict.get("psi_install", new_obj.psi_install)
+        new_obj.source = _input_dict.get("source", new_obj.source)
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> PhApertureInstallType
+        return self.__copy__()
+
+    def __copy__(self):
+        # type: () -> PhApertureInstallType
+        new_obj = self.__class__(self.identifier)
+        new_obj.set_base_attrs_from_obj(self)
+        new_obj.psi_install = self.psi_install
+        new_obj.source = self.source
+        return new_obj
+
+    def __str__(self):
+        return "{}(display_name={}, psi_install={:.3f}, source={})".format(
+            self.__class__.__name__, self.display_name, self.psi_install, self.source
+        )
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)

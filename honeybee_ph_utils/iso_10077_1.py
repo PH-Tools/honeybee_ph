@@ -20,6 +20,11 @@ try:
 except ImportError:
     raise ImportError("Failed to import honeybee_energy_ph from honeybee_energy_ph.")
 
+try:
+    from honeybee_ph_utils import aperture_psi_install
+except ImportError:
+    raise ImportError("Failed to import aperture_psi_install from honeybee_ph_utils.")
+
 
 def get_ladybug_Face3D_width_and_height(_lbt_face3d):
     # type: (face.Face3D) -> tuple[float, float]
@@ -89,19 +94,21 @@ class ISO100771Data:
     @classmethod
     def from_hb_aperture(cls, _hb_aperture):
         # type: (aperture.Aperture) -> ISO100771Data
-        """Create an ISO100771Data object from a honeybee.aperture.Aperture object."""
+        """Create an ISO100771Data object from a honeybee.aperture.Aperture object.
 
-        hbe_prop = _hb_aperture.properties.energy  # type: ignore
+        The frame used is the aperture's *effective* frame: the window construction's
+        PH frame with each side's psi-install resolved through any aperture-level
+        Install Type assignments (AperturePhProperties.install_types).
+        """
 
         try:
-            ph_frame = hbe_prop.construction.properties.ph.ph_frame
+            ph_frame = aperture_psi_install.resolve_effective_frame(_hb_aperture)
         except Exception as e:
             raise Exception("The Aperture does not have a PH-Style frame.", e)
 
-        try:
-            ph_glazing = hbe_prop.construction.properties.ph.ph_glazing
-        except Exception as e:
-            raise Exception("The Aperture does not have a PH-Style glazing.", e)
+        ph_glazing = aperture_psi_install.get_ph_glazing(_hb_aperture)
+        if ph_glazing is None:
+            raise Exception("The Aperture does not have a PH-Style glazing.")
 
         (
             w,

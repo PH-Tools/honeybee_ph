@@ -9,6 +9,85 @@ try:
 except ImportError:
     pass  # IronPython 2.7
 
+try:
+    from honeybee_energy_ph.construction.window import PhApertureInstallType
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
+
+
+class AperturePsiInstalls(object):
+    """Per-edge Psi-Install 'Install Type' assignments for a single Aperture.
+
+    Each side (top / right / bottom / left, matching PhWindowFrame element order)
+    optionally holds a PhApertureInstallType. A side left as None inherits the
+    psi-install value from the Aperture construction's frame element for that side.
+    """
+
+    SIDES = ("top", "right", "bottom", "left")
+
+    def __init__(self):
+        self.top = None  # type: Optional[PhApertureInstallType]
+        self.right = None  # type: Optional[PhApertureInstallType]
+        self.bottom = None  # type: Optional[PhApertureInstallType]
+        self.left = None  # type: Optional[PhApertureInstallType]
+
+    @property
+    def any_assigned(self):
+        # type: () -> bool
+        """Return True if any side has an Install Type assigned."""
+        return any(getattr(self, side) is not None for side in self.SIDES)
+
+    def get_side(self, _side):
+        # type: (str) -> Optional[PhApertureInstallType]
+        """Return the Install Type assigned to a side ('top' | 'right' | 'bottom' | 'left'), or None."""
+        if _side not in self.SIDES:
+            raise ValueError("Side must be one of {}. Got: '{}'".format(self.SIDES, _side))
+        return getattr(self, _side)
+
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        d = {}
+        for side in self.SIDES:
+            install_type = getattr(self, side)
+            if install_type is not None:
+                d[side] = install_type.to_dict()
+        return d
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> AperturePsiInstalls
+        new_obj = cls()
+        for side in cls.SIDES:
+            install_type_dict = _input_dict.get(side, None)
+            if install_type_dict:
+                setattr(new_obj, side, PhApertureInstallType.from_dict(install_type_dict))
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> AperturePsiInstalls
+        return self.__copy__()
+
+    def __copy__(self):
+        # type: () -> AperturePsiInstalls
+        new_obj = self.__class__()
+        for side in self.SIDES:
+            install_type = getattr(self, side)
+            if install_type is not None:
+                setattr(new_obj, side, install_type.duplicate())
+        return new_obj
+
+    def __str__(self):
+        return "{}({})".format(
+            self.__class__.__name__,
+            ", ".join("{}={!r}".format(side, getattr(self, side)) for side in self.SIDES),
+        )
+
+    def __repr__(self):
+        return str(self)
+
+    def ToString(self):
+        return str(self)
+
 
 class ShadingDimensions(object):
     """PHPP Style shading dimension info"""
@@ -82,6 +161,7 @@ class AperturePhProperties(object):
         self.variant_type = "_unnamed_type_"
         self.install_depth = 0.1016  # m
         self.default_monthly_shading_correction_factor = 1.0
+        self.install_types = AperturePsiInstalls()
 
     @property
     def host(self):
@@ -100,6 +180,7 @@ class AperturePhProperties(object):
         new_properties_obj.variant_type = self.variant_type
         new_properties_obj.install_depth = self.install_depth
         new_properties_obj.default_monthly_shading_correction_factor = self.default_monthly_shading_correction_factor
+        new_properties_obj.install_types = self.install_types.duplicate()
 
         return new_properties_obj
 
@@ -121,6 +202,8 @@ class AperturePhProperties(object):
         d["variant_type"] = self.variant_type
         d["install_depth"] = self.install_depth
         d["default_monthly_shading_correction_factor"] = self.default_monthly_shading_correction_factor
+        if self.install_types.any_assigned:
+            d["install_types"] = self.install_types.to_dict()
 
         return {"ph": d}
 
@@ -148,6 +231,11 @@ class AperturePhProperties(object):
             "default_monthly_shading_correction_factor", 1.0
         )
 
+        # Use get to ensure backwards compatibility: older HBJSON has no install_types
+        install_types_dict = _input_dict.get("install_types", None)
+        if install_types_dict:
+            new_prop.install_types = AperturePsiInstalls.from_dict(install_types_dict)
+
         return new_prop
 
     def apply_properties_from_dict(self, _aperture_prop_dict):
@@ -174,5 +262,10 @@ class AperturePhProperties(object):
         self.default_monthly_shading_correction_factor = _aperture_prop_dict.get(
             "default_monthly_shading_correction_factor", 1.0
         )
+
+        # Use get to ensure backwards compatibility: older HBJSON has no install_types
+        install_types_dict = _aperture_prop_dict.get("install_types", None)
+        if install_types_dict:
+            self.install_types = AperturePsiInstalls.from_dict(install_types_dict)
 
         return None
