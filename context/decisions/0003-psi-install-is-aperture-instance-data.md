@@ -3,8 +3,8 @@
 **Date:** 2026-08-12
 **Status:** DECIDED — implemented
 **Decider:** Ed May
-**Research:** [`planning/refactor/aperture-psi-install.md`](../../planning/refactor/aperture-psi-install.md)
-**Companion repos:** `PHX/planning/refactor/aperture-psi-install.md`,
+**Research:** [`planning/archive/aperture-psi-install/`](../../planning/archive/aperture-psi-install/aperture-psi-install-plan.md)
+**Companion repos:** `PHX/planning/archive/aperture-psi-install/`,
 `honeybee_grasshopper_ph/planning/refactor/aperture-psi-install.md`,
 `ph-navigator-v2/planning/features_v1.1/aperture-psi-install/upstream-alignment.md`
 **Resolves:** honeybee_ph [#51](https://github.com/PH-Tools/honeybee_ph/issues/51);
