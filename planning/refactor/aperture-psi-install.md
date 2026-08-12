@@ -164,7 +164,7 @@ Branch: `refactor/aperture-psi-install`. One phase at a time; each phase ends gr
 | Phase | Scope | Verification | State |
 |---|---|---|---|
 | 1 | `PhApertureInstallType` in `honeybee_energy_ph/construction/window.py` (§3.1) | Round-trip + duplicate tests in `tests/test_honeybee_energy_ph/`; IPy2.7-safe | ✅ 2026-08-12 |
-| 2 | `AperturePsiInstalls` container + `AperturePhProperties.install_types` (§3.2), incl. `to_dict`/`from_dict`/`duplicate`/`apply_properties_from_dict` | Property round-trip tests; full-model HBJSON round-trip; old-HBJSON back-compat (`.get`) | ☐ |
+| 2 | `AperturePsiInstalls` container + `AperturePhProperties.install_types` (§3.2), incl. `to_dict`/`from_dict`/`duplicate`/`apply_properties_from_dict` | Property round-trip tests; full-model HBJSON round-trip; old-HBJSON back-compat (`.get`) | ✅ 2026-08-12 |
 | 3 | Resolver module `honeybee_ph_utils/aperture_psi_install.py` (§3.3) | Precedence tests (slot/inherit/mixed/shade-construction); shared-construction no-duplication test | ☐ |
 | 4 | ISO 10077-1 integration (§3.4): aperture entry points use `resolve_effective_frame` | Zero-Ψ edge ⇒ zero install heat loss; unresolved paths byte-identical | ☐ |
 | 5 | Closeout: `docs/nav.yml` (hard rule 3), full-suite 100% coverage, §4 checklist swept | All §4 boxes checked | ☐ |
