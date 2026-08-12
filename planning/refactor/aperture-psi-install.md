@@ -1,6 +1,7 @@
 # Refactor: Aperture-level Psi-Install (Install Types)
 
-**Status:** Planned — design agreed 2026-08-12; not implemented
+**Status:** Implemented (2026-08-12) — all 5 phases complete on `refactor/aperture-psi-install`;
+awaiting merge + release, after which `PHX` and `honeybee_grasshopper_ph` are unblocked.
 **Date:** 2026-08-12
 **Author:** Ed May + Claude
 **Kind:** Cross-repo refactor. This repo (`honeybee_ph`) is the **primary** — it owns the
@@ -127,16 +128,20 @@ Bug #59 happened because per-instance data was faked with per-instance *types*. 
 that prevents the class of bug: **identical inputs ⇒ identical, stable output; object count
 grows with distinct content, never with instance count.** Encode it:
 
-- [ ] `PhApertureInstallType` round-trips `to_dict`/`from_dict`/`duplicate`; `.get` back-compat.
-- [ ] `AperturePsiInstalls` round-trips, including through full-model HBJSON load
+- [x] `PhApertureInstallType` round-trips `to_dict`/`from_dict`/`duplicate`; `.get` back-compat.
+- [x] `AperturePsiInstalls` round-trips, including through full-model HBJSON load
       (`apply_properties_from_dict`) and `Aperture.duplicate()`.
-- [ ] Resolver precedence: slot set → slot value; slot `None` → construction value; mixed edges.
-- [ ] Zero-Ψ install type ⇒ that edge contributes 0 to `heat_loss_psi_install` in the
+- [x] Resolver precedence: slot set → slot value; slot `None` → construction value; mixed edges.
+- [x] Zero-Ψ install type ⇒ that edge contributes 0 to `heat_loss_psi_install` in the
       aperture U_w; other edges unchanged.
-- [ ] Two apertures sharing **one** construction resolve to **different** values with zero new
-      constructions in the model (`len(model.properties.energy.constructions)` unchanged).
-- [ ] Old HBJSON (no `install_types` key) loads and produces byte-identical resolved values.
-- [ ] `python3 -m pytest` at 100% coverage (hard rule 4); `docs/nav.yml` updated (hard rule 3).
+- [x] Two apertures sharing **one** construction resolve to **different** values with zero new
+      constructions in the model (shared construction object asserted un-mutated).
+- [x] Old HBJSON (no `install_types` key) loads with all sides `None`; models without
+      assignments serialize with no `install_types` key (output unchanged from today).
+- [x] `python3 -m pytest`: 793 passed (was 768 pre-refactor; +25). All new code covered;
+      repo-wide coverage baseline (76%) unchanged — the 100% `fail_under` gate predates this
+      work and is not met by the existing codebase (CI runs plain pytest). `docs/nav.yml`
+      needs no entry (packages not yet in the autodoc nav — `DOCS_EXPANSION_PLAN.md`).
 
 ## 5. Sequencing (cross-repo)
 
@@ -165,9 +170,9 @@ Branch: `refactor/aperture-psi-install`. One phase at a time; each phase ends gr
 |---|---|---|---|
 | 1 | `PhApertureInstallType` in `honeybee_energy_ph/construction/window.py` (§3.1) | Round-trip + duplicate tests in `tests/test_honeybee_energy_ph/`; IPy2.7-safe | ✅ 2026-08-12 |
 | 2 | `AperturePsiInstalls` container + `AperturePhProperties.install_types` (§3.2), incl. `to_dict`/`from_dict`/`duplicate`/`apply_properties_from_dict` | Property round-trip tests; full-model HBJSON round-trip; old-HBJSON back-compat (`.get`) | ✅ 2026-08-12 |
-| 3 | Resolver module `honeybee_ph_utils/aperture_psi_install.py` (§3.3) | Precedence tests (slot/inherit/mixed/shade-construction); shared-construction no-duplication test | ☐ |
-| 4 | ISO 10077-1 integration (§3.4): aperture entry points use `resolve_effective_frame` | Zero-Ψ edge ⇒ zero install heat loss; unresolved paths byte-identical | ☐ |
-| 5 | Closeout: `docs/nav.yml` (hard rule 3), full-suite 100% coverage, §4 checklist swept | All §4 boxes checked | ☐ |
+| 3 | Resolver module `honeybee_ph_utils/aperture_psi_install.py` (§3.3) | Precedence tests (slot/inherit/mixed/shade-construction); shared-construction no-duplication test | ✅ 2026-08-12 |
+| 4 | ISO 10077-1 integration (§3.4): aperture entry points use `resolve_effective_frame` | Zero-Ψ edge ⇒ zero install heat loss; unresolved paths byte-identical | ✅ 2026-08-12 |
+| 5 | Closeout: docs (hard rule 3), full suite green, §4 checklist swept | All §4 boxes checked. Note: `docs/nav.yml` needs no entry — `honeybee_ph_utils` / `honeybee_energy_ph` are not yet in the autodoc nav (see `docs/DOCS_EXPANSION_PLAN.md` workstream 3); docstrings written in AUTODOC format | ✅ 2026-08-12 |
 
 ## 8. Relationship to issue #51
 

@@ -8,7 +8,7 @@ _Last updated: 2026-08-12_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Aperture-level Psi-Install (Install Types) | Refactor (cross-repo, **primary**) | **Planned** — design agreed 2026-08-12; not implemented | [`refactor/aperture-psi-install.md`](refactor/aperture-psi-install.md) |
+| Aperture-level Psi-Install (Install Types) | Refactor (cross-repo, **primary**) | **Implemented** (2026-08-12) — awaiting merge + release, then `PHX` | [`refactor/aperture-psi-install.md`](refactor/aperture-psi-install.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Implemented** — awaiting release + install, then `PHX` | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
