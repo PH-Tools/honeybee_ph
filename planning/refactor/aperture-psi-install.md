@@ -6,7 +6,7 @@
 **Kind:** Cross-repo refactor. This repo (`honeybee_ph`) is the **primary** — it owns the
 new data model, the resolver, and the tests. Ships first; everything else is blocked on it.
 **Resolves:** [honeybee_ph #51](https://github.com/PH-Tools/honeybee_ph/issues/51) (by a
-different mechanism than the issue proposes — see §7) and, via the `honeybee_grasshopper_ph`
+different mechanism than the issue proposes — see §8) and, via the `honeybee_grasshopper_ph`
 companion, [honeybee_grasshopper_ph #59](https://github.com/PH-Tools/honeybee_grasshopper_ph/issues/59).
 
 **Companion docs (same slug in each repo):**
@@ -68,7 +68,7 @@ Location: `honeybee_energy_ph/construction/window.py`, sibling of `PhWindowFrame
 - `to_dict` / `from_dict` / `duplicate` / `__copy__` per repo serialization rules
   (hard rule 2: new fields default in `__init__`, `.get(key, default)` in `from_dict`).
 - IronPython 2.7 compatible (hard rule 1).
-- A zero-Ψ instance **is** the "install off" state — there is no separate boolean flag (§7).
+- A zero-Ψ instance **is** the "install off" state — there is no separate boolean flag (§8).
 
 ### 3.2 `AperturePhProperties` per-edge slots
 
@@ -117,7 +117,7 @@ type contributes zero install heat loss to U_w,installed.
 ### 3.5 Explicitly NOT changing
 
 - `PhWindowFrameElement.psi_install` semantics and its 0.04 default (type-level default stays).
-- No `psi_install_enabled` boolean anywhere (§7).
+- No `psi_install_enabled` boolean anywhere (§8).
 - No model-level install-type library/registry (inline serialization, §3.2).
 - No neighbor/mull detection.
 
@@ -156,7 +156,20 @@ grows with distinct content, never with instance count.** Encode it:
   types (recommended in GH companion doc §2.2; confirm ergonomics on the canvas at
   implementation).
 
-## 7. Relationship to issue #51
+## 7. Implementation phases (this repo)
+
+Branch: `refactor/aperture-psi-install`. One phase at a time; each phase ends green
+(`python3 -m pytest`, coverage 100%) with a simplify pass before moving on.
+
+| Phase | Scope | Verification | State |
+|---|---|---|---|
+| 1 | `PhApertureInstallType` in `honeybee_energy_ph/construction/window.py` (§3.1) | Round-trip + duplicate tests in `tests/test_honeybee_energy_ph/`; IPy2.7-safe | ✅ 2026-08-12 |
+| 2 | `AperturePsiInstalls` container + `AperturePhProperties.install_types` (§3.2), incl. `to_dict`/`from_dict`/`duplicate`/`apply_properties_from_dict` | Property round-trip tests; full-model HBJSON round-trip; old-HBJSON back-compat (`.get`) | ☐ |
+| 3 | Resolver module `honeybee_ph_utils/aperture_psi_install.py` (§3.3) | Precedence tests (slot/inherit/mixed/shade-construction); shared-construction no-duplication test | ☐ |
+| 4 | ISO 10077-1 integration (§3.4): aperture entry points use `resolve_effective_frame` | Zero-Ψ edge ⇒ zero install heat loss; unresolved paths byte-identical | ☐ |
+| 5 | Closeout: `docs/nav.yml` (hard rule 3), full-suite 100% coverage, §4 checklist swept | All §4 boxes checked | ☐ |
+
+## 8. Relationship to issue #51
 
 Issue #51 asks for per-window, per-edge install **on/off** (PHPP's 0|1 columns) via a
 `psi_install_enabled` flag on the frame element plus four `Optional[bool]` aperture overrides.
