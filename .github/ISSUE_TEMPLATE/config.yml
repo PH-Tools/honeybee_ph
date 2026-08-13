@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or usage help
+    url: https://discourse.ladybug.tools/c/honeybee/honeybee-ph/
+    about: For "how do I ...?" questions, please use the Ladybug Tools forum rather than an issue.
+  - name: PHPP / WUFI export problem
+    url: https://github.com/PH-Tools/PHX/issues
+    about: Anything about writing to a PHPP workbook or a WUFI-Passive XML belongs to PHX, not here.
+  - name: Grasshopper component problem
+    url: https://github.com/PH-Tools/honeybee_grasshopper_ph/issues
+    about: Problems with the Rhino/Grasshopper components belong to honeybee_grasshopper_ph.

@@ -1,0 +1,60 @@
+name: Deprecation
+description: Retire an existing API, attribute, or serialization key.
+title: "DEPRECATE: "
+labels: ["deprecation"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is being retired, and what replaces it. Say why both exist today.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: Permalink the code being retired, and permalink its replacement.
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired
+    attributes:
+      label: Migration plan
+      description: |
+        Spell out the read path, the write path, and the removal, in that order. Old HBJSON
+        must keep loading.
+      value: |
+        1. `from_dict()` continues to read the legacy key and migrates it onto the new API.
+        2. `to_dict()` stops writing the legacy key.
+        3. The attribute is removed from the public API.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected code
+      description: The module being retired, its replacement, and every downstream reader (PHX, honeybee_grasshopper_ph, PH-Navigator).
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ] `from_dict()` reads the legacy key with `.get()` (no `KeyError` when absent) and migrates it.
+        - [ ] A checked-in legacy HBJSON fixture loads and its data is reachable through the new API.
+        - [ ] `to_dict()` no longer emits the legacy key.
+        - [ ] The deprecated attribute no longer exists.
+        - [ ] No remaining references in this repo; companion issues opened downstream.
+        - [ ] `python3 -m pytest` passes at 100% coverage.
+        - [ ] Docstrings and `docs/nav.yml` updated per `docs/.instructions.md`.
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related

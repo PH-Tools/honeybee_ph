@@ -1,0 +1,84 @@
+name: Bug Report
+description: Something in the honeybee-ph data model behaves incorrectly.
+title: "BUG: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: if the wrong value appears in a **PHPP workbook or WUFI-Passive XML**,
+        the issue probably belongs to [PHX](https://github.com/PH-Tools/PHX/issues). If a
+        **Grasshopper component** misbehaves, it probably belongs to
+        [honeybee_grasshopper_ph](https://github.com/PH-Tools/honeybee_grasshopper_ph/issues).
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One paragraph — what is wrong, in plain terms.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: |
+        What happens today. Include a permalink to the relevant code
+        (open the file on GitHub, select the lines, press `y`, then copy the URL).
+      placeholder: |
+        `ModelPhProperties.to_dict()` writes an empty list ...
+
+        https://github.com/PH-Tools/honeybee_ph/blob/<sha>/path/to/file.py#L10-L20
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The smallest sequence that shows the problem. Attach an HBJSON if you have one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired behavior
+      description: What should happen instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected code
+      description: Bullet list of the modules/classes involved, and any downstream repos.
+      placeholder: |
+        - `honeybee_ph/properties/model.py` — `ModelPhProperties.to_dict()`
+        - Downstream: `PHX`, `honeybee_grasshopper_ph`
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checkboxes that make "done" testable. Keep the serialization item unless it genuinely does not apply.
+      value: |
+        - [ ] Regression test reproduces the bug and passes after the fix.
+        - [ ] Backward compatibility: old HBJSON still loads (`from_dict` uses `.get(key, default)`).
+        - [ ] `python3 -m pytest` passes at 100% coverage.
+        - [ ] Docstrings and `docs/nav.yml` updated per `docs/.instructions.md`.
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "honeybee-ph 1.33.32 · Rhino 8 / IronPython 2.7 · CPython 3.10"
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: Links to related issues in this repo, PHX, honeybee_grasshopper_ph, or ladybug-tools.

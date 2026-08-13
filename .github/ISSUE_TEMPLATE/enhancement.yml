@@ -1,0 +1,58 @@
+name: Enhancement
+description: A new capability or an extension to the honeybee-ph data model.
+title: "ENHANCEMENT: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One paragraph — what is wanted and why. Name the PH modeling situation that motivates it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: |
+        What the code does today, and what the workaround is (if any). Include permalinks —
+        select the lines on GitHub, press `y`, copy the URL.
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired behavior
+      description: |
+        The proposed design. Be specific about **where** data lives (which class, which
+        properties object) and how it resolves against existing values.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected code
+      description: Modules and classes to change here, plus any companion work in PHX or honeybee_grasshopper_ph.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ] New fields default in `__init__`, are written in `to_dict()`, read with `_input_dict.get(key, default)` in `from_dict()`, and copied in `duplicate()`.
+        - [ ] Backward compatibility: HBJSON written before this change still loads and behaves identically.
+        - [ ] Round-trip test covering the new data.
+        - [ ] IronPython 2.7 compatible (`context/CODING_STANDARDS.md`).
+        - [ ] `python3 -m pytest` passes at 100% coverage.
+        - [ ] Docstrings and `docs/nav.yml` updated per `docs/.instructions.md`.
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: Companion issues in PHX / honeybee_grasshopper_ph / ladybug-tools, and any relevant PHPP or WUFI reference.
