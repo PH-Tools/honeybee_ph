@@ -76,7 +76,10 @@ attribute:
 `honeybee_energy_ph/dwellings.py` is the single implementation of dwelling grouping,
 consumed by both `honeybee_grasshopper_ph` and `PHX`. Rooms in one dwelling share a
 `PhDwellings` **instance** (identity compared on `.identifier`); a Room holding several
-dwellings uses `num_dwellings > 1`.
+dwellings uses `num_dwellings > 1`. Assignment state is determined by the serialized
+count: `num_dwellings < 1` is unassigned/non-residential, while `>= 1` is explicit.
+The process-local `PhDwellings.default()` UUID must not be used to infer assignment
+after an HBJSON round-trip.
 
 **Do not tag Honeybee-PH data onto honeybee-core attributes.** `Room.zone` was used as a
 dwelling tag while it was inert; honeybee-energy later gave it real E+ meaning, silently

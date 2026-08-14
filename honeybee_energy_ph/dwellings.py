@@ -42,17 +42,18 @@ except ImportError as e:
 
 def _is_default_dwelling(_dwelling):
     # type: (PhDwellings) -> bool
-    """Is this the shared class-level 'default' PhDwellings object?
+    """Does this PhDwellings object represent the un-set default state?
 
     `PeoplePhProperties.__init__` assigns `PhDwellings.default()` -- a single cached
     instance -- to every People load. So EVERY Room that has never been passed through
-    the 'HBPH - Set Dwelling' component carries the same dwelling identifier. Those
-    Rooms are 'untagged', not 'all one dwelling', and must not be grouped together.
+    the 'HBPH - Set Dwelling' component has `num_dwellings < 1`. Those Rooms are
+    'untagged', not 'all one dwelling', and must not be grouped together.
 
-    Compared by identifier rather than by `is`, since `PhDwellings.duplicate()` and
-    `from_dict()` both produce new objects that keep the original identifier.
+    The count is the serialization-stable assignment marker. The class default's
+    identifier is a process-local UUID, so it cannot identify an un-set dwelling after
+    an HBJSON round-trip in a later process.
     """
-    return _dwelling.identifier == PhDwellings.default().identifier
+    return _dwelling.num_dwellings < 1
 
 
 def get_dwelling_obj(_hb_room):

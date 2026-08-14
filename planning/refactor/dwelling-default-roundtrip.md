@@ -1,49 +1,214 @@
 # Default dwelling identity across HBJSON round-trips
 
-**Status:** Requested — reproduced downstream, not implemented
+**Status:** In progress — implementation complete; full verification pending
 **Opened:** 2026-08-06
+**Investigated:** 2026-08-14
 **Owner:** `honeybee_energy_ph/dwellings.py`
+**Downstream witness:** `PHX/from_HBJSON/_dwelling_occupancy.py`
 
-## Defect
+## 1. Conclusion
 
-`get_dwelling_obj()` identifies an unset dwelling by comparing its identifier with the current
-process's cached `PhDwellings.default().identifier`. That identifier is a `uuid4`. An HBJSON
-round-trip preserves the original process's default identifier, but a later process creates a
-different default identifier. The deserialized unset dwelling is therefore mistaken for an
-explicit dwelling.
+The bug was still present when re-investigated on 2026-08-14 and the fix remained
+necessary. The count-based correction and focused regressions are now implemented on
+`codex/dwelling-default-roundtrip`; repository-wide verification is pending.
 
-Because every originally untagged Room in the HBJSON shares that serialized identifier,
-`group_rooms_by_dwelling()` pools all of those Rooms into one dwelling. Occupancy entered for
-one otherwise-untagged Room can then be spread across unrelated Rooms.
+Before this correction, `get_dwelling_obj()` decided whether a Room was untagged by comparing the
+Room's serialized `PhDwellings.identifier` with the current process's
+`PhDwellings.default().identifier`. The default identifier is a `uuid4`, so that
+comparison is valid only within the process that created the object. It fails after an
+HBJSON round-trip in a later process.
 
-## Reproduction
+The repository already has a serialization-stable contract that resolves the defect:
 
-1. Create two Rooms whose People PH properties still use `PhDwellings.default()`
-   (`num_dwellings == 0`).
-2. Serialize the model to HBJSON.
-3. Reset `PhDwellings._default` to simulate a new process and deserialize the model.
-4. `get_dwelling_obj(room)` returns a `PhDwellings` object instead of `None`, and both Rooms
-   receive the same `dwelling_key`.
+- `num_dwellings >= 1` means the Room has an explicit residential dwelling assignment.
+- `num_dwellings < 1` means no dwelling is assigned.
+- `identifier` distinguishes explicit dwelling groups; it does not determine whether an
+  assignment exists.
 
-PHX encountered this while implementing dwelling-group occupancy gating and works around it by
-treating `num_dwellings >= 1` as the serialization-stable definition of an explicit dwelling.
+No new serialized marker is needed. `PeoplePhProperties.is_residential` already uses
+`num_dwellings >= 1`, the established dwelling-zone decision records a corridor/lobby as
+either having no People or `PhDwellings(0)`, and PHX already uses the same count-based
+test at the HBJSON boundary.
 
-## Proposed correction
+## 2. Defect and impact
 
-Make the unset/explicit distinction serialization-stable. The smallest compatible change is to
-treat `num_dwellings < 1` as unset in `_is_default_dwelling()` rather than comparing a
-process-local UUID. Preserve identifier comparison only for object identity among explicit
-dwellings.
+`PeoplePhProperties.__init__()` assigns the process-wide
+`PhDwellings.default()` object to every new People load. All Rooms that have not passed
+through *HBPH - Set Dwelling* therefore serialize the same default identifier and a
+`num_dwellings` value of `0`.
 
-Before implementation, confirm whether an explicitly authored `PhDwellings(0)` has any supported
-meaning. If it does, add an explicit serialized marker instead of inferring the state from the
-count; that marker must default safely when older HBJSON files are read.
+During deserialization, `PhDwellings.from_dict()` correctly preserves that serialized
+identifier. A new process, however, has a newly generated default identifier. The
+current `_is_default_dwelling()` comparison misses, so `get_dwelling_obj()` returns the
+deserialized zero-count object as though it were an explicit dwelling.
 
-## Verification
+The error propagates through the shared helpers:
 
-- Add a real `to_dict()` / `from_dict()` round-trip test with `PhDwellings._default` reset
-  between serialization and deserialization.
-- Untagged Rooms remain separate groups after the round-trip.
-- Explicit Rooms sharing one dwelling identifier still group together.
-- `total_dwelling_count()` remains unchanged for explicit single- and multi-dwelling objects.
-- `python3 -m pytest` passes with repository-wide coverage at or above 75%.
+1. `dwelling_key()` returns the stale default identifier instead of the Room identifier.
+2. `group_rooms_by_dwelling()` collapses all originally untagged Rooms into one group.
+3. A consumer performing dwelling-group occupancy logic can pool or gate occupancy
+   across unrelated Rooms.
+4. `unique_dwelling_objects()` also exposes the zero-count object as an assigned
+   dwelling, although `total_dwelling_count()` happens to remain numerically unchanged
+   because the object's count is zero.
+
+PHX encountered the first three effects while implementing dwelling-group occupancy
+gating. Its local count-based test prevents the bad grouping there, but the shared
+honeybee-ph helper remains incorrect for every other caller.
+
+## 3. Reproduction confirmed on the current checkout
+
+The defect was reproduced on 2026-08-14 with real Honeybee model serialization, not a
+hand-built `PhDwellings` dictionary:
+
+1. Create two Rooms with People loads that retain `PhDwellings.default()`.
+2. Create a `honeybee.model.Model` and call `Model.to_dict()`.
+3. Set `PhDwellings._default = None` to simulate a new process.
+4. Call `Model.from_dict()`.
+5. Pass the deserialized Rooms to the dwelling helpers.
+
+Observed result:
+
+| Check | Expected | Pre-fix result |
+|---|---:|---:|
+| Deserialized `num_dwellings` | `[0, 0]` | `[0, 0]` |
+| `get_dwelling_obj(room) is not None` | `[False, False]` | `[True, True]` |
+| `group_rooms_by_dwelling()` group sizes | `[1, 1]` | `[2]` |
+
+The serialized Rooms retain the original default UUID; the reset class singleton has a
+different UUID. This isolates the defect to classification in
+`_is_default_dwelling()`, not serialization loss or identifier corruption.
+
+## 4. Behavioral contract
+
+The helper must implement the following distinction consistently before and after
+serialization:
+
+| `PhDwellings` state | Assignment state | Grouping key | Count contribution |
+|---|---|---|---:|
+| Process default, count `0` | Unset | Room identifier | 0 |
+| Deserialized former default, count `0` | Unset | Room identifier | 0 |
+| Independently constructed `PhDwellings(0)` | Unset / non-residential | Room identifier | 0 |
+| `PhDwellings(1)` | Explicit dwelling | Dwelling identifier | 1 per unique identifier |
+| `PhDwellings(N)`, `N > 1` | Explicit block of dwellings | Dwelling identifier | N per unique identifier |
+
+For explicit dwellings, Rooms with equal dwelling identifiers remain in one group even
+when deserialization or `duplicate()` has produced distinct Python objects. Identifier
+comparison remains load-bearing for that identity function.
+
+### Why an explicit marker is rejected
+
+An `is_default` / `is_assigned` field would change the HBJSON contract, require a
+backward-compatibility inference for all existing files, and introduce two possible
+sources of truth. No supported state needs it: a zero-count object is already
+non-residential according to `PeoplePhProperties.is_residential`, regardless of whether
+it originated from the singleton or was constructed directly.
+
+## 5. Implemented scope
+
+### Shipping change
+
+Implemented in `honeybee_energy_ph/dwellings.py`:
+
+1. Change `_is_default_dwelling()` to classify `_dwelling.num_dwellings < 1` as
+   unset instead of comparing against `PhDwellings.default().identifier`.
+2. Rewrite its docstring to state the count-based assignment contract and the reason the
+   process-local UUID cannot be used across HBJSON boundaries.
+3. Keep `dwelling_key()`, `group_rooms_by_dwelling()`,
+   `unique_dwelling_objects()`, and `total_dwelling_count()` otherwise unchanged.
+
+The minimal implementation is intentionally equivalent to:
+
+```python
+def _is_default_dwelling(_dwelling):
+    # type: (PhDwellings) -> bool
+    return _dwelling.num_dwellings < 1
+```
+
+The private helper may retain its existing name to keep the patch surgical; its revised
+docstring must make clear that "default" means the serialized unset state, not object
+identity with the current singleton.
+
+### Test changes
+
+Add focused cases to `tests/test_honeybee_energy_ph/test_dwellings.py`:
+
+1. **Real unset round-trip regression:** serialize a two-Room `Model`, reset
+   `PhDwellings._default`, deserialize, and assert that each Room falls back to its own
+   key and group. Use pytest's `monkeypatch` fixture or `try/finally` so the class cache is
+   restored after the test.
+2. **Explicit shared-dwelling round-trip:** two Rooms sharing `PhDwellings(1)` remain one
+   group after `Model.to_dict()` / `Model.from_dict()` and contribute a total count of 1.
+3. **Explicit multi-unit round-trip:** one Room with `PhDwellings(4)` remains explicit and
+   contributes 4.
+4. **Independent zero-count object:** `PhDwellings(0)` with a non-default identifier is
+   treated as unset. This locks the resolved semantic question and prevents regression
+   back to identifier-based classification.
+
+Keep the existing in-memory default, missing-People, duplicate-identifier, stable-order,
+and count tests. The new tests cover the missing process boundary rather than replacing
+those unit cases.
+
+### Documentation and serialization
+
+- No `PhDwellings.to_dict()` / `from_dict()` change.
+- No schema migration or HBJSON version change.
+- No public API addition or rename.
+- No `docs/nav.yml` change because the edited helper is private.
+- The existing dwelling grouping section in `context/ARCHITECTURE.md` and decision 0002
+  remain valid; no new ADR is required for this defect repair.
+
+## 6. Downstream handling
+
+`PHX/from_HBJSON/_dwelling_occupancy.py` already uses
+`number_dwelling_units >= 1` as its explicit-assignment test. Keep that guard in place
+for compatibility with older honeybee-ph releases.
+
+Replacing the PHX-local key logic with `honeybee_energy_ph.dwellings.dwelling_key()` is
+an optional follow-up only after PHX raises its minimum honeybee-ph version to the
+release containing this fix. It is not required to correct this repository and should
+not expand the implementation patch.
+
+## 7. Non-goals
+
+- Changing how *HBPH - Set Dwelling* creates or shares explicit dwelling objects.
+- Validating or coercing the type/range of `num_dwellings`.
+- Changing `PhDwellings.identifier`, equality, hashing, duplication, or serialization.
+- Repairing occupancy values already written after Rooms were incorrectly pooled.
+- Addressing the existing PHX `max(total_ph_dwellings, 1)` behavior for purely
+  non-residential merged segments.
+
+## 8. Verification and acceptance
+
+Focused verification:
+
+```bash
+python3 -m pytest tests/test_honeybee_energy_ph/test_dwellings.py
+```
+
+Repository closeout:
+
+```bash
+python3 -m coverage run
+python3 -m coverage report
+```
+
+Acceptance criteria:
+
+- [ ] The real two-Room unset regression fails before the code change and passes after it.
+- [ ] Untagged Rooms remain separate groups after a new-process HBJSON round-trip.
+- [ ] Any `PhDwellings` object with `num_dwellings < 1` contributes no assigned dwelling.
+- [ ] Explicit Rooms sharing one dwelling identifier still group together after round-trip.
+- [ ] Explicit single- and multi-dwelling counts remain unchanged.
+- [ ] The full suite passes with repository-wide coverage at or above the configured 75% floor.
+- [ ] Shipping code remains IronPython 2.7 compatible.
+
+## 9. Closeout
+
+After implementation and verification:
+
+1. Mark this item `Implemented` until the fix is released.
+2. Record the release version and PHX compatibility note here.
+3. Once released, mark it `Complete`, move it under `planning/archive/`, add it to
+   `planning/archive/README.md`, and remove it from the active execution queue in
+   `planning/STATUS.md`.

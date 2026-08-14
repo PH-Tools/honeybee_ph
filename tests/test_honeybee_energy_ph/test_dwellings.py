@@ -1,3 +1,4 @@
+from honeybee.model import Model
 from honeybee.room import Room
 from honeybee_energy.load.people import People
 from honeybee_energy.schedule.ruleset import ScheduleRuleset
@@ -90,6 +91,16 @@ def test_duplicated_dwelling_keeps_the_same_key():
     assert dwelling_key(room_a) == dwelling_key(room_b)
 
 
+def test_independent_zero_count_dwelling_is_unset():
+    """A zero count is unset even when the object has its own identifier."""
+    dwelling = PhDwellings(_num_dwellings=0)
+    room = _room("rm_1", dwelling)
+
+    assert dwelling.identifier != PhDwellings.default().identifier
+    assert get_dwelling_obj(room) is None
+    assert dwelling_key(room) == room.identifier
+
+
 # -----------------------------------------------------------------------------
 # -- group_rooms_by_dwelling
 
@@ -142,6 +153,40 @@ def test_group_untagged_rooms_do_not_collapse_together():
 
     assert len(groups) == 4
     assert all(len(g) == 1 for g in groups)
+
+
+def test_group_untagged_rooms_remain_separate_after_new_process_round_trip(monkeypatch):
+    """A serialized default UUID must not become an explicit dwelling in a new process."""
+    rooms = [_room("rm_{}".format(i)) for i in range(2)]
+    model_dict = Model("model", rooms).to_dict()
+    serialized_default_id = rooms[0].properties.energy.people.properties.ph.dwellings.identifier
+
+    monkeypatch.setattr(PhDwellings, "_default", None)
+    round_trip_rooms = Model.from_dict(model_dict).rooms
+
+    assert PhDwellings.default().identifier != serialized_default_id
+    assert all(get_dwelling_obj(room) is None for room in round_trip_rooms)
+    assert [dwelling_key(room) for room in round_trip_rooms] == [room.identifier for room in round_trip_rooms]
+    assert [len(group) for group in group_rooms_by_dwelling(round_trip_rooms)] == [1, 1]
+
+
+def test_group_shared_dwelling_survives_round_trip():
+    dwelling = PhDwellings(_num_dwellings=1)
+    rooms = [_room("rm_{}".format(i), dwelling) for i in range(2)]
+
+    round_trip_rooms = Model.from_dict(Model("model", rooms).to_dict()).rooms
+
+    assert len(group_rooms_by_dwelling(round_trip_rooms)) == 1
+    assert total_dwelling_count(round_trip_rooms) == 1
+
+
+def test_multi_unit_dwelling_survives_round_trip():
+    room = _room("rm_1", PhDwellings(_num_dwellings=4))
+
+    round_trip_rooms = Model.from_dict(Model("model", [room]).to_dict()).rooms
+
+    assert get_dwelling_obj(round_trip_rooms[0]) is not None
+    assert total_dwelling_count(round_trip_rooms) == 4
 
 
 def test_group_rooms_without_people_do_not_collapse_together():
