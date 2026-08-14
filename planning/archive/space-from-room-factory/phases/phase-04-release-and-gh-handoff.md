@@ -49,6 +49,13 @@ and prove behavior parity before retiring duplicate orchestration.
 - Headless meter/foot smoke verifies 2.5 m / 8.2020997375 ft heights, source
   Room non-mutation, 20 model-unit-squared floor and weighted floor area,
   volume, Room HBJSON round-trip, and no-floor/conversion error routing.
-- Remaining exit check: live meter and non-meter Rhino/Grasshopper definitions,
-  including multi-floor volume count and `Space.host` identity. No existing
-  repo definition exercises this component, so the packet remains active.
+- Live `manual-test.ghx` verification passes:
+  - meter single-floor: 20.0 m2 floor/weighted area, 50.0 m3 volume, 2.5 m
+    height;
+  - foot single-floor: 215.278 ft2 floor/weighted area, 1765.739 ft3 volume,
+    8.2021 ft height;
+  - foot multi-floor: one Space, two volumes, two floor segments, 12.0 ft2
+    floor/weighted area, 98.4252 ft3 volume, and two 8.2021 ft heights.
+- Every live case reports the expected default-space name, Room host identity,
+  one preserved Room-dict round-trip Space, and correct restored host. All
+  Phase 04 exit checks pass.

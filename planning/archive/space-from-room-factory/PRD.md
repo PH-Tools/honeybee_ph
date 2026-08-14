@@ -3,7 +3,7 @@
 **Status:** Implementing · Phase 03 complete; Phase 04 next · 2026-08-14
 **Author:** Ed May + Claude
 **Kind:** Feature / cross-repo refactor — **this repo is primary**, ships
-first. Companion: `honeybee_grasshopper_ph/planning/refactor/space-from-room-factory.md`.
+first. Companion: `honeybee_grasshopper_ph/planning/archive/space-from-room-factory/`.
 
 ---
 

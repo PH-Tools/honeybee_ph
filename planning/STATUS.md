@@ -9,7 +9,6 @@ _Last updated: 2026-08-14_
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Scoped** — replaces bundled dataset proposal; blocked until `honeybee-ph>=1.33.35` is published and verified | [`features/epw-derived-preliminary-climate/`](features/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
-| `Space.from_room()` default-space factory (upstream from GH) | Feature (cross-repo, **primary**) | **Released v1.33.36; GH v1.28.1 pinned** — live meter/non-meter canvas verification remains before archive | [`features/space-from-room-factory/`](features/space-from-room-factory/README.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **Scoped** — local API fixed; Phase 01 state matrix required before code | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
@@ -19,18 +18,16 @@ _Last updated: 2026-08-14_
 
 For one implementation stream:
 
-1. `space-from-room-factory` — isolated, fully scoped primary implementation.
-2. `epw-derived-preliminary-climate` — depends on published
+1. `epw-derived-preliminary-climate` — depends on published
    `honeybee-ph>=1.33.35` and adds the broader
    provenance/readiness contract.
-3. `default-ventilation-system-factory` — complete only with coordinated
+2. `default-ventilation-system-factory` — complete only with coordinated
    PHX/OpenPH state semantics.
 
 Hard dependencies are narrower than the linear queue:
 
 ```text
 honeybee-ph>=1.33.35 -> epw-derived-preliminary-climate
-space-from-room-factory -> honeybee-ph release -> GH wrapper re-point
 ventilation state matrix -> PHX/OpenPH semantics -> ventilation closeout
 ```
 
@@ -38,6 +35,7 @@ ventilation state matrix -> PHX/OpenPH semantics -> ventilation closeout
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| `Space.from_room()` default-space factory (upstream from GH) | Feature (cross-repo, **primary**) | **Complete** — factory released v1.33.36; GH wrapper released v1.28.1 with generated pin; meter, foot, multi-floor, host, and round-trip canvas checks pass | [`archive/space-from-room-factory/`](archive/space-from-room-factory/README.md) |
 | Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | **Complete** — archived; 98 focused + 891 full tests pass; release target `v1.33.35` via merge CI | [`archive/independent-site-defaults/`](archive/independent-site-defaults/README.md) |
 | Aperture-level Psi-Install (Install Types) | Refactor (cross-repo, **primary**) | **Complete** — merged (PR #87) + released v1.33.33; archived; decision [0003](../context/decisions/0003-psi-install-is-aperture-instance-data.md) | [`archive/aperture-psi-install/`](archive/aperture-psi-install/aperture-psi-install-plan.md) |
 | Bundled PHI/Phius climate dataset library | Feature | **Superseded** — licensed datasets will not be redistributed; replaced by user-supplied EPW conversion; decision [0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) | [`archive/climate-dataset-library/`](archive/climate-dataset-library/README.md) |
@@ -70,8 +68,8 @@ re-points its component at it and retires the Rhino-side duplicate.
 
 | Repo | Doc | Role |
 |------|-----|------|
-| `honeybee_ph` | [`features/space-from-room-factory/`](features/space-from-room-factory/PRD.md) | Primary — **released v1.33.36**; live GH canvas evidence remains before archive |
-| `honeybee_grasshopper_ph` | `planning/refactor/space-from-room-factory.md` | Wrapper **released v1.28.1** with generated `honeybee-ph>=1.33.36` pin; live canvas check remains |
+| `honeybee_ph` | [`archive/space-from-room-factory/`](archive/space-from-room-factory/PRD.md) | Primary — **complete, archived; released v1.33.36** |
+| `honeybee_grasshopper_ph` | `planning/archive/space-from-room-factory/` | Wrapper **complete, archived; released v1.28.1** with generated `honeybee-ph>=1.33.36` pin |
 
 `epw-derived-preliminary-climate` is owned here and will be implemented here,
 with downstream readiness coordination. This repo owns EPW conversion, provenance,
