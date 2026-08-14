@@ -22,11 +22,14 @@ from honeybee_ph import _base
 
 def _finite_value_issue(field_name, value):
     # type: (str, Any) -> Optional[str]
-    if isinstance(value, bool) or not isinstance(value, Real):
-        return "{}: expected a finite numeric value; got {!r}.".format(field_name, value)
-    if math.isnan(value) or math.isinf(value):
+    if not _is_finite_real(value):
         return "{}: expected a finite numeric value; got {!r}.".format(field_name, value)
     return None
+
+
+def _is_finite_real(value):
+    # type: (Any) -> bool
+    return not isinstance(value, bool) and isinstance(value, Real) and not math.isnan(value) and not math.isinf(value)
 
 
 class Climate_MonthlyValueSet(_base._Base):
