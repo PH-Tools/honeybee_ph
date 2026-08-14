@@ -186,6 +186,10 @@ class Ventilator(_base._PhHVACBase):
 class PhVentilationSystem(_base._PhHVACBase):
     """Passive House Fresh-Air Ventilation System.
 
+    Construct a selected balanced HRV/ERV with ``balanced_hrv()``. Represent
+    no mechanical ventilation as ``None`` on the Room HVAC properties; summer
+    window ACH inputs are separate and do not create this object.
+
     Attributes:
         display_name (str): User-facing name for the ventilation system.
         sys_type (int): System type identifier (1 = Balanced PH ventilation with HR).
@@ -213,12 +217,13 @@ class PhVentilationSystem(_base._PhHVACBase):
         display_name=None,
     ):
         # type: (Ventilator, Optional[List[ducting.PhDuctElement]], Optional[List[ducting.PhDuctElement]], Optional[str]) -> PhVentilationSystem
-        """Create a balanced HRV/ERV system from explicit equipment.
+        """Create a balanced HRV/ERV system from selected equipment.
 
-        The caller-supplied ventilator and duct elements are validated and
-        duplicated. ``None`` or an empty duct collection means that no exterior
-        duct elements are modeled; this method never creates default ducts and
-        does not attach the returned system to a Room.
+        The required ventilator type, recovery/electric ranges, and duct
+        directions are validated; accepted children are duplicated. ``None``
+        or an empty duct collection means that no exterior duct elements are
+        modeled. This method never creates default ducts, chooses preliminary
+        performance, or attaches the returned system to a Room.
 
         Arguments:
         ----------

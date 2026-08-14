@@ -1,6 +1,6 @@
 # STATUS — ventilation-system-factories
 
-**Status:** In progress · Phases 01–04 complete · 2026-08-14
+**Status:** Implemented · coordinated release pending · 2026-08-14
 
 - Phase 01 froze the shared honeybee-ph / PHX / OpenPH state contract in
   `STATE_TABLE.md`.
@@ -31,8 +31,10 @@
 - Phase 04 gives PHX an explicit nullable assignment, mutation-free source
   preflight, aggregate Space/duct readiness, and target-specific mappings;
   OpenPH compatibility passes without fabricated equipment or duct lengths.
-- **Next step:** Phase 05 public constructor/state documentation, deferred
-  preset record, full gates, coordinated versions/pins, release, and archive.
+- Phase 05 adds the public constructor/state guide, migration guidance, and
+  decision 0006; the optional preliminary preset remains deferred.
+- **Next step:** run the final Phase 05 gates, publish coordinated versions,
+  record minimum pins, verify installed artifacts, and archive both packets.
 - The optional preliminary preset remains deferred because no complete set of
   performance, frost, location, and duct assumptions has been accepted.
 - Phase 01 gate: simplify reuse/quality/efficiency findings resolved;
@@ -55,3 +57,6 @@
 - Phase 04 direct Honeybee → HBJSON → PHX → OpenPH matrix passes for no
   mechanical equipment and balanced systems with zero or two duct elements per
   direction.
+- Phase 05 pre-release gate: both exact public examples execute independently;
+  Black, Python 2 grammar parsing, and `git diff --check` pass; the full suite
+  passes **1016 tests** with **80%** aggregate coverage.
