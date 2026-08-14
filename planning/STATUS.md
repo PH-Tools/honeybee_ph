@@ -8,27 +8,18 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Default dwelling identity across HBJSON round-trips | Bug fix | **In progress** — implementation complete; full gate pending | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
 
 ## Recommended execution order
 
-For one implementation stream:
-
-1. `dwelling-default-roundtrip` — fix the reproduced default dwelling identity
-   loss across HBJSON/PHX round trips.
-
-Hard dependencies are narrower than the linear queue:
-
-```text
-default dwelling identity -> HBJSON/PHX round-trip verification
-```
+No active item currently has a recommended implementation order.
 
 ## Completed / archived work
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| Default dwelling identity across HBJSON round-trips | Bug fix | **Complete** — count-based assignment restored; 1,020 tests pass at 80% coverage; release pending | [`archive/dwelling-default-roundtrip/`](archive/dwelling-default-roundtrip/README.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo, **primary**) | **Complete** — honeybee-ph v1.33.42 and PHX v1.56.79 released; published four-package matrix verified | [`archive/default-ventilation-system-factory/`](archive/default-ventilation-system-factory/README.md) → [decision 0006](../context/decisions/0006-explicit-ventilation-system-states.md) |
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Complete** — honeybee-ph v1.33.40 and PHX v1.56.76 released; both published artifacts pass EPW/readiness smoke checks | [`archive/epw-derived-preliminary-climate/`](archive/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
 | `Space.from_room()` default-space factory (upstream from GH) | Feature (cross-repo, **primary**) | **Complete** — factory released v1.33.36; GH wrapper released v1.28.1 with generated pin; meter, foot, multi-floor, host, and round-trip canvas checks pass | [`archive/space-from-room-factory/`](archive/space-from-room-factory/README.md) |

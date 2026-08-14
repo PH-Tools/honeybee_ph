@@ -1,16 +1,18 @@
 # Default dwelling identity across HBJSON round-trips
 
-**Status:** In progress — implementation complete; full verification pending
+**Status:** Complete — implemented and verified; release pending
 **Opened:** 2026-08-06
 **Investigated:** 2026-08-14
+**Completed:** 2026-08-14
+**Implementation commit:** `3903a86`
 **Owner:** `honeybee_energy_ph/dwellings.py`
 **Downstream witness:** `PHX/from_HBJSON/_dwelling_occupancy.py`
 
 ## 1. Conclusion
 
 The bug was still present when re-investigated on 2026-08-14 and the fix remained
-necessary. The count-based correction and focused regressions are now implemented on
-`codex/dwelling-default-roundtrip`; repository-wide verification is pending.
+necessary. The count-based correction and focused regressions are implemented in
+`3903a86`; the full repository gate passes.
 
 Before this correction, `get_dwelling_obj()` decided whether a Room was untagged by comparing the
 Room's serialized `PhDwellings.identifier` with the current process's
@@ -39,7 +41,7 @@ through *HBPH - Set Dwelling* therefore serialize the same default identifier an
 
 During deserialization, `PhDwellings.from_dict()` correctly preserves that serialized
 identifier. A new process, however, has a newly generated default identifier. The
-current `_is_default_dwelling()` comparison misses, so `get_dwelling_obj()` returns the
+pre-fix `_is_default_dwelling()` comparison missed, so `get_dwelling_obj()` returned the
 deserialized zero-count object as though it were an explicit dwelling.
 
 The error propagates through the shared helpers:
@@ -131,7 +133,7 @@ identity with the current singleton.
 
 ### Test changes
 
-Add focused cases to `tests/test_honeybee_energy_ph/test_dwellings.py`:
+Added focused cases to `tests/test_honeybee_energy_ph/test_dwellings.py`:
 
 1. **Real unset round-trip regression:** serialize a two-Room `Model`, reset
    `PhDwellings._default`, deserialize, and assert that each Room falls back to its own
@@ -183,32 +185,43 @@ not expand the implementation patch.
 Focused verification:
 
 ```bash
-python3 -m pytest tests/test_honeybee_energy_ph/test_dwellings.py
+.venv/bin/python -m pytest tests/test_honeybee_energy_ph/test_dwellings.py
 ```
 
 Repository closeout:
 
 ```bash
-python3 -m coverage run
-python3 -m coverage report
+.venv/bin/python -m coverage run
+.venv/bin/python -m coverage report
 ```
 
 Acceptance criteria:
 
-- [ ] The real two-Room unset regression fails before the code change and passes after it.
-- [ ] Untagged Rooms remain separate groups after a new-process HBJSON round-trip.
-- [ ] Any `PhDwellings` object with `num_dwellings < 1` contributes no assigned dwelling.
-- [ ] Explicit Rooms sharing one dwelling identifier still group together after round-trip.
-- [ ] Explicit single- and multi-dwelling counts remain unchanged.
-- [ ] The full suite passes with repository-wide coverage at or above the configured 75% floor.
-- [ ] Shipping code remains IronPython 2.7 compatible.
+- [x] The real two-Room unset regression fails before the code change and passes after it.
+- [x] Untagged Rooms remain separate groups after a new-process HBJSON round-trip.
+- [x] Any `PhDwellings` object with `num_dwellings < 1` contributes no assigned dwelling.
+- [x] Explicit Rooms sharing one dwelling identifier still group together after round-trip.
+- [x] Explicit single- and multi-dwelling counts remain unchanged.
+- [x] The full suite passes with repository-wide coverage at or above the configured 75% floor.
+- [x] Shipping code remains IronPython 2.7 compatible.
+
+Final evidence, using the repository-local Python environment:
+
+```text
+.venv/bin/black --check honeybee_energy_ph/dwellings.py \
+    tests/test_honeybee_energy_ph/test_dwellings.py
+    2 files would be left unchanged
+
+.venv/bin/python -m coverage run
+    1020 passed in 57.10s
+
+.venv/bin/python -m coverage report
+    TOTAL 9858 statements, 80% coverage (75% required)
+```
 
 ## 9. Closeout
 
-After implementation and verification:
-
-1. Mark this item `Implemented` until the fix is released.
-2. Record the release version and PHX compatibility note here.
-3. Once released, mark it `Complete`, move it under `planning/archive/`, add it to
-   `planning/archive/README.md`, and remove it from the active execution queue in
-   `planning/STATUS.md`.
+- The implementation is complete and archived; no HBJSON field or migration was added.
+- PHX retains its local `number_dwelling_units >= 1` compatibility guard.
+- No package version was bumped and no release was published in this implementation loop.
+- The release version should be recorded here when this branch is released.
