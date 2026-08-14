@@ -1,5 +1,7 @@
 # Phase 04 — Site integration and readiness
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Expose the supported one-call API and prove that EPW-derived state remains
@@ -24,6 +26,11 @@ honest through duplication and HBJSON.
 6. Update any in-repo consumer that assumes non-null peak loads or nonblank
    PHPP codes; do not make downstream exporters invent values.
 
+Downstream touchpoint identified in Phase 01: PHX
+`phx/from_HBJSON/create_variant.py:417-456` unconditionally dereferences the
+four peak-load sets. Its HBJSON conversion boundary must reject monthly-only
+climates with `Climate.peak_load_readiness_issues()` before those reads.
+
 ## Tests
 
 - End-to-end EPW -> Site -> dict -> Site preserves values and provenance.
@@ -41,3 +48,15 @@ honest through duplication and HBJSON.
 - Downstream changes required for safe conversion are implemented or block
   release in Phase 05.
 
+## Completion evidence
+
+- `52 passed` across converter, public integration, and readiness tests.
+- `Site.from_epw()` forwards every documented option and returns a fresh graph.
+- JSON encoding with `allow_nan=False`, Site/BuildingSegment/Room paths,
+  duplication, and mutation isolation pass.
+- EPW output uses `climate_zone=None`, blank PHPP codes, and `peak_loads=None`;
+  no source field is invented from a legacy default.
+- Repository audit found no additional in-repo peak-load or PHPP-code consumer;
+  the PHX boundary was carried into Phase 05 for downstream implementation.
+- Full repository suite: `966 passed`; aggregate coverage: `80%`.
+- Black, Python 2 grammar parsing, and `git diff --check` pass.

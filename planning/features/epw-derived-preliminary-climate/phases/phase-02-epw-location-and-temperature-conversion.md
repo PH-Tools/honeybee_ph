@@ -1,5 +1,7 @@
 # Phase 02 — EPW location and temperature conversion
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Parse and validate a local EPW and derive location, scalar climate properties,
@@ -42,3 +44,17 @@ and monthly temperature collections with no silent fallback values.
 - No source missing value was converted to zero.
 - Focused tests maintain 100% branch coverage for the new module.
 
+## Completion evidence
+
+- `honeybee_ph._epw.convert_epw()` reads one immutable file snapshot for
+  SHA-256, validation, and `EPW.from_file_string()` conversion.
+- The generated test EPW contains only controlled synthetic values; no weather
+  observation or certification dataset is stored in the repository.
+- Focused suite: `21 passed`; `honeybee_ph/_epw.py` has 100% statement and
+  branch coverage.
+- Full coverage gate: `946 passed`, `80%` aggregate coverage; Black,
+  `git diff --check`, and Python 2.7 grammar parsing pass.
+- Leap/non-leap cardinality, malformed input, independent invalid values,
+  impossible location fields, southern warm-season wrap, deterministic method
+  metadata, and horizontal-infrared sky fallback are pinned.
+- The public `Site.from_epw()` entry point remains absent pending Phase 04.

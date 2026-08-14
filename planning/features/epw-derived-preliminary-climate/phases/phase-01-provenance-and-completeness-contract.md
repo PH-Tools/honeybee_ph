@@ -1,5 +1,7 @@
 # Phase 01 — Provenance and completeness contract
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Make approved, user-defined, EPW-derived, complete, incomplete, and legacy
@@ -43,3 +45,27 @@ unknown climate states distinguishable before adding any EPW conversion path.
 - No old HBJSON fixture regresses.
 - Downstream assumptions and follow-up touchpoints are listed in Phase 04/05.
 - No EPW parsing code has been added yet.
+
+## Completion evidence
+
+- PyPI lists `honeybee-ph 1.33.39`; the required `>=1.33.35` artifact is published.
+- Focused climate and graph-independence suite: `114 passed`.
+- Full coverage gate: `925 passed`, `79%` aggregate coverage.
+- Black, `git diff --check`, and Python 2.7 grammar parsing pass.
+- Default `Climate.to_dict()` remains provenance-free; missing peak loads retain
+  the legacy populated default, while explicit unavailable peak loads serialize as null.
+- `ClimateProvenance`, readiness issue ordering, zero-valued available data,
+  recursive duplication, and `PHPPCodes.blank()` are pinned by focused tests.
+- No EPW parser or fixture was added in this phase.
+
+## Downstream audit
+
+- PHX `phx/from_HBJSON/create_variant.py:417-456` dereferences all four peak-load
+  records unconditionally. Before release it must call the upstream readiness
+  contract and raise the specialized-data diagnostic instead of reading a null
+  collection or constructing zero-filled peak loads.
+- The same PHX mapping copies blank PHPP codes at lines 394-396; blank strings
+  are structurally safe, but exporter behavior must be verified in Phase 05.
+- No adjacent OpenPH checkout exists in this workspace; Phase 05 must verify its
+  current consumer behavior from an available checkout or record that it has no
+  honeybee-ph climate ingestion path.
