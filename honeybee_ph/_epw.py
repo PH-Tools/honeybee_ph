@@ -13,8 +13,9 @@ except ImportError:  # pragma: no cover - IronPython 2.7
 
 from ladybug.epw import EPW
 from ladybug.skymodel import calc_horizontal_infrared
+from ladybug.wea import Wea
 
-from honeybee_ph.site import ClimateProvenance, _is_finite_real
+from honeybee_ph.site import ClimateProvenance, Climate_MonthlyValueSet, _is_finite_real
 
 
 class EPWConversionResult(object):
@@ -31,6 +32,13 @@ class EPWConversionResult(object):
         self.monthly_air_temperatures = None  # type: Optional[List[float]]
         self.monthly_dewpoint_temperatures = None  # type: Optional[List[float]]
         self.monthly_sky_temperatures = None  # type: Optional[List[float]]
+        self.monthly_ground_temperatures = None  # type: Optional[List[float]]
+        self.ground_temperature_depth = None  # type: Optional[float]
+        self.monthly_north_radiation = None  # type: Optional[List[float]]
+        self.monthly_east_radiation = None  # type: Optional[List[float]]
+        self.monthly_south_radiation = None  # type: Optional[List[float]]
+        self.monthly_west_radiation = None  # type: Optional[List[float]]
+        self.monthly_global_radiation = None  # type: Optional[List[float]]
         self.average_wind_speed = None  # type: Optional[float]
         self.summer_daily_temperature_swing = None  # type: Optional[float]
         self.issues = []  # type: List[str]
@@ -122,11 +130,12 @@ def _validate_header(result, lines):
         ("location.utc_offset", location_fields[8], -12.0, 14.0),
         ("location.elevation", location_fields[9], -1000.0, 10000.0),
     )
+    issue_count = len(result.issues)
     for field_name, raw_value, minimum, maximum in location_values:
         _, issue = _header_float_issue(result.file_path, field_name, raw_value, minimum, maximum)
         if issue:
             result.issues.append(issue)
-    if result.issues:
+    if len(result.issues) != issue_count:
         return False
 
     leap_fields = lines[4].split(",")
@@ -151,25 +160,69 @@ def _validate_header(result, lines):
     return True
 
 
-def _preflight_horizontal_infrared(result, lines):
+def _preflight_integer_fields(result, lines):
     # type: (EPWConversionResult, List[str]) -> bool
+    issue_count = len(result.issues)
+    integer_fields = (
+        (12, "horizontal_infrared_radiation_intensity"),
+        (13, "global_horizontal_radiation"),
+        (14, "direct_normal_radiation"),
+        (15, "diffuse_horizontal_radiation"),
+    )
     for index, line in enumerate(lines[8:]):
         fields = line.split(",")
-        if len(fields) <= 12:
-            return True
-        try:
-            value = float(fields[12])
-        except ValueError:
-            return True
-        if not _is_finite_real(value):
-            result.issues.append(
-                _issue(
-                    result.file_path,
-                    "horizontal_infrared_radiation_intensity hour {}".format(index + 1),
-                    "observed {!r}.".format(value),
+        for field_index, field_name in integer_fields:
+            if len(fields) <= field_index:
+                continue
+            try:
+                value = float(fields[field_index])
+            except ValueError:
+                continue
+            if not _is_finite_real(value):
+                result.issues.append(
+                    _issue(
+                        result.file_path,
+                        "{} hour {}".format(field_name, index + 1),
+                        "observed {!r}.".format(value),
+                    )
                 )
+    return len(result.issues) == issue_count
+
+
+def _validate_options(result, ground_temperature_depth, ground_reflectance, diffuse_model):
+    # type: (EPWConversionResult, Optional[float], float, str) -> None
+    if not _is_finite_real(ground_reflectance) or not 0 <= ground_reflectance <= 1:
+        result.issues.append(
+            _issue(
+                result.file_path,
+                "ground_reflectance",
+                "expected a finite value from 0 through 1; observed {!r}.".format(ground_reflectance),
             )
-    return not result.issues
+        )
+    else:
+        result.provenance.assumptions["ground_reflectance"] = ground_reflectance
+    if diffuse_model not in ("isotropic", "anisotropic"):
+        result.issues.append(
+            _issue(
+                result.file_path,
+                "diffuse_model",
+                "expected 'isotropic' or 'anisotropic'; observed {!r}.".format(diffuse_model),
+            )
+        )
+    else:
+        result.provenance.assumptions["diffuse_model"] = diffuse_model
+    if ground_temperature_depth is not None and (
+        not _is_finite_real(ground_temperature_depth) or ground_temperature_depth < 0
+    ):
+        result.issues.append(
+            _issue(
+                result.file_path,
+                "ground_temperature_depth",
+                "expected None or a finite non-negative depth in meters; observed {!r}.".format(
+                    ground_temperature_depth
+                ),
+            )
+        )
 
 
 def _validated_series(file_path, field_name, values, missing_value, minimum, maximum):
@@ -195,15 +248,30 @@ def _validated_series(file_path, field_name, values, missing_value, minimum, max
                     "expected {} through {}; observed {!r}.".format(minimum, maximum, value),
                 )
             )
-    return (None if issues else list(values)), issues
+    return (None if issues else values), issues
+
+
+def _monthly_sums_and_counts(collection):
+    # type: (Any) -> Tuple[List[float], List[int]]
+    monthly_sums = [0.0] * 12
+    monthly_counts = [0] * 12
+    for value, dt in zip(collection.values, collection.datetimes):
+        month_index = dt.month - 1
+        monthly_sums[month_index] += value
+        monthly_counts[month_index] += 1
+    return monthly_sums, monthly_counts
 
 
 def _monthly_means(collection):
     # type: (Any) -> List[float]
-    monthly_values = [[] for _ in range(12)]
-    for value, dt in zip(collection.values, collection.datetimes):
-        monthly_values[dt.month - 1].append(value)
-    return [sum(values) / len(values) for values in monthly_values]
+    monthly_sums, monthly_counts = _monthly_sums_and_counts(collection)
+    return [total / count for total, count in zip(monthly_sums, monthly_counts)]
+
+
+def _monthly_totals_kwh(collection):
+    # type: (Any) -> List[float]
+    monthly_sums, _ = _monthly_sums_and_counts(collection)
+    return [total / 1000.0 for total in monthly_sums]
 
 
 def _summer_daily_swing(values, datetimes, monthly_means):
@@ -256,18 +324,105 @@ def _resolved_horizontal_infrared(result, epw, dry_bulb, dewpoint):
     return None if issues or len(resolved) != len(horizontal_ir) else resolved
 
 
-def convert_epw(file_path):
-    # type: (str) -> EPWConversionResult
-    """Convert EPW location and temperature fields into an internal result."""
+def _select_ground_temperature(result, epw, requested_depth):
+    # type: (EPWConversionResult, EPW, Optional[float]) -> None
+    ground_series = epw.monthly_ground_temperature
+    available_depths = sorted(ground_series.keys())
+    if not available_depths:
+        result.issues.append(
+            _issue(result.file_path, "ground_temperature", "EPW header contains no monthly ground-temperature series.")
+        )
+        return
+    if requested_depth is None:
+        if len(available_depths) != 1:
+            result.issues.append(
+                _issue(
+                    result.file_path,
+                    "ground_temperature_depth",
+                    "EPW header has multiple series; choose one of {} m.".format(available_depths),
+                )
+            )
+            return
+        selected_depth = available_depths[0]
+    elif requested_depth not in ground_series:
+        result.issues.append(
+            _issue(
+                result.file_path,
+                "ground_temperature_depth",
+                "requested {} m; available depths are {} m.".format(requested_depth, available_depths),
+            )
+        )
+        return
+    else:
+        selected_depth = requested_depth
+
+    values = list(ground_series[selected_depth].values)
+    if len(values) != 12:
+        result.issues.append(
+            _issue(
+                result.file_path,
+                "ground_temperature depth {} m".format(selected_depth),
+                "expected 12 monthly values; got {}.".format(len(values)),
+            )
+        )
+        return
+    ground_issues = []
+    for month_name, value in zip(Climate_MonthlyValueSet.months, values):
+        if not _is_finite_real(value) or value < -70 or value > 70:
+            ground_issues.append(
+                _issue(
+                    result.file_path,
+                    "ground_temperature depth {} m {}".format(selected_depth, month_name),
+                    "expected a finite value from -70 through 70 C; observed {!r}.".format(value),
+                )
+            )
+    result.issues.extend(ground_issues)
+    if not ground_issues:
+        result.ground_temperature_depth = selected_depth
+        result.monthly_ground_temperatures = values
+        result.provenance.assumptions["ground_temperature_depth_m"] = selected_depth
+
+
+def _set_directional_radiation(result, epw, direct_normal, diffuse_horizontal, ground_reflectance, diffuse_model):
+    # type: (EPWConversionResult, EPW, Optional[List[float]], Optional[List[float]], float, str) -> None
+    if direct_normal is None or diffuse_horizontal is None:
+        return
+    wea = Wea(epw.location, epw.direct_normal_radiation, epw.diffuse_horizontal_radiation)
+    isotropic = diffuse_model == "isotropic"
+    orientations = (
+        ("north", "monthly_north_radiation", 0),
+        ("east", "monthly_east_radiation", 90),
+        ("south", "monthly_south_radiation", 180),
+        ("west", "monthly_west_radiation", 270),
+    )
+    for _, field_name, azimuth in orientations:
+        total_irradiance = wea.directional_irradiance(
+            altitude=0,
+            azimuth=azimuth,
+            ground_reflectance=ground_reflectance,
+            isotropic=isotropic,
+        )[0]
+        setattr(result, field_name, _monthly_totals_kwh(total_irradiance))
+    result.provenance.assumptions["vertical_plane_azimuths_degrees"] = {
+        name: azimuth for name, _, azimuth in orientations
+    }
+
+
+def convert_epw(file_path, ground_temperature_depth=None, ground_reflectance=0.2, diffuse_model="isotropic"):
+    # type: (str, Optional[float], float, str) -> EPWConversionResult
+    """Convert EPW monthly-demand fields into an internal result."""
     path = os.path.abspath(str(file_path))
     result = EPWConversionResult(path)
+    _validate_options(result, ground_temperature_depth, ground_reflectance, diffuse_model)
+    if result.issues:
+        return result
     source_text = _read_source(result)
     if source_text is None:
         return result
     lines = source_text.splitlines()
     if not _validate_header(result, lines):
         return result
-    if not _preflight_horizontal_infrared(result, lines):
+    if not _preflight_integer_fields(result, lines):
         return result
 
     try:
@@ -276,6 +431,9 @@ def convert_epw(file_path):
         dry_collection = epw.dry_bulb_temperature
         dewpoint_collection = epw.dew_point_temperature
         wind_collection = epw.wind_speed
+        global_collection = epw.global_horizontal_radiation
+        direct_collection = epw.direct_normal_radiation
+        diffuse_collection = epw.diffuse_horizontal_radiation
     except Exception as error:
         result.issues.append(_issue(path, "epw", "Ladybug failed to parse the file ({})".format(error)))
         return result
@@ -294,9 +452,21 @@ def convert_epw(file_path):
         path, "dew_point_temperature", list(dewpoint_collection.values), 99.9, -70.0, 70.0
     )
     wind_speed, wind_issues = _validated_series(path, "wind_speed", list(wind_collection.values), 999, 0.0, 40.0)
+    global_horizontal, global_issues = _validated_series(
+        path, "global_horizontal_radiation", list(global_collection.values), 9999, 0.0, 9998.0
+    )
+    direct_normal, direct_issues = _validated_series(
+        path, "direct_normal_radiation", list(direct_collection.values), 9999, 0.0, 9998.0
+    )
+    diffuse_horizontal, diffuse_issues = _validated_series(
+        path, "diffuse_horizontal_radiation", list(diffuse_collection.values), 9999, 0.0, 9998.0
+    )
     result.issues.extend(dry_issues)
     result.issues.extend(dewpoint_issues)
     result.issues.extend(wind_issues)
+    result.issues.extend(global_issues)
+    result.issues.extend(direct_issues)
+    result.issues.extend(diffuse_issues)
 
     if dry_bulb is not None:
         result.monthly_air_temperatures = _monthly_means(dry_collection)
@@ -308,9 +478,34 @@ def convert_epw(file_path):
         result.monthly_dewpoint_temperatures = _monthly_means(dewpoint_collection)
     if wind_speed is not None:
         result.average_wind_speed = wind_collection.average
+    if global_horizontal is not None:
+        result.monthly_global_radiation = _monthly_totals_kwh(global_collection)
 
     horizontal_ir = _resolved_horizontal_infrared(result, epw, dry_bulb, dewpoint)
     if horizontal_ir is not None:
         epw.horizontal_infrared_radiation_intensity.values = horizontal_ir
         result.monthly_sky_temperatures = _monthly_means(epw.sky_temperature)
+    _set_directional_radiation(
+        result,
+        epw,
+        direct_normal,
+        diffuse_horizontal,
+        ground_reflectance,
+        diffuse_model,
+    )
+    _select_ground_temperature(result, epw, ground_temperature_depth)
+    required_monthly_values = (
+        result.monthly_air_temperatures,
+        result.monthly_dewpoint_temperatures,
+        result.monthly_sky_temperatures,
+        result.monthly_ground_temperatures,
+        result.monthly_north_radiation,
+        result.monthly_east_radiation,
+        result.monthly_south_radiation,
+        result.monthly_west_radiation,
+        result.monthly_global_radiation,
+    )
+    result.provenance.monthly_data_available = not result.issues and all(
+        values is not None for values in required_monthly_values
+    )
     return result

@@ -1,7 +1,10 @@
 import hashlib
+import math
 
 import pytest
+from ladybug.epw import EPW
 from ladybug.skymodel import calc_horizontal_infrared, calc_sky_temperature
+from ladybug.wea import Wea
 
 from honeybee_ph._epw import convert_epw
 from tests.test_honeybee_ph.test_site.epw_fixture import write_synthetic_epw
@@ -282,3 +285,189 @@ def test_checksum_and_conversion_metadata_are_deterministic(tmp_path):
     assert first.provenance.conversion_method == second.provenance.conversion_method
     assert first.provenance.conversion_method_version == second.provenance.conversion_method_version
     assert first.monthly_air_temperatures == second.monthly_air_temperatures
+
+
+def _monthly_totals_kwh(collection):
+    monthly = [[] for _ in range(12)]
+    for value, dt in zip(collection.values, collection.datetimes):
+        monthly[dt.month - 1].append(value)
+    return [sum(values) / 1000.0 for values in monthly]
+
+
+def test_global_and_cardinal_radiation_match_ladybug_reference(tmp_path):
+    epw_path = write_synthetic_epw(tmp_path / "radiation.epw")
+
+    result = convert_epw(str(epw_path))
+    epw = EPW(str(epw_path))
+    wea = Wea(epw.location, epw.direct_normal_radiation, epw.diffuse_horizontal_radiation)
+
+    assert result.issues == []
+    assert result.monthly_global_radiation == pytest.approx(_monthly_totals_kwh(epw.global_horizontal_radiation))
+    for field_name, azimuth in (
+        ("monthly_north_radiation", 0),
+        ("monthly_east_radiation", 90),
+        ("monthly_south_radiation", 180),
+        ("monthly_west_radiation", 270),
+    ):
+        reference = wea.directional_irradiance(
+            altitude=0,
+            azimuth=azimuth,
+            ground_reflectance=0.2,
+            isotropic=True,
+        )[0]
+        assert getattr(result, field_name) == pytest.approx(_monthly_totals_kwh(reference))
+
+
+def test_radiation_options_change_results_and_are_recorded(tmp_path):
+    epw_path = write_synthetic_epw(tmp_path / "radiation-options.epw")
+
+    baseline = convert_epw(str(epw_path), ground_reflectance=0.1, diffuse_model="isotropic")
+    reflected = convert_epw(str(epw_path), ground_reflectance=0.6, diffuse_model="isotropic")
+    anisotropic = convert_epw(str(epw_path), ground_reflectance=0.1, diffuse_model="anisotropic")
+
+    assert baseline.issues == []
+    assert reflected.issues == []
+    assert anisotropic.issues == []
+    assert baseline.monthly_north_radiation != reflected.monthly_north_radiation
+    assert baseline.monthly_north_radiation != anisotropic.monthly_north_radiation
+    assert baseline.provenance.assumptions["ground_reflectance"] == 0.1
+    assert baseline.provenance.assumptions["diffuse_model"] == "isotropic"
+    assert reflected.provenance.assumptions["ground_reflectance"] == 0.6
+    assert reflected.provenance.assumptions["diffuse_model"] == "isotropic"
+    assert anisotropic.provenance.assumptions["ground_reflectance"] == 0.1
+    assert anisotropic.provenance.assumptions["diffuse_model"] == "anisotropic"
+
+
+@pytest.mark.parametrize(
+    "ground_reflectance, diffuse_model, expected_field",
+    [
+        (-0.1, "isotropic", "ground_reflectance"),
+        (1.1, "isotropic", "ground_reflectance"),
+        (0.2, "perez", "diffuse_model"),
+    ],
+)
+def test_invalid_radiation_options_are_targeted(tmp_path, ground_reflectance, diffuse_model, expected_field):
+    epw_path = write_synthetic_epw(tmp_path / "invalid-options.epw")
+
+    result = convert_epw(
+        str(epw_path),
+        ground_reflectance=ground_reflectance,
+        diffuse_model=diffuse_model,
+    )
+
+    assert len(result.issues) == 1
+    assert expected_field in result.issues[0]
+    assert expected_field not in result.provenance.assumptions
+
+
+@pytest.mark.parametrize("ground_temperature_depth", [-0.1, float("nan"), True, "deep"])
+def test_invalid_ground_temperature_depth_is_targeted(tmp_path, ground_temperature_depth):
+    epw_path = write_synthetic_epw(tmp_path / "invalid-ground-depth.epw")
+
+    result = convert_epw(str(epw_path), ground_temperature_depth=ground_temperature_depth)
+
+    assert len(result.issues) == 1
+    assert "ground_temperature_depth" in result.issues[0]
+    assert "ground_temperature_depth_m" not in result.provenance.assumptions
+
+
+def test_single_ground_series_is_selected_automatically(tmp_path):
+    ground_values = [float(value) for value in range(12)]
+    epw_path = write_synthetic_epw(
+        tmp_path / "one-ground.epw",
+        ground_temperatures={0.5: ground_values},
+    )
+
+    result = convert_epw(str(epw_path))
+
+    assert result.issues == []
+    assert result.ground_temperature_depth == 0.5
+    assert result.monthly_ground_temperatures == ground_values
+    assert result.provenance.assumptions["ground_temperature_depth_m"] == 0.5
+
+
+def test_no_ground_series_is_explicitly_unavailable(tmp_path):
+    epw_path = write_synthetic_epw(tmp_path / "no-ground.epw", ground_temperatures=None)
+
+    result = convert_epw(str(epw_path))
+
+    assert result.monthly_ground_temperatures is None
+    assert result.issues == [
+        "{}: ground_temperature: EPW header contains no monthly ground-temperature series.".format(epw_path)
+    ]
+    assert result.provenance.monthly_data_available is False
+
+
+def test_multiple_ground_series_requires_an_explicit_depth(tmp_path):
+    ground = {0.5: [10.0] * 12, 2.0: [12.0] * 12}
+    epw_path = write_synthetic_epw(tmp_path / "multiple-ground.epw", ground_temperatures=ground)
+
+    ambiguous = convert_epw(str(epw_path))
+    selected = convert_epw(str(epw_path), ground_temperature_depth=2.0)
+    unavailable = convert_epw(str(epw_path), ground_temperature_depth=1.0)
+
+    assert ambiguous.issues == [
+        "{}: ground_temperature_depth: EPW header has multiple series; choose one of [0.5, 2.0] m.".format(epw_path)
+    ]
+    assert selected.issues == []
+    assert selected.ground_temperature_depth == 2.0
+    assert selected.monthly_ground_temperatures == [12.0] * 12
+    assert unavailable.issues == [
+        "{}: ground_temperature_depth: requested 1.0 m; available depths are [0.5, 2.0] m.".format(epw_path)
+    ]
+
+
+def test_invalid_ground_month_is_targeted(tmp_path):
+    ground = {0.5: [10.0] * 11 + [float("nan")]}
+    epw_path = write_synthetic_epw(tmp_path / "invalid-ground.epw", ground_temperatures=ground)
+
+    result = convert_epw(str(epw_path))
+
+    assert result.monthly_ground_temperatures is None
+    assert "ground_temperature depth 0.5 m december" in result.issues[0]
+    assert "observed nan" in result.issues[0]
+
+
+def test_missing_radiation_is_not_converted_to_zero(tmp_path):
+    epw_path = write_synthetic_epw(
+        tmp_path / "missing-radiation.epw",
+        field_overrides={
+            "global_horizontal_radiation": {0: 9999},
+            "direct_normal_radiation": {1: 9999},
+            "diffuse_horizontal_radiation": {2: -1},
+        },
+    )
+
+    result = convert_epw(str(epw_path))
+
+    assert len(result.issues) == 3
+    assert "global_horizontal_radiation hour 1" in result.issues[0]
+    assert "direct_normal_radiation hour 2" in result.issues[1]
+    assert "diffuse_horizontal_radiation hour 3" in result.issues[2]
+    assert result.monthly_global_radiation is None
+    assert result.monthly_north_radiation is None
+
+
+def test_complete_monthly_outputs_have_twelve_finite_values(tmp_path):
+    epw_path = write_synthetic_epw(tmp_path / "complete-monthly.epw")
+
+    result = convert_epw(str(epw_path))
+
+    output_names = (
+        "monthly_air_temperatures",
+        "monthly_dewpoint_temperatures",
+        "monthly_sky_temperatures",
+        "monthly_ground_temperatures",
+        "monthly_north_radiation",
+        "monthly_east_radiation",
+        "monthly_south_radiation",
+        "monthly_west_radiation",
+        "monthly_global_radiation",
+    )
+    assert result.issues == []
+    assert result.provenance.monthly_data_available is True
+    assert result.provenance.peak_load_data_available is False
+    for output_name in output_names:
+        values = getattr(result, output_name)
+        assert len(values) == 12
+        assert all(math.isfinite(value) for value in values)

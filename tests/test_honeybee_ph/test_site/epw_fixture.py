@@ -6,7 +6,14 @@ month/day/hour indices within the test run.
 """
 
 from ladybug.epw import EPW
+from ladybug.analysisperiod import AnalysisPeriod
+from ladybug.datacollection import MonthlyCollection
+from ladybug.datatype.temperature import GroundTemperature
+from ladybug.header import Header
 from ladybug.location import Location
+
+
+_DEFAULT_GROUND = object()
 
 
 def write_synthetic_epw(
@@ -18,6 +25,7 @@ def write_synthetic_epw(
     opaque_sky_cover=5,
     is_leap_year=False,
     field_overrides=None,
+    ground_temperatures=_DEFAULT_GROUND,
 ):
     monthly_means = [float(month) for month in range(1, 13)] if monthly_means is None else monthly_means
     daily_ranges = [4.0] * 12 if daily_ranges is None else daily_ranges
@@ -72,6 +80,25 @@ def write_synthetic_epw(
         for index, value in overrides.items():
             values[index] = value
         fields[field_name].values = values
+
+    if ground_temperatures is _DEFAULT_GROUND:
+        ground_temperatures = {0.5: [10.0] * 12}
+    if ground_temperatures is not None:
+        ground_collections = {}
+        for depth, values in ground_temperatures.items():
+            header = Header(
+                GroundTemperature(),
+                "C",
+                AnalysisPeriod(),
+                {
+                    "depth": depth,
+                    "soil conductivity": "1.5",
+                    "soil density": "1800",
+                    "soil specific heat": "900",
+                },
+            )
+            ground_collections[depth] = MonthlyCollection(header, values, list(range(12)))
+        epw.monthly_ground_temperature = ground_collections
 
     epw.write(str(file_path))
     return file_path

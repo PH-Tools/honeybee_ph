@@ -1,6 +1,6 @@
 # STATUS — epw-derived-preliminary-climate
 
-**Status:** In progress · Phases 01–02 complete · 2026-08-14
+**Status:** In progress · Phases 01–03 complete · 2026-08-14
 
 - Replaces the superseded bundled climate-dataset proposal.
 - Product/IP boundary is decided in context decision 0004.
@@ -13,8 +13,11 @@
 - Phase 02 adds the internal, snapshot-consistent Ladybug EPW converter with
   path/header/cardinality/value validation, location/scalars, monthly dry-bulb,
   dewpoint, and sky temperatures, warm-season swing, and SHA-256 provenance.
-- **Next step:** execute Phase 03: directional/global monthly radiation and
-  explicit ground-temperature depth selection.
+- Phase 03 adds global-horizontal and cardinal vertical-plane monthly
+  radiation, explicit diffuse/reflectance assumptions, and deterministic EPW
+  ground-temperature depth selection without inferred fallback values.
+- **Next step:** execute Phase 04: public `Site.from_epw()` integration,
+  independence, HBJSON round-trips, and readiness verification.
 - Release blocker: downstream PHX readiness behavior must be implemented and
   verified; no adjacent OpenPH checkout was available for a direct audit.
 - Do not add or copy any real PHI/Phius/EPW dataset into this repository while

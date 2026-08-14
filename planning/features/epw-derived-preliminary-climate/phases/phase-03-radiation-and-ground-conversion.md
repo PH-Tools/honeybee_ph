@@ -1,5 +1,7 @@
 # Phase 03 — Radiation and ground conversion
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Complete preliminary monthly-demand inputs with documented directional solar
@@ -39,3 +41,11 @@ radiation and explicit EPW ground-temperature selection.
 - No PHI/Phius peak-load field has been synthesized.
 - Focused tests and `git diff --check` pass.
 
+## Completion evidence
+
+- `36 passed` in the focused synthetic EPW conversion suite.
+- Converter branch coverage: 98%; all radiation and ground-selection paths are
+  exercised, with only defensive I/O/type guards remaining uncovered.
+- Isolated option tests prove both ground reflectance and diffuse-model changes.
+- Full repository suite: `961 passed`; aggregate coverage: `80%`.
+- Black, Python 2 grammar parsing, and `git diff --check` pass.
