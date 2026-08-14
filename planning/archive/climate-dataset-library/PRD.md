@@ -7,7 +7,7 @@
 > **Superseded:** This proposal will not be implemented. PHI/Phius climate
 > datasets are licensed or access-controlled certification data and must not be
 > copied into this public package without an explicit redistribution grant.
-> Replacement: [`epw-derived-preliminary-climate`](../../features/epw-derived-preliminary-climate/README.md).
+> Replacement: [`epw-derived-preliminary-climate`](../epw-derived-preliminary-climate/README.md).
 
 ---
 

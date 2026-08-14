@@ -4,7 +4,7 @@
 **Status:** DECIDED — bundled dataset library will not be implemented
 **Decider:** Ed May
 **Research:** [`planning/archive/climate-dataset-library/`](../../planning/archive/climate-dataset-library/README.md)
-**Replacement:** [`planning/features/epw-derived-preliminary-climate/`](../../planning/features/epw-derived-preliminary-climate/README.md)
+**Replacement:** [`planning/archive/epw-derived-preliminary-climate/`](../../planning/archive/epw-derived-preliminary-climate/README.md)
 
 ## Context
 

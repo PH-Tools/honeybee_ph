@@ -1,7 +1,7 @@
 # climate-dataset-library — superseded router
 
 **Status:** Superseded 2026-08-14 by
-[`epw-derived-preliminary-climate`](../../features/epw-derived-preliminary-climate/README.md).
+[`epw-derived-preliminary-climate`](../epw-derived-preliminary-climate/README.md).
 
 **Scope:** Ship real PHPP climate-dataset *values* inside honeybee-ph and add a
 one-line constructor (`Site.from_dataset("US0055c-New York")`), so a

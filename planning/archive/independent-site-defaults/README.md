@@ -16,4 +16,4 @@ independent nested object graph.
 
 **Downstream prerequisite:** The published `honeybee-ph>=1.33.35` artifact must
 be verified before work begins on
-[`epw-derived-preliminary-climate`](../../features/epw-derived-preliminary-climate/README.md).
+[`epw-derived-preliminary-climate`](../epw-derived-preliminary-climate/README.md).

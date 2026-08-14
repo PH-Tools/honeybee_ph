@@ -1,6 +1,6 @@
 # PRD — EPW-derived preliminary monthly climate
 
-**Status:** In progress · Phases 01–04 complete · Phase 05 release handoff · 2026-08-14
+**Status:** Complete · released honeybee-ph v1.33.40 and PHX v1.56.76 · 2026-08-14
 **Author:** Ed May + Codex
 **Kind:** Feature / data-contract extension (this repo primary; downstream
 readiness coordination required)
