@@ -66,9 +66,11 @@ class Climate_MonthlyValueSet(_base._Base):
         "december",
     ]
 
-    def __init__(self, _values=[0.0] * 12):
-        # type: (Collection[float]) -> None
+    def __init__(self, _values=None):
+        # type: (Optional[Collection[float]]) -> None
         super(Climate_MonthlyValueSet, self).__init__()
+        if _values is None:
+            _values = [0.0] * 12
         self.values = _values
 
     @property
@@ -90,10 +92,8 @@ class Climate_MonthlyValueSet(_base._Base):
 
     def __copy__(self):
         # type: () -> Climate_MonthlyValueSet
-        obj = Climate_MonthlyValueSet(copy(self.values))
+        obj = Climate_MonthlyValueSet(self.values)
         obj.set_base_attrs_from_source(self)
-        for month in self.months:
-            setattr(obj, month, getattr(self, month))
 
         return obj
 
@@ -120,7 +120,7 @@ class Climate_MonthlyValueSet(_base._Base):
         obj = cls()
         obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.display_name = _input_dict.get("display_name", obj.display_name)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         for month in cls.months:
             setattr(obj, month, _input_dict.get(month))
@@ -131,6 +131,9 @@ class Climate_MonthlyValueSet(_base._Base):
 class Climate_MonthlyTempCollection(_base._Base):
     """Collection of monthly temperature data sets.
 
+    Default construction creates four independent monthly value sets. Explicitly
+    supplied value sets are retained by identity.
+
     Attributes:
         air_temps (Climate_MonthlyValueSet): Monthly air temperatures in degrees C.
         dewpoints (Climate_MonthlyValueSet): Monthly dewpoint temperatures in degrees C.
@@ -140,17 +143,17 @@ class Climate_MonthlyTempCollection(_base._Base):
 
     def __init__(
         self,
-        _air=Climate_MonthlyValueSet(),
-        _dewpoint=Climate_MonthlyValueSet(),
-        _sky=Climate_MonthlyValueSet(),
-        _ground=Climate_MonthlyValueSet(),
+        _air=None,
+        _dewpoint=None,
+        _sky=None,
+        _ground=None,
     ):
-        # type: (Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet) -> None
+        # type: (Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet]) -> None
         super(Climate_MonthlyTempCollection, self).__init__()
-        self.air_temps = _air
-        self.dewpoints = _dewpoint
-        self.sky_temps = _sky
-        self.ground_temps = _ground
+        self.air_temps = _air if _air is not None else Climate_MonthlyValueSet()
+        self.dewpoints = _dewpoint if _dewpoint is not None else Climate_MonthlyValueSet()
+        self.sky_temps = _sky if _sky is not None else Climate_MonthlyValueSet()
+        self.ground_temps = _ground if _ground is not None else Climate_MonthlyValueSet()
 
     def __copy__(self):
         # type: () -> Climate_MonthlyTempCollection
@@ -194,13 +197,16 @@ class Climate_MonthlyTempCollection(_base._Base):
         )
         obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.display_name = _input_dict.get("display_name", obj.display_name)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         return obj
 
 
 class Climate_MonthlyRadiationCollection(_base._Base):
     """Collection of monthly solar radiation data by orientation.
+
+    Default construction creates five independent monthly value sets. Explicitly
+    supplied value sets are retained by identity.
 
     Attributes:
         north (Climate_MonthlyValueSet): Monthly north-facing radiation in kWh/m2.
@@ -212,19 +218,19 @@ class Climate_MonthlyRadiationCollection(_base._Base):
 
     def __init__(
         self,
-        _north=Climate_MonthlyValueSet(),
-        _east=Climate_MonthlyValueSet(),
-        _south=Climate_MonthlyValueSet(),
-        _west=Climate_MonthlyValueSet(),
-        _glob=Climate_MonthlyValueSet(),
+        _north=None,
+        _east=None,
+        _south=None,
+        _west=None,
+        _glob=None,
     ):
+        # type: (Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet]) -> None
         super(Climate_MonthlyRadiationCollection, self).__init__()
-        # type: (Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet, Climate_MonthlyValueSet) -> None
-        self.north = _north
-        self.east = _east
-        self.south = _south
-        self.west = _west
-        self.glob = _glob
+        self.north = _north if _north is not None else Climate_MonthlyValueSet()
+        self.east = _east if _east is not None else Climate_MonthlyValueSet()
+        self.south = _south if _south is not None else Climate_MonthlyValueSet()
+        self.west = _west if _west is not None else Climate_MonthlyValueSet()
+        self.glob = _glob if _glob is not None else Climate_MonthlyValueSet()
 
     def __copy__(self):
         # type: () -> Climate_MonthlyRadiationCollection
@@ -270,7 +276,7 @@ class Climate_MonthlyRadiationCollection(_base._Base):
         )
         obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.display_name = _input_dict.get("display_name", obj.display_name)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         return obj
 
@@ -362,7 +368,7 @@ class Climate_PeakLoadValueSet(_base._Base):
 
         obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.identifier = _input_dict.get("identifier", obj.identifier)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         obj.temp = _input_dict["temp"]
         obj.rad_north = _input_dict["rad_north"]
@@ -380,6 +386,9 @@ class Climate_PeakLoadValueSet(_base._Base):
 class Climate_PeakLoadCollection(_base._Base):
     """Collection of peak heating and cooling load design conditions.
 
+    Default construction creates four independent peak-load value sets. Explicitly
+    supplied value sets are retained by identity.
+
     Attributes:
         heat_load_1 (Climate_PeakLoadValueSet): Primary heating design condition.
         heat_load_2 (Climate_PeakLoadValueSet): Secondary heating design condition.
@@ -389,17 +398,17 @@ class Climate_PeakLoadCollection(_base._Base):
 
     def __init__(
         self,
-        _heat_load_1=Climate_PeakLoadValueSet(),
-        _heat_load_2=Climate_PeakLoadValueSet(),
-        _cooling_load_1=Climate_PeakLoadValueSet(),
-        _cooling_load_2=Climate_PeakLoadValueSet(),
+        _heat_load_1=None,
+        _heat_load_2=None,
+        _cooling_load_1=None,
+        _cooling_load_2=None,
     ):
-        # type: (Climate_PeakLoadValueSet, Climate_PeakLoadValueSet, Climate_PeakLoadValueSet, Climate_PeakLoadValueSet) -> None
+        # type: (Optional[Climate_PeakLoadValueSet], Optional[Climate_PeakLoadValueSet], Optional[Climate_PeakLoadValueSet], Optional[Climate_PeakLoadValueSet]) -> None
         super(Climate_PeakLoadCollection, self).__init__()
-        self.heat_load_1 = _heat_load_1
-        self.heat_load_2 = _heat_load_2
-        self.cooling_load_1 = _cooling_load_1
-        self.cooling_load_2 = _cooling_load_2
+        self.heat_load_1 = _heat_load_1 if _heat_load_1 is not None else Climate_PeakLoadValueSet()
+        self.heat_load_2 = _heat_load_2 if _heat_load_2 is not None else Climate_PeakLoadValueSet()
+        self.cooling_load_1 = _cooling_load_1 if _cooling_load_1 is not None else Climate_PeakLoadValueSet()
+        self.cooling_load_2 = _cooling_load_2 if _cooling_load_2 is not None else Climate_PeakLoadValueSet()
 
     def __copy__(self):
         # type: () -> Climate_PeakLoadCollection
@@ -444,7 +453,7 @@ class Climate_PeakLoadCollection(_base._Base):
         )
         obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.display_name = _input_dict.get("display_name", obj.display_name)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         return obj
 
@@ -477,8 +486,24 @@ class Climate_Ground(_base._Base):
         # type: () -> Climate_Ground
         obj = Climate_Ground()
         obj.set_base_attrs_from_source(self)
-        for attr_nm, attr_val in vars(self).items():
-            setattr(obj, attr_nm, attr_val)
+        obj.ground_thermal_conductivity = self.ground_thermal_conductivity
+        obj.ground_heat_capacity = self.ground_heat_capacity
+        obj.ground_density = self.ground_density
+        obj.depth_groundwater = self.depth_groundwater
+        obj.flow_rate_groundwater = self.flow_rate_groundwater
+        modeled_attributes = {
+            "_identifier",
+            "_display_name",
+            "user_data",
+            "ground_thermal_conductivity",
+            "ground_heat_capacity",
+            "ground_density",
+            "depth_groundwater",
+            "flow_rate_groundwater",
+        }
+        for attr_name, attr_value in vars(self).items():
+            if attr_name not in modeled_attributes:
+                setattr(obj, attr_name, attr_value)
 
         return obj
 
@@ -508,7 +533,7 @@ class Climate_Ground(_base._Base):
         obj = cls()
         obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.display_name = _input_dict.get("display_name", obj.display_name)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         obj.ground_thermal_conductivity = _input_dict.get(
             "ground_thermal_conductivity", obj.ground_thermal_conductivity
@@ -525,7 +550,8 @@ class Climate(_base._Base):
     """Complete climate dataset for PH energy modeling.
 
     Contains monthly temperatures, monthly radiation, peak load conditions,
-    and ground thermal properties.
+    and ground thermal properties. Default construction creates a fresh nested
+    graph; explicitly supplied collections are retained by identity.
 
     Attributes:
         station_elevation (float): Weather station elevation in meters.
@@ -544,11 +570,11 @@ class Climate(_base._Base):
         _station_elevation=0.0,
         _daily_temp_swing=8.0,
         _average_wind_speed=4.0,
-        _monthly_temps=Climate_MonthlyTempCollection(),
-        _monthly_radiation=Climate_MonthlyRadiationCollection(),
-        _peak_loads=Climate_PeakLoadCollection(),
+        _monthly_temps=None,
+        _monthly_radiation=None,
+        _peak_loads=None,
     ):
-        # type: (str, float, float, float, Climate_MonthlyTempCollection, Climate_MonthlyRadiationCollection, Climate_PeakLoadCollection) -> None
+        # type: (str, float, float, float, Optional[Climate_MonthlyTempCollection], Optional[Climate_MonthlyRadiationCollection], Optional[Climate_PeakLoadCollection]) -> None
         super(Climate, self).__init__()
         self.display_name = _display_name
         self.station_elevation = _station_elevation  # m
@@ -556,9 +582,11 @@ class Climate(_base._Base):
         self.average_wind_speed = _average_wind_speed  # m/s
 
         self.ground = Climate_Ground()
-        self.monthly_temps = _monthly_temps
-        self.monthly_radiation = _monthly_radiation
-        self.peak_loads = _peak_loads
+        self.monthly_temps = _monthly_temps if _monthly_temps is not None else Climate_MonthlyTempCollection()
+        self.monthly_radiation = (
+            _monthly_radiation if _monthly_radiation is not None else Climate_MonthlyRadiationCollection()
+        )
+        self.peak_loads = _peak_loads if _peak_loads is not None else Climate_PeakLoadCollection()
 
     def to_dict(self):
         # type: () -> Dict
@@ -581,29 +609,49 @@ class Climate(_base._Base):
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate
-        obj = cls()
-
-        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj = cls(
+            _display_name=_input_dict.get("display_name", "New York"),
+            _station_elevation=_input_dict["station_elevation"],
+            _daily_temp_swing=_input_dict["summer_daily_temperature_swing"],
+            _average_wind_speed=_input_dict["average_wind_speed"],
+            _monthly_temps=Climate_MonthlyTempCollection.from_dict(_input_dict.get("monthly_temps", {})),
+            _monthly_radiation=Climate_MonthlyRadiationCollection.from_dict(_input_dict.get("monthly_radiation", {})),
+            _peak_loads=Climate_PeakLoadCollection.from_dict(_input_dict.get("peak_loads", {})),
+        )
         obj.identifier = _input_dict.get("identifier", obj.identifier)
-        obj.user_data = _input_dict.get("user_data", {})
-
-        obj.station_elevation = _input_dict["station_elevation"]
-        obj.summer_daily_temperature_swing = _input_dict["summer_daily_temperature_swing"]
-        obj.average_wind_speed = _input_dict["average_wind_speed"]
-
+        obj.user_data = copy(_input_dict.get("user_data", {}))
         obj.ground = Climate_Ground.from_dict(_input_dict.get("ground", {}))
-        obj.monthly_temps = Climate_MonthlyTempCollection.from_dict(_input_dict.get("monthly_temps", {}))
-        obj.monthly_radiation = Climate_MonthlyRadiationCollection.from_dict(_input_dict.get("monthly_radiation", {}))
-        obj.peak_loads = Climate_PeakLoadCollection.from_dict(_input_dict.get("peak_loads", {}))
 
         return obj
 
     def __copy__(self):
         # type: () -> Climate
-        obj = Climate()
+        obj = Climate(
+            self.display_name,
+            self.station_elevation,
+            self.summer_daily_temperature_swing,
+            self.average_wind_speed,
+            self.monthly_temps.duplicate(),
+            self.monthly_radiation.duplicate(),
+            self.peak_loads.duplicate(),
+        )
         obj.set_base_attrs_from_source(self)
-        for attr_nm, attr_val in vars(self).items():
-            setattr(obj, attr_nm, attr_val)
+        obj.ground = self.ground.duplicate()
+        modeled_attributes = {
+            "_identifier",
+            "_display_name",
+            "user_data",
+            "station_elevation",
+            "summer_daily_temperature_swing",
+            "average_wind_speed",
+            "ground",
+            "monthly_temps",
+            "monthly_radiation",
+            "peak_loads",
+        }
+        for attr_name, attr_value in vars(self).items():
+            if attr_name not in modeled_attributes:
+                setattr(obj, attr_name, attr_value)
 
         return obj
 
@@ -667,7 +715,7 @@ class Location(_base._Base):
         )
         obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.identifier = _input_dict.get("identifier", obj.identifier)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         return obj
 
@@ -737,7 +785,7 @@ class PHPPCodes(_base._Base):
         )
         obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.identifier = _input_dict.get("identifier", obj.identifier)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         return obj
 
@@ -760,6 +808,9 @@ class PHPPCodes(_base._Base):
 class Site(_base._Base):
     """Complete site data combining location, climate, and PHPP library codes.
 
+    Default construction creates a fresh location, climate graph, and PHPP code
+    object. Explicitly supplied child objects are retained by identity.
+
     Attributes:
         location (Location): Geographic location data.
         climate (Climate): Climate dataset for energy modeling.
@@ -768,15 +819,15 @@ class Site(_base._Base):
 
     def __init__(
         self,
-        _location=Location(),
-        _climate=Climate(),
-        _phpp_library_codes=PHPPCodes(),
+        _location=None,
+        _climate=None,
+        _phpp_library_codes=None,
     ):
-        # type: (Location, Climate, PHPPCodes) -> None
+        # type: (Optional[Location], Optional[Climate], Optional[PHPPCodes]) -> None
         super(Site, self).__init__()
-        self.location = _location
-        self.climate = _climate
-        self.phpp_library_codes = _phpp_library_codes
+        self.location = _location if _location is not None else Location()
+        self.climate = _climate if _climate is not None else Climate()
+        self.phpp_library_codes = _phpp_library_codes if _phpp_library_codes is not None else PHPPCodes()
 
     def to_dict(self):
         # type: () -> Dict[str, Any]
@@ -801,18 +852,14 @@ class Site(_base._Base):
         )
         obj.display_name = _input_dict.get("display_name", obj.display_name)
         obj.identifier = _input_dict.get("identifier", obj.identifier)
-        obj.user_data = _input_dict.get("user_data", {})
+        obj.user_data = copy(_input_dict.get("user_data", {}))
 
         return obj
 
     def __copy__(self):
         # type: () -> Site
-        obj = Site()
-
+        obj = Site(self.location.duplicate(), self.climate.duplicate(), self.phpp_library_codes.duplicate())
         obj.set_base_attrs_from_source(self)
-        obj.location = self.location.duplicate()
-        obj.climate = self.climate.duplicate()
-        obj.phpp_library_codes = self.phpp_library_codes.duplicate()
 
         return obj
 

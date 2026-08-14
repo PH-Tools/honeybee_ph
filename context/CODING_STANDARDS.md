@@ -46,6 +46,14 @@ Model classes round-trip through HBJSON via `to_dict()` / `from_dict()`. HBJSON 
 3. Read it in `from_dict()` (or `base_attrs_from_dict`) with `_input_dict.get("key", default)` — **never** bare `_input_dict["key"]` access, so old HBJSON without the key still loads.
 4. Copy it in `duplicate()`.
 
+### Mutable constructor ownership
+
+Mutable or nested constructor arguments must default to `None`; construct a fresh
+child inside `__init__` for each call. When a caller explicitly supplies a child
+object, retain that object by identity unless the public API documents a different
+ownership rule. `duplicate()` must recursively duplicate modeled mutable children
+while preserving serialized values and the existing `_Base` attribute convention.
+
 ## 4. The `_extend_*` / `properties` pattern
 
 PH data is attached to Honeybee objects through Honeybee's `properties` extension API, registered by each package's `_extend_*.py` on import. New host-object attributes belong in the relevant `properties/` sub-package, which owns that host's `to_dict()`/`from_dict()`. Do not attach PH data by monkey-patching around this mechanism.

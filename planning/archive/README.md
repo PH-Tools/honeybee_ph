@@ -6,7 +6,9 @@ This README is the index — scan or grep it instead of guessing dates. Add a ro
 
 | Item | Kind | Completed | Summary | Folder |
 |------|------|-----------|---------|--------|
+| Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | 2026-08-14 | Removed 20 constructed mutable defaults; made duplicate/load graphs recursively independent; verified Room, Model HBJSON, Python 2.7 grammar, and wheel behavior. Release target `v1.33.35`. | [`independent-site-defaults/`](independent-site-defaults/README.md) |
 | Aperture-level Psi-Install (Install Types) | Refactor (cross-repo, primary) | 2026-08-12 | PhApertureInstallType + per-edge aperture slots + single resolver; ISO 10077-1 override-aware; resolves #51. Decision 0003. | [`aperture-psi-install/`](aperture-psi-install/aperture-psi-install-plan.md) |
+| Bundled PHI/Phius climate dataset library | Feature | 2026-08-14 | Superseded before implementation: do not redistribute licensed/access-controlled certification data. Replaced by user-supplied EPW preliminary conversion. Decision 0004. | [`climate-dataset-library/`](climate-dataset-library/README.md) |
 
 ## Conventions
 
