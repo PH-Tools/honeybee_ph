@@ -1,6 +1,6 @@
 # Phase 02 — Constructors and deep duplication
 
-**Status:** Next
+**Status:** Complete · 2026-08-14
 
 ## Objective
 
@@ -31,6 +31,19 @@ operations recursively independent without changing caller-supplied ownership.
 
 ## Exit checks
 
-- Every Phase 01 regression passes.
-- No new serialized key or default value exists.
-- No CPython-only syntax or dependency was introduced.
+- [x] Every Phase 01 regression passes; the expanded focused matrix is 95/95.
+- [x] No new serialized key or default value exists.
+- [x] No CPython-only syntax or dependency was introduced.
+
+## Verification evidence
+
+```text
+./.venv/bin/python -m pytest -q tests/test_honeybee_ph/test_site/test_site_graph_independence.py
+95 passed
+
+./.venv/bin/python -m pytest -q tests/test_honeybee_ph/test_site/test_site_graph_independence.py tests/test_honeybee_ph/test_site tests/test_honeybee_ph/test_bldg_segment.py tests/test_honeybee_ph/test_properties/test_room.py
+186 passed
+
+./.venv/bin/black honeybee_ph/site.py tests/test_honeybee_ph/test_site/test_site_graph_independence.py
+2 files left unchanged
+```

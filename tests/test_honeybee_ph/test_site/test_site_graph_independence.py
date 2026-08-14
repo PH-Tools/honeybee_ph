@@ -73,10 +73,6 @@ SITE_MUTABLE_PATHS = (
 ) + tuple("climate.{}".format(path) for path in CLIMATE_MUTABLE_PATHS)
 
 
-def _xfail(*values):
-    return pytest.param(*values, marks=pytest.mark.xfail(strict=True, reason="shared mutable constructor default"))
-
-
 def _resolve(obj, path):
     for attribute in path.split("."):
         obj = getattr(obj, attribute)
@@ -210,26 +206,26 @@ def _default_site():
 @pytest.mark.parametrize(
     "constructor, parameter_name",
     [
-        _xfail(site.Climate_MonthlyValueSet, "_values"),
-        _xfail(site.Climate_MonthlyTempCollection, "_air"),
-        _xfail(site.Climate_MonthlyTempCollection, "_dewpoint"),
-        _xfail(site.Climate_MonthlyTempCollection, "_sky"),
-        _xfail(site.Climate_MonthlyTempCollection, "_ground"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "_north"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "_east"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "_south"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "_west"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "_glob"),
-        _xfail(site.Climate_PeakLoadCollection, "_heat_load_1"),
-        _xfail(site.Climate_PeakLoadCollection, "_heat_load_2"),
-        _xfail(site.Climate_PeakLoadCollection, "_cooling_load_1"),
-        _xfail(site.Climate_PeakLoadCollection, "_cooling_load_2"),
-        _xfail(site.Climate, "_monthly_temps"),
-        _xfail(site.Climate, "_monthly_radiation"),
-        _xfail(site.Climate, "_peak_loads"),
-        _xfail(site.Site, "_location"),
-        _xfail(site.Site, "_climate"),
-        _xfail(site.Site, "_phpp_library_codes"),
+        (site.Climate_MonthlyValueSet, "_values"),
+        (site.Climate_MonthlyTempCollection, "_air"),
+        (site.Climate_MonthlyTempCollection, "_dewpoint"),
+        (site.Climate_MonthlyTempCollection, "_sky"),
+        (site.Climate_MonthlyTempCollection, "_ground"),
+        (site.Climate_MonthlyRadiationCollection, "_north"),
+        (site.Climate_MonthlyRadiationCollection, "_east"),
+        (site.Climate_MonthlyRadiationCollection, "_south"),
+        (site.Climate_MonthlyRadiationCollection, "_west"),
+        (site.Climate_MonthlyRadiationCollection, "_glob"),
+        (site.Climate_PeakLoadCollection, "_heat_load_1"),
+        (site.Climate_PeakLoadCollection, "_heat_load_2"),
+        (site.Climate_PeakLoadCollection, "_cooling_load_1"),
+        (site.Climate_PeakLoadCollection, "_cooling_load_2"),
+        (site.Climate, "_monthly_temps"),
+        (site.Climate, "_monthly_radiation"),
+        (site.Climate, "_peak_loads"),
+        (site.Site, "_location"),
+        (site.Site, "_climate"),
+        (site.Site, "_phpp_library_codes"),
     ],
 )
 def test_mutable_constructor_parameters_default_to_none(constructor, parameter_name):
@@ -239,35 +235,35 @@ def test_mutable_constructor_parameters_default_to_none(constructor, parameter_n
 @pytest.mark.parametrize(
     "constructor, path",
     [
-        _xfail(site.Climate_MonthlyTempCollection, "air_temps"),
-        _xfail(site.Climate_MonthlyTempCollection, "dewpoints"),
-        _xfail(site.Climate_MonthlyTempCollection, "sky_temps"),
-        _xfail(site.Climate_MonthlyTempCollection, "ground_temps"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "north"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "east"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "south"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "west"),
-        _xfail(site.Climate_MonthlyRadiationCollection, "glob"),
-        _xfail(site.Climate_PeakLoadCollection, "heat_load_1"),
-        _xfail(site.Climate_PeakLoadCollection, "heat_load_2"),
-        _xfail(site.Climate_PeakLoadCollection, "cooling_load_1"),
-        _xfail(site.Climate_PeakLoadCollection, "cooling_load_2"),
+        (site.Climate_MonthlyTempCollection, "air_temps"),
+        (site.Climate_MonthlyTempCollection, "dewpoints"),
+        (site.Climate_MonthlyTempCollection, "sky_temps"),
+        (site.Climate_MonthlyTempCollection, "ground_temps"),
+        (site.Climate_MonthlyRadiationCollection, "north"),
+        (site.Climate_MonthlyRadiationCollection, "east"),
+        (site.Climate_MonthlyRadiationCollection, "south"),
+        (site.Climate_MonthlyRadiationCollection, "west"),
+        (site.Climate_MonthlyRadiationCollection, "glob"),
+        (site.Climate_PeakLoadCollection, "heat_load_1"),
+        (site.Climate_PeakLoadCollection, "heat_load_2"),
+        (site.Climate_PeakLoadCollection, "cooling_load_1"),
+        (site.Climate_PeakLoadCollection, "cooling_load_2"),
         (site.Climate, "ground"),
-        _xfail(site.Climate, "monthly_temps"),
-        _xfail(site.Climate, "monthly_temps.air_temps"),
-        _xfail(site.Climate, "monthly_radiation"),
-        _xfail(site.Climate, "monthly_radiation.north"),
-        _xfail(site.Climate, "peak_loads"),
-        _xfail(site.Climate, "peak_loads.heat_load_1"),
-        _xfail(site.Site, "location"),
-        _xfail(site.Site, "climate"),
-        _xfail(site.Site, "climate.monthly_temps.air_temps"),
-        _xfail(site.Site, "phpp_library_codes"),
+        (site.Climate, "monthly_temps"),
+        (site.Climate, "monthly_temps.air_temps"),
+        (site.Climate, "monthly_radiation"),
+        (site.Climate, "monthly_radiation.north"),
+        (site.Climate, "peak_loads"),
+        (site.Climate, "peak_loads.heat_load_1"),
+        (site.Site, "location"),
+        (site.Site, "climate"),
+        (site.Site, "climate.monthly_temps.air_temps"),
+        (site.Site, "phpp_library_codes"),
         (BldgSegment, "site"),
-        _xfail(BldgSegment, "site.location"),
-        _xfail(BldgSegment, "site.climate"),
-        _xfail(BldgSegment, "site.climate.monthly_radiation.north"),
-        _xfail(BldgSegment, "site.phpp_library_codes"),
+        (BldgSegment, "site.location"),
+        (BldgSegment, "site.climate"),
+        (BldgSegment, "site.climate.monthly_radiation.north"),
+        (BldgSegment, "site.phpp_library_codes"),
     ],
 )
 def test_default_nested_objects_are_independent(constructor, path):
@@ -281,22 +277,22 @@ def test_default_nested_objects_are_independent(constructor, path):
     "constructor, path, changed_value",
     [
         (site.Climate_MonthlyValueSet, "january", 99.0),
-        _xfail(site.Climate_MonthlyTempCollection, "air_temps.january", 11.0),
-        _xfail(site.Climate_MonthlyRadiationCollection, "north.january", 22.0),
-        _xfail(site.Climate_PeakLoadCollection, "heat_load_1.temp", -12.0),
-        _xfail(site.Climate, "monthly_temps.air_temps.january", 33.0),
-        _xfail(site.Climate, "monthly_radiation.north.january", 44.0),
-        _xfail(site.Climate, "peak_loads.heat_load_1.temp", -14.0),
+        (site.Climate_MonthlyTempCollection, "air_temps.january", 11.0),
+        (site.Climate_MonthlyRadiationCollection, "north.january", 22.0),
+        (site.Climate_PeakLoadCollection, "heat_load_1.temp", -12.0),
+        (site.Climate, "monthly_temps.air_temps.january", 33.0),
+        (site.Climate, "monthly_radiation.north.january", 44.0),
+        (site.Climate, "peak_loads.heat_load_1.temp", -14.0),
         (site.Climate, "ground.ground_thermal_conductivity", 3.0),
-        _xfail(site.Site, "location.latitude", 42.0),
-        _xfail(site.Site, "climate.ground.ground_density", 1800),
-        _xfail(site.Site, "climate.monthly_temps.air_temps.january", 55.0),
-        _xfail(site.Site, "climate.monthly_radiation.north.january", 66.0),
-        _xfail(site.Site, "climate.peak_loads.heat_load_1.temp", -16.0),
-        _xfail(site.Site, "phpp_library_codes.region_code", "Massachusetts"),
-        _xfail(BldgSegment, "site.location.latitude", 43.0),
-        _xfail(BldgSegment, "site.climate.monthly_temps.air_temps.january", 77.0),
-        _xfail(BldgSegment, "site.phpp_library_codes.region_code", "New Jersey"),
+        (site.Site, "location.latitude", 42.0),
+        (site.Site, "climate.ground.ground_density", 1800),
+        (site.Site, "climate.monthly_temps.air_temps.january", 55.0),
+        (site.Site, "climate.monthly_radiation.north.january", 66.0),
+        (site.Site, "climate.peak_loads.heat_load_1.temp", -16.0),
+        (site.Site, "phpp_library_codes.region_code", "Massachusetts"),
+        (BldgSegment, "site.location.latitude", 43.0),
+        (BldgSegment, "site.climate.monthly_temps.air_temps.january", 77.0),
+        (BldgSegment, "site.phpp_library_codes.region_code", "New Jersey"),
     ],
 )
 def test_mutating_default_graph_does_not_change_peer(constructor, path, changed_value):
@@ -357,12 +353,15 @@ def _populated_climate():
             _cooling_load_2=site.Climate_PeakLoadValueSet(_temp=35.0),
         ),
     )
+    climate.ground.ground_thermal_conductivity = 1.7
+    climate.ground.ground_heat_capacity = 850
     climate.ground.ground_density = 1900
+    climate.ground.depth_groundwater = 2.5
+    climate.ground.flow_rate_groundwater = 0.02
     climate.user_data["source"] = "test"
     return climate
 
 
-@pytest.mark.xfail(strict=True, reason="Climate duplicate is shallow")
 def test_climate_duplicate_is_recursively_independent():
     climate = _populated_climate()
     duplicate = climate.duplicate()
@@ -372,15 +371,29 @@ def test_climate_duplicate_is_recursively_independent():
         assert _resolve(duplicate, path) is not _resolve(climate, path)
 
 
-@pytest.mark.xfail(strict=True, reason="Climate_Ground duplicate reuses user_data")
 def test_ground_duplicate_owns_user_data():
     ground = site.Climate_Ground()
     ground.user_data["source"] = "test"
+    ground.ground_thermal_conductivity = 1.7
+    ground.ground_heat_capacity = 850
+    ground.ground_density = 1900
+    ground.depth_groundwater = 2.5
+    ground.flow_rate_groundwater = 0.02
 
     duplicate = ground.duplicate()
 
     assert duplicate.to_dict() == ground.to_dict()
     assert duplicate.user_data is not ground.user_data
+
+
+@pytest.mark.parametrize("original", [_populated_climate(), site.Climate_Ground()])
+def test_duplicate_preserves_dynamic_attributes(original):
+    custom_value = {"downstream": []}
+    original.custom_extension_value = custom_value
+
+    duplicate = original.duplicate()
+
+    assert duplicate.custom_extension_value is custom_value
 
 
 def _populated_site():
@@ -400,7 +413,6 @@ def test_site_duplicate_preserves_values_and_owns_nested_objects():
         assert _resolve(duplicate, path) is not _resolve(original, path)
 
 
-@pytest.mark.xfail(strict=True, reason="Site duplicate contains a shallow Climate duplicate")
 def test_site_duplicate_owns_complete_climate_graph():
     original = _populated_site()
     duplicate = original.duplicate()
@@ -433,7 +445,6 @@ def test_legacy_site_dict_without_base_attributes_loads_independently():
         assert _resolve(left, path) is not _resolve(right, path)
 
 
-@pytest.mark.xfail(strict=True, reason="from_dict reuses input user_data dictionaries")
 def test_repeated_site_deserialization_owns_user_data():
     serialized = site.Site().to_dict()
     serialized["user_data"]["scope"] = "site"
@@ -479,3 +490,39 @@ def test_constructor_preserves_explicit_child_ownership(constructor, parameter, 
     obj = constructor(**{parameter: child})
 
     assert getattr(obj, attribute) is child
+
+
+def test_mutable_children_preserve_positional_order():
+    temp_children = tuple(site.Climate_MonthlyValueSet([value] * 12) for value in range(1, 5))
+    temperatures = site.Climate_MonthlyTempCollection(*temp_children)
+    assert (
+        temperatures.air_temps,
+        temperatures.dewpoints,
+        temperatures.sky_temps,
+        temperatures.ground_temps,
+    ) == temp_children
+
+    radiation_children = tuple(site.Climate_MonthlyValueSet([value] * 12) for value in range(5, 10))
+    radiation = site.Climate_MonthlyRadiationCollection(*radiation_children)
+    assert (radiation.north, radiation.east, radiation.south, radiation.west, radiation.glob) == radiation_children
+
+    peak_children = tuple(site.Climate_PeakLoadValueSet(_temp=value) for value in range(10, 14))
+    peak_loads = site.Climate_PeakLoadCollection(*peak_children)
+    assert (
+        peak_loads.heat_load_1,
+        peak_loads.heat_load_2,
+        peak_loads.cooling_load_1,
+        peak_loads.cooling_load_2,
+    ) == peak_children
+
+    climate = site.Climate("Test", 100.0, 7.0, 3.0, temperatures, radiation, peak_loads)
+    assert climate.monthly_temps is temperatures
+    assert climate.monthly_radiation is radiation
+    assert climate.peak_loads is peak_loads
+
+    location = site.Location()
+    phpp_codes = site.PHPPCodes()
+    site_obj = site.Site(location, climate, phpp_codes)
+    assert site_obj.location is location
+    assert site_obj.climate is climate
+    assert site_obj.phpp_library_codes is phpp_codes

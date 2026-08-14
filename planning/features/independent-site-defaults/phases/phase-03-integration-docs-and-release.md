@@ -1,6 +1,6 @@
 # Phase 03 — Integration, docs, and release
 
-**Status:** Pending
+**Status:** Next
 
 ## Objective
 
