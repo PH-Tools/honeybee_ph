@@ -1,6 +1,6 @@
 # space-from-room-factory — router
 
-**Status:** Scoped · implementation not started
+**Status:** Implementing · Phases 01-02 complete
 
 **Scope:** Upstream the "create a default PH Space from a Honeybee Room"
 logic — today implemented Rhino-side in `honeybee_grasshopper_ph`

@@ -4,7 +4,8 @@
 """PH 'Space' and Related Sub-object Classes (FloorSegments, etc)."""
 
 from copy import copy
-from math import radians
+from math import isinf, isnan, radians
+from numbers import Real
 
 try:
     pass
@@ -14,6 +15,7 @@ except:
 try:
     from ladybug_geometry.geometry3d.face import Face3D as LBFace3D
     from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+    from ladybug_geometry.geometry3d.polyface import Polyface3D
 except ImportError as e:
     raise ImportError("\nFailed to import ladybug_geometry:\n\t{}".format(e))
 
@@ -813,6 +815,100 @@ class Space(_base._Base):
 
         self._volumes = list()
         self.properties = SpaceProperties(self)
+
+    @classmethod
+    def from_room(cls, hb_room, avg_ceiling_height):
+        # type: (room.Room, float) -> Space
+        """Build a default Passive House Space from a Honeybee Room.
+
+        Each horizontal Honeybee Floor face becomes one floor segment, one
+        floor, and one volume. Floor-face winding is normalized only for the
+        upward World-Z extrusion; the source geometry remains attached to the
+        generated floor and segment. The returned Space is not attached to the
+        Room, so callers retain control of Room mutation and final iCFA/TFA
+        reductions.
+
+        Arguments:
+        ----------
+            * hb_room (room.Room): The Honeybee Room whose Floor faces define
+                the generated Space.
+            * avg_ceiling_height (float): Required positive, finite extrusion
+                height in the same coordinate units as the Room geometry.
+
+        Returns:
+        --------
+            * Space: A default Space hosted by, but not attached to, hb_room.
+        """
+        if not isinstance(hb_room, room.Room):
+            raise TypeError("hb_room must be a Honeybee Room. Got {}.".format(type(hb_room)))
+
+        if (
+            isinstance(avg_ceiling_height, bool)
+            or not isinstance(avg_ceiling_height, Real)
+            or isnan(avg_ceiling_height)
+            or isinf(avg_ceiling_height)
+            or avg_ceiling_height <= 0
+        ):
+            raise ValueError("avg_ceiling_height must be a finite number greater than zero.")
+        ceiling_height = float(avg_ceiling_height)
+
+        floor_faces = hb_room.floors
+        if not floor_faces:
+            raise ValueError("Honeybee Room '{}' has no Floor faces.".format(hb_room.display_name))
+
+        floor_geometry_and_polyfaces = []
+        for floor_face in floor_faces:
+            floor_geometry = floor_face.geometry
+            try:
+                is_horizontal = floor_geometry.is_horizontal(1e-7)
+            except (AttributeError, TypeError, ValueError):
+                is_horizontal = False
+            if not is_horizontal:
+                raise ValueError(
+                    "Honeybee Room '{}' Floor face '{}' must be horizontal for World-Z extrusion.".format(
+                        hb_room.display_name, floor_face.identifier
+                    )
+                )
+
+            extrusion_geometry = floor_geometry if floor_geometry.normal.z > 0 else floor_geometry.flip()
+            try:
+                volume_polyface = Polyface3D.from_offset_face(extrusion_geometry, ceiling_height)
+            except Exception as e:
+                raise ValueError(
+                    "Honeybee Room '{}' Floor face '{}' could not be extruded: {}".format(
+                        hb_room.display_name, floor_face.identifier, e
+                    )
+                )
+            if not volume_polyface.is_solid:
+                raise ValueError(
+                    "Honeybee Room '{}' Floor face '{}' could not be extruded into a solid volume.".format(
+                        hb_room.display_name, floor_face.identifier
+                    )
+                )
+            floor_geometry_and_polyfaces.append((floor_geometry, volume_polyface))
+
+        new_volumes = []
+        for floor_geometry, volume_polyface in floor_geometry_and_polyfaces:
+            new_segment = SpaceFloorSegment()
+            new_segment.geometry = floor_geometry
+            new_segment.reference_point = floor_geometry.center
+            new_segment.weighting_factor = 1.0
+            new_segment.net_area_factor = 1.0
+
+            new_floor = SpaceFloor()
+            new_floor.add_floor_segment(new_segment)
+            new_floor.geometry = floor_geometry
+
+            new_volume = SpaceVolume()
+            new_volume.floor = new_floor
+            new_volume.avg_ceiling_height = ceiling_height
+            new_volume.geometry = list(volume_polyface.faces)
+            new_volumes.append(new_volume)
+
+        new_space = cls(_host=hb_room)
+        new_space.name = "{}_default_space".format(hb_room.display_name)
+        new_space.add_new_volumes(new_volumes)
+        return new_space
 
     @property
     def display_name(self):

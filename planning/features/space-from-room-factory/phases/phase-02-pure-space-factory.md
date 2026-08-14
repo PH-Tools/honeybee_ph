@@ -1,5 +1,7 @@
 # Phase 02 — Pure Space factory
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Implement the tested Room -> segment/floor/volume/Space assembly with pure
@@ -36,3 +38,11 @@ Honeybee and ladybug-geometry dependencies.
 - No Rhino-specific import or implicit conversion exists.
 - V1 does not merge floors or repair topology.
 
+## Evidence
+
+- `.venv/bin/python -m pytest tests/test_honeybee_ph/test_space/test_Space_from_room.py -q`
+  → 18 passed.
+- `.venv/bin/python -m pytest tests/` → 909 passed.
+- `.venv/bin/black --check honeybee_ph/space.py tests/test_honeybee_ph/test_space/test_Space_from_room.py`
+  → 2 files unchanged.
+- `git diff --check` → pass.
