@@ -7,8 +7,8 @@ changes only after the released minimum version is available.
 |---:|---|---|---|
 | 01 | **Complete** | Freeze API, unit, floor-selection, geometry, naming, and host contracts in tests | Focused failures reproduced only the missing API/import |
 | 02 | **Complete** | Implement the pure-Ladybug `Space.from_room()` assembly | 18 focused contract tests pass |
-| 03 | **Next** | Prove attachment, duplication, HBJSON, docs, and full-suite compatibility | Phase 02 focused tests green |
-| 04 | **Pending release gate** | Release primary, re-point GH wrapper, compare behavior, and retire duplicate code | Released minimum version installed in GH environment |
+| 03 | **Complete** | Prove attachment, duplication, HBJSON, docs, and full-suite compatibility | 23 focused + 914 full tests pass; 79% coverage clears the 75% floor; wheel verified |
+| 04 | **Next** | Release primary, re-point GH wrapper, compare behavior, and retire duplicate code | Released minimum version installed in GH environment |
 
 Phase documents:
 

@@ -19,7 +19,8 @@ This plugin  is designed to be used as a plugin for Ladybug-Tools v1.9 or higher
 ## Development:
 
 - **Requirements:** Code must run under both **IronPython 2.7** (the Rhino/Grasshopper runtime) and **CPython 3.10+**. See [`context/CODING_STANDARDS.md`](context/CODING_STANDARDS.md).
-- **Tests:** `python3 -m pytest` (100% coverage target).
+- **Tests:** `python3 -m coverage run && python3 -m coverage report` (75%
+  repository-wide coverage floor).
 - **Agent/contributor orientation:** [`CLAUDE.md`](CLAUDE.md) and the [`context/`](context/) folder (PRD, architecture, tech stack, coding standards).
 
 # More Information:

@@ -1,9 +1,11 @@
 import math
+import json
 from fractions import Fraction
 
 import pytest
 from honeybee.face import Face
 from honeybee.facetype import Floor, Wall
+from honeybee.model import Model
 from honeybee.room import Room
 from ladybug_geometry.geometry3d import Face3D, Point3D
 
@@ -177,3 +179,69 @@ def test_from_room_wraps_non_extrudable_geometry_error(monkeypatch):
         space.Space.from_room(hb_room, avg_ceiling_height=2.5)
 
     assert hb_room.properties.ph.spaces == []
+
+
+def test_factory_space_attachment_flows_through_room_properties():
+    hb_room = Room.from_box("AttachedRoom", width=5, depth=4, height=3)
+    ph_space = space.Space.from_room(hb_room, avg_ceiling_height=2.5)
+    ph_space.floor_segments[0].weighting_factor = 0.75
+
+    hb_room.properties.ph.add_new_space(ph_space)
+
+    assert hb_room.properties.ph.spaces == [ph_space]
+    assert hb_room.properties.ph.total_space_floor_area == pytest.approx(20.0)
+    assert hb_room.properties.ph.spaces[0].weighted_floor_area == pytest.approx(15.0)
+
+
+def test_room_duplicate_rebinds_factory_space_host_and_children():
+    hb_room = Room.from_box("DuplicateRoom")
+    ph_space = space.Space.from_room(hb_room, avg_ceiling_height=2.5)
+    hb_room.properties.ph.add_new_space(ph_space)
+
+    duplicated_room = hb_room.duplicate()
+    duplicated_space = duplicated_room.properties.ph.spaces[0]
+
+    assert duplicated_space.host is duplicated_room
+    assert duplicated_space.host is not hb_room
+    assert duplicated_space.to_dict() == ph_space.to_dict()
+    assert duplicated_space.volumes[0] is not ph_space.volumes[0]
+    assert duplicated_space.volumes[0].floor is not ph_space.volumes[0].floor
+    assert duplicated_space.floor_segments[0] is not ph_space.floor_segments[0]
+    assert duplicated_space.floor_segments[0].geometry is not ph_space.floor_segments[0].geometry
+    assert duplicated_space.volumes[0].geometry[0] is not ph_space.volumes[0].geometry[0]
+
+
+def test_factory_space_dict_roundtrip_preserves_room_host_contract():
+    hb_room = Room.from_box("SpaceDictRoom")
+    ph_space = space.Space.from_room(hb_room, avg_ceiling_height=2.5)
+
+    restored_space = space.Space.from_dict(ph_space.to_dict(), _host=hb_room)
+
+    assert restored_space.host is hb_room
+    assert restored_space.to_dict() == ph_space.to_dict()
+
+
+def test_room_hbjson_roundtrip_preserves_factory_space_and_host():
+    hb_room = Room.from_box("RoomRoundtrip")
+    ph_space = space.Space.from_room(hb_room, avg_ceiling_height=2.5)
+    hb_room.properties.ph.add_new_space(ph_space)
+
+    restored_room = Room.from_dict(json.loads(json.dumps(hb_room.to_dict())))
+    restored_space = restored_room.properties.ph.spaces[0]
+
+    assert restored_space.host is restored_room
+    assert restored_space.to_dict() == ph_space.to_dict()
+
+
+def test_model_hbjson_roundtrip_preserves_factory_space_and_host():
+    hb_room = Room.from_box("ModelRoundtripRoom")
+    ph_space = space.Space.from_room(hb_room, avg_ceiling_height=2.5)
+    hb_room.properties.ph.add_new_space(ph_space)
+    hb_model = Model("FactoryModel", [hb_room])
+
+    restored_model = Model.from_dict(json.loads(json.dumps(hb_model.to_dict())))
+    restored_room = restored_model.rooms[0]
+    restored_space = restored_room.properties.ph.spaces[0]
+
+    assert restored_space.host is restored_room
+    assert restored_space.to_dict() == ph_space.to_dict()

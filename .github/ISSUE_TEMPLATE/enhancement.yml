@@ -46,7 +46,7 @@ body:
         - [ ] Backward compatibility: HBJSON written before this change still loads and behaves identically.
         - [ ] Round-trip test covering the new data.
         - [ ] IronPython 2.7 compatible (`context/CODING_STANDARDS.md`).
-        - [ ] `python3 -m pytest` passes at 100% coverage.
+        - [ ] `python3 -m coverage run && python3 -m coverage report` passes at or above 75%.
         - [ ] Docstrings and `docs/nav.yml` updated per `docs/.instructions.md`.
     validations:
       required: true

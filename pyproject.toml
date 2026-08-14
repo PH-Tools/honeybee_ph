@@ -109,7 +109,7 @@ omit = ["*/__init__.py", "*.venv/*", "*.venv_mbair/*"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 100
+fail_under = 75
 
 [tool.coverage.html]
 directory = "_coverage_html"

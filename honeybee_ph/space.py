@@ -561,15 +561,15 @@ class SpaceVolume(_base._Base):
     ceiling heights.
 
     Attributes:
-        avg_ceiling_height (float): Average clear ceiling height in meters.
-            Default: 2.5.
+        avg_ceiling_height (float): Average clear ceiling height in the same
+            coordinate units as the Space geometry. Default: 2.5.
         floor (SpaceFloor): The floor level for this volume.
         geometry (List[LBFace3D]): The enclosing 3D face geometry.
     """
 
     def __init__(self):
         super(SpaceVolume, self).__init__()
-        self.avg_ceiling_height = 2.5  # m
+        self.avg_ceiling_height = 2.5
         self.floor = SpaceFloor()
         self.geometry = []  # type: List[LBFace3D]
 

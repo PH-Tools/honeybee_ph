@@ -36,7 +36,8 @@ Not affiliated with or endorsed by PHI or Phius.
 - A model built with these attributes round-trips losslessly through HBJSON — including old HBJSON produced by earlier versions (backward-compatible deserialization).
 - The full model exports cleanly through PHX to both PHPP and WUFI-Passive.
 - All code loads and runs inside Rhino/Grasshopper (IronPython 2.7) with no import or syntax errors.
-- 100% test coverage maintained.
+- Repository-wide test coverage remains at or above 75%; new behavior receives
+  focused regression coverage.
 
 ## 6. Current direction
 

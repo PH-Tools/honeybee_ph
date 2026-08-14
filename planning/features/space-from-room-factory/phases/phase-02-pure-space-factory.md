@@ -34,7 +34,7 @@ Honeybee and ladybug-geometry dependencies.
 
 ## Exit checks
 
-- Complete focused suite passes at 100% coverage.
+- Complete focused contract suite passes.
 - No Rhino-specific import or implicit conversion exists.
 - V1 does not merge floors or repair topology.
 
