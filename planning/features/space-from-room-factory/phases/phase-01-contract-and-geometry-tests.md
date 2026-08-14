@@ -1,5 +1,7 @@
 # Phase 01 — Contract and geometry tests
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Encode the complete public/geometry contract before implementing the factory.
@@ -13,7 +15,9 @@ Encode the complete public/geometry contract before implementing the factory.
   supplied Honeybee Room.
 - One Floor-type source face becomes one segment, one floor, and one volume;
   no v1 merging or topology repair.
-- Only horizontal upward-facing Floor geometry is supported.
+- Horizontal Honeybee Floor geometry is supported. Because solid Honeybee
+  Rooms wind floor faces outward (`-Z`), the extrusion copy is normalized to
+  `+Z`; the source floor geometry is preserved on the PH objects.
 - Space name is `"{room.display_name}_default_space"`.
 
 ## Tests first
@@ -26,8 +30,9 @@ Encode the complete public/geometry contract before implementing the factory.
 4. No Floor-type faces: room-specific error.
 5. Zero, negative, NaN, positive/negative infinity, bool, and nonnumeric height:
    field-specific validation errors.
-6. Sloped, downward-facing, degenerate, or non-extrudable floor: room- and
-   face-specific error; no partial Space returned.
+6. Sloped or non-extrudable floor: room- and face-specific error; no partial
+   Space returned. Degenerate `Face3D` inputs are rejected by Ladybug before
+   they can become Honeybee Faces. Both valid floor windings are covered.
 7. Host identity, default name, weighting/net-area defaults, and non-mutation.
 8. Confirm no Rhino/ladybug_rhino/ph_units import is needed.
 
@@ -38,3 +43,8 @@ Encode the complete public/geometry contract before implementing the factory.
 - The exact supported Ladybug/Honeybee versions expose the required face-type,
   normal/horizontal checks, and `Polyface3D.from_offset_face()` API.
 
+## Evidence
+
+- Pre-implementation: focused failures were all due to the missing
+  `Space.from_room()` API/import.
+- Post-implementation: 18 focused tests pass.

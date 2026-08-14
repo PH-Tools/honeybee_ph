@@ -16,7 +16,8 @@ jobs:
         with:
           python-version: "3.10"
       - run: pip install '.[dev]'
-      - run: python -m pytest tests/
+      - run: python -m coverage run
+      - run: python -m coverage report
 
   bump-and-release:
     name: Bump version and publish

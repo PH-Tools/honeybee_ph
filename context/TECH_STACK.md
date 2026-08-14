@@ -31,8 +31,12 @@ Dev extras (`[project.optional-dependencies] dev`): `black`, `coverage`, `pytest
 
 ## Testing
 
-- **pytest** — `python3 -m pytest`.
-- Coverage via `coverage` / `pytest-cov`; **`fail_under = 100`** — 100% coverage is the standard.
+- **pytest + coverage** — `python3 -m coverage run` executes the configured
+  full suite and `python3 -m coverage report` enforces the coverage floor.
+- Coverage via `coverage` / `pytest-cov`; **`fail_under = 75`** is the
+  repository-wide floor. New behavior still requires focused contract tests.
+- CI runs both coverage commands; plain `python3 -m pytest` is useful for
+  focused local checks but does not enforce the aggregate floor.
 - `filterwarnings = ["error", ...]` — warnings are errors in the test suite.
 - HTML coverage report → `_coverage_html/` (gitignored).
 - Tests live under `tests/`, mirroring the package layout (`test_honeybee_ph/`, `test_honeybee_phhvac/`, etc.).

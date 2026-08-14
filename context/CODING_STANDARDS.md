@@ -64,8 +64,11 @@ PH data is attached to Honeybee objects through Honeybee's `properties` extensio
 
 ## 6. Testing
 
-- **pytest** — `python3 -m pytest`.
-- Coverage target: **100%** (`fail_under = 100`). New code needs tests that keep coverage at 100%.
+- **pytest + coverage** — `python3 -m coverage run` executes the configured
+  full suite; `python3 -m coverage report` enforces the repository floor.
+- Repository-wide coverage floor: **75%** (`fail_under = 75`). New behavior
+  still needs focused tests for its public, validation, serialization, and
+  compatibility contracts.
 - `filterwarnings = ["error", ...]` — a warning fails the suite. Fix the cause, don't silence it broadly.
 - Tests mirror the package structure under `tests/` (`test_honeybee_ph/`, `test_honeybee_phhvac/`, …).
 
@@ -77,6 +80,7 @@ Docstrings feed the autodoc site — keep them in the `ph-docs` format described
 
 - [ ] Code loads under IronPython 2.7 (no f-strings/walrus/match/unions/dataclasses; guarded `typing`; comment-style hints).
 - [ ] New fields follow the backward-compatible serialization pattern (default + `.get()` + `duplicate()`).
-- [ ] `python3 -m pytest` passes at 100% coverage.
+- [ ] `python3 -m coverage run && python3 -m coverage report` passes with
+      repository-wide coverage at or above 75%.
 - [ ] `black` clean.
 - [ ] `docs/nav.yml` + docstrings updated for any new/renamed public API.

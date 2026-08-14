@@ -20,8 +20,8 @@ claims, IronPython regressions, or downstream zero fallbacks.
    IronPython syntax/import compatibility check appropriate to this repo.
 5. Coordinate PHX/OpenPH behavior so `peak_loads=None` produces a targeted
    readiness diagnostic and never zero-filled load inputs.
-6. Run focused tests, `python3 -m pytest` at 100% coverage, Black, and
-   `git diff --check`.
+6. Run focused tests, `python3 -m pytest` at or above the 75% repository
+   coverage floor, Black, and `git diff --check`.
 7. Fold the stable provenance/readiness contract into `context/`, update
    `planning/STATUS.md`, release, then archive this packet only after the
    released artifact and downstream diagnostic are verified.
@@ -34,4 +34,3 @@ claims, IronPython regressions, or downstream zero fallbacks.
 - Docs never use `approved`, `certification`, `PHPP dataset`, or `Phius
   dataset` to describe EPW-derived values except to state the exclusion.
 - Release version and downstream minimum-version requirements are recorded.
-

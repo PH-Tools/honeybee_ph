@@ -1,6 +1,6 @@
 # PRD — `Space.from_room()` default-space factory (upstreamed from GH)
 
-**Status:** Scoped · 2026-08-14
+**Status:** Implementing · Phase 03 complete; Phase 04 next · 2026-08-14
 **Author:** Ed May + Claude
 **Kind:** Feature / cross-repo refactor — **this repo is primary**, ships
 first. Companion: `honeybee_grasshopper_ph/planning/refactor/space-from-room-factory.md`.
@@ -60,10 +60,12 @@ Behavior contract (matches today's GH component semantics,
    to the room (`add_new_space`) and any `room.duplicate()` semantics remain
    the caller's / GH wrapper's job.
 8. **Geometry validity:** `avg_ceiling_height` must be a finite value greater
-   than zero. V1 supports horizontal upward-facing Honeybee Floor faces and
-   raises a clear room/face-specific error for geometry it cannot extrude
-   vertically without changing the source floor area. It must not silently
-   extrude a sloped floor along the wrong vector.
+   than zero. V1 supports horizontal Honeybee Floor faces. Honeybee solid
+   Rooms normally wind floor faces outward with a `-Z` normal, so the factory
+   normalizes an extrusion-only copy to `+Z` while preserving the source face
+   on the segment/floor. It raises a clear room/face-specific error for
+   geometry it cannot extrude vertically without changing the source floor
+   area, and must not silently extrude a sloped floor along the wrong vector.
 9. **Area defaults:** each generated segment starts at weighting factor `1.0`
    and uses its geometric area unless the existing model contract defines a
    different explicit default. The docstring must state that callers still own

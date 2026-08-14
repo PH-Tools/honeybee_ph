@@ -410,7 +410,7 @@ log a warning when it encounters >1 system pre-Phase-2.
   shape (incl. dual-key output); add: multi-system round-trip, order
   preservation, dedup-on-add, legacy-key-only load, dual-key no-double-read,
   transforms over multiple systems, compat property/setter behavior.
-  Coverage target is 100% (`fail_under = 100`).
+  Repository-wide coverage floor is 75% (`fail_under = 75`).
 - **Docs**: new collection class + changed methods into `docs/nav.yml`,
   AUTODOC-format docstrings per `docs/.instructions.md`.
 

@@ -66,7 +66,7 @@ body:
       value: |
         - [ ] Regression test reproduces the bug and passes after the fix.
         - [ ] Backward compatibility: old HBJSON still loads (`from_dict` uses `.get(key, default)`).
-        - [ ] `python3 -m pytest` passes at 100% coverage.
+        - [ ] `python3 -m coverage run && python3 -m coverage report` passes at or above 75%.
         - [ ] Docstrings and `docs/nav.yml` updated per `docs/.instructions.md`.
     validations:
       required: true

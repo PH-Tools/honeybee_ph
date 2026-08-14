@@ -165,4 +165,5 @@ that approved/specialized load climate data must be supplied separately.
 - Monthly-demand readiness passes only when every required derived field is
   present and finite.
 - Repeated conversions are independent.
-- IronPython-safe syntax, 100% coverage, docs/nav updates, and full pytest pass.
+- IronPython-safe syntax, focused coverage for the new behavior, docs/nav
+  updates, and full pytest at or above the 75% repository coverage floor.

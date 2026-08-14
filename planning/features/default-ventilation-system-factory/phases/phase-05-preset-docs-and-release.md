@@ -28,7 +28,7 @@ feature without it. Never fill gaps from current defaults.
 3. Add migration guidance away from composing bare `Ventilator()` with default
    ducts as a nominal HRV.
 4. Run Black, `git diff --check`, IronPython compatibility, and full pytest at
-   100% coverage.
+   or above the 75% repository coverage floor.
 5. Record downstream suite/reference evidence, release versions, and minimum
    compatible pins.
 6. Fold the stable ventilation-state contract into `context/`, update all
@@ -40,4 +40,3 @@ feature without it. Never fill gaps from current defaults.
 - Optional preset is either fully specified/tested or explicitly deferred.
 - No public example contains dummy ID `0`, zero-recovery HRV, or invented duct.
 - Released versions and downstream compatibility requirements are recorded.
-

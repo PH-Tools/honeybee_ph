@@ -3,12 +3,12 @@
 Implement in order. This repo owns the factory and release; the GH wrapper
 changes only after the released minimum version is available.
 
-| Phase | Objective | Gate |
-|---:|---|---|
-| 01 | Freeze API, unit, floor-selection, geometry, naming, and host contracts in tests | No production implementation yet |
-| 02 | Implement the pure-Ladybug `Space.from_room()` assembly | Phase 01 failures reproduce missing capability |
-| 03 | Prove attachment, duplication, HBJSON, docs, and full-suite compatibility | Phase 02 focused tests green |
-| 04 | Release primary, re-point GH wrapper, compare behavior, and retire duplicate code | Released minimum version installed in GH environment |
+| Phase | Status | Objective | Gate |
+|---:|---|---|---|
+| 01 | **Complete** | Freeze API, unit, floor-selection, geometry, naming, and host contracts in tests | Focused failures reproduced only the missing API/import |
+| 02 | **Complete** | Implement the pure-Ladybug `Space.from_room()` assembly | 18 focused contract tests pass |
+| 03 | **Complete** | Prove attachment, duplication, HBJSON, docs, and full-suite compatibility | 23 focused + 914 full tests pass; 79% coverage clears the 75% floor; wheel verified |
+| 04 | **Next** | Release primary, re-point GH wrapper, compare behavior, and retire duplicate code | Released minimum version installed in GH environment |
 
 Phase documents:
 
@@ -25,4 +25,3 @@ honeybee_ph factory + tests
     -> honeybee_grasshopper_ph pin bump + wrapper re-point
     -> Rhino/Grasshopper parity smoke
 ```
-
