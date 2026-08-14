@@ -1,14 +1,27 @@
 {
+  "description": "Mirror honeybee-ph package edits into installed local development targets.",
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "^apply_patch$",
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/em/Dropbox/bldgtyp-00/00_PH_Tools/honeybee_ph/.claude/fsdeploy-hook.sh",
-            "timeout": 10,
-            "statusMessage": "Deploying to targets..."
+            "command": "REPO_ROOT=$(git rev-parse --show-toplevel) && /Users/em/.claude/ph-tools-fsdeploy.sh --sync-repo \"$REPO_ROOT\"",
+            "timeout": 30,
+            "statusMessage": "Syncing honeybee-ph edits to installed development targets..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "REPO_ROOT=$(git rev-parse --show-toplevel) && /Users/em/.claude/ph-tools-fsdeploy.sh --sync-repo \"$REPO_ROOT\" && printf '%s\\n' '{\"continue\":true,\"suppressOutput\":true}'",
+            "timeout": 30,
+            "statusMessage": "Syncing honeybee-ph to installed development targets..."
           }
         ]
       }
