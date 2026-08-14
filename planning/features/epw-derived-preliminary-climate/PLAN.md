@@ -6,7 +6,7 @@ requested.
 
 | Phase | Objective | Gate |
 |---:|---|---|
-| 01 | Freeze provenance, completeness, serialization, and downstream contracts | Published `honeybee-ph>=1.33.35` verified; schema review accepted |
+| 01 ✅ | Freeze provenance, completeness, serialization, and downstream contracts | Complete; PyPI `1.33.39` prerequisite and focused contract tests verified |
 | 02 | Implement EPW parsing, source validation, location, scalars, and monthly temperatures | Phase 01 tests/contract stable |
 | 03 | Implement directional monthly radiation and explicit ground-temperature selection | Phase 02 complete |
 | 04 | Add `Site.from_epw()`, readiness checks, duplication, and HBJSON integration | Phases 02–03 complete |

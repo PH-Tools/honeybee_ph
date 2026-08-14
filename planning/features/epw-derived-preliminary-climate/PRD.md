@@ -1,6 +1,6 @@
 # PRD — EPW-derived preliminary monthly climate
 
-**Status:** Scoped · 2026-08-14
+**Status:** In progress · Phase 01 complete · 2026-08-14
 **Author:** Ed May + Codex
 **Kind:** Feature / data-contract extension (this repo primary; downstream
 readiness coordination required)

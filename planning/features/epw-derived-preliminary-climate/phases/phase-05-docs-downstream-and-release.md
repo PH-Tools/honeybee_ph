@@ -20,6 +20,10 @@ claims, IronPython regressions, or downstream zero fallbacks.
    IronPython syntax/import compatibility check appropriate to this repo.
 5. Coordinate PHX/OpenPH behavior so `peak_loads=None` produces a targeted
    readiness diagnostic and never zero-filled load inputs.
+   - PHX audit target: `phx/from_HBJSON/create_variant.py:394-456` (blank PHPP
+     codes plus unconditional peak-load dereferences).
+   - OpenPH: no adjacent checkout was present during Phase 01; locate and audit
+     its current honeybee-ph climate ingestion path before release.
 6. Run focused tests, `python3 -m pytest` at or above the 75% repository
    coverage floor, Black, and `git diff --check`.
 7. Fold the stable provenance/readiness contract into `context/`, update

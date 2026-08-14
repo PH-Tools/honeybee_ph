@@ -1,6 +1,6 @@
 # epw-derived-preliminary-climate — router
 
-**Status:** Scoped · implementation not started
+**Status:** In progress · Phase 01 complete
 
 **Scope:** Convert a caller-supplied EPW into a provenance-bearing,
 explicitly preliminary `Site` suitable for monthly design exploration. Bundle

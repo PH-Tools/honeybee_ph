@@ -3,7 +3,9 @@
 
 """Passive-House Style Monthly Climate Data"""
 
-from copy import copy
+import math
+from copy import copy, deepcopy
+from numbers import Real
 
 try:
     from itertools import izip as zip  # type: ignore
@@ -16,6 +18,15 @@ except ImportError:
     pass  # IronPython 2.7
 
 from honeybee_ph import _base
+
+
+def _finite_value_issue(field_name, value):
+    # type: (str, Any) -> Optional[str]
+    if isinstance(value, bool) or not isinstance(value, Real):
+        return "{}: expected a finite numeric value; got {!r}.".format(field_name, value)
+    if math.isnan(value) or math.isinf(value):
+        return "{}: expected a finite numeric value; got {!r}.".format(field_name, value)
+    return None
 
 
 class Climate_MonthlyValueSet(_base._Base):
@@ -546,6 +557,142 @@ class Climate_Ground(_base._Base):
         return obj
 
 
+class ClimateProvenance(_base._Base):
+    """Source identity, conversion method, and availability for climate data.
+
+    Availability flags describe whether source data is present; they do not
+    infer completeness from numeric values, since zero is a valid climate value.
+
+    Attributes:
+        source_type (str): Source category. One of ``legacy_unknown``,
+            ``phi_approved``, ``phius_approved``, ``epw_derived``, or
+            ``user_defined``.
+        source_name (Optional[str]): Human-readable source name.
+        source_uri (Optional[str]): Source file path or URI.
+        source_version (Optional[str]): Version of the source data.
+        source_checksum (Optional[str]): SHA-256 checksum for a file source.
+        conversion_method (Optional[str]): Algorithm used to convert the source.
+        conversion_method_version (Optional[str]): Version of the conversion method.
+        is_certification_approved (Optional[bool]): Whether the source is approved
+            for certification; ``None`` means unknown.
+        monthly_data_available (Optional[bool]): Whether monthly-demand data is available.
+        peak_load_data_available (Optional[bool]): Whether peak-load data is available.
+        assumptions (Dict): JSON-safe conversion assumptions.
+    """
+
+    SOURCE_TYPES = (
+        "legacy_unknown",
+        "phi_approved",
+        "phius_approved",
+        "epw_derived",
+        "user_defined",
+    )
+
+    def __init__(
+        self,
+        source_type="legacy_unknown",
+        source_name=None,
+        source_uri=None,
+        source_version=None,
+        source_checksum=None,
+        conversion_method=None,
+        conversion_method_version=None,
+        is_certification_approved=None,
+        monthly_data_available=None,
+        peak_load_data_available=None,
+        assumptions=None,
+    ):
+        # type: (str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[bool], Optional[bool], Optional[Dict]) -> None
+        super(ClimateProvenance, self).__init__()
+        if source_type not in self.SOURCE_TYPES:
+            raise ValueError(
+                "source_type must be one of {}. Got: {!r}.".format(", ".join(self.SOURCE_TYPES), source_type)
+            )
+        for field_name, value in (
+            ("is_certification_approved", is_certification_approved),
+            ("monthly_data_available", monthly_data_available),
+            ("peak_load_data_available", peak_load_data_available),
+        ):
+            if value is not None and not isinstance(value, bool):
+                raise ValueError("{} must be True, False, or None. Got: {!r}.".format(field_name, value))
+        if assumptions is not None and not isinstance(assumptions, dict):
+            raise ValueError("assumptions must be a dict or None. Got: {!r}.".format(assumptions))
+
+        self.source_type = source_type
+        self.source_name = source_name
+        self.source_uri = source_uri
+        self.source_version = source_version
+        self.source_checksum = source_checksum
+        self.conversion_method = conversion_method
+        self.conversion_method_version = conversion_method_version
+        self.is_certification_approved = is_certification_approved
+        self.monthly_data_available = monthly_data_available
+        self.peak_load_data_available = peak_load_data_available
+        self.assumptions = assumptions if assumptions is not None else {}
+
+    def to_dict(self):
+        # type: () -> Dict[str, Any]
+        return {
+            "display_name": self.display_name,
+            "identifier": self.identifier,
+            "user_data": copy(self.user_data),
+            "source_type": self.source_type,
+            "source_name": self.source_name,
+            "source_uri": self.source_uri,
+            "source_version": self.source_version,
+            "source_checksum": self.source_checksum,
+            "conversion_method": self.conversion_method,
+            "conversion_method_version": self.conversion_method_version,
+            "is_certification_approved": self.is_certification_approved,
+            "monthly_data_available": self.monthly_data_available,
+            "peak_load_data_available": self.peak_load_data_available,
+            "assumptions": deepcopy(self.assumptions),
+        }
+
+    @classmethod
+    def from_dict(cls, _input_dict):
+        # type: (Dict[str, Any]) -> ClimateProvenance
+        obj = cls(
+            source_type=_input_dict.get("source_type", "legacy_unknown"),
+            source_name=_input_dict.get("source_name"),
+            source_uri=_input_dict.get("source_uri"),
+            source_version=_input_dict.get("source_version"),
+            source_checksum=_input_dict.get("source_checksum"),
+            conversion_method=_input_dict.get("conversion_method"),
+            conversion_method_version=_input_dict.get("conversion_method_version"),
+            is_certification_approved=_input_dict.get("is_certification_approved"),
+            monthly_data_available=_input_dict.get("monthly_data_available"),
+            peak_load_data_available=_input_dict.get("peak_load_data_available"),
+            assumptions=deepcopy(_input_dict.get("assumptions", {})),
+        )
+        obj.display_name = _input_dict.get("display_name", obj.display_name)
+        obj.identifier = _input_dict.get("identifier", obj.identifier)
+        obj.user_data = copy(_input_dict.get("user_data", {}))
+        return obj
+
+    def __copy__(self):
+        # type: () -> ClimateProvenance
+        obj = ClimateProvenance(
+            source_type=self.source_type,
+            source_name=self.source_name,
+            source_uri=self.source_uri,
+            source_version=self.source_version,
+            source_checksum=self.source_checksum,
+            conversion_method=self.conversion_method,
+            conversion_method_version=self.conversion_method_version,
+            is_certification_approved=self.is_certification_approved,
+            monthly_data_available=self.monthly_data_available,
+            peak_load_data_available=self.peak_load_data_available,
+            assumptions=deepcopy(self.assumptions),
+        )
+        obj.set_base_attrs_from_source(self)
+        return obj
+
+    def duplicate(self):
+        # type: () -> ClimateProvenance
+        return self.__copy__()
+
+
 class Climate(_base._Base):
     """Complete climate dataset for PH energy modeling.
 
@@ -561,7 +708,8 @@ class Climate(_base._Base):
         ground (Climate_Ground): Ground thermal properties.
         monthly_temps (Climate_MonthlyTempCollection): Monthly temperature data.
         monthly_radiation (Climate_MonthlyRadiationCollection): Monthly radiation data.
-        peak_loads (Climate_PeakLoadCollection): Peak load design conditions.
+        peak_loads (Optional[Climate_PeakLoadCollection]): Peak load design conditions.
+        provenance (Optional[ClimateProvenance]): Source and availability metadata.
     """
 
     def __init__(
@@ -573,8 +721,9 @@ class Climate(_base._Base):
         _monthly_temps=None,
         _monthly_radiation=None,
         _peak_loads=None,
+        _provenance=None,
     ):
-        # type: (str, float, float, float, Optional[Climate_MonthlyTempCollection], Optional[Climate_MonthlyRadiationCollection], Optional[Climate_PeakLoadCollection]) -> None
+        # type: (str, float, float, float, Optional[Climate_MonthlyTempCollection], Optional[Climate_MonthlyRadiationCollection], Optional[Climate_PeakLoadCollection], Optional[ClimateProvenance]) -> None
         super(Climate, self).__init__()
         self.display_name = _display_name
         self.station_elevation = _station_elevation  # m
@@ -586,7 +735,14 @@ class Climate(_base._Base):
         self.monthly_radiation = (
             _monthly_radiation if _monthly_radiation is not None else Climate_MonthlyRadiationCollection()
         )
-        self.peak_loads = _peak_loads if _peak_loads is not None else Climate_PeakLoadCollection()
+        self.provenance = _provenance
+        peak_loads_unavailable = self.provenance is not None and self.provenance.peak_load_data_available is False
+        if _peak_loads is not None:
+            self.peak_loads = _peak_loads
+        elif peak_loads_unavailable:
+            self.peak_loads = None
+        else:
+            self.peak_loads = Climate_PeakLoadCollection()
 
     def to_dict(self):
         # type: () -> Dict
@@ -602,13 +758,19 @@ class Climate(_base._Base):
         d["ground"] = self.ground.to_dict()
         d["monthly_temps"] = self.monthly_temps.to_dict()
         d["monthly_radiation"] = self.monthly_radiation.to_dict()
-        d["peak_loads"] = self.peak_loads.to_dict()
+        d["peak_loads"] = self.peak_loads.to_dict() if self.peak_loads is not None else None
+        if self.provenance is not None:
+            d["provenance"] = self.provenance.to_dict()
 
         return d
 
     @classmethod
     def from_dict(cls, _input_dict):
         # type: (Dict) -> Climate
+        peak_loads_dict = _input_dict.get("peak_loads")
+        peak_loads = Climate_PeakLoadCollection.from_dict(peak_loads_dict) if peak_loads_dict is not None else None
+        peak_loads_is_explicit_null = "peak_loads" in _input_dict and peak_loads_dict is None
+        provenance_dict = _input_dict.get("provenance")
         obj = cls(
             _display_name=_input_dict.get("display_name", "New York"),
             _station_elevation=_input_dict["station_elevation"],
@@ -616,8 +778,11 @@ class Climate(_base._Base):
             _average_wind_speed=_input_dict["average_wind_speed"],
             _monthly_temps=Climate_MonthlyTempCollection.from_dict(_input_dict.get("monthly_temps", {})),
             _monthly_radiation=Climate_MonthlyRadiationCollection.from_dict(_input_dict.get("monthly_radiation", {})),
-            _peak_loads=Climate_PeakLoadCollection.from_dict(_input_dict.get("peak_loads", {})),
+            _peak_loads=peak_loads,
+            _provenance=ClimateProvenance.from_dict(provenance_dict) if provenance_dict is not None else None,
         )
+        if peak_loads_is_explicit_null:
+            obj.peak_loads = None
         obj.identifier = _input_dict.get("identifier", obj.identifier)
         obj.user_data = copy(_input_dict.get("user_data", {}))
         obj.ground = Climate_Ground.from_dict(_input_dict.get("ground", {}))
@@ -633,8 +798,11 @@ class Climate(_base._Base):
             self.average_wind_speed,
             self.monthly_temps.duplicate(),
             self.monthly_radiation.duplicate(),
-            self.peak_loads.duplicate(),
+            self.peak_loads.duplicate() if self.peak_loads is not None else None,
+            self.provenance.duplicate() if self.provenance is not None else None,
         )
+        if self.peak_loads is None:
+            obj.peak_loads = None
         obj.set_base_attrs_from_source(self)
         obj.ground = self.ground.duplicate()
         modeled_attributes = {
@@ -648,6 +816,7 @@ class Climate(_base._Base):
             "monthly_temps",
             "monthly_radiation",
             "peak_loads",
+            "provenance",
         }
         for attr_name, attr_value in vars(self).items():
             if attr_name not in modeled_attributes:
@@ -658,6 +827,85 @@ class Climate(_base._Base):
     def duplicate(self):
         # type: () -> Climate
         return self.__copy__()
+
+    def monthly_demand_readiness_issues(self):
+        # type: () -> List[str]
+        """Return deterministic issues preventing monthly-demand use."""
+        if self.provenance is None:
+            return ["provenance: monthly climate data availability is unknown for this legacy climate."]
+        if self.provenance.monthly_data_available is False:
+            return ["provenance.monthly_data_available: monthly climate data is explicitly unavailable."]
+        if self.provenance.monthly_data_available is None:
+            return ["provenance.monthly_data_available: monthly climate data availability is unknown."]
+
+        issues = []
+        scalar_fields = (
+            ("station_elevation", self.station_elevation),
+            ("summer_daily_temperature_swing", self.summer_daily_temperature_swing),
+            ("average_wind_speed", self.average_wind_speed),
+        )
+        monthly_fields = (
+            ("monthly_temps.air_temps", self.monthly_temps.air_temps),
+            ("monthly_temps.dewpoints", self.monthly_temps.dewpoints),
+            ("monthly_temps.sky_temps", self.monthly_temps.sky_temps),
+            ("monthly_temps.ground_temps", self.monthly_temps.ground_temps),
+            ("monthly_radiation.north", self.monthly_radiation.north),
+            ("monthly_radiation.east", self.monthly_radiation.east),
+            ("monthly_radiation.south", self.monthly_radiation.south),
+            ("monthly_radiation.west", self.monthly_radiation.west),
+            ("monthly_radiation.glob", self.monthly_radiation.glob),
+        )
+        for field_name, value in scalar_fields:
+            issue = _finite_value_issue(field_name, value)
+            if issue:
+                issues.append(issue)
+        for field_name, value_set in monthly_fields:
+            for month_name, value in zip(value_set.months, value_set.values):
+                issue = _finite_value_issue("{}.{}".format(field_name, month_name), value)
+                if issue:
+                    issues.append(issue)
+        return issues
+
+    @property
+    def is_monthly_demand_ready(self):
+        # type: () -> bool
+        """Whether all explicitly available monthly-demand fields are finite."""
+        return not self.monthly_demand_readiness_issues()
+
+    def peak_load_readiness_issues(self):
+        # type: () -> List[str]
+        """Return deterministic issues preventing peak-load use."""
+        if self.provenance is None:
+            return ["provenance: peak-load climate data availability is unknown for this legacy climate."]
+        if self.provenance.peak_load_data_available is False:
+            return [
+                "provenance.peak_load_data_available: approved or specialized peak-load climate data must be supplied separately."
+            ]
+        if self.provenance.peak_load_data_available is None:
+            return ["provenance.peak_load_data_available: peak-load climate data availability is unknown."]
+        if self.peak_loads is None:
+            return ["peak_loads: data is marked available but no peak-load collection is present."]
+
+        issues = []
+        load_sets = (
+            ("peak_loads.heat_load_1", self.peak_loads.heat_load_1),
+            ("peak_loads.heat_load_2", self.peak_loads.heat_load_2),
+            ("peak_loads.cooling_load_1", self.peak_loads.cooling_load_1),
+            ("peak_loads.cooling_load_2", self.peak_loads.cooling_load_2),
+        )
+        value_names = ("temp", "rad_north", "rad_east", "rad_south", "rad_west", "rad_global")
+        for field_name, value_set in load_sets:
+            for value_name in value_names:
+                issue = _finite_value_issue("{}.{}".format(field_name, value_name), getattr(value_set, value_name))
+                if issue:
+                    issues.append(issue)
+        return issues
+
+    @property
+    def is_peak_load_ready(self):
+        # type: () -> bool
+        """Whether all explicitly available peak-load fields are finite."""
+        return not self.peak_load_readiness_issues()
 
 
 class Location(_base._Base):
@@ -774,6 +1022,12 @@ class PHPPCodes(_base._Base):
         d["user_data"] = copy(self.user_data)
 
         return d
+
+    @classmethod
+    def blank(cls):
+        # type: () -> PHPPCodes
+        """Create a record with no PHPP climate-library identity."""
+        return cls("", "", "")
 
     @classmethod
     def from_dict(cls, _input_dict):

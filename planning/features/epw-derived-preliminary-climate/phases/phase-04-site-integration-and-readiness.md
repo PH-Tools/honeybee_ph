@@ -24,6 +24,11 @@ honest through duplication and HBJSON.
 6. Update any in-repo consumer that assumes non-null peak loads or nonblank
    PHPP codes; do not make downstream exporters invent values.
 
+Downstream touchpoint identified in Phase 01: PHX
+`phx/from_HBJSON/create_variant.py:417-456` unconditionally dereferences the
+four peak-load sets. Its HBJSON conversion boundary must reject monthly-only
+climates with `Climate.peak_load_readiness_issues()` before those reads.
+
 ## Tests
 
 - End-to-end EPW -> Site -> dict -> Site preserves values and provenance.
@@ -40,4 +45,3 @@ honest through duplication and HBJSON.
 - Serialization is backward compatible and explicit for new unavailable data.
 - Downstream changes required for safe conversion are implemented or block
   release in Phase 05.
-
