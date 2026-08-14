@@ -3,7 +3,7 @@
 **Date:** 2026-08-14
 **Status:** DECIDED
 **Decider:** Ed May
-**Research:** [`planning/features/default-ventilation-system-factory/`](../../planning/features/default-ventilation-system-factory/README.md)
+**Research:** [`planning/archive/default-ventilation-system-factory/`](../../planning/archive/default-ventilation-system-factory/README.md)
 
 ## Context
 

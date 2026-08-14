@@ -1,6 +1,6 @@
 # STATUS — ventilation-system-factories
 
-**Status:** Implemented · coordinated release pending · 2026-08-14
+**Status:** Complete · released and archived · 2026-08-14
 
 - Phase 01 froze the shared honeybee-ph / PHX / OpenPH state contract in
   `STATE_TABLE.md`.
@@ -33,8 +33,13 @@
   OpenPH compatibility passes without fabricated equipment or duct lengths.
 - Phase 05 adds the public constructor/state guide, migration guidance, and
   decision 0006; the optional preliminary preset remains deferred.
-- **Next step:** run the final Phase 05 gates, publish coordinated versions,
-  record minimum pins, verify installed artifacts, and archive both packets.
+- honeybee-ph **v1.33.42** and PHX **v1.56.79** are published and pass clean
+  installed-artifact smoke tests. PHX requires `honeybee-ph>=1.33.42`.
+- The published compatibility matrix `honeybee-ph==1.33.42`, `PHX==1.56.79`,
+  `openph==0.5.1`, and `openph-demand==0.5.0` installs and converts the
+  no-mechanical, zero-duct, and multi-duct states successfully.
+- Both active packets are archived. No release blocker or next implementation
+  step remains in this feature.
 - The optional preliminary preset remains deferred because no complete set of
   performance, frost, location, and duct assumptions has been accepted.
 - Phase 01 gate: simplify reuse/quality/efficiency findings resolved;

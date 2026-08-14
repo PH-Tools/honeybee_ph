@@ -1,6 +1,6 @@
 # Phase 05 — Deferred preset, docs, and release
 
-**Status:** In progress · implementation and public docs complete; release pending
+**Status:** Complete · released and archived · 2026-08-14
 
 ## Objective
 
@@ -43,7 +43,7 @@ Never fill gaps from current defaults.
 - No public example contains dummy ID `0`, zero-recovery HRV, or invented duct.
 - Released versions and downstream compatibility requirements are recorded.
 
-## Pre-release outcome
+## Outcome
 
 `docs/ventilation-systems.md` documents every supported authoring state and
 migration away from bare equipment plus default 1 m ducts. Both Python examples
@@ -52,7 +52,14 @@ downstream; their values are labeled illustrative, not recommended defaults.
 Decision 0006 preserves the stable state/absence/deferred-preset contract.
 
 The preliminary preset remains deferred. All simplify reuse, quality, and
-efficiency findings are resolved, with the decision-record research link
-scheduled to follow the packet into `planning/archive/` after release. Black,
-Python 2 grammar parsing, `git diff --check`, and the exact public examples
-pass. The full suite passes 1,016 tests with 80% aggregate coverage.
+efficiency findings are resolved; the decision-record research link follows
+this archived packet. Black, Python 2 grammar parsing, `git diff --check`, and
+the exact public examples pass. The full suite passes 1,016 tests with 80%
+aggregate coverage.
+
+honeybee-ph v1.33.42 and PHX v1.56.79 are published. PHX declares and locks
+`honeybee-ph>=1.33.42`; both artifacts pass clean-install smoke tests. The
+published matrix with OpenPH 0.5.1 and openph-demand 0.5.0 installs and converts
+the no-mechanical, zero-duct, and multi-duct states successfully. All three
+implementation releases were verified before the planning packets were
+archived.
