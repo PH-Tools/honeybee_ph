@@ -918,7 +918,8 @@ class Location(_base._Base):
         latitude (float): Site latitude in decimal degrees. Default: 40.6.
         longitude (float): Site longitude in decimal degrees. Default: -73.8.
         site_elevation (Optional[float]): Site elevation in meters above sea level.
-        climate_zone (int): ASHRAE climate zone number. Default: 1.
+        climate_zone (Optional[int]): ASHRAE climate zone number, or None when
+            the source does not supply one. Default: 1.
         hours_from_UTC (int): Time zone offset from UTC in hours. Default: -4.
     """
 
@@ -930,7 +931,7 @@ class Location(_base._Base):
         climate_zone=1,
         hours_from_UTC=-4,
     ):
-        # type: (float, float, Optional[float], int, int) -> None
+        # type: (float, float, Optional[float], Optional[int], int) -> None
         super(Location, self).__init__()
         self.latitude = latitude
         self.longitude = longitude
@@ -1085,6 +1086,80 @@ class Site(_base._Base):
         self.location = _location if _location is not None else Location()
         self.climate = _climate if _climate is not None else Climate()
         self.phpp_library_codes = _phpp_library_codes if _phpp_library_codes is not None else PHPPCodes()
+
+    @classmethod
+    def from_epw(cls, file_path, ground_temperature_depth=None, ground_reflectance=0.2, diffuse_model="isotropic"):
+        # type: (str, Optional[float], float, str) -> Site
+        """Create a preliminary monthly-demand Site from a caller-supplied EPW.
+
+        EPW-derived values are not PHI/Phius certification climate data. The
+        returned Site has blank PHPP library codes and no peak-load climate.
+
+        Arguments:
+        ----------
+            * file_path (str): Path to a local annual EPW file.
+            * ground_temperature_depth (Optional[float]): EPW ground-series
+                depth in meters. May be omitted only when exactly one series
+                is available.
+            * ground_reflectance (float): Finite directional-radiation ground
+                reflectance from 0 through 1. Default: 0.2.
+            * diffuse_model (str): ``"isotropic"`` or ``"anisotropic"``.
+
+        Returns:
+        --------
+            * Site: A fresh, monthly-demand-ready preliminary Site.
+
+        Raises:
+        -------
+            * ValueError: If options or required EPW source data are invalid.
+                All independently detected conversion issues are included.
+        """
+        from honeybee_ph._epw import convert_epw
+
+        result = convert_epw(
+            file_path,
+            ground_temperature_depth=ground_temperature_depth,
+            ground_reflectance=ground_reflectance,
+            diffuse_model=diffuse_model,
+        )
+        if result.issues:
+            raise ValueError("EPW conversion failed:\n- {}".format("\n- ".join(result.issues)))
+
+        location = Location(
+            latitude=result.latitude,
+            longitude=result.longitude,
+            site_elevation=result.elevation,
+            climate_zone=None,
+            hours_from_UTC=result.utc_offset,
+        )
+        location.display_name = result.location_name
+
+        monthly_temps = Climate_MonthlyTempCollection(
+            Climate_MonthlyValueSet(result.monthly_air_temperatures),
+            Climate_MonthlyValueSet(result.monthly_dewpoint_temperatures),
+            Climate_MonthlyValueSet(result.monthly_sky_temperatures),
+            Climate_MonthlyValueSet(result.monthly_ground_temperatures),
+        )
+        monthly_radiation = Climate_MonthlyRadiationCollection(
+            Climate_MonthlyValueSet(result.monthly_north_radiation),
+            Climate_MonthlyValueSet(result.monthly_east_radiation),
+            Climate_MonthlyValueSet(result.monthly_south_radiation),
+            Climate_MonthlyValueSet(result.monthly_west_radiation),
+            Climate_MonthlyValueSet(result.monthly_global_radiation),
+        )
+        climate = Climate(
+            _display_name=result.location_name,
+            _station_elevation=result.elevation,
+            _daily_temp_swing=result.summer_daily_temperature_swing,
+            _average_wind_speed=result.average_wind_speed,
+            _monthly_temps=monthly_temps,
+            _monthly_radiation=monthly_radiation,
+            _peak_loads=None,
+            _provenance=result.provenance,
+        )
+        obj = cls(location, climate, PHPPCodes.blank())
+        obj.display_name = result.location_name
+        return obj
 
     def to_dict(self):
         # type: () -> Dict[str, Any]

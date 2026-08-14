@@ -1,6 +1,6 @@
 # STATUS — epw-derived-preliminary-climate
 
-**Status:** In progress · Phases 01–03 complete · 2026-08-14
+**Status:** In progress · Phases 01–04 complete · 2026-08-14
 
 - Replaces the superseded bundled climate-dataset proposal.
 - Product/IP boundary is decided in context decision 0004.
@@ -16,8 +16,13 @@
 - Phase 03 adds global-horizontal and cardinal vertical-plane monthly
   radiation, explicit diffuse/reflectance assumptions, and deterministic EPW
   ground-temperature depth selection without inferred fallback values.
-- **Next step:** execute Phase 04: public `Site.from_epw()` integration,
-  independence, HBJSON round-trips, and readiness verification.
+- Phase 04 adds the public `Site.from_epw()` factory, explicitly unknown
+  ASHRAE climate zone, blank PHPP codes, null peak loads, JSON/HBJSON host
+  round-trips, and recursive independence verification.
+- No in-repo consumer outside `site.py` dereferences peak loads or requires
+  nonblank PHPP climate codes; the identified unsafe consumer remains in PHX.
+- **Next step:** execute Phase 05: packaging/docs verification and coordinated
+  downstream readiness diagnostics before release.
 - Release blocker: downstream PHX readiness behavior must be implemented and
   verified; no adjacent OpenPH checkout was available for a direct audit.
 - Do not add or copy any real PHI/Phius/EPW dataset into this repository while

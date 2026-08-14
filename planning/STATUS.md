@@ -8,7 +8,7 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **In progress** — Phases 01–03 complete; Phase 04 next; PHX readiness remains a release blocker | [`features/epw-derived-preliminary-climate/`](features/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
+| EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **In progress** — Phases 01–04 complete; Phase 05 packaging/downstream/release next; PHX readiness remains a release blocker | [`features/epw-derived-preliminary-climate/`](features/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **Scoped** — local API fixed; Phase 01 state matrix required before code | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |

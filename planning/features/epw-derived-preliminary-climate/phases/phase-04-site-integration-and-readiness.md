@@ -1,5 +1,7 @@
 # Phase 04 — Site integration and readiness
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Expose the supported one-call API and prove that EPW-derived state remains
@@ -45,3 +47,16 @@ climates with `Climate.peak_load_readiness_issues()` before those reads.
 - Serialization is backward compatible and explicit for new unavailable data.
 - Downstream changes required for safe conversion are implemented or block
   release in Phase 05.
+
+## Completion evidence
+
+- `52 passed` across converter, public integration, and readiness tests.
+- `Site.from_epw()` forwards every documented option and returns a fresh graph.
+- JSON encoding with `allow_nan=False`, Site/BuildingSegment/Room paths,
+  duplication, and mutation isolation pass.
+- EPW output uses `climate_zone=None`, blank PHPP codes, and `peak_loads=None`;
+  no source field is invented from a legacy default.
+- Repository audit found no additional in-repo peak-load or PHPP-code consumer;
+  the PHX boundary remains the Phase 05 release blocker.
+- Full repository suite: `966 passed`; aggregate coverage: `80%`.
+- Black, Python 2 grammar parsing, and `git diff --check` pass.
