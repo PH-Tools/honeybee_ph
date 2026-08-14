@@ -1,7 +1,7 @@
 # STATUS — space-from-room-factory
 
-**Status:** Released · Phase 04 handoff substantially complete; live GH canvas
-verification remains · 2026-08-14
+**Status:** Complete · Released, downstream pinned, and live GH verification
+passed · 2026-08-14
 
 - Phase 01 contract suite added: focused failures reproduced only the
   missing `Space.from_room()` API/import before implementation.
@@ -36,8 +36,13 @@ verification remains · 2026-08-14
   routing. The wrapper no longer performs duplicate default-space assembly;
   all `make_spaces/` helpers remain because other detailed-space components
   still import them.
-- **Next step / closeout blocker:** run the released component on meter and
-  non-meter Rhino canvases and record iCFA/HBJSON parity plus the intentional
-  multi-floor volume-count and `Space.host` corrections. No existing repo
-  verification definition was found; headless evidence is not labeled as the
-  live canvas check.
+- Live Rhino/Grasshopper verification passes using `manual-test.ghx`:
+  - meter Room: one Space/volume/segment, 20.0 m2 floor and weighted floor
+    area, 50.0 m3 net volume, and 2.5 m height;
+  - foot Room: one Space/volume/segment, 215.278 ft2 floor and weighted floor
+    area, 1765.739 ft3 net volume, and 8.2021 ft height;
+  - two-floor foot fixture: one Space with two ordered volumes/segments,
+    12.0 ft2 area, 98.4252 ft3 volume, and two 8.2021 ft heights.
+- All three live cases preserve `Space.host is output_room` and Room-dict
+  round-trip host rebinding. No component warnings/errors were observed.
+- Closeout: complete; packet archived after both repo statuses were updated.
