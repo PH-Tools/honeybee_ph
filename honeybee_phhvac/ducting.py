@@ -3,6 +3,7 @@
 
 """Honeybee-PH-HVAC-Equipment: Ducts."""
 
+from copy import deepcopy
 from math import radians
 
 try:
@@ -116,7 +117,7 @@ class PhDuctSegment(_base._PhHVACBase):
         new_obj.width = self.width
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
-        new_obj.user_data = self.user_data
+        new_obj.user_data = deepcopy(self.user_data)
 
         return new_obj
 
@@ -383,7 +384,7 @@ class PhDuctElement(_base._PhHVACBase):
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.duct_type = self.duct_type
-        new_obj.user_data = self.user_data
+        new_obj.user_data = deepcopy(self.user_data)
 
         return new_obj
 

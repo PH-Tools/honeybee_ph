@@ -1,5 +1,7 @@
 # Phase 02 — Explicit factories and validation
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Implement physically honest local construction for an explicit balanced
@@ -34,3 +36,16 @@ HRV/ERV without changing legacy constructors or inventing ducts.
 - Existing constructor/duct tests remain unchanged and pass.
 - No preliminary performance preset is added in this phase.
 
+## Outcome
+
+`PhVentilationSystem.balanced_hrv()` now implements the accepted constructor.
+The tests cover required equipment, all performance boundaries and invalid
+finite/range cases, `None`/empty/one/many ducts, collection and direction
+errors, child ownership, nested metadata independence, deterministic naming,
+no default-duct calls, and no Room attachment. The finite-real predicate is
+shared with climate/EPW validation through `honeybee_ph_utils.validation`.
+
+Verification before the full phase gate: 38 focused factory tests pass with no
+uncovered lines in the new factory/helper code; 135 adjacent HVAC/climate tests
+pass; Black, Python 2 grammar parsing, and `git diff --check` pass. The full
+repository gate passes with 1004 tests and 80% aggregate coverage.

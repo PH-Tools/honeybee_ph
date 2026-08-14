@@ -3,9 +3,7 @@
 
 """Passive-House Style Monthly Climate Data"""
 
-import math
 from copy import copy, deepcopy
-from numbers import Real
 
 try:
     from itertools import izip as zip  # type: ignore
@@ -18,6 +16,7 @@ except ImportError:
     pass  # IronPython 2.7
 
 from honeybee_ph import _base
+from honeybee_ph_utils.validation import is_finite_real as _is_finite_real
 
 
 def _finite_value_issue(field_name, value):
@@ -25,11 +24,6 @@ def _finite_value_issue(field_name, value):
     if not _is_finite_real(value):
         return "{}: expected a finite numeric value; got {!r}.".format(field_name, value)
     return None
-
-
-def _is_finite_real(value):
-    # type: (Any) -> bool
-    return not isinstance(value, bool) and isinstance(value, Real) and not math.isnan(value) and not math.isinf(value)
 
 
 class Climate_MonthlyValueSet(_base._Base):

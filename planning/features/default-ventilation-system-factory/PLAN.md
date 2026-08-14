@@ -6,7 +6,7 @@ survive PHX/OpenPH without dummy devices or ducts. Implement in this order.
 | Phase | Objective | Gate |
 |---:|---|---|
 | 01 | Freeze cross-repo system/device/duct state matrix and reconcile packets | **Complete** — `STATE_TABLE.md` accepted |
-| 02 | Implement explicit local factories and validation | Phase 01 source states/names stable |
+| 02 | Implement explicit local factories and validation | **Complete** — focused factory/adjacent suites green |
 | 03 | Prove ownership, duplication, Room attachment, and HBJSON | Phase 02 focused tests green |
 | 04 | Implement/verify PHX and OpenPH semantics for every accepted state | PHX representation and OpenPH rules coordinated |
 | 05 | Record deferred preset, finish docs/full gates, release, and hand off | End-to-end state matrix green |
