@@ -17,7 +17,8 @@ The core Passive House data model. Adds PH-specific elements to Honeybee includi
 - **Spaces** — interior floor areas with iCFA/TFA weighting factors
 - **Building segments** — PH certification boundaries and climate data
 - **Certification** — PHI and Phius certification thresholds and settings
-- **Site** — location, climate, and shading data
+- **Site** — location, climate, and shading data, including preliminary monthly
+  climate derived from a caller-supplied EPW
 
 [PyPI](https://pypi.org/project/honeybee-ph/) |
 [Source](https://github.com/PH-Tools/honeybee_ph/tree/main/honeybee_ph)

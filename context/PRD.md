@@ -21,7 +21,9 @@ Not affiliated with or endorsed by PHI or Phius.
 
 - New PH attributes on Honeybee/Honeybee-Energy objects (spaces, windows, constructions, HVAC, loads, certification thresholds).
 - The object model + `to_dict()`/`from_dict()` HBJSON round-tripping for those attributes.
-- Reference standards data (climates, assemblies, schedules) shipped as JSON.
+- Reference standards data whose terms permit redistribution (assemblies,
+  schedules, and source factors). Licensed PHI/Phius climate datasets are not
+  bundled.
 - Shared utilities those objects need (unit handling via `PH-units`, colors, geometry helpers).
 
 ## 4. Non-goals

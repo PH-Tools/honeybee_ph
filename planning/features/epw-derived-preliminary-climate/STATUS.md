@@ -1,6 +1,6 @@
 # STATUS — epw-derived-preliminary-climate
 
-**Status:** In progress · Phases 01–04 complete · 2026-08-14
+**Status:** In progress · Phases 01–04 complete · Phase 05 release handoff · 2026-08-14
 
 - Replaces the superseded bundled climate-dataset proposal.
 - Product/IP boundary is decided in context decision 0004.
@@ -20,11 +20,21 @@
   ASHRAE climate zone, blank PHPP codes, null peak loads, JSON/HBJSON host
   round-trips, and recursive independence verification.
 - No in-repo consumer outside `site.py` dereferences peak loads or requires
-  nonblank PHPP climate codes; the identified unsafe consumer remains in PHX.
-- **Next step:** execute Phase 05: packaging/docs verification and coordinated
-  downstream readiness diagnostics before release.
-- Release blocker: downstream PHX readiness behavior must be implemented and
-  verified; no adjacent OpenPH checkout was available for a direct audit.
+  nonblank PHPP climate codes; the identified PHX consumer is now guarded on
+  its companion branch.
+- Phase 05 local verification is complete: public docs/context are updated;
+  built sdist/wheel contain no EPW or copied climate dataset; built-wheel
+  conversion passes under CPython 3.10.
+- PHX readiness is implemented on
+  `codex/epw-derived-preliminary-climate-readiness` at `2e8864c`; 881 PHX tests
+  pass against its locked dependency and focused integration passes against
+  this feature checkout.
+- OpenPH was located under `openph-workspace` and audited. It has no direct
+  honeybee-ph climate ingestion; the canonical PHX boundary now rejects the
+  monthly-only state before OpenPH construction.
+- **Next step / release blocker:** merge and release expected
+  `honeybee-ph==1.33.40`, verify the published artifact, raise/lock PHX to
+  `honeybee-ph>=1.33.40`, verify/release PHX, then archive this packet.
 - Do not add or copy any real PHI/Phius/EPW dataset into this repository while
   implementing or testing. Generate a minimal synthetic EPW fixture or use a
   license-compatible test fixture with its terms recorded.

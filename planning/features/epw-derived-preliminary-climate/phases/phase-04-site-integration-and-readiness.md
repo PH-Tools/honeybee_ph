@@ -57,6 +57,6 @@ climates with `Climate.peak_load_readiness_issues()` before those reads.
 - EPW output uses `climate_zone=None`, blank PHPP codes, and `peak_loads=None`;
   no source field is invented from a legacy default.
 - Repository audit found no additional in-repo peak-load or PHPP-code consumer;
-  the PHX boundary remains the Phase 05 release blocker.
+  the PHX boundary was carried into Phase 05 for downstream implementation.
 - Full repository suite: `966 passed`; aggregate coverage: `80%`.
 - Black, Python 2 grammar parsing, and `git diff --check` pass.

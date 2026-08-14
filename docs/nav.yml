@@ -1,6 +1,7 @@
 nav:
   - Getting Started:
     - Overview: getting-started.md
+    - EPW preliminary climate: epw-preliminary-climate.md
   - Packages:
     - Overview: packages.md
   - API Reference:

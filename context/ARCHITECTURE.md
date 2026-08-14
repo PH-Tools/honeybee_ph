@@ -40,6 +40,22 @@ Within `honeybee_ph`, `honeybee_energy_ph`, and `honeybee_phhvac`, the `properti
 
 Every model class implements `to_dict()` / `from_dict()` (and usually `duplicate()`). HBJSON is the interchange format for the whole ecosystem, so **backward compatibility is a hard requirement** — see `CODING_STANDARDS.md` §Serialization. `from_dict()` must tolerate HBJSON written by older versions that lack newer keys.
 
+### Climate provenance and readiness
+
+`Climate.provenance` is optional so legacy HBJSON remains byte-shape compatible.
+When present, it records source type, checksum/method metadata, certification
+approval, monthly availability, peak-load availability, and JSON-safe
+assumptions. `Climate.monthly_demand_readiness_issues()` and
+`Climate.peak_load_readiness_issues()` are the canonical downstream gates;
+numeric zero never implies missing data.
+
+`Site.from_epw()` is the supported one-call EPW path. It creates preliminary
+monthly values with blank PHPP library codes and explicit provenance, but no
+PHI/Phius peak-load sets. Downstream PHX conversion must reject that
+monthly-only state with the readiness diagnostic rather than constructing
+zero-filled peak inputs. No weather file or licensed PHI/Phius climate dataset
+is distributed by this repository.
+
 ## Dependencies
 
 Runtime deps are deliberately minimal: `honeybee-core`, `honeybee-energy`, and `PH-units` (unit parsing/conversion). No heavy scientific stack — the code has to load in Rhino.
@@ -69,6 +85,7 @@ merging thermal zones and dropping HVAC systems. See
 
 ## Where the boundaries are
 
-- Export/conversion logic → **PHX**, not here.
+- PHPP/WUFI export logic → **PHX**; the local EPW-to-Site derivation remains a
+  data-model factory and does not export a proprietary format.
 - Grasshopper components → **honeybee_grasshopper_ph**, not here.
 - This repo stays a pure, IronPython-2.7-safe data-model library.
