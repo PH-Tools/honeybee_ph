@@ -1,5 +1,7 @@
 # Phase 04 — PHX/OpenPH integration
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Remove the downstream conditions that forced callers to create device ID `0`,
@@ -42,3 +44,21 @@ absence of placeholders.
   separately documented fidelity fix was accepted.
 - Full relevant suites in honeybee-ph and PHX pass; focused OpenPH and
   openph-demand compatibility suites pass against the updated PHX model.
+
+## Outcome
+
+PHX now represents no Space assignment as `None`, rejects source mechanical
+systems without a real ventilation unit before any mutation, and aggregates
+Space plus collection-scoped duct reference issues before export. PHPP skips
+unassigned lookup; WUFI/METr adapt `None` to legacy numeric `0`; WUFI import
+normalizes missing/blank/`0` back to `None`. PPP, PHPP, WUFI, and METr project
+entry points preflight before generating output.
+
+The affected PHX surface passes 516 tests with 3 expected skips. Against the
+updated honeybee-ph + PHX source graph, 29 focused OpenPH tests and 4
+openph-demand tests pass. A direct Honeybee Room/HVAC → HBJSON → PHX → OpenPH
+matrix passes for no mechanical equipment and balanced systems with zero or
+two supply/exhaust ducts; no placeholder units or duct lengths are created.
+The full PHX gate passes with 901 tests, 3 skipped, and 1 deselected; the full
+honeybee-ph gate passes with 1,016 tests and 80% aggregate coverage. All
+simplify reuse, quality, and efficiency findings were resolved.
