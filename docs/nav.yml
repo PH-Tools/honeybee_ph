@@ -2,6 +2,7 @@ nav:
   - Getting Started:
     - Overview: getting-started.md
     - EPW preliminary climate: epw-preliminary-climate.md
+    - Ventilation systems: ventilation-systems.md
   - Packages:
     - Overview: packages.md
   - API Reference:

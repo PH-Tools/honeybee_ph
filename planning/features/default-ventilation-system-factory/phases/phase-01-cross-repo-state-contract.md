@@ -1,5 +1,7 @@
 # Phase 01 — Cross-repo ventilation state contract
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Derive one reviewed state table for honeybee-ph, PHX, PHPP/WUFI export, and
@@ -18,7 +20,7 @@ OpenPH before naming factories or encoding absence.
 3. Reconcile these packets so they describe the same contract:
    - this packet;
    - `PHX/planning/features/ventilation-assignment-semantics/`;
-   - `openph-workspace/planning/features/ventilation-input-semantics/`.
+   - `openph-workspace/planning/archive/dated/2026-08-14/ventilation-input-semantics/`.
 4. Remove the stale OpenPH planning statement that describes the honeybee-ph
    factory as a default ventilator plus default ducts.
 
@@ -42,3 +44,16 @@ OpenPH before naming factories or encoding absence.
 - The local `balanced_hrv()` signature in the PRD remains compatible with the
   accepted matrix.
 
+## Outcome
+
+All exit checks are recorded in `../STATE_TABLE.md`. The accepted model uses
+`None` for no assignment, optional empty exterior-duct collections, and
+PHPP-faithful multi-element aggregation. Summer window ACH remains supported;
+primary PHPP K12=3 window-only authoring is deferred because honeybee-ph has no
+source field carrying that choice. The optional preliminary preset is also
+deferred pending accepted physical assumptions.
+
+Verification: the three simplify reviews were resolved, docs-pass found no
+broken links or stale status statements, and the full honeybee-ph coverage gate
+passed with 966 tests and 80% aggregate coverage. The coordinated PHX full gate
+passed with 881 tests, 3 skipped, and 1 deselected.

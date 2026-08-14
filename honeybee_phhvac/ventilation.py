@@ -4,7 +4,7 @@
 """Honeybee-PH-HVAC-Equipment: Ventilation (ERV) Devices."""
 
 import sys
-from copy import copy
+from copy import copy, deepcopy
 
 try:
     from typing import Any, Dict, List, Optional
@@ -20,6 +20,48 @@ try:
     from honeybee_phhvac import _base, ducting
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_phhvac:\n\t{}".format(e))
+
+try:
+    from honeybee_ph_utils.validation import is_finite_real
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_ph_utils:\n\t{}".format(e))
+
+
+# -----------------------------------------------------------------------------
+
+
+def _validated_finite_number(_value, _field_name):
+    # type: (Any, str) -> Any
+    """Return a finite real value or raise an error naming the physical field."""
+    if not is_finite_real(_value):
+        raise ValueError("{} must be a finite number; got {!r}.".format(_field_name, _value))
+    return _value
+
+
+def _validated_duct_collection(_ducts, _field_name, _duct_type):
+    # type: (Optional[List[ducting.PhDuctElement]], str, int) -> List[ducting.PhDuctElement]
+    """Return a validated duct-element list for one airflow direction."""
+    if _ducts is None:
+        return []
+
+    try:
+        duct_elements = list(_ducts)
+    except TypeError:
+        raise TypeError("{} must be an iterable of PhDuctElement objects.".format(_field_name))
+
+    for duct_element in duct_elements:
+        if not isinstance(duct_element, ducting.PhDuctElement):
+            raise TypeError("{} must contain only PhDuctElement objects.".format(_field_name))
+        if duct_element.duct_type != _duct_type:
+            raise ValueError(
+                "{} contains {!r} with duct_type={!r}; expected duct_type={}.".format(
+                    _field_name,
+                    duct_element.display_name,
+                    duct_element.duct_type,
+                    _duct_type,
+                )
+            )
+    return duct_elements
 
 
 # -----------------------------------------------------------------------------
@@ -111,7 +153,7 @@ class Ventilator(_base._PhHVACBase):
         new_obj = Ventilator()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
-        new_obj.user_data = copy(self.user_data)
+        new_obj.user_data = deepcopy(self.user_data)
         new_obj.id_num = self.id_num
         new_obj.quantity = self.quantity
         new_obj.sensible_heat_recovery = self.sensible_heat_recovery
@@ -144,6 +186,10 @@ class Ventilator(_base._PhHVACBase):
 class PhVentilationSystem(_base._PhHVACBase):
     """Passive House Fresh-Air Ventilation System.
 
+    Construct a selected balanced HRV/ERV with ``balanced_hrv()``. Represent
+    no mechanical ventilation as ``None`` on the Room HVAC properties; summer
+    window ACH inputs are separate and do not create this object.
+
     Attributes:
         display_name (str): User-facing name for the ventilation system.
         sys_type (int): System type identifier (1 = Balanced PH ventilation with HR).
@@ -161,6 +207,75 @@ class PhVentilationSystem(_base._PhHVACBase):
         self.exhaust_ducting = []  # type: List[ducting.PhDuctElement]
         self._ventilation_unit = None  # type: Optional[Ventilator]
         self.id_num = 0
+
+    @classmethod
+    def balanced_hrv(
+        cls,
+        ventilator,
+        supply_ducting=None,
+        exhaust_ducting=None,
+        display_name=None,
+    ):
+        # type: (Ventilator, Optional[List[ducting.PhDuctElement]], Optional[List[ducting.PhDuctElement]], Optional[str]) -> PhVentilationSystem
+        """Create a balanced HRV/ERV system from selected equipment.
+
+        The required ventilator type, recovery/electric ranges, and duct
+        directions are validated; accepted children are duplicated. ``None``
+        or an empty duct collection means that no exterior duct elements are
+        modeled. This method never creates default ducts, chooses preliminary
+        performance, or attaches the returned system to a Room.
+
+        Arguments:
+        ----------
+            * ventilator (Ventilator): A selected ventilation unit with finite,
+                valid recovery and electric-efficiency values.
+            * supply_ducting (Optional[Iterable[PhDuctElement]]): Supply-air
+                duct elements (duct_type=1). Defaults to no exterior ducts.
+            * exhaust_ducting (Optional[Iterable[PhDuctElement]]): Exhaust-air
+                duct elements (duct_type=2). Defaults to no exterior ducts.
+            * display_name (Optional[str]): User-facing system name.
+
+        Returns:
+        --------
+            * PhVentilationSystem: A new, unattached balanced system that owns
+                duplicates of all supplied children.
+        """
+        if not isinstance(ventilator, Ventilator):
+            raise TypeError("ventilator must be a Ventilator object.")
+
+        sensible = _validated_finite_number(ventilator.sensible_heat_recovery, "sensible_heat_recovery")
+        if not 0.0 < sensible <= 1.0:
+            raise ValueError(
+                "sensible_heat_recovery must be greater than 0 and no greater than 1; got {!r}.".format(
+                    ventilator.sensible_heat_recovery
+                )
+            )
+
+        latent = _validated_finite_number(ventilator.latent_heat_recovery, "latent_heat_recovery")
+        if not 0.0 <= latent <= 1.0:
+            raise ValueError(
+                "latent_heat_recovery must be between 0 and 1 inclusive; got {!r}.".format(
+                    ventilator.latent_heat_recovery
+                )
+            )
+
+        electric = _validated_finite_number(ventilator.electric_efficiency, "electric_efficiency")
+        if electric < 0.0:
+            raise ValueError(
+                "electric_efficiency must be nonnegative; got {!r}.".format(ventilator.electric_efficiency)
+            )
+
+        supply_elements = _validated_duct_collection(supply_ducting, "supply_ducting", 1)
+        exhaust_elements = _validated_duct_collection(exhaust_ducting, "exhaust_ducting", 2)
+
+        obj = cls()
+        if display_name is not None:
+            obj.display_name = display_name
+        obj.sys_type = 1
+        obj.supply_ducting = [element.duplicate() for element in supply_elements]
+        obj.exhaust_ducting = [element.duplicate() for element in exhaust_elements]
+        obj.ventilation_unit = ventilator.duplicate()
+        return obj
 
     @property
     def ventilation_unit(self):
@@ -258,7 +373,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj.sys_type = _input_dict["sys_type"]
         obj.supply_ducting = [ducting.PhDuctElement.from_dict(s_duct) for s_duct in _input_dict["supply_ducting"]]
         obj.exhaust_ducting = [ducting.PhDuctElement.from_dict(e_duct) for e_duct in _input_dict["exhaust_ducting"]]
-        obj.id_num = _input_dict.get("id_num", 0)
+        obj.id_num = _input_dict.get("id_num", obj.id_num)
 
         vent_unit_dict = _input_dict.get("ventilation_unit", None)
         if vent_unit_dict:
@@ -266,20 +381,26 @@ class PhVentilationSystem(_base._PhHVACBase):
 
         return obj
 
-    def duplicate(self):
+    def _duplicate_without_ducts(self):
         # type: () -> PhVentilationSystem
+        """Duplicate system metadata and equipment without copying duct collections."""
         new_obj = self.__class__()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
-        new_obj.user_data = copy(self.user_data)
+        new_obj.user_data = deepcopy(self.user_data)
         new_obj.sys_type = self.sys_type
-        new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
-        new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
         new_obj.id_num = self.id_num
 
         if self.ventilation_unit:
             new_obj._ventilation_unit = self.ventilation_unit.duplicate()
 
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> PhVentilationSystem
+        new_obj = self._duplicate_without_ducts()
+        new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
+        new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
         return new_obj
 
     def __copy__(self):
@@ -307,8 +428,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with moved ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [duct_element.move(moving_vec3D) for duct_element in self.supply_ducting]
         new_system.exhaust_ducting = [duct_element.move(moving_vec3D) for duct_element in self.exhaust_ducting]
         return new_system
@@ -330,8 +450,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with rotated ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.rotate(axis_vec3D, angle_degrees, origin_pt3D) for duct_element in self.supply_ducting
         ]
@@ -352,8 +471,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with rotated ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.rotate_xy(angle_degrees, origin_pt3D) for duct_element in self.supply_ducting
         ]
@@ -374,8 +492,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with reflected ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.reflect(normal_vec3D, origin_pt3D) for duct_element in self.supply_ducting
         ]
@@ -398,8 +515,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with scaled ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.scale(scale_factor, origin_pt3D) for duct_element in self.supply_ducting
         ]

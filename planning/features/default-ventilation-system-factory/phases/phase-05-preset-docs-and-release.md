@@ -1,14 +1,17 @@
-# Phase 05 — Preset decision, docs, and release
+# Phase 05 — Deferred preset, docs, and release
+
+**Status:** In progress · implementation and public docs complete; release pending
 
 ## Objective
 
-Decide the optional preliminary preset, document every supported state, run
-full gates, and release the coordinated contract.
+Record the preliminary preset as a deferred follow-up, document every supported
+state, run full gates, and release the coordinated contract.
 
-## Preliminary preset gate
+## Deferred preliminary preset
 
-Add `preliminary_balanced_hrv()` only if Ed accepts a complete, cited assumption
-set covering:
+This feature ships without `preliminary_balanced_hrv()`. A future packet may
+propose it only with Ed's acceptance of a complete, cited assumption set
+covering:
 
 - sensible and latent recovery;
 - electric efficiency/specific fan power;
@@ -17,8 +20,7 @@ set covering:
 - supply/exhaust exterior duct representation;
 - display/provenance label identifying assumed—not selected—equipment.
 
-If any value remains unresolved, record the preset as Deferred and complete the
-feature without it. Never fill gaps from current defaults.
+Never fill gaps from current defaults.
 
 ## Docs and verification
 
@@ -37,6 +39,20 @@ feature without it. Never fill gaps from current defaults.
 ## Exit checks
 
 - Every documented constructor state passes the end-to-end matrix.
-- Optional preset is either fully specified/tested or explicitly deferred.
+- Preliminary preset is explicitly deferred to a separately accepted packet.
 - No public example contains dummy ID `0`, zero-recovery HRV, or invented duct.
 - Released versions and downstream compatibility requirements are recorded.
+
+## Pre-release outcome
+
+`docs/ventilation-systems.md` documents every supported authoring state and
+migration away from bare equipment plus default 1 m ducts. Both Python examples
+execute independently and explicitly set all ventilator fields that flow
+downstream; their values are labeled illustrative, not recommended defaults.
+Decision 0006 preserves the stable state/absence/deferred-preset contract.
+
+The preliminary preset remains deferred. All simplify reuse, quality, and
+efficiency findings are resolved, with the decision-record research link
+scheduled to follow the packet into `planning/archive/` after release. Black,
+Python 2 grammar parsing, `git diff --check`, and the exact public examples
+pass. The full suite passes 1,016 tests with 80% aggregate coverage.

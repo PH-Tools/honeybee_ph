@@ -15,7 +15,8 @@ from ladybug.epw import EPW
 from ladybug.skymodel import calc_horizontal_infrared
 from ladybug.wea import Wea
 
-from honeybee_ph.site import ClimateProvenance, Climate_MonthlyValueSet, _is_finite_real
+from honeybee_ph.site import ClimateProvenance, Climate_MonthlyValueSet
+from honeybee_ph_utils.validation import is_finite_real as _is_finite_real
 
 
 class EPWConversionResult(object):

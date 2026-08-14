@@ -86,7 +86,11 @@ class ModelPhHvacProperties(object):
         for room_dict in data:
             d = room_dict.get("ventilation_system", {})
             if d:
-                mechanical_systems["ventilation_systems"][d["identifier"]] = PhVentilationSystem.from_dict(d)
+                ventilation_system = PhVentilationSystem.from_dict(d)
+                existing_system = mechanical_systems["ventilation_systems"].get(d["identifier"])
+                if existing_system and existing_system.to_dict() != ventilation_system.to_dict():
+                    raise ValueError("Conflicting ventilation systems share identifier {!r}.".format(d["identifier"]))
+                mechanical_systems["ventilation_systems"][d["identifier"]] = ventilation_system
 
             for d in room_dict.get("heating_systems", []):
                 mechanical_systems["heating_systems"][d["identifier"]] = PhHeatingSystemBuilder.from_dict(d)

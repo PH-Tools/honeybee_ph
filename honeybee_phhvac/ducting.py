@@ -3,6 +3,7 @@
 
 """Honeybee-PH-HVAC-Equipment: Ducts."""
 
+from copy import deepcopy
 from math import radians
 
 try:
@@ -103,11 +104,10 @@ class PhDuctSegment(_base._PhHVACBase):
 
         return cls(geom)
 
-    def __copy__(self):
-        # type: () -> PhDuctSegment
-        new_obj = PhDuctSegment(self.geometry)
-
-        new_obj.geometry = self.geometry
+    def _duplicate_with_geometry(self, geometry):
+        # type: (LineSegment3D) -> PhDuctSegment
+        """Duplicate metadata around an already-copied/transformed geometry."""
+        new_obj = PhDuctSegment(geometry)
         new_obj.insulation_thickness = self.insulation_thickness
         new_obj.insulation_conductivity = self.insulation_conductivity
         new_obj.insulation_reflective = self.insulation_reflective
@@ -116,9 +116,13 @@ class PhDuctSegment(_base._PhHVACBase):
         new_obj.width = self.width
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
-        new_obj.user_data = self.user_data
+        new_obj.user_data = deepcopy(self.user_data)
 
         return new_obj
+
+    def __copy__(self):
+        # type: () -> PhDuctSegment
+        return self._duplicate_with_geometry(self.geometry.duplicate())
 
     def duplicate(self):
         # type: () -> PhDuctSegment
@@ -175,9 +179,7 @@ class PhDuctSegment(_base._PhHVACBase):
         --------
             * PhDuctSegment: A new moved duct segment.
         """
-        new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.move(moving_vec3D)
-        return new_segment
+        return self._duplicate_with_geometry(self.geometry.move(moving_vec3D))
 
     def rotate(self, axis_vec3D, angle_degrees, origin_pt3D):
         # type: (Point3D, float, Point3D) -> PhDuctSegment
@@ -197,9 +199,8 @@ class PhDuctSegment(_base._PhHVACBase):
         --------
             * PhDuctSegment: A new rotated duct segment.
         """
-        new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
-        return new_segment
+        geometry = self.geometry.rotate(axis_vec3D, radians(angle_degrees), origin_pt3D)
+        return self._duplicate_with_geometry(geometry)
 
     def rotate_xy(self, angle_degrees, origin_pt3D):
         # type: (float, Point3D) -> PhDuctSegment
@@ -214,9 +215,8 @@ class PhDuctSegment(_base._PhHVACBase):
         --------
             * PhDuctSegment: A new rotated duct segment.
         """
-        new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
-        return new_segment
+        geometry = self.geometry.rotate_xy(radians(angle_degrees), origin_pt3D)
+        return self._duplicate_with_geometry(geometry)
 
     def reflect(self, normal_vec3D, origin_pt3D):
         # type: (Point3D, Point3D) -> PhDuctSegment
@@ -232,9 +232,7 @@ class PhDuctSegment(_base._PhHVACBase):
         --------
             * PhDuctSegment: A new reflected duct segment.
         """
-        new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.reflect(normal_vec3D, origin_pt3D)
-        return new_segment
+        return self._duplicate_with_geometry(self.geometry.reflect(normal_vec3D, origin_pt3D))
 
     def scale(self, scale_factor, origin_pt3D=None):
         # type: (float, Optional[Point3D]) -> PhDuctSegment
@@ -250,8 +248,7 @@ class PhDuctSegment(_base._PhHVACBase):
         --------
             * PhDuctSegment: A new scaled duct segment.
         """
-        new_segment = self.duplicate()
-        new_segment.geometry = self.geometry.scale(scale_factor, origin_pt3D)
+        new_segment = self._duplicate_with_geometry(self.geometry.scale(scale_factor, origin_pt3D))
         new_segment.insulation_thickness = self.insulation_thickness * scale_factor
         new_segment.diameter = self.diameter * scale_factor
         new_segment.height = scale_factor * self.height if self.height else None
@@ -373,18 +370,22 @@ class PhDuctElement(_base._PhHVACBase):
         """Clear all the segments from the duct element."""
         self._segments = {}
 
-    def __copy__(self):
+    def _duplicate_without_segments(self):
         # type: () -> PhDuctElement
+        """Duplicate element metadata without copying its segment collection."""
         new_obj = PhDuctElement()
-
-        for segment in self.segments:
-            new_obj.add_segment(segment.duplicate())
-
         new_obj.identifier = self.identifier
         new_obj.display_name = self.display_name
         new_obj.duct_type = self.duct_type
-        new_obj.user_data = self.user_data
+        new_obj.user_data = deepcopy(self.user_data)
 
+        return new_obj
+
+    def __copy__(self):
+        # type: () -> PhDuctElement
+        new_obj = self._duplicate_without_segments()
+        for segment in self.segments:
+            new_obj.add_segment(segment.duplicate())
         return new_obj
 
     def duplicate(self):
@@ -442,8 +443,7 @@ class PhDuctElement(_base._PhHVACBase):
         --------
             * PhDuctElement: A new moved duct element.
         """
-        new_element = self.duplicate()
-        new_element.clear_segments()
+        new_element = self._duplicate_without_segments()
         for segment in self.segments:
             new_element.add_segment(segment.move(moving_vec3D))
         return new_element
@@ -465,8 +465,7 @@ class PhDuctElement(_base._PhHVACBase):
         --------
             * PhDuctElement: A new rotated duct element.
         """
-        new_element = self.duplicate()
-        new_element.clear_segments()
+        new_element = self._duplicate_without_segments()
         for segment in self.segments:
             new_element.add_segment(segment.rotate(axis_vec3D, angle_degrees, origin_pt3D))
         return new_element
@@ -483,8 +482,7 @@ class PhDuctElement(_base._PhHVACBase):
         --------
             * PhDuctElement: A new rotated duct element.
         """
-        new_element = self.duplicate()
-        new_element.clear_segments()
+        new_element = self._duplicate_without_segments()
         for segment in self.segments:
             new_element.add_segment(segment.rotate_xy(angle_degrees, origin_pt3D))
         return new_element
@@ -502,8 +500,7 @@ class PhDuctElement(_base._PhHVACBase):
         --------
             * PhDuctElement: A new reflected duct element.
         """
-        new_element = self.duplicate()
-        new_element.clear_segments()
+        new_element = self._duplicate_without_segments()
         for segment in self.segments:
             new_element.add_segment(segment.reflect(normal_vec3D, origin_pt3D))
         return new_element
@@ -522,8 +519,7 @@ class PhDuctElement(_base._PhHVACBase):
         --------
             * PhDuctElement: A new scaled duct element.
         """
-        new_element = self.duplicate()
-        new_element.clear_segments()
+        new_element = self._duplicate_without_segments()
         for segment in self.segments:
             new_element.add_segment(segment.scale(scale_factor, origin_pt3D))
         return new_element

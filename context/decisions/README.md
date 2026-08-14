@@ -15,3 +15,4 @@ research (e.g. `planning/refactor/`).
 | [0003](0003-psi-install-is-aperture-instance-data.md) | Psi-install is aperture-instance data resolved from named Install Types — never a reason to duplicate a window construction | Decided 2026-08-12 |
 | [0004](0004-no-bundled-licensed-climate-data.md) | Do not bundle licensed PHI/Phius climate datasets; convert user-supplied EPW data as explicitly preliminary instead | Decided 2026-08-14 |
 | [0005](0005-repository-coverage-floor-is-75-percent.md) | Enforce a truthful 75% repository-wide coverage floor while retaining focused contract tests for new behavior | Decided 2026-08-14 |
+| [0006](0006-explicit-ventilation-system-states.md) | Use explicit ventilation-system states and selected equipment; do not invent nominal HRV performance or ducts | Decided 2026-08-14 |
