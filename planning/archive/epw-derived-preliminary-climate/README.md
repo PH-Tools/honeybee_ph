@@ -1,6 +1,6 @@
 # epw-derived-preliminary-climate — router
 
-**Status:** In progress · Phases 01–04 complete · Phase 05 release handoff
+**Status:** Complete · released honeybee-ph v1.33.40 and PHX v1.56.76 · 2026-08-14
 
 **Scope:** Convert a caller-supplied EPW into a provenance-bearing,
 explicitly preliminary `Site` suitable for monthly design exploration. Bundle
@@ -15,11 +15,11 @@ climate data explicitly unavailable.
 4. `STATUS.md` — current state and next action
 
 **Prerequisite:**
-[`independent-site-defaults`](../../archive/independent-site-defaults/README.md)
+[`independent-site-defaults`](../independent-site-defaults/README.md)
 is complete and archived. Verify the published `honeybee-ph>=1.33.35` artifact
 before implementation so every converted Site owns an independent nested graph.
 
 **Supersedes:**
-[`planning/archive/climate-dataset-library/`](../../archive/climate-dataset-library/README.md).
+[`planning/archive/climate-dataset-library/`](../climate-dataset-library/README.md).
 Canonical boundary: decision
 [`0004-no-bundled-licensed-climate-data`](../../../context/decisions/0004-no-bundled-licensed-climate-data.md).

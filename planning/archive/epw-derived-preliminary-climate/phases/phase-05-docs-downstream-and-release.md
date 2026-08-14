@@ -1,7 +1,6 @@
 # Phase 05 — Docs, downstream verification, and release
 
-**Status:** In progress · local implementation and downstream guard complete;
-release verification pending · 2026-08-14
+**Status:** Complete · upstream and downstream releases verified · 2026-08-14
 
 ## Objective
 
@@ -47,15 +46,15 @@ claims, IronPython regressions, or downstream zero fallbacks.
 - Public EPW guide documents units, cardinal azimuths, radiation options,
   ground-depth selection, readiness/provenance, PHX rejection, and the
   non-certification/no-zero boundary.
-- `uv build` produced the `1.33.39` development sdist and wheel in a temporary
+- `uv build` produced the pre-release development sdist and wheel in a temporary
   directory. Archive inspection found no `.epw` or copied climate dataset;
   both `honeybee_ph/_epw.py` and `honeybee_ph/site.py` are present.
 - Import/conversion from the built wheel succeeds under CPython 3.10:
   monthly ready, peak not ready, `source_type=epw_derived`, `peak_loads=None`.
 - Final honeybee-ph gate remains `966 passed` with `80%` aggregate coverage;
   Black, Python 2 grammar parsing, and `git diff --check` pass.
-- PHX branch `codex/epw-derived-preliminary-climate-readiness`, commit
-  `2e8864c`, rejects explicit monthly or peak readiness issues before any
+- PHX commits `2e8864c` and `703d836` reject explicit monthly or peak
+  readiness issues before any
   substantive variant builder. Legacy populated climate remains supported and
   blank PHPP codes remain blank.
 - PHX verification: `881 passed, 3 skipped, 1 deselected` against its locked
@@ -63,8 +62,10 @@ claims, IronPython regressions, or downstream zero fallbacks.
 - OpenPH workspace audit found no direct honeybee-ph climate ingestion. Its
   canonical path consumes a PHX `PhxVariant`; the new PHX boundary rejects the
   monthly-only state before OpenPH construction.
-- Expected upstream release target is `honeybee-ph==1.33.40`. Before the PHX
-  branch merges/releases, its downstream minimum must be raised to
-  `honeybee-ph>=1.33.40` and locked against the published artifact.
-- Remaining blocker: merge/release authorization, published-artifact
-  verification, PHX pin/release verification, then packet archive.
+- Honeybee-ph PR #93 merged and released v1.33.40. A fresh PyPI-wheel venv
+  converted the synthetic EPW with monthly readiness true, peak readiness
+  false, null peak loads, and `epw_derived` provenance.
+- PHX PR #81 merged with `honeybee-ph>=1.33.40` in both package metadata and
+  lockfile, then released v1.56.76. A fresh PyPI venv verified the published
+  packages together and produced the targeted pre-copy readiness diagnostic.
+- All exit checks are satisfied; the packet is archived.

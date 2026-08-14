@@ -39,7 +39,7 @@
 - **Final release check:** verify the `v1.33.35` tag, GitHub release, and PyPI
   artifact before beginning the EPW-derived climate packet.
 - Blockers: none.
-- Downstream: [`epw-derived-preliminary-climate`](../../features/epw-derived-preliminary-climate/README.md)
+- Downstream: [`epw-derived-preliminary-climate`](../epw-derived-preliminary-climate/README.md)
   remains blocked until the `honeybee-ph>=1.33.35` artifact is published and
   verified.
 

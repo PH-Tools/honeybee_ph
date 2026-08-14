@@ -8,7 +8,6 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **In progress** — Phases 01–04 + Phase 05 local/downstream work complete; expected v1.33.40 release, PHX >=1.33.40 pin/release, and archive remain | [`features/epw-derived-preliminary-climate/`](features/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **Scoped** — local API fixed; Phase 01 state matrix required before code | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
@@ -18,16 +17,12 @@ _Last updated: 2026-08-14_
 
 For one implementation stream:
 
-1. `epw-derived-preliminary-climate` — depends on published
-   `honeybee-ph>=1.33.35` and adds the broader
-   provenance/readiness contract.
-2. `default-ventilation-system-factory` — complete only with coordinated
+1. `default-ventilation-system-factory` — complete only with coordinated
    PHX/OpenPH state semantics.
 
 Hard dependencies are narrower than the linear queue:
 
 ```text
-honeybee-ph>=1.33.35 -> epw-derived-preliminary-climate
 ventilation state matrix -> PHX/OpenPH semantics -> ventilation closeout
 ```
 
@@ -35,6 +30,7 @@ ventilation state matrix -> PHX/OpenPH semantics -> ventilation closeout
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Complete** — honeybee-ph v1.33.40 and PHX v1.56.76 released; both published artifacts pass EPW/readiness smoke checks | [`archive/epw-derived-preliminary-climate/`](archive/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
 | `Space.from_room()` default-space factory (upstream from GH) | Feature (cross-repo, **primary**) | **Complete** — factory released v1.33.36; GH wrapper released v1.28.1 with generated pin; meter, foot, multi-floor, host, and round-trip canvas checks pass | [`archive/space-from-room-factory/`](archive/space-from-room-factory/README.md) |
 | Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | **Complete** — archived; 98 focused + 891 full tests pass; release target `v1.33.35` via merge CI | [`archive/independent-site-defaults/`](archive/independent-site-defaults/README.md) |
 | Aperture-level Psi-Install (Install Types) | Refactor (cross-repo, **primary**) | **Complete** — merged (PR #87) + released v1.33.33; archived; decision [0003](../context/decisions/0003-psi-install-is-aperture-instance-data.md) | [`archive/aperture-psi-install/`](archive/aperture-psi-install/aperture-psi-install-plan.md) |
@@ -71,16 +67,17 @@ re-points its component at it and retires the Rhino-side duplicate.
 | `honeybee_ph` | [`archive/space-from-room-factory/`](archive/space-from-room-factory/PRD.md) | Primary — **complete, archived; released v1.33.36** |
 | `honeybee_grasshopper_ph` | `planning/archive/space-from-room-factory/` | Wrapper **complete, archived; released v1.28.1** with generated `honeybee-ph>=1.33.36` pin |
 
-`epw-derived-preliminary-climate` is owned here and will be implemented here,
-with downstream readiness coordination. This repo owns EPW conversion, provenance,
-availability, and HBJSON; PHX/OpenPH must reject unavailable peak-load data
-precisely rather than manufacturing zeros.
+`epw-derived-preliminary-climate` is owned here and complete, with downstream
+readiness coordination. This repo owns EPW conversion, provenance,
+availability, and HBJSON; PHX rejects unavailable peak-load data precisely
+rather than manufacturing zeros. OpenPH requires no direct change because its
+canonical path consumes the already-validated PHX variant.
 
 | Repo | Doc | Role |
 |------|-----|------|
-| `honeybee_ph` | [`features/epw-derived-preliminary-climate/`](features/epw-derived-preliminary-climate/README.md) | Primary — user-supplied EPW conversion + provenance/readiness |
-| `PHX` | follow-up to be filed during Phase 01 | Preserve monthly-only/unavailable-load state |
-| `openph-workspace` | follow-up to be filed during Phase 01 | Targeted readiness diagnostic; no zero fallback |
+| `honeybee_ph` | [`archive/epw-derived-preliminary-climate/`](archive/epw-derived-preliminary-climate/README.md) | Primary — **complete, archived; released v1.33.40** |
+| `PHX` | PR #81 | **Complete; released v1.56.76** with `honeybee-ph>=1.33.40` and pre-copy readiness rejection |
+| `openph-workspace` | audit only | No direct honeybee-ph climate ingestion; canonical PHX boundary is sufficient |
 
 `default-ventilation-system-factory` shares one state contract with PHX and
 OpenPH. The target-derived state matrix is Phase 01; no repo may independently
