@@ -32,3 +32,23 @@ and prove behavior parity before retiring duplicate orchestration.
 - No still-imported `make_spaces` helper was removed.
 - Both repo packets/statuses record the release, pin, and verification evidence.
 
+## Evidence — 2026-08-14
+
+- Primary PR #89 merged at `e456ca5`; release workflow 31818498356 succeeded
+  and published `honeybee-ph==1.33.36` from tag/commit `3371ab2`.
+- The release was installed and API-checked in the GH repo `.venv` and
+  `/Users/em/ladybug_tools/python`. Rhino was not running, so no restart was
+  required before the non-GUI checks.
+- GH PR #61 merged at `9d2ae2a`; release workflow 31819524996 succeeded and
+  published `honeybee_grasshopper_ph` v1.28.1 from `062402f`.
+- Generated `requirements.txt` and `hbph_installer.ghx` both require
+  `honeybee-ph>=1.33.36`.
+- The wrapper now owns only Room duplication, one document-unit conversion per
+  run, attachment, and IGH error routing. Import audit confirms every
+  `make_spaces/` helper still has another detailed-space consumer.
+- Headless meter/foot smoke verifies 2.5 m / 8.2020997375 ft heights, source
+  Room non-mutation, 20 model-unit-squared floor and weighted floor area,
+  volume, Room HBJSON round-trip, and no-floor/conversion error routing.
+- Remaining exit check: live meter and non-meter Rhino/Grasshopper definitions,
+  including multi-floor volume count and `Space.host` identity. No existing
+  repo definition exercises this component, so the packet remains active.
