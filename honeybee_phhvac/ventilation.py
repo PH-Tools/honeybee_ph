@@ -368,7 +368,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         obj.sys_type = _input_dict["sys_type"]
         obj.supply_ducting = [ducting.PhDuctElement.from_dict(s_duct) for s_duct in _input_dict["supply_ducting"]]
         obj.exhaust_ducting = [ducting.PhDuctElement.from_dict(e_duct) for e_duct in _input_dict["exhaust_ducting"]]
-        obj.id_num = _input_dict.get("id_num", 0)
+        obj.id_num = _input_dict.get("id_num", obj.id_num)
 
         vent_unit_dict = _input_dict.get("ventilation_unit", None)
         if vent_unit_dict:
@@ -376,20 +376,26 @@ class PhVentilationSystem(_base._PhHVACBase):
 
         return obj
 
-    def duplicate(self):
+    def _duplicate_without_ducts(self):
         # type: () -> PhVentilationSystem
+        """Duplicate system metadata and equipment without copying duct collections."""
         new_obj = self.__class__()
         new_obj.display_name = self.display_name
         new_obj.identifier = self.identifier
-        new_obj.user_data = copy(self.user_data)
+        new_obj.user_data = deepcopy(self.user_data)
         new_obj.sys_type = self.sys_type
-        new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
-        new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
         new_obj.id_num = self.id_num
 
         if self.ventilation_unit:
             new_obj._ventilation_unit = self.ventilation_unit.duplicate()
 
+        return new_obj
+
+    def duplicate(self):
+        # type: () -> PhVentilationSystem
+        new_obj = self._duplicate_without_ducts()
+        new_obj.supply_ducting = [s_duct.duplicate() for s_duct in self.supply_ducting]
+        new_obj.exhaust_ducting = [e_duct.duplicate() for e_duct in self.exhaust_ducting]
         return new_obj
 
     def __copy__(self):
@@ -417,8 +423,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with moved ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [duct_element.move(moving_vec3D) for duct_element in self.supply_ducting]
         new_system.exhaust_ducting = [duct_element.move(moving_vec3D) for duct_element in self.exhaust_ducting]
         return new_system
@@ -440,8 +445,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with rotated ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.rotate(axis_vec3D, angle_degrees, origin_pt3D) for duct_element in self.supply_ducting
         ]
@@ -462,8 +466,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with rotated ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.rotate_xy(angle_degrees, origin_pt3D) for duct_element in self.supply_ducting
         ]
@@ -484,8 +487,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with reflected ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.reflect(normal_vec3D, origin_pt3D) for duct_element in self.supply_ducting
         ]
@@ -508,8 +510,7 @@ class PhVentilationSystem(_base._PhHVACBase):
         --------
             * PhVentilationSystem: A new system with scaled ducts.
         """
-        new_system = self.duplicate()
-        new_system.identifier = self.identifier
+        new_system = self._duplicate_without_ducts()
         new_system.supply_ducting = [
             duct_element.scale(scale_factor, origin_pt3D) for duct_element in self.supply_ducting
         ]

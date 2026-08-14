@@ -1,6 +1,6 @@
 # ventilation-system-factories — router
 
-**Status:** In progress · Phases 01–02 complete
+**Status:** In progress · Phases 01–03 complete
 
 **Scope:** Explicit constructors for valid ventilation states in
 `honeybee_phhvac`, including a balanced HRV/ERV system without invented duct

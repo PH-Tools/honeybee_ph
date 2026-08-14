@@ -1,5 +1,7 @@
 # Phase 03 — Serialization and Room integration
 
+**Status:** Complete · 2026-08-14
+
 ## Objective
 
 Prove every local factory state through duplicate, Room properties, model
@@ -28,3 +30,22 @@ collection deduplication, and HBJSON without changing attachment semantics.
 - Existing valid HBJSON payloads remain byte-shape compatible unless an
   additive key was explicitly accepted in Phase 01.
 
+## Outcome
+
+All zero/one/many-duct states round-trip through system dictionaries, full and
+abridged Room properties, and a real HBJSON file. Direct, Room, and transformed
+duplicates own independent system, ventilator, duct element, segment, geometry,
+and nested metadata graphs. Public two-Room Model round trips prove identical
+system identifiers deduplicate to one shared restored object and distinct
+identifiers remain distinct.
+
+Model reload now rejects a same-identifier/different-payload ventilation
+collision instead of silently keeping the last graph. Required historical
+system keys remain required; genuinely optional metadata (`user_data`,
+`id_num`) remains tolerant. Transform implementations reuse metadata-only copy
+helpers so the stronger geometry-ownership contract does not allocate and
+discard intermediate graphs.
+
+Verification before the full phase gate: 115 focused/adjacent tests pass;
+Black, Python 2 grammar parsing, and `git diff --check` pass. The full repository
+gate passes with 1016 tests and 80% aggregate coverage.

@@ -8,7 +8,7 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **In progress** — Phases 01–02 complete; serialization/Room/HBJSON integration next | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
+| Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **In progress** — Phases 01–03 complete; PHX/OpenPH integration next | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |

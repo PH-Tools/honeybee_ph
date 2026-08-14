@@ -1,6 +1,6 @@
 # STATUS — ventilation-system-factories
 
-**Status:** In progress · Phases 01–02 complete · 2026-08-14
+**Status:** In progress · Phases 01–03 complete · 2026-08-14
 
 - Phase 01 froze the shared honeybee-ph / PHX / OpenPH state contract in
   `STATE_TABLE.md`.
@@ -20,8 +20,16 @@
 - `None` and empty duct collections remain empty; accepted caller children and
   nested `user_data` are independently duplicated; no legacy default-duct
   helper is called and no Room attachment occurs.
-- **Next step:** Phase 03 serialization, duplication, Room, Model, and HBJSON
-  round-trip coverage.
+- Phase 03 proves zero/one/many-duct dictionary round trips, full graph
+  independence including geometry and nested metadata, explicit Room
+  attachment, real HBJSON file transport, shared-system deduplication, and
+  preservation of distinct system identifiers.
+- Same-identifier/different-payload system graphs now fail with a targeted
+  conflict instead of silently overwriting one graph during Model reload.
+- Transform paths reuse metadata-only duplicates and no longer allocate and
+  discard intermediate geometry graphs.
+- **Next step:** Phase 04 PHX nullable assignment, converter validation, target
+  mappings, and OpenPH compatibility verification.
 - The optional preliminary preset remains deferred because no complete set of
   performance, frost, location, and duct assumptions has been accepted.
 - Phase 01 gate: simplify reuse/quality/efficiency findings resolved;
@@ -32,3 +40,6 @@
   the new factory/helpers; **135 adjacent factory/duct/climate tests** pass;
   Black, Python 2 grammar parsing, and `git diff --check` pass.
 - Phase 02 full gate: **1004 tests** pass with **80%** aggregate coverage.
+- Phase 03 focused/adjacent gate: **115 tests** pass; Black, Python 2 grammar,
+  and `git diff --check` pass before the full phase gate.
+- Phase 03 full gate: **1016 tests** pass with **80%** aggregate coverage.
