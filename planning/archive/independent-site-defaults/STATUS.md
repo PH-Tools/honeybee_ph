@@ -1,6 +1,6 @@
 # STATUS — independent-site-defaults
 
-**Status:** Implemented · verified locally; release pending · 2026-08-14
+**Status:** Complete · archived · release target `v1.33.35` · 2026-08-14
 
 - Defect reproduced during the ph-modeler POC review: separate `Site()` calls
   share a nested `Climate` object.
@@ -33,17 +33,19 @@
   baseline for this feature on 2026-08-14; no unrelated coverage expansion was
   added. `honeybee_ph/site.py` reports 99%, with only pre-existing import
   fallback and invalid-length validation lines uncovered.
-- **Next step:** merge this branch to `main`. GitHub Actions will run tests,
-  create the version bump/tag, publish to PyPI, and create the GitHub release.
-  Then record the actual released version, update the EPW minimum prerequisite,
-  mark this packet Complete, and archive it.
+- The implementation packet is complete and archived. Merge to `main` is the
+  release handoff: GitHub Actions will run tests, create `v1.33.35`, publish to
+  PyPI, and create the GitHub release.
+- **Final release check:** verify the `v1.33.35` tag, GitHub release, and PyPI
+  artifact before beginning the EPW-derived climate packet.
 - Blockers: none.
-- Downstream: `../epw-derived-preliminary-climate/` is blocked on this feature's
-  completion and release.
+- Downstream: [`epw-derived-preliminary-climate`](../../features/epw-derived-preliminary-climate/README.md)
+  remains blocked until the `honeybee-ph>=1.33.35` artifact is published and
+  verified.
 
 ## Do-not-run boundary
 
 - Do not publish or tag manually from this feature branch; release is owned by
   `.github/workflows/ci.yml` after merge to `main`.
-- Do not unblock `epw-derived-preliminary-climate` or archive this packet until
-  the published artifact is verified and its actual version is recorded.
+- Do not begin `epw-derived-preliminary-climate` until the published
+  `honeybee-ph>=1.33.35` artifact is verified.

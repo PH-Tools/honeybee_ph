@@ -1,6 +1,6 @@
 # PRD — Independent `Site` and `Climate` defaults
 
-**Status:** Implemented · release pending · 2026-08-14
+**Status:** Complete · archived · release target `v1.33.35` · 2026-08-14
 **Author:** Ed May + Codex
 **Kind:** Correctness feature / defect repair (this repo only)
 
@@ -80,4 +80,5 @@ state.
   children.
 - Existing default serialization snapshots remain unchanged.
 - Old serialized site dictionaries still load and remain independent.
-- Full `python3 -m pytest` passes at the repository's coverage threshold.
+- Full `python3 -m pytest` passes; the authorized existing aggregate coverage
+  baseline is recorded in `STATUS.md`.

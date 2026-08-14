@@ -7,7 +7,7 @@ constructor changes.
 |---:|---|---|---|
 | 01 | Pin compatibility and reproduce every shared-identity path | No code changes before failures exist | **Complete** — 66 red / 26 green contract checks |
 | 02 | Replace constructed defaults and implement recursive duplication | Phase 01 regression matrix complete | **Complete** — 95 focused cases green |
-| 03 | Verify HBJSON, host-object behavior, docs, full suite, and release | Phase 02 focused tests green | **Implemented** — local verification complete; release/archive pending merge |
+| 03 | Verify HBJSON, host-object behavior, docs, full suite, and release handoff | Phase 02 focused tests green | **Complete** — archived; `v1.33.35` release queued through merge CI |
 
 Phase documents:
 
@@ -19,6 +19,6 @@ Phase documents:
 
 ```text
 independent-site-defaults
-    -> release
+    -> published honeybee-ph>=1.33.35
     -> epw-derived-preliminary-climate
 ```

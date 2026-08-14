@@ -7,7 +7,7 @@ unknown climate states distinguishable before adding any EPW conversion path.
 
 ## Preconditions
 
-- `independent-site-defaults` is complete and released.
+- The published `honeybee-ph>=1.33.35` artifact has been verified.
 - Decision 0004 remains in force.
 
 ## Implementation

@@ -6,7 +6,7 @@ requested.
 
 | Phase | Objective | Gate |
 |---:|---|---|
-| 01 | Freeze provenance, completeness, serialization, and downstream contracts | `independent-site-defaults` complete; schema review accepted |
+| 01 | Freeze provenance, completeness, serialization, and downstream contracts | Published `honeybee-ph>=1.33.35` verified; schema review accepted |
 | 02 | Implement EPW parsing, source validation, location, scalars, and monthly temperatures | Phase 01 tests/contract stable |
 | 03 | Implement directional monthly radiation and explicit ground-temperature selection | Phase 02 complete |
 | 04 | Add `Site.from_epw()`, readiness checks, duplication, and HBJSON integration | Phases 02–03 complete |
@@ -23,7 +23,7 @@ Phase documents:
 ## Required sequence with adjacent work
 
 ```text
-independent-site-defaults
+published honeybee-ph>=1.33.35
     -> EPW Phase 01 provenance/completeness
     -> EPW conversion phases
     -> PHX/OpenPH readiness verification
@@ -31,4 +31,3 @@ independent-site-defaults
 
 `space-from-room-factory` is independent and may proceed before or alongside
 this packet after the shared-site fix is complete.
-

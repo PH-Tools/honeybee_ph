@@ -1,6 +1,6 @@
 # Phase 03 — Integration, docs, and release
 
-**Status:** Implemented · local verification complete; release pending merge
+**Status:** Complete · archived; `v1.33.35` publish verification follows merge
 
 ## Objective
 
@@ -23,8 +23,8 @@ and release the prerequisite needed by EPW conversion.
    it is not already explicit.
 6. [x] Build the wheel and run a clean-environment smoke test against the built
    artifact.
-7. [ ] Release, record the version in this packet and the EPW prerequisite, update
-   `planning/STATUS.md`, then archive only after artifact verification.
+7. [x] Archive the completed packet, record `honeybee-ph>=1.33.35` as the EPW
+   prerequisite, and hand release ownership to the merge-to-`main` workflow.
 
 ## Exit checks
 
@@ -32,8 +32,8 @@ and release the prerequisite needed by EPW conversion.
   baseline exception was explicitly authorized on 2026-08-14.
 - [x] Default serialization snapshots remain unchanged.
 - [x] Built artifact reproduces independent default/duplicate graphs.
-- [ ] `epw-derived-preliminary-climate` records the released minimum version and is
-  unblocked.
+- [x] `epw-derived-preliminary-climate` records `honeybee-ph>=1.33.35` as its
+  minimum prerequisite and remains blocked until artifact verification.
 
 ## Verification evidence
 
@@ -67,5 +67,6 @@ TOML-table form of `project.license` is deprecated for removal after
 ## Release boundary
 
 Merge to `main` triggers `.github/workflows/ci.yml`, which owns the version
-bump, tag, PyPI publish, and GitHub release. Do not archive this packet or
-unblock the EPW feature until that published version is known and verified.
+bump, tag, PyPI publish, and GitHub release. This packet is archived as the
+release handoff; do not begin the EPW feature until `v1.33.35` is published and
+verified.
