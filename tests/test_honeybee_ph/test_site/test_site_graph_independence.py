@@ -6,6 +6,8 @@ import sys
 
 import pytest
 
+from honeybee.model import Model
+from honeybee.room import Room
 from honeybee_ph import site
 from honeybee_ph.bldg_segment import BldgSegment
 
@@ -526,3 +528,54 @@ def test_mutable_children_preserve_positional_order():
     assert site_obj.location is location
     assert site_obj.climate is climate
     assert site_obj.phpp_library_codes is phpp_codes
+
+
+def _room_site(room):
+    return room.properties.ph.ph_bldg_segment.site
+
+
+def _room_with_populated_site():
+    room = Room.from_box("source-room")
+    room_site = _populated_site()
+    room_site.user_data["scope"] = "site"
+    room.properties.ph.ph_bldg_segment.site = room_site
+    return room, room_site
+
+
+def test_room_property_default_site_graphs_are_independent():
+    left = Room.from_box("left-room")
+    right = Room.from_box("right-room")
+
+    for path in SITE_MUTABLE_PATHS:
+        assert _resolve(_room_site(left), path) is not _resolve(_room_site(right), path)
+
+
+def test_room_duplicate_owns_complete_site_graph():
+    room, original_site = _room_with_populated_site()
+
+    duplicate_site = _room_site(room.duplicate())
+
+    assert duplicate_site.to_dict() == original_site.to_dict()
+    for path in SITE_MUTABLE_PATHS:
+        assert _resolve(duplicate_site, path) is not _resolve(original_site, path)
+
+
+def test_model_hbjson_round_trip_owns_complete_site_graph():
+    room, original_site = _room_with_populated_site()
+    serialized = json.loads(json.dumps(Model("site-graph-model", [room]).to_dict()))
+
+    left_model = Model.from_dict(deepcopy(serialized))
+    right_model = Model.from_dict(deepcopy(serialized))
+    left_site = _room_site(left_model.rooms[0])
+    right_site = _room_site(right_model.rooms[0])
+
+    assert json.loads(json.dumps(left_model.to_dict())) == serialized
+    assert json.loads(json.dumps(right_model.to_dict())) == serialized
+    assert left_site.to_dict() == original_site.to_dict()
+    for path in SITE_MUTABLE_PATHS:
+        assert _resolve(left_site, path) is not _resolve(original_site, path)
+        assert _resolve(left_site, path) is not _resolve(right_site, path)
+
+    left_site.climate.monthly_temps.air_temps.january = -5.0
+    assert right_site.climate.monthly_temps.air_temps.january == 1
+    assert original_site.climate.monthly_temps.air_temps.january == 1

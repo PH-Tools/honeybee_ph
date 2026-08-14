@@ -1,6 +1,6 @@
 # independent-site-defaults — router
 
-**Status:** In progress · Phases 01–02 complete; Phase 03 next
+**Status:** Implemented · verified locally; release pending merge to `main`
 
 **Scope:** Remove shared mutable constructor defaults and shallow climate copies
 from `honeybee_ph.site`, so every `Site`/`Climate` instance and duplicate owns an

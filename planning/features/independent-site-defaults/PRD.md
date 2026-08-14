@@ -1,6 +1,6 @@
 # PRD — Independent `Site` and `Climate` defaults
 
-**Status:** In progress · 2026-08-14
+**Status:** Implemented · release pending · 2026-08-14
 **Author:** Ed May + Codex
 **Kind:** Correctness feature / defect repair (this repo only)
 

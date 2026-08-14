@@ -131,6 +131,9 @@ class Climate_MonthlyValueSet(_base._Base):
 class Climate_MonthlyTempCollection(_base._Base):
     """Collection of monthly temperature data sets.
 
+    Default construction creates four independent monthly value sets. Explicitly
+    supplied value sets are retained by identity.
+
     Attributes:
         air_temps (Climate_MonthlyValueSet): Monthly air temperatures in degrees C.
         dewpoints (Climate_MonthlyValueSet): Monthly dewpoint temperatures in degrees C.
@@ -202,6 +205,9 @@ class Climate_MonthlyTempCollection(_base._Base):
 class Climate_MonthlyRadiationCollection(_base._Base):
     """Collection of monthly solar radiation data by orientation.
 
+    Default construction creates five independent monthly value sets. Explicitly
+    supplied value sets are retained by identity.
+
     Attributes:
         north (Climate_MonthlyValueSet): Monthly north-facing radiation in kWh/m2.
         east (Climate_MonthlyValueSet): Monthly east-facing radiation in kWh/m2.
@@ -218,8 +224,8 @@ class Climate_MonthlyRadiationCollection(_base._Base):
         _west=None,
         _glob=None,
     ):
-        super(Climate_MonthlyRadiationCollection, self).__init__()
         # type: (Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet], Optional[Climate_MonthlyValueSet]) -> None
+        super(Climate_MonthlyRadiationCollection, self).__init__()
         self.north = _north if _north is not None else Climate_MonthlyValueSet()
         self.east = _east if _east is not None else Climate_MonthlyValueSet()
         self.south = _south if _south is not None else Climate_MonthlyValueSet()
@@ -379,6 +385,9 @@ class Climate_PeakLoadValueSet(_base._Base):
 
 class Climate_PeakLoadCollection(_base._Base):
     """Collection of peak heating and cooling load design conditions.
+
+    Default construction creates four independent peak-load value sets. Explicitly
+    supplied value sets are retained by identity.
 
     Attributes:
         heat_load_1 (Climate_PeakLoadValueSet): Primary heating design condition.
@@ -541,7 +550,8 @@ class Climate(_base._Base):
     """Complete climate dataset for PH energy modeling.
 
     Contains monthly temperatures, monthly radiation, peak load conditions,
-    and ground thermal properties.
+    and ground thermal properties. Default construction creates a fresh nested
+    graph; explicitly supplied collections are retained by identity.
 
     Attributes:
         station_elevation (float): Weather station elevation in meters.
@@ -797,6 +807,9 @@ class PHPPCodes(_base._Base):
 
 class Site(_base._Base):
     """Complete site data combining location, climate, and PHPP library codes.
+
+    Default construction creates a fresh location, climate graph, and PHPP code
+    object. Explicitly supplied child objects are retained by identity.
 
     Attributes:
         location (Location): Geographic location data.

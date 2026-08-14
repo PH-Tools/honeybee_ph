@@ -8,7 +8,7 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | **In progress** — Phases 01–02 complete; Phase 03 integration/artifact verification next | [`features/independent-site-defaults/`](features/independent-site-defaults/README.md) |
+| Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | **Implemented** — all local gates and wheel smoke pass; release/archive pending merge to `main` | [`features/independent-site-defaults/`](features/independent-site-defaults/README.md) |
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Scoped** — replaces bundled dataset proposal; blocked on independent Site graphs | [`features/epw-derived-preliminary-climate/`](features/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
 | `Space.from_room()` default-space factory (upstream from GH) | Feature (cross-repo, **primary**) | **Scoped** — API/unit contract and four implementation phases fixed | [`features/space-from-room-factory/`](features/space-from-room-factory/README.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **Scoped** — local API fixed; Phase 01 state matrix required before code | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
