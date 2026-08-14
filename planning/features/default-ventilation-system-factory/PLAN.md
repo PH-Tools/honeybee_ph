@@ -5,11 +5,11 @@ survive PHX/OpenPH without dummy devices or ducts. Implement in this order.
 
 | Phase | Objective | Gate |
 |---:|---|---|
-| 01 | Freeze cross-repo system/device/duct state matrix and reconcile packets | PHPP/WUFI target research accepted |
+| 01 | Freeze cross-repo system/device/duct state matrix and reconcile packets | **Complete** — `STATE_TABLE.md` accepted |
 | 02 | Implement explicit local factories and validation | Phase 01 source states/names stable |
 | 03 | Prove ownership, duplication, Room attachment, and HBJSON | Phase 02 focused tests green |
 | 04 | Implement/verify PHX and OpenPH semantics for every accepted state | PHX representation and OpenPH rules coordinated |
-| 05 | Decide optional preset, finish docs/full gates, release, and hand off | End-to-end state matrix green |
+| 05 | Record deferred preset, finish docs/full gates, release, and hand off | End-to-end state matrix green |
 
 Phase documents:
 
@@ -22,7 +22,7 @@ Phase documents:
 ## Required cross-repo sequence
 
 ```text
-PHPP/WUFI state-table research
+PHPP/WUFI state-table research [complete]
     -> accepted honeybee-ph source states
     -> PHX explicit assignment representation
     -> OpenPH no-device/zero-duct/multi-duct behavior
@@ -32,4 +32,3 @@ PHPP/WUFI state-table research
 The explicit `balanced_hrv()` implementation may land after Phase 01 while
 downstream work continues, but this packet cannot reach Complete before Phase
 04.
-

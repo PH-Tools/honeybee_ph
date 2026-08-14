@@ -1,14 +1,15 @@
-# Phase 05 — Preset decision, docs, and release
+# Phase 05 — Deferred preset, docs, and release
 
 ## Objective
 
-Decide the optional preliminary preset, document every supported state, run
-full gates, and release the coordinated contract.
+Record the preliminary preset as a deferred follow-up, document every supported
+state, run full gates, and release the coordinated contract.
 
-## Preliminary preset gate
+## Deferred preliminary preset
 
-Add `preliminary_balanced_hrv()` only if Ed accepts a complete, cited assumption
-set covering:
+This feature ships without `preliminary_balanced_hrv()`. A future packet may
+propose it only with Ed's acceptance of a complete, cited assumption set
+covering:
 
 - sensible and latent recovery;
 - electric efficiency/specific fan power;
@@ -17,8 +18,7 @@ set covering:
 - supply/exhaust exterior duct representation;
 - display/provenance label identifying assumed—not selected—equipment.
 
-If any value remains unresolved, record the preset as Deferred and complete the
-feature without it. Never fill gaps from current defaults.
+Never fill gaps from current defaults.
 
 ## Docs and verification
 
@@ -37,6 +37,6 @@ feature without it. Never fill gaps from current defaults.
 ## Exit checks
 
 - Every documented constructor state passes the end-to-end matrix.
-- Optional preset is either fully specified/tested or explicitly deferred.
+- Preliminary preset is explicitly deferred to a separately accepted packet.
 - No public example contains dummy ID `0`, zero-recovery HRV, or invented duct.
 - Released versions and downstream compatibility requirements are recorded.

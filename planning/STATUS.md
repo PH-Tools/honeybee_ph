@@ -8,7 +8,7 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **Scoped** — local API fixed; Phase 01 state matrix required before code | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
+| Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **In progress** — Phase 01 state contract accepted; Phase 02 factory implementation next | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
@@ -87,7 +87,7 @@ invent a `None`, ID `0`, or duct fallback.
 |------|-----|------|
 | `honeybee_ph` | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) | Authoring-side factories + validation |
 | `PHX` | `planning/features/ventilation-assignment-semantics/` | Explicit target-neutral assignment/device representation |
-| `openph-workspace` | `planning/features/ventilation-input-semantics/` | PHPP-derived device/duct state rules + readiness |
+| `openph-workspace` | `planning/archive/dated/2026-08-14/ventilation-input-semantics/` | PHPP-derived device/duct state rules + readiness — **complete, archived** |
 
 ## Update rule
 

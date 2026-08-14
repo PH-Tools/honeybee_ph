@@ -1,6 +1,6 @@
 # PRD — Explicit `PhVentilationSystem` factories
 
-**Status:** Scoped · 2026-08-14
+**Status:** In progress · Phase 01 contract accepted · 2026-08-14
 **Author:** Ed May + Codex
 **Kind:** Feature (this repo, `honeybee_phhvac`) with downstream PHX/OpenPH coordination
 
@@ -22,7 +22,7 @@ system = PhVentilationSystem.balanced_hrv(
 )
 ```
 
-Optionally provide a separately named preliminary-model preset:
+The separately named preliminary-model preset is deferred from this feature:
 
 ```python
 system = PhVentilationSystem.preliminary_balanced_hrv()
@@ -46,7 +46,7 @@ serialized user data.
    must not silently pair with the current bare `Ventilator()` value of
    `sensible_heat_recovery = 0.0` unless the caller set that value deliberately
    or invoked a clearly named non-HR constructor.
-3. **Preliminary preset, if shipped.** Its complete physical assumptions are
+3. **Preliminary preset (deferred follow-up).** Its complete physical assumptions are
    documented and tested: sensible/latent recovery, specific electric power,
    frost protection, unit location, and duct representation. Values must come
    from a stated standard/library convention or be clearly marked BLDGTYP
@@ -107,7 +107,8 @@ loss, and an incomplete model.
   and duct inputs.
 - Empty duct collections remain empty and semantically meaningful.
 - No named HRV preset silently has 0% sensible recovery.
-- Any preliminary preset exposes and documents every physical assumption.
+- No preliminary preset ships without a separately accepted complete set of
+  physical assumptions.
 - Missing/no-mechanical ventilation is not encoded as an accidental device ID.
 - Factory objects are independent and round-trip through HBJSON.
 - PHX converts each supported state without inventing new physical inputs.

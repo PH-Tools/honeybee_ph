@@ -14,14 +14,14 @@ blank ventilators, and two artificial 1 m ducts.
 4. Validate unresolved references before export and return all issues together.
 5. Keep valid existing mechanical fixtures and target writes unchanged.
 
-## OpenPH work
+## OpenPH compatibility verification
 
-1. Accept valid no-mechanical and zero-exterior-duct states.
-2. Reject incomplete mechanical systems before device-property access.
-3. Implement the documented PHPP-faithful multi-element rule at the target
-   boundary; do not collapse the PHX model prematurely.
-4. Compare Ventilation, SummVent, Heating, and Cooling cells/results against a
-   controlled PHPP reference.
+OpenPH's archived `ventilation-input-semantics` work already accepts valid
+no-mechanical and zero-exterior-duct states, rejects incomplete assignments,
+and implements PHPP-faithful multi-element aggregation. Do not duplicate that
+implementation. Verify the updated PHX model against the completed OpenPH
+contract and retain its legacy PHX `0` input test until the published PHX pin
+can make that compatibility path removable.
 
 ## End-to-end matrix
 
@@ -40,5 +40,5 @@ absence of placeholders.
 - Valid empty duct collections calculate without fabricated lengths.
 - Existing valid mechanical reference outputs remain unchanged unless a
   separately documented fidelity fix was accepted.
-- Full relevant suites in honeybee-ph, PHX, OpenPH, and openph-demand pass.
-
+- Full relevant suites in honeybee-ph and PHX pass; focused OpenPH and
+  openph-demand compatibility suites pass against the updated PHX model.
