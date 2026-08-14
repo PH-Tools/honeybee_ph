@@ -6,6 +6,7 @@ This README is the index — scan or grep it instead of guessing dates. Add a ro
 
 | Item | Kind | Completed | Summary | Folder |
 |------|------|-----------|---------|--------|
+| Explicit `PhVentilationSystem` factories | Feature (cross-repo, primary) | 2026-08-14 | Added selected-equipment `balanced_hrv()` without invented ducts; honeybee-ph v1.33.42, PHX v1.56.79, and OpenPH v0.5.1 released; published matrix passes. Decision 0006. | [`default-ventilation-system-factory/`](default-ventilation-system-factory/README.md) |
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, primary) | 2026-08-14 | Added user-supplied EPW conversion without bundled data; honeybee-ph v1.33.40 and PHX v1.56.76 published-artifact smokes pass. | [`epw-derived-preliminary-climate/`](epw-derived-preliminary-climate/README.md) |
 | `Space.from_room()` default-space factory | Feature (cross-repo, primary) | 2026-08-14 | Added the pure-Ladybug Room factory; released v1.33.36; GH wrapper released v1.28.1; meter, foot, multi-floor, host, and HBJSON round-trip canvas checks pass. | [`space-from-room-factory/`](space-from-room-factory/README.md) |
 | Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | 2026-08-14 | Removed 20 constructed mutable defaults; made duplicate/load graphs recursively independent; verified Room, Model HBJSON, Python 2.7 grammar, and wheel behavior. Release target `v1.33.35`. | [`independent-site-defaults/`](independent-site-defaults/README.md) |

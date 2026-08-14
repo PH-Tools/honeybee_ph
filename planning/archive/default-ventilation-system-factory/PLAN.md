@@ -9,7 +9,7 @@ survive PHX/OpenPH without dummy devices or ducts. Implement in this order.
 | 02 | Implement explicit local factories and validation | **Complete** — focused factory/adjacent suites green |
 | 03 | Prove ownership, duplication, Room attachment, and HBJSON | **Complete** — graph/HBJSON integration green |
 | 04 | Implement/verify PHX and OpenPH semantics for every accepted state | **Complete** — PHX representation and OpenPH rules coordinated |
-| 05 | Record deferred preset, finish docs/full gates, release, and hand off | **In progress** — implementation/docs complete; coordinated release pending |
+| 05 | Record deferred preset, finish docs/full gates, release, and hand off | **Complete** — published artifacts verified and packets archived |
 
 Phase documents:
 
@@ -30,5 +30,5 @@ PHPP/WUFI state-table research [complete]
 ```
 
 The explicit `balanced_hrv()` implementation and downstream semantics are
-complete. This packet reaches Complete only after the coordinated honeybee-ph
-and PHX releases are published and verified.
+complete. The coordinated honeybee-ph v1.33.42, PHX v1.56.79, and OpenPH
+v0.5.1 releases are published and verified with openph-demand 0.5.0.

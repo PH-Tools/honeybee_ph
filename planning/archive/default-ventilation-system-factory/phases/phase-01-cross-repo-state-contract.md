@@ -19,7 +19,7 @@ OpenPH before naming factories or encoding absence.
    - how natural/window and no-mechanical states are represented.
 3. Reconcile these packets so they describe the same contract:
    - this packet;
-   - `PHX/planning/features/ventilation-assignment-semantics/`;
+   - `PHX/planning/archive/ventilation-assignment-semantics/`;
    - `openph-workspace/planning/archive/dated/2026-08-14/ventilation-input-semantics/`.
 4. Remove the stale OpenPH planning statement that describes the honeybee-ph
    factory as a default ventilator plus default ducts.

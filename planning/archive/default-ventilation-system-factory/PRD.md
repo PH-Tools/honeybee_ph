@@ -1,6 +1,6 @@
 # PRD — Explicit `PhVentilationSystem` factories
 
-**Status:** Implemented · coordinated release pending · 2026-08-14
+**Status:** Complete · honeybee-ph v1.33.42 / PHX v1.56.79 · 2026-08-14
 **Author:** Ed May + Codex
 **Kind:** Feature (this repo, `honeybee_phhvac`) with downstream PHX/OpenPH coordination
 

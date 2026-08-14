@@ -8,7 +8,6 @@ _Last updated: 2026-08-14_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Explicit `PhVentilationSystem` factories | Feature (cross-repo) | **Implemented** — code/docs and cross-repo gates complete; coordinated releases and archive next | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Requested** — reproduced in PHX; not implemented | [`refactor/dwelling-default-roundtrip.md`](refactor/dwelling-default-roundtrip.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
@@ -17,19 +16,20 @@ _Last updated: 2026-08-14_
 
 For one implementation stream:
 
-1. `default-ventilation-system-factory` — complete only with coordinated
-   PHX/OpenPH state semantics.
+1. `dwelling-default-roundtrip` — fix the reproduced default dwelling identity
+   loss across HBJSON/PHX round trips.
 
 Hard dependencies are narrower than the linear queue:
 
 ```text
-ventilation state matrix -> PHX/OpenPH semantics -> ventilation closeout
+default dwelling identity -> HBJSON/PHX round-trip verification
 ```
 
 ## Completed / archived work
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| Explicit `PhVentilationSystem` factories | Feature (cross-repo, **primary**) | **Complete** — honeybee-ph v1.33.42 and PHX v1.56.79 released; published four-package matrix verified | [`archive/default-ventilation-system-factory/`](archive/default-ventilation-system-factory/README.md) → [decision 0006](../context/decisions/0006-explicit-ventilation-system-states.md) |
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Complete** — honeybee-ph v1.33.40 and PHX v1.56.76 released; both published artifacts pass EPW/readiness smoke checks | [`archive/epw-derived-preliminary-climate/`](archive/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
 | `Space.from_room()` default-space factory (upstream from GH) | Feature (cross-repo, **primary**) | **Complete** — factory released v1.33.36; GH wrapper released v1.28.1 with generated pin; meter, foot, multi-floor, host, and round-trip canvas checks pass | [`archive/space-from-room-factory/`](archive/space-from-room-factory/README.md) |
 | Independent `Site`/`Climate` defaults and duplication | Feature / defect repair | **Complete** — archived; 98 focused + 891 full tests pass; release target `v1.33.35` via merge CI | [`archive/independent-site-defaults/`](archive/independent-site-defaults/README.md) |
@@ -85,9 +85,9 @@ invent a `None`, ID `0`, or duct fallback.
 
 | Repo | Doc | Role |
 |------|-----|------|
-| `honeybee_ph` | [`features/default-ventilation-system-factory/`](features/default-ventilation-system-factory/README.md) | Authoring-side factories + validation |
-| `PHX` | `planning/features/ventilation-assignment-semantics/` | Explicit target-neutral assignment/device representation |
-| `openph-workspace` | `planning/archive/dated/2026-08-14/ventilation-input-semantics/` | PHPP-derived device/duct state rules + readiness — **complete, archived** |
+| `honeybee_ph` | [`archive/default-ventilation-system-factory/`](archive/default-ventilation-system-factory/README.md) | **Complete, archived; released v1.33.42** |
+| `PHX` | `planning/archive/ventilation-assignment-semantics/` | **Complete, archived; released v1.56.79; requires honeybee-ph>=1.33.42** |
+| `openph-workspace` | `planning/archive/dated/2026-08-14/ventilation-input-semantics/` | **Complete, archived; released OpenPH v0.5.1** |
 
 ## Update rule
 

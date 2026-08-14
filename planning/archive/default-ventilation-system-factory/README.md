@@ -1,6 +1,6 @@
 # ventilation-system-factories — router
 
-**Status:** Implemented · coordinated release pending · 2026-08-14
+**Status:** Complete · released and archived · 2026-08-14
 
 **Scope:** Explicit constructors for valid ventilation states in
 `honeybee_phhvac`, including a balanced HRV/ERV system without invented duct
