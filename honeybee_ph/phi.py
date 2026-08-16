@@ -262,11 +262,11 @@ class EnumProperty(object):
         """
 
         if value:
-            instance.__dict__[self.attribute_name] = self.enum(value)
-
-        if instance.__dict__[self.attribute_name].value == "_":
-            msg = "Error: Input value: '{}' for '{}' is not allowed. Check inputs.".format(value, self.attribute_name)
-            raise Exception(msg)
+            candidate = self.enum(value)
+            if candidate.value == "_":
+                msg = "Error: Input value: '{}' for '{}' is not allowed. Check inputs.".format(value, self.attribute_name)
+                raise Exception(msg)
+            instance.__dict__[self.attribute_name] = candidate
 
     def __get__(self, instance, owner):
         # type: (Any, Any) -> enumerables.CustomEnum
