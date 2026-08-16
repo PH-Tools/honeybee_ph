@@ -106,7 +106,7 @@ class EnumProperty(object):
                 "4-PHPP CALCULATION ('IHG NON-RES' WORKSHEET)",
             ],
             10: [
-                "_",
+                "1-User-Defined",
                 "2-STANDARD",
                 "3-PHPP-CALCULATION ('IHG' WORKSHEET)",
                 "4-PHPP-CALCULATION ('IHG NON-RES' WORKSHEET)",
