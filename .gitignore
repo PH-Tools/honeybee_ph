@@ -13,7 +13,6 @@ dist/*
 *.eggs*
 build/
 !docs/build_docs.sh
-CLAUDE.md
 
 # Sphinx build output (auto-generated .rst/.html files)
 docs/api_docs/_build/
