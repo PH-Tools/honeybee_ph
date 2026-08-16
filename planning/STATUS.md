@@ -2,7 +2,7 @@
 
 Master index of active planning work in honeybee-ph. Update the table when a unit of work is added, changes status, or is folded back into `context/`.
 
-_Last updated: 2026-08-14_
+_Last updated: 2026-08-15_
 
 ## Active / current work
 
@@ -13,7 +13,10 @@ _Last updated: 2026-08-14_
 
 ## Recommended execution order
 
-No active item currently has a recommended implementation order.
+Two cross-repo items were filed from PHX/OpenPH on 2026-08-15 with honeybee-ph as
+**primary** (see *Cross-repo work*): the `SetPoints.mechanical_cooling` flag is a
+one-field change and can go first; the PHPP-10 foundation-shape fields are the larger
+one and gate PHX's `Ground` writer and OpenPH's foundation objects.
 
 ## Completed / archived work
 
@@ -28,6 +31,17 @@ No active item currently has a recommended implementation order.
 | Bundled PHI/Phius climate dataset library | Feature | **Superseded** — licensed datasets will not be redistributed; replaced by user-supplied EPW conversion; decision [0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) | [`archive/climate-dataset-library/`](archive/climate-dataset-library/README.md) |
 
 ## Cross-repo work
+
+**Filed 2026-08-15 from PHX (honeybee-ph primary; not yet started here):** — on
+completion of each, the PHX packet writes a hand-off doc into the OpenPH feature folder
+(`openph-workspace/planning/features/ground-degree-hours-alignment/upstream/`); the
+honeybee-ph half should hand PHX the released version and the exact attribute/JSON names.
+
+| Item | Change here | Pointer |
+|------|-------------|---------|
+| Mechanical cooling flag (`Verification!N30`) | `bldg_segment.py::SetPoints.mechanical_cooling: bool = False` (+ `to_dict`/`from_dict`/`duplicate`/`__eq__`), GH input on the setpoints component, `honeybee-ph-schema` field. PHX then writes `Verification!N30`; OpenPH reads it instead of a hardcoded `True` | `PHX/planning/bug-fix/phpp-writer-input-gaps/06-verification-mechanical-cooling.md` |
+| Foundation shape for PHPP 10.x `Ground` | `foundations.py`: `interior_wall_to_heated_area_m2` / `_u_value` (slab, unheated basement, crawl space — or hoisted to `PhFoundation`), `PhVentedCrawlspace.wind_shield_factor = 0.05`; fix crawlspace perimeter default (2.5 → 0.0); decide slab perimeter-insulation defaults (recommend "none"); optional naming cleanups. Schema + GH inputs follow | `PHX/planning/features/foundation-phpp10-shape/PRD.md` §4, §6 |
+
 
 `aperture-psi-install` spans four repos. This repo is the **primary** — it owns the new
 `PhApertureInstallType` object, the per-edge aperture slots, and the resolver; it ships first.
