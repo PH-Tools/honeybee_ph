@@ -77,3 +77,20 @@ def test_scale_phi_cert():
     new_cert = phi_cert.scale(2, Point3D(0, 0, 0))
     assert new_cert.to_dict() != phi_cert.to_dict()
     assert new_cert.attributes.tfa_override == 200
+
+def test_phi_cert_serialization_customized_v10():
+    phi_cert = phi.PhiCertification(phpp_version=10)
+
+    phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings10
+    phi_cert_attributes.building_use_type = "10"
+    phi_cert_attributes.ihg_type = "1"
+    phi_cert_attributes.certification_class = "10"
+    phi_cert_attributes.certification_type = "10"
+    phi_cert_attributes.primary_energy_type = "1"
+    phi_cert_attributes.retrofit_type = "1"
+    phi_cert_attributes.tfa_override = 436.89
+
+    d = phi_cert.to_dict()
+    new_obj = phi.PhiCertification.from_dict(d)
+
+    assert new_obj.to_dict() == d
