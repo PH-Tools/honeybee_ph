@@ -40,16 +40,6 @@ class EnumProperty(object):
     """
 
     allowed_inputs = {  # type: Dict[str, Dict[int, List]]
-        "phpp_version": {
-            9: [
-                "9",
-                "10",
-            ],
-            10: [
-                "9",
-                "10",
-            ],
-        },
         "building_category_type": {
             9: [
                 "1-RESIDENTIAL BUILDING",
@@ -308,7 +298,7 @@ class _PHPPSettingsBase(object):
         tfa_override (Optional[float]): Optional override for the treated floor area.
     """
 
-    phpp_version = 9  # default
+    #phpp_version = 9  # default
     tfa_override = None  # type: float | None
 
     def to_dict(self):
