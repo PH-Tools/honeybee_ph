@@ -48,7 +48,7 @@ class EnumProperty(object):
             10: [
                 "9",
                 "10",
-            ]'
+            ],
         },
         "building_category_type": {
             9: [
