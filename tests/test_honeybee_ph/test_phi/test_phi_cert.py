@@ -32,6 +32,7 @@ def test_phi_cert_serialization_customized():
 
     phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings9
     phi_cert_attributes.building_category_type = "1"
+    phi_cert_attributes.ihg_type = "1"
     phi_cert_attributes.tfa_override = 436.89
 
     d = phi_cert.to_dict()
@@ -90,7 +91,6 @@ def test_phi_cert_serialization_customized_v10():
     phi_cert = phi.PhiCertification(phpp_version=10)
 
     phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings10
-    phi_cert_attributes.phpp_version = "10"
     phi_cert_attributes.building_use_type = "10"
     phi_cert_attributes.ihg_type = "1"
     phi_cert_attributes.certification_class = "10"
