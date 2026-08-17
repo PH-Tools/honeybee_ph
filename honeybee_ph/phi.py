@@ -426,7 +426,7 @@ class PhiCertification(_base._Base):
         # type: (int) -> None
         super(PhiCertification, self).__init__()
         self.phpp_version = phpp_version
-        if phpp_version == 10:
+        if self.phpp_version == 10:
             self.attributes = PHPPSettings10()
         elif self.phpp_version == 9:
             self.attributes = PHPPSettings9()
