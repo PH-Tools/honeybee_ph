@@ -83,7 +83,7 @@ def test_phi_cert_serialization_default_v10():
     phi_cert = phi.PhiCertification(phpp_version=10)
     
     d = phi_cert.to_dict()
-    new_obj = phi.attributes(d)
+    new_obj = phi_cert.attributes(d)
 
     assert new_obj.to_dict() == d
 
@@ -100,6 +100,6 @@ def test_phi_cert_serialization_customized_v10():
     phi_cert_attributes.tfa_override = 436.89
 
     d = phi_cert.to_dict()
-    new_obj = phi.attributes(d)
+    new_obj = phi_cert.attributes(d)
 
     assert new_obj.to_dict() == d
