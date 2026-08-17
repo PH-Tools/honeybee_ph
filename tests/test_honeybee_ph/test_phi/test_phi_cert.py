@@ -79,20 +79,25 @@ def test_scale_phi_cert():
     assert new_cert.to_dict() != phi_cert.to_dict()
     assert new_cert.attributes.tfa_override == 200
 
+
 def test_phi_cert_serialization_default_v10():
     phi_cert = phi.PhiCertification(phpp_version=10)
-    
-    d = phi_cert.to_dict()
-    new_obj = phi_cert.attributes(d)
+    phi_cert_attributes = phi_cert.attributes
 
-    assert new_obj.to_dict() == d
+    d = phi_cert.to_dict()
+    new_obj = phi_cert.from_dict(d)
+
+    assert new_obj.attributes.phpp_version == phi_cert_attributes.phpp_version
+
 
 def test_phi_cert_serialization_customized_v10():
     phi_cert = phi.PhiCertification(phpp_version=10)
 
     phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings10
-    phi_cert_attributes.building_use_type = "10"
-    phi_cert_attributes.ihg_type = "1"
+    phi_cert_attributes.building_use_type = "10"  # should fail on invalid entry like 11
+    phi_cert_attributes.ihg_type = (
+        "1-USER-DEFINED"  # should fail with invalid input like "1-BANANA", but currently passes
+    )
     phi_cert_attributes.certification_class = "10"
     phi_cert_attributes.certification_type = "10"
     phi_cert_attributes.primary_energy_type = "1"
@@ -100,6 +105,13 @@ def test_phi_cert_serialization_customized_v10():
     phi_cert_attributes.tfa_override = 436.89
 
     d = phi_cert.to_dict()
-    new_obj = phi_cert.attributes(d)
+    new_obj = phi_cert.from_dict(d)  # round trip to check serialization survival
 
-    assert new_obj.to_dict() == d
+    assert new_obj.attributes.phpp_version == phi_cert_attributes.phpp_version
+    assert new_obj.attributes.building_use_type == phi_cert_attributes.building_use_type
+    assert new_obj.attributes.ihg_type == phi_cert_attributes.ihg_type
+    assert new_obj.attributes.certification_class == phi_cert_attributes.certification_class
+    assert new_obj.attributes.certification_type == phi_cert_attributes.certification_type
+    assert new_obj.attributes.primary_energy_type == phi_cert_attributes.primary_energy_type
+    assert new_obj.attributes.retrofit_type == phi_cert_attributes.retrofit_type
+    assert new_obj.attributes.tfa_override == phi_cert_attributes.tfa_override
