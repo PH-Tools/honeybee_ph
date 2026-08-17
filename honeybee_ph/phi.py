@@ -422,7 +422,7 @@ class PhiCertification(_base._Base):
         attributes (Union[PHPPSettings9, PHPPSettings10]): Version-specific certification settings.
     """
 
-    def __init__(self, phpp_version=9):
+    def __init__(self, phpp_version):
         # type: (int) -> None
         super(PhiCertification, self).__init__()
         self.phpp_version = phpp_version
