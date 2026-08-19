@@ -9,60 +9,40 @@ The one rule that shapes everything else: **all shipping code must run under Iro
 
 ## 1. IronPython 2.7 compatibility
 
-Do **not** use:
+The generic dual-runtime rules (banned syntax and modules, comment-style type
+hints, guarded `typing` imports, defensive third-party imports, and the lint
+settings they imply) live in the **ironpython-27-compatibility** skill. Apply it
+before editing anything on the Rhino load path. Only this repo's specifics are
+recorded below.
 
-- f-strings — use `"{}".format(...)` or `%` formatting.
-- The walrus operator `:=`, `match`/`case`, or `X | Y` union syntax.
-- `dataclasses` or `pydantic` — use plain classes with `__init__`.
-- Any CPython-3-only stdlib module or syntax.
+All shipping code must run under IronPython 2.7 (Rhino/Grasshopper) *and*
+CPython 3.10+. Write to the intersection. Tests under `tests/` are CPython-only.
 
-Guard `typing` imports so IronPython does not choke:
+## 2. Serialization pattern (backward-compatible HBJSON)
 
-```python
-try:
-    from typing import Any, Dict, List, Optional
-except ImportError:
-    pass  # IronPython 2.7
-```
+The HBJSON round-trip contract (four steps for a new field, when `.get()` is
+required, mutable constructor ownership, `duplicate()` recursion) and the
+`_extend`/`properties` attachment mechanism live in the
+**hbjson-serialization-contract** skill. Apply it before adding or changing any
+field on a model class.
 
-## 2. Type hints — comment style (PEP 484 py2)
+Model classes round-trip through HBJSON, the ecosystem interchange format, so
+deserialization must tolerate files written by older versions. This repo also
+provides the `base_attrs_from_dict` helper and the `_Base` attribute convention
+that `duplicate()` must preserve.
 
-Use comment-style annotations, not inline annotations:
+## 3. The `_extend_*` / `properties` pattern
 
-```python
-def my_func(self, name, value):
-    # type: (str, float) -> bool
-    ...
-```
 
-Do **not** write `def my_func(self, name: str) -> bool:` — inline annotations are not IronPython-2.7 safe.
+PH data is attached through Honeybee's `properties` extension API, registered by
+each package's `_extend_*.py` on import. New host-object attributes belong in
+the relevant `properties/` sub-package, which owns that host's serialization.
 
-## 3. Serialization pattern (backward-compatible HBJSON)
-
-Model classes round-trip through HBJSON via `to_dict()` / `from_dict()`. HBJSON is the ecosystem interchange format, so deserialization must tolerate files written by older versions. When adding a field:
-
-1. Add it in `__init__` with a sensible **default**.
-2. Write it in `to_dict()`.
-3. Read it in `from_dict()` (or `base_attrs_from_dict`) with `_input_dict.get("key", default)` — **never** bare `_input_dict["key"]` access, so old HBJSON without the key still loads.
-4. Copy it in `duplicate()`.
-
-### Mutable constructor ownership
-
-Mutable or nested constructor arguments must default to `None`; construct a fresh
-child inside `__init__` for each call. When a caller explicitly supplies a child
-object, retain that object by identity unless the public API documents a different
-ownership rule. `duplicate()` must recursively duplicate modeled mutable children
-while preserving serialized values and the existing `_Base` attribute convention.
-
-## 4. The `_extend_*` / `properties` pattern
-
-PH data is attached to Honeybee objects through Honeybee's `properties` extension API, registered by each package's `_extend_*.py` on import. New host-object attributes belong in the relevant `properties/` sub-package, which owns that host's `to_dict()`/`from_dict()`. Do not attach PH data by monkey-patching around this mechanism.
-
-## 5. Formatting
+## 4. Formatting
 
 - **Black**, `line-length = 120` (configured in `pyproject.toml`).
 
-## 6. Testing
+## 5. Testing
 
 - **pytest + coverage** — `python3 -m coverage run` executes the configured
   full suite; `python3 -m coverage report` enforces the repository floor.
@@ -72,7 +52,7 @@ PH data is attached to Honeybee objects through Honeybee's `properties` extensio
 - `filterwarnings = ["error", ...]` — a warning fails the suite. Fix the cause, don't silence it broadly.
 - Tests mirror the package structure under `tests/` (`test_honeybee_ph/`, `test_honeybee_phhvac/`, …).
 
-## 7. Docstrings & docs
+## 6. Docstrings & docs
 
 Docstrings feed the autodoc site — keep them in the `ph-docs` format described in `docs/.instructions.md`. When you add or rename a public class/module/method/function, update `docs/nav.yml` so it appears on the site.
 

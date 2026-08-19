@@ -2,7 +2,7 @@
 
 Extends [Ladybug Tools' Honeybee](https://github.com/ladybug-tools/honeybee-core) with a Passive House data model. Published on PyPI as `honeybee-ph`. Source: https://github.com/PH-Tools/honeybee_ph
 
-> **Runtime constraint:** all shipping code must run under **IronPython 2.7** (the Rhino/Grasshopper runtime) as well as CPython 3.10+. This is the single most important thing to know before writing code here — see `context/CODING_STANDARDS.md`.
+> **Runtime constraint:** all shipping code must run under **IronPython 2.7** (the Rhino/Grasshopper runtime) as well as CPython 3.10+. This is the single most important thing to know before writing code here Apply the **ironpython-27-compatibility** skill; repo specifics in `context/CODING_STANDARDS.md`.
 
 ## What this repo is
 
@@ -33,7 +33,7 @@ Full context index: `context/README.md`.
 ## Hard rules
 
 1. **IronPython 2.7 compatibility is mandatory.** No f-strings, no walrus, no `match`/`case`, no `X | Y` unions, no dataclasses/Pydantic. Comment-style type hints only (`# type: (str) -> bool`). Guard `typing` imports. Full detail: `context/CODING_STANDARDS.md`.
-2. **Serialization must be backward-compatible.** New fields get a default in `__init__`, are written in `to_dict()`, read with `_input_dict.get("key", default)` in `from_dict()`, and copied in `duplicate()`. Old HBJSON must still load.
+2. **Serialization must be backward-compatible.** New fields get a default in `__init__`, are written in `to_dict()`, read with `_input_dict.get("key", default)` in `from_dict()`, and copied in `duplicate()`. Old HBJSON must still load. Apply the **hbjson-serialization-contract** skill.
 3. **Docs are an autodoc spoke.** When you add/change a class, module, method, or function, update `docs/nav.yml` and keep docstrings in the `ph-docs` format (`docs/.instructions.md`). Never restructure `docs/`.
 4. **Verify before closeout.** Run `python3 -m coverage run && python3 -m coverage report`; the repository-wide coverage floor is 75% (`fail_under = 75`). Tests mirror the package layout under `tests/`.
 
