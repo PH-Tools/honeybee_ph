@@ -428,7 +428,7 @@ class PhiCertification(_base._Base):
         self.phpp_version = phpp_version
         if phpp_version == 10:
             self.attributes = PHPPSettings10()
-        elif phpp_version == 9:
+        elif self.phpp_version == 9:
             self.attributes = PHPPSettings9()
         else:
             msg = "Error: Unknown PHPP Version? Got: '{}'".format(self.phpp_version)
