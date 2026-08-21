@@ -100,13 +100,13 @@ class EnumProperty(object):
         },
         "ihg_type": {
             9: [
-                "_",
+                "1-USER DETERMINED",    # No interstitial dash in PHPP 9
                 "2-STANDARD",
                 "3-PHPP CALCULATION ('IHG' WORKSHEET)",
                 "4-PHPP CALCULATION ('IHG NON-RES' WORKSHEET)",
             ],
             10: [
-                "_",
+                "1-USER-DEFINED",
                 "2-STANDARD",
                 "3-PHPP-CALCULATION ('IHG' WORKSHEET)",
                 "4-PHPP-CALCULATION ('IHG NON-RES' WORKSHEET)",
