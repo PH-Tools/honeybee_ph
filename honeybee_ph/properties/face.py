@@ -2,6 +2,7 @@
 # -*- Python Version: 2.7 -*-
 
 """HB-Face Passive House (PH) Properties."""
+
 try:
     from typing import Any, Dict
 except ImportError:

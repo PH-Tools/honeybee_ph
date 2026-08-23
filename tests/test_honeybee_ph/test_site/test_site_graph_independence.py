@@ -1,16 +1,15 @@
-from copy import deepcopy
-from inspect import signature
 import json
 import subprocess
 import sys
+from copy import deepcopy
+from inspect import signature
 
 import pytest
-
 from honeybee.model import Model
 from honeybee.room import Room
+
 from honeybee_ph import site
 from honeybee_ph.bldg_segment import BldgSegment
-
 
 MONTHS = (
     "january",

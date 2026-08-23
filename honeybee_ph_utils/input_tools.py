@@ -3,7 +3,6 @@
 
 """Utility functions for cleaning and handling user-inputs"""
 
-
 try:
     from typing import Any, List, Optional, TypeVar
 

@@ -3,7 +3,6 @@
 
 """Passive House properties for honeybee_energy.material.opaque.EnergyMaterial Objects"""
 
-
 from collections import defaultdict
 
 try:

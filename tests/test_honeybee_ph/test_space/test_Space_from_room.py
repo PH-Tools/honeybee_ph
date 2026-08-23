@@ -1,5 +1,5 @@
-import math
 import json
+import math
 from fractions import Fraction
 
 import pytest
