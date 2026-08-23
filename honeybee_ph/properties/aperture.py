@@ -3,7 +3,6 @@
 
 """HB-Aperture Passive House (PH) Properties."""
 
-
 try:
     from typing import Any, Dict, Optional
 except ImportError:

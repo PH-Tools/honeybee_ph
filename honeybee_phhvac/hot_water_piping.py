@@ -87,11 +87,11 @@ class PhHvacPipeInsulationQuality(enumerables.CustomEnum):
         "2-MODERATE",
         "3-GOOD",
     ]
-        
+
     def __init__(self, _value=1):
         # type: (Union[str, int]) -> None
-        super(PhHvacPipeInsulationQuality, self).__init__(_value)    
-    
+        super(PhHvacPipeInsulationQuality, self).__init__(_value)
+
     def __eq__(self, other):
         # type: (PhHvacPipeInsulationQuality) -> bool
         return self.value == other.value
@@ -121,7 +121,7 @@ class PhHvacPipeSegment(_base._PhHVACBase):
         insulation_thickness_mm (float): The insulation thickness in millimeters.
         insulation_conductivity (float): The insulation thermal conductivity (W/m-K).
         insulation_reflective (bool): True if the insulation has a reflective surface.
-        insulation_quality (PhHvacPipeInsulationQuality): The quality-level of pipe insulation at 
+        insulation_quality (PhHvacPipeInsulationQuality): The quality-level of pipe insulation at
             fixings, mountings, and junctions.
         daily_period (float): Hours per day the pipe is in use.
         water_temp_c (float): The water temperature in degrees Celsius.

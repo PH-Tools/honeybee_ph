@@ -73,9 +73,7 @@ class UnknownPhExhaustVentTypeError(Exception):
     def __init__(self, _device_types, _received_type):
         # type: (list[str], str) -> None
         self.msg = 'Error: Unknown HBPH-Exhaust Ventilation type? Got: "{}"\
-            "but only types: {} are allowed?'.format(
-            _received_type, _device_types
-        )
+            "but only types: {} are allowed?'.format(_received_type, _device_types)
         super(UnknownPhExhaustVentTypeError, self).__init__(self.msg)
 
 
@@ -105,7 +103,7 @@ class Ventilator(_base._PhHVACBase):
         self.display_name = "_unnamed_ventilator_"  # type: str
         self.id_num = 0  # type: int
         self.quantity = 1  # type: int
-        self.sensible_heat_recovery = 0.0  # type:float
+        self.sensible_heat_recovery = 0.0  # type: float
         self.latent_heat_recovery = 0.0  # type float
         self.electric_efficiency = 0.55  # type: float
         self.frost_protection_reqd = True  # type: bool

@@ -4,7 +4,6 @@
 
 """DEPRECATED in favor of the new 'honeybee_phhvac' module."""
 
-
 # -- Boiler Fuels
 NATURAL_GAS = "NATURAL_GAS"
 OIL = "OIL"

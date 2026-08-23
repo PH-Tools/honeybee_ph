@@ -5,13 +5,12 @@ data. Every hourly value is generated from controlled constants and calendar
 month/day/hour indices within the test run.
 """
 
-from ladybug.epw import EPW
 from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.datacollection import MonthlyCollection
 from ladybug.datatype.temperature import GroundTemperature
+from ladybug.epw import EPW
 from ladybug.header import Header
 from ladybug.location import Location
-
 
 _DEFAULT_GROUND = object()
 

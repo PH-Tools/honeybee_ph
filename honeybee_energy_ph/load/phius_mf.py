@@ -3,7 +3,6 @@
 
 """Classes for calculating Phius Multifamily Elec. Energy as per Phius Multifamily Calculator (v4.2)"""
 
-
 try:
     from typing import Any, ValuesView
 except ImportError:

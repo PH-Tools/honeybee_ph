@@ -12,7 +12,6 @@ from honeybee_energy_ph.dwellings import (
 )
 from honeybee_energy_ph.properties.load.people import PhDwellings
 
-
 # -----------------------------------------------------------------------------
 # -- Helpers
 

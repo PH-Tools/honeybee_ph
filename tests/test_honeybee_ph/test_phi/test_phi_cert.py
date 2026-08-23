@@ -1,8 +1,9 @@
+import pytest
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 
 from honeybee_ph import phi
-import pytest
+
 
 def test_phi_cert():
     phi_cert = phi.PhiCertification()
@@ -87,7 +88,7 @@ def test_phi_cert_serialization_default_v10():
     default_cert = phi_cert.to_dict()
     new_obj = phi.PhiCertification.from_dict(default_cert)
 
-    assert new_obj.attributes.phpp_version == phi_cert_attributes.phpp_version #test default serialization
+    assert new_obj.attributes.phpp_version == phi_cert_attributes.phpp_version  # test default serialization
 
 
 def test_phi_cert_serialization_customized_v10():
@@ -96,7 +97,7 @@ def test_phi_cert_serialization_customized_v10():
     phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings10
     phi_cert_attributes.building_use_type = "10"  # invalid input 11 test in test_invalid_entry_in_phi_cert_v10
     phi_cert_attributes.ihg_type = (
-        "1-USER-DEFINED"  # invalid input eg "1-BANANA" test in test_invalid_entry_in_phi_cert_v10 
+        "1-USER-DEFINED"  # invalid input eg "1-BANANA" test in test_invalid_entry_in_phi_cert_v10
     )
     phi_cert_attributes.certification_class = "10"
     phi_cert_attributes.certification_type = "10"
@@ -127,6 +128,7 @@ def test_invalid_entry_in_phi_cert_v10():
     with pytest.raises(Exception):
         phi_cert_attributes.ihg_type = "1-BANANA"  # test valid .number but invalid string fails
 
+
 def test_phi_cert_none_type_v10():
     phi_cert = phi.PhiCertification(phpp_version=10)
     phi_cert_attributes = phi_cert.attributes
@@ -135,13 +137,13 @@ def test_phi_cert_none_type_v10():
 
     phi_cert_attributes.ihg_type = ""
     empty_cert = phi_cert.to_dict()
-    assert empty_cert == default_cert #empty value returns default value
+    assert empty_cert == default_cert  # empty value returns default value
 
-    '''phi_cert_attributes.ihg_type = "0"
+    """phi_cert_attributes.ihg_type = "0"
     zero_cert = phi_cert.to_dict()
-    assert zero_cert == default_cert''' #Currently Fails: zero value not behaving the same as empty string and None type inputs. needs further investigation 
-    
+    assert zero_cert == default_cert"""  # Currently Fails: zero value not behaving the same as empty string and None type inputs. needs further investigation
+
     phi_cert_attributes.ihg_type = None
     none_cert = phi_cert.to_dict()
 
-    assert none_cert == default_cert #none value returns default value
+    assert none_cert == default_cert  # none value returns default value

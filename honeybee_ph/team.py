@@ -3,7 +3,6 @@
 
 """Project Team-Member Classes."""
 
-
 try:
     from typing import Any, Dict, Optional
 except ImportError:

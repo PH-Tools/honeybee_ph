@@ -3,7 +3,6 @@
 
 """DEPRECATED in favor of the new 'honeybee_phhvac' module."""
 
-
 from honeybee_energy_ph.hvac import _base
 from honeybee_ph_utils import enumerables
 
