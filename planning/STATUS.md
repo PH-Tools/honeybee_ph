@@ -8,7 +8,6 @@ _Last updated: 2026-08-25_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
-| Phius MF custom MEL/Lighting export `reference_quantity = 2` | Bug fix (cross-repo; fix lands in `honeybee_grasshopper_ph`) | **Implemented** (2026-08-25) — all six builders now construct from the PHIUS defaults dict; unit, round-trip, appliance-regression and lint checks pass. Remaining: canvas re-export + WUFI/METr export check, GH release, and the §7 open question on what WUFI does with `ReferenceQuantity = 2` on already-submitted models | [`bug_fixes/phius-mf-custom-load-reference-quantity.md`](bug_fixes/phius-mf-custom-load-reference-quantity.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
 
@@ -23,6 +22,7 @@ one and gate PHX's `Ground` writer and OpenPH's foundation objects.
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| Phius MF custom MEL/Lighting export `reference_quantity = 2` | Bug fix (cross-repo; fix landed in `honeybee_grasshopper_ph`) | **Complete** — merged in [honeybee_grasshopper_ph#69](https://github.com/PH-Tools/honeybee_grasshopper_ph/pull/69); all six MF builders now construct from the PHIUS defaults dict. Follow-ups (canvas export check, GH release, and the open WUFI `ReferenceQuantity = 2` import question) tracked downstream — see the packet §10 | [`archive/phius-mf-custom-load-reference-quantity/`](archive/phius-mf-custom-load-reference-quantity/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Complete** — count-based assignment restored; 1,020 tests pass at 80% coverage; release pending | [`archive/dwelling-default-roundtrip/`](archive/dwelling-default-roundtrip/README.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo, **primary**) | **Complete** — honeybee-ph v1.33.42 and PHX v1.56.79 released; published four-package matrix verified | [`archive/default-ventilation-system-factory/`](archive/default-ventilation-system-factory/README.md) → [decision 0006](../context/decisions/0006-explicit-ventilation-system-states.md) |
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Complete** — honeybee-ph v1.33.40 and PHX v1.56.76 released; both published artifacts pass EPW/readiness smoke checks | [`archive/epw-derived-preliminary-climate/`](archive/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |

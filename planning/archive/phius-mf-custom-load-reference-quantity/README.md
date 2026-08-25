@@ -1,6 +1,6 @@
 # Bug fix: Phius MF custom MEL/Lighting loads export `reference_quantity = 2`
 
-**Status:** Implemented (2026-08-25) — fix committed on `honeybee_grasshopper_ph` branch `fix/phius-mf-custom-load-reference-quantity`; remaining: canvas re-export + WUFI/METr export check (§6.3), then release + archive. See §9.
+**Status:** Complete — archived 2026-08-25. Fix merged to `honeybee_grasshopper_ph` `main` in [PR #69](https://github.com/PH-Tools/honeybee_grasshopper_ph/pull/69) (`25a8d92`). Two follow-ups outlive this packet and are tracked in that repo's `planning/STATUS.md` — see §10.
 **Kind:** Bug fix (cross-repo; **fix lands in `honeybee_grasshopper_ph`**, data owned here)
 **Date:** 2026-08-25
 **Author:** Ed May + Claude
@@ -235,10 +235,29 @@ that returns a *fresh* instance from the defaults dict (unlike the cached `phius
 singleton, see §5). Deliberately not done here: it would require a `honeybee_ph` release and a
 `requirements.txt` pin bump before a six-line downstream fix could ship.
 
-### Remaining before archive
+---
 
-1. §6.3 export check on the canvas (Ed).
-2. `honeybee_grasshopper_ph` release + pin bump.
-3. §7 open question — what WUFI-Passive actually does on import with `ReferenceQuantity = 2`.
-   This decides whether already-submitted models need revisiting, and is the higher-stakes
-   half of this packet.
+## 10. Resolution and follow-ups
+
+**Merged:** `honeybee_grasshopper_ph` PR
+[#69](https://github.com/PH-Tools/honeybee_grasshopper_ph/pull/69), merge commit `25a8d92`,
+2026-08-25. Branch deleted. No change shipped from `honeybee_ph`, `honeybee_ph_standards` or
+`PHX`.
+
+Three of the four verification items in §6 passed before merge; the fourth needs Rhino and is
+follow-up 1 below. This packet is archived on the merge, not on the export check, because the
+remaining work belongs to the downstream repo and to a question wider than this defect.
+
+| # | Follow-up | Owner / where tracked |
+|---|---|---|
+| 1 | Canvas re-export of a Phius MF model; confirm `<ReferenceQuantity>5</ReferenceQuantity>` in the WUFI XML and `"refQ": 5` in the METr JSON (§6.3) | Ed, on the canvas — `honeybee_grasshopper_ph/planning/STATUS.md` |
+| 2 | `honeybee_grasshopper_ph` release carrying the fix | release orchestrator — `honeybee_grasshopper_ph/planning/STATUS.md` |
+| 3 | **§7 — what WUFI-Passive does on import with `ReferenceQuantity = 2`.** This is the higher-stakes half: if WUFI applies the zone occupant count as a multiplier, every previously submitted Phius MF model overstates MEL and lighting by a large factor. If it only affects display normalization, delivered results are unaffected. Decides whether submitted models need revisiting | open — GUI check, not a code question |
+| 4 | Upstream `PhEquipment` factory returning a *fresh* instance from the defaults dict, so a bare `PhCustomAnnual*()` constructor cannot silently reproduce this defect (§9, *Residual*) | not filed — needs a `honeybee_ph` release + pin bump to be worth doing |
+
+### What made this findable, for the next one
+
+The diagnosis was settled by a file nobody was looking at:
+`gh_compo_io/program/_deprecated_/phius_MF_calc.py:334-389`, the pre-rewrite component, passes
+exactly the defaults dicts the rewrite dropped. When a value is wrong in a rewritten
+component, the deprecated original is the cheapest place to check what the rewrite lost.
