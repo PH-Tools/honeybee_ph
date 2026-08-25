@@ -458,7 +458,8 @@ class PhiCertification(_base._Base):
         # type: (Dict) -> PhiCertification
         new_obj = cls()
         attr_dict = _input_dict["attributes"]
-        if attr_dict["phpp_version"] == 10:
+        new_obj.phpp_version = attr_dict["phpp_version"]  # sets top level phpp_version from .attributes phpp_version
+        if new_obj.phpp_version == 10:  # reads rebuilt top level phpp_version
             new_obj.attributes = PHPPSettings10.from_dict(attr_dict)
         else:
             new_obj.attributes = PHPPSettings9.from_dict(attr_dict)
