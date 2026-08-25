@@ -2,7 +2,7 @@
 
 Master index of active planning work in honeybee-ph. Update the table when a unit of work is added, changes status, or is folded back into `context/`.
 
-_Last updated: 2026-08-15_
+_Last updated: 2026-08-25_
 
 ## Active / current work
 
@@ -22,6 +22,7 @@ one and gate PHX's `Ground` writer and OpenPH's foundation objects.
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| Phius MF custom MEL/Lighting export `reference_quantity = 2` | Bug fix (cross-repo; fix landed in `honeybee_grasshopper_ph`) | **Complete** — merged in [honeybee_grasshopper_ph#69](https://github.com/PH-Tools/honeybee_grasshopper_ph/pull/69); all six MF builders now construct from the PHIUS defaults dict. Follow-ups (canvas export check, GH release, and the open WUFI `ReferenceQuantity = 2` import question) tracked downstream — see the packet §10 | [`archive/phius-mf-custom-load-reference-quantity/`](archive/phius-mf-custom-load-reference-quantity/README.md) |
 | Default dwelling identity across HBJSON round-trips | Bug fix | **Complete** — count-based assignment restored; 1,020 tests pass at 80% coverage; release pending | [`archive/dwelling-default-roundtrip/`](archive/dwelling-default-roundtrip/README.md) |
 | Explicit `PhVentilationSystem` factories | Feature (cross-repo, **primary**) | **Complete** — honeybee-ph v1.33.42 and PHX v1.56.79 released; published four-package matrix verified | [`archive/default-ventilation-system-factory/`](archive/default-ventilation-system-factory/README.md) → [decision 0006](../context/decisions/0006-explicit-ventilation-system-states.md) |
 | EPW-derived preliminary monthly climate + provenance/readiness | Feature (cross-repo readiness, **primary**) | **Complete** — honeybee-ph v1.33.40 and PHX v1.56.76 released; both published artifacts pass EPW/readiness smoke checks | [`archive/epw-derived-preliminary-climate/`](archive/epw-derived-preliminary-climate/README.md) → [decision 0004](../context/decisions/0004-no-bundled-licensed-climate-data.md) |
