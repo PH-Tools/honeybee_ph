@@ -2,6 +2,7 @@ from honeybee_energy.lib.schedules import schedule_by_identifier
 from pytest import approx
 
 from honeybee_energy_ph.load import ph_equipment
+from honeybee_ph_standards.programtypes.default_elec_equip import ph_default_equip
 
 # -- Basics
 
@@ -496,3 +497,84 @@ def test_ihg_utilization_factor_backwards_compat():
     del d["ihg_utilization_factor"]
     e2 = ph_equipment.PhEquipmentBuilder.from_dict(d)
     assert e2.ihg_utilization_factor == 1.0
+
+
+# -- Reference Quantity defaults
+
+
+def _all_equipment_subclasses():
+    """Every concrete PhEquipment subclass defined in the ph_equipment module."""
+    return [
+        obj
+        for obj in vars(ph_equipment).values()
+        if isinstance(obj, type)
+        and issubclass(obj, ph_equipment.PhEquipment)
+        and obj is not ph_equipment.PhEquipment
+        and obj.__module__ == ph_equipment.__name__
+    ]
+
+
+def test_reference_quantity_defaults():
+    """Each equipment type should carry the correct WUFI 'Reference Quantity' selector.
+
+    A bare constructor must produce the same value as one built from the standards
+    dict -- the six Phius-MF builders once relied on the base-class value and silently
+    exported 2 ("Zone occupants") on every custom MEL and lighting device.
+    """
+    assert ph_equipment.PhDishwasher().reference_quantity == 1
+    assert ph_equipment.PhClothesWasher().reference_quantity == 1
+    assert ph_equipment.PhClothesDryer().reference_quantity == 1
+    assert ph_equipment.PhCooktop().reference_quantity == 1
+    assert ph_equipment.PhRefrigerator().reference_quantity == 4
+    assert ph_equipment.PhFreezer().reference_quantity == 4
+    assert ph_equipment.PhFridgeFreezer().reference_quantity == 4
+    assert ph_equipment.PhPhiusMEL().reference_quantity == 3
+    assert ph_equipment.PhPhiusLightingInterior().reference_quantity == 6
+    assert ph_equipment.PhPhiusLightingExterior().reference_quantity == 6
+    assert ph_equipment.PhPhiusLightingGarage().reference_quantity == 2
+    assert ph_equipment.PhCustomAnnualElectric().reference_quantity == 5
+    assert ph_equipment.PhCustomAnnualLighting().reference_quantity == 5
+    assert ph_equipment.PhCustomAnnualMEL().reference_quantity == 5
+    assert ph_equipment.PhElevatorHydraulic().reference_quantity == 5
+    assert ph_equipment.PhElevatorGearedTraction().reference_quantity == 5
+    assert ph_equipment.PhElevatorGearlessTraction().reference_quantity == 5
+
+
+def test_every_equipment_subclass_declares_its_own_reference_quantity():
+    """No subclass may inherit DEFAULT_REFERENCE_QUANTITY from PhEquipment.
+
+    Inheriting it is always a mistake: the base value is a placeholder, not a sensible
+    fallback. This guard is what stops the defect coming back when a new equipment
+    class is added.
+    """
+    missing = [cls.__name__ for cls in _all_equipment_subclasses() if "DEFAULT_REFERENCE_QUANTITY" not in vars(cls)]
+    assert missing == [], "PhEquipment subclasses missing DEFAULT_REFERENCE_QUANTITY: {}".format(missing)
+
+
+def test_reference_quantity_matches_the_standards_data():
+    """The class defaults and 'ph_default_equip' must not drift apart.
+
+    PHI and PHIUS agree on reference_quantity for every entry, which is why the value
+    belongs to the class. Both representations are public, so both have to stay true.
+    """
+    for cls in _all_equipment_subclasses():
+        defaults = ph_default_equip.get(cls.__name__)
+        if defaults is None:
+            continue  # -- the elevators have no standards entry
+        for standard in ("PHI", "PHIUS"):
+            assert (
+                defaults[standard]["reference_quantity"] == cls.DEFAULT_REFERENCE_QUANTITY
+            ), "{}: ph_default_equip['{}'] says {} but the class says {}".format(
+                cls.__name__,
+                standard,
+                defaults[standard]["reference_quantity"],
+                cls.DEFAULT_REFERENCE_QUANTITY,
+            )
+
+
+def test_reference_quantity_survives_a_round_trip():
+    """An explicitly-set reference_quantity must not be reset by from_dict."""
+    e1 = ph_equipment.PhCustomAnnualMEL()
+    e1.reference_quantity = 1
+    e2 = ph_equipment.PhEquipmentBuilder.from_dict(e1.to_dict())
+    assert e2.reference_quantity == 1
