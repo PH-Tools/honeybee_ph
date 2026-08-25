@@ -2,12 +2,13 @@
 
 Master index of active planning work in honeybee-ph. Update the table when a unit of work is added, changes status, or is folded back into `context/`.
 
-_Last updated: 2026-08-15_
+_Last updated: 2026-08-25_
 
 ## Active / current work
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| Phius MF custom MEL/Lighting export `reference_quantity = 2` | Bug fix (cross-repo; fix lands in `honeybee_grasshopper_ph`) | **Implemented** (2026-08-25) — all six builders now construct from the PHIUS defaults dict; unit, round-trip, appliance-regression and lint checks pass. Remaining: canvas re-export + WUFI/METr export check, GH release, and the §7 open question on what WUFI does with `ReferenceQuantity = 2` on already-submitted models | [`bug_fixes/phius-mf-custom-load-reference-quantity.md`](bug_fixes/phius-mf-custom-load-reference-quantity.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
 
