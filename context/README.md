@@ -11,10 +11,11 @@ Stable, ground-truth documentation for honeybee-ph: what it is, how it is built,
 | [`PRD.md`](PRD.md) | Product scope — what this library is for, who uses it, what belongs here and what does not |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The package/module map, key abstractions, and how data flows through the ecosystem |
 | [`TECH_STACK.md`](TECH_STACK.md) | Runtime, dependencies, packaging, testing, CI, and the release process |
+| [`UBIQUITOUS_LANGUAGE.md`](UBIQUITOUS_LANGUAGE.md) | The canonical name for a domain concept, which aliases to avoid, and the terminology ambiguities already ruled on |
 | [`CODING_STANDARDS.md`](CODING_STANDARDS.md) | The rules for writing code here — IronPython 2.7 constraints, typing, serialization, testing |
 | [`AUTODOC.md`](AUTODOC.md) | Feature spec for the automated API-doc generator that feeds the ph-docs hub |
 | [`decisions/`](decisions/) | Numbered decision records — especially decisions *not* to do something |
 
 ## Maintenance rule
 
-When an accepted design decision changes how the library works, fold it back into the relevant doc here (and add a `decisions/` record if it closes off an alternative). Keep these docs true; stale canon is worse than none.
+When a decision or refactor renames a domain concept, or introduces one, update [`UBIQUITOUS_LANGUAGE.md`](UBIQUITOUS_LANGUAGE.md) in the same change. When an accepted design decision changes how the library works, fold it back into the relevant doc here (and add a `decisions/` record if it closes off an alternative). Keep these docs true; stale canon is worse than none.

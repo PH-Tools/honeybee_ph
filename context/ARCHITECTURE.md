@@ -62,6 +62,8 @@ Runtime deps are deliberately minimal: `honeybee-core`, `honeybee-energy`, and `
 
 ## Grouping concepts: never overload a honeybee-core attribute
 
+Canonical names and the aliases to avoid: [`UBIQUITOUS_LANGUAGE.md`](UBIQUITOUS_LANGUAGE.md).
+
 An HB `Room` carries **no intrinsic semantics** — it is a geometry container, and its
 granularity is a modeling convenience. Every real grouping concept has its own explicit
 attribute:

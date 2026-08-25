@@ -24,6 +24,7 @@ A set of five sub-packages that layer Passive House (PHI + Phius) attributes ont
 | How the packages fit together, data flow | `context/ARCHITECTURE.md` |
 | Writing/changing any code (IPy2.7 rules, typing, serialization) | `context/CODING_STANDARDS.md` |
 | Dependencies, packaging, tests, CI, release | `context/TECH_STACK.md` |
+| What a domain term means, which word to use | `context/UBIQUITOUS_LANGUAGE.md` |
 | Why a past design choice was made | `context/decisions/` |
 | Current / in-flight work | `planning/STATUS.md` |
 | The public docs site (autodoc spoke — do not restructure) | `docs/.instructions.md` |
@@ -34,8 +35,9 @@ Full context index: `context/README.md`.
 
 1. **IronPython 2.7 compatibility is mandatory.** No f-strings, no walrus, no `match`/`case`, no `X | Y` unions, no dataclasses/Pydantic. Comment-style type hints only (`# type: (str) -> bool`). Guard `typing` imports. Full detail: `context/CODING_STANDARDS.md`.
 2. **Serialization must be backward-compatible.** New fields get a default in `__init__`, are written in `to_dict()`, read with `_input_dict.get("key", default)` in `from_dict()`, and copied in `duplicate()`. Old HBJSON must still load. Apply the **hbjson-serialization-contract** skill.
-3. **Docs are an autodoc spoke.** When you add/change a class, module, method, or function, update `docs/nav.yml` and keep docstrings in the `ph-docs` format (`docs/.instructions.md`). Never restructure `docs/`.
-4. **Verify before closeout.** Run `python3 -m coverage run && python3 -m coverage report`; the repository-wide coverage floor is 75% (`fail_under = 75`). Tests mirror the package layout under `tests/`.
+3. **Use the repo's own vocabulary.** Names, docstrings, and prose follow `context/UBIQUITOUS_LANGUAGE.md` — it settles the collisions that keep recurring (HB Room vs PH Space, Zone, Ventilator vs Ventilation System, Construction vs Assembly, `None` vs `0` for absence). Introducing a new domain term means adding it there.
+4. **Docs are an autodoc spoke.** When you add/change a class, module, method, or function, update `docs/nav.yml` and keep docstrings in the `ph-docs` format (`docs/.instructions.md`). Never restructure `docs/`.
+5. **Verify before closeout.** Run `python3 -m coverage run && python3 -m coverage report`; the repository-wide coverage floor is 75% (`fail_under = 75`). Tests mirror the package layout under `tests/`.
 
 ## Ecosystem / downstream consumers
 
