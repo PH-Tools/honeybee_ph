@@ -235,6 +235,11 @@ that returns a *fresh* instance from the defaults dict (unlike the cached `phius
 singleton, see §5). Deliberately not done here: it would require a `honeybee_ph` release and a
 `requirements.txt` pin bump before a six-line downstream fix could ship.
 
+**Resolved 2026-08-25** in
+[`archive/ph-equipment-reference-quantity-defaults/`](../ph-equipment-reference-quantity-defaults/README.md),
+by a class-level default on every subclass rather than a factory — see
+[decision 0007](../../../context/decisions/0007-reference-quantity-is-equipment-type-data.md).
+
 ---
 
 ## 10. Resolution and follow-ups
@@ -253,7 +258,7 @@ remaining work belongs to the downstream repo and to a question wider than this 
 | 1 | Canvas re-export of a Phius MF model; confirm `<ReferenceQuantity>5</ReferenceQuantity>` in the WUFI XML and `"refQ": 5` in the METr JSON (§6.3) | Ed, on the canvas — `honeybee_grasshopper_ph/planning/STATUS.md` |
 | 2 | `honeybee_grasshopper_ph` release carrying the fix | release orchestrator — `honeybee_grasshopper_ph/planning/STATUS.md` |
 | 3 | **§7 — what WUFI-Passive does on import with `ReferenceQuantity = 2`.** This is the higher-stakes half: if WUFI applies the zone occupant count as a multiplier, every previously submitted Phius MF model overstates MEL and lighting by a large factor. If it only affects display normalization, delivered results are unaffected. Decides whether submitted models need revisiting | open — GUI check, not a code question |
-| 4 | Upstream `PhEquipment` factory returning a *fresh* instance from the defaults dict, so a bare `PhCustomAnnual*()` constructor cannot silently reproduce this defect (§9, *Residual*) | not filed — needs a `honeybee_ph` release + pin bump to be worth doing |
+| 4 | ✅ **Done 2026-08-25.** Fixed upstream so a bare `PhCustomAnnual*()` constructor cannot silently reproduce this defect — every `PhEquipment` subclass now declares its own `DEFAULT_REFERENCE_QUANTITY` | [`archive/ph-equipment-reference-quantity-defaults/`](../ph-equipment-reference-quantity-defaults/README.md), [decision 0007](../../../context/decisions/0007-reference-quantity-is-equipment-type-data.md) |
 
 ### What made this findable, for the next one
 

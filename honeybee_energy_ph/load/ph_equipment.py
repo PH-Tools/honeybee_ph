@@ -70,7 +70,8 @@ class PhEquipment(_base._Base):
     Attributes:
         equipment_type (str): Class name used for serialization dispatch.
         comment (str): Optional user comment.
-        reference_quantity (int): Reference quantity type (2 = zone occupants).
+        reference_quantity (int): WUFI 'Reference Quantity' selector value.
+            Initialized from the subclass's ``DEFAULT_REFERENCE_QUANTITY``.
         quantity (int): Number of this appliance installed.
         in_conditioned_space (bool): Whether the appliance is inside the
             thermal envelope. Default: True.
@@ -82,6 +83,17 @@ class PhEquipment(_base._Base):
             internal heat gain inside the envelope (0.0-1.0). Default: 1.0.
     """
 
+    # -- The WUFI "Reference Quantity" selector value for this equipment type. It belongs
+    # -- to the type, not to the standard: PHI and PHIUS agree on it for every entry in
+    # -- 'ph_default_equip'. Every subclass MUST declare its own -- an inherited value is
+    # -- always a mistake, never a fallback, and
+    # -- 'test_every_equipment_subclass_declares_its_own_reference_quantity' fails when a
+    # -- new subclass forgets. See context/decisions/0007.
+    # -- Known selector values: 1=PH case occupants, 2=Zone occupants, 4=PH case Units,
+    # -- 5=User defined. 3 and 6 are carried by the Phius RESNET types but are not
+    # -- labeled in the phi-rules or wufi-xml corpora.
+    DEFAULT_REFERENCE_QUANTITY = 2  # Zone Occupants
+
     _phi_default = None
     _phius_default = None
 
@@ -92,7 +104,7 @@ class PhEquipment(_base._Base):
         self.equipment_type = self.__class__.__name__
         self.display_name = "_unnamed_equipment_"
         self.comment = ""
-        self.reference_quantity = 2  # Zone Occupants
+        self.reference_quantity = self.DEFAULT_REFERENCE_QUANTITY
         self.quantity = 0
         self.in_conditioned_space = True
         self.reference_energy_norm = 2  # Year
@@ -259,6 +271,8 @@ class PhDishwasher(PhEquipment):
         capacity (int): Place-setting capacity. Default: 12.
     """
 
+    DEFAULT_REFERENCE_QUANTITY = 1  # PH case occupants
+
     def __init__(self, _defaults={}):
         super(PhDishwasher, self).__init__()
         self.display_name = "Kitchen dishwasher"
@@ -313,6 +327,8 @@ class PhClothesWasher(PhEquipment):
         modified_energy_factor (float): Modified energy factor. Default: 2.7.
         utilization_factor (int): Utilization factor. Default: 1.
     """
+
+    DEFAULT_REFERENCE_QUANTITY = 1  # PH case occupants
 
     def __init__(self, _defaults={}):
         super(PhClothesWasher, self).__init__()
@@ -372,6 +388,8 @@ class PhClothesDryer(PhEquipment):
         field_utilization_factor_type (int): Utilization factor type. Default: 1.
         field_utilization_factor (float): Field utilization factor. Default: 1.18.
     """
+
+    DEFAULT_REFERENCE_QUANTITY = 1  # PH case occupants
 
     def __init__(self, _defaults={}):
         super(PhClothesDryer, self).__init__()
@@ -440,6 +458,8 @@ class PhClothesDryer(PhEquipment):
 class PhRefrigerator(PhEquipment):
     """PH kitchen refrigerator (standalone, no freezer)."""
 
+    DEFAULT_REFERENCE_QUANTITY = 4  # PH case Units
+
     def __init__(self, _defaults={}):
         super(PhRefrigerator, self).__init__()
         self.display_name = "Kitchen refrigerator"
@@ -467,6 +487,8 @@ class PhRefrigerator(PhEquipment):
 
 class PhFreezer(PhEquipment):
     """PH kitchen standalone freezer."""
+
+    DEFAULT_REFERENCE_QUANTITY = 4  # PH case Units
 
     def __init__(self, _defaults={}):
         super(PhFreezer, self).__init__()
@@ -496,6 +518,8 @@ class PhFreezer(PhEquipment):
 class PhFridgeFreezer(PhEquipment):
     """PH kitchen combination refrigerator/freezer."""
 
+    DEFAULT_REFERENCE_QUANTITY = 4  # PH case Units
+
     def __init__(self, _defaults={}):
         super(PhFridgeFreezer, self).__init__()
         self.display_name = "Kitchen fridge/freeze combo"
@@ -523,6 +547,8 @@ class PhFridgeFreezer(PhEquipment):
 
 class PhCooktop(PhEquipment):
     """PH kitchen cooktop/range appliance."""
+
+    DEFAULT_REFERENCE_QUANTITY = 1  # PH case occupants
 
     def __init__(self, _defaults={}):
         super(PhCooktop, self).__init__()
@@ -573,6 +599,8 @@ class PhCooktop(PhEquipment):
 class PhPhiusMEL(PhEquipment):
     """Phius miscellaneous electrical loads (MELs) per RESNET."""
 
+    DEFAULT_REFERENCE_QUANTITY = 3
+
     def __init__(self, _defaults={}):
         super(PhPhiusMEL, self).__init__()
         self.display_name = "PHIUS+ MELS"
@@ -615,6 +643,8 @@ class PhPhiusLightingInterior(PhEquipment):
         frac_high_efficiency (float): Fraction of high-efficiency fixtures. Default: 1.
     """
 
+    DEFAULT_REFERENCE_QUANTITY = 6
+
     def __init__(self, _defaults={}):
         super(PhPhiusLightingInterior, self).__init__()
         self.display_name = "PHIUS+ Interior Lighting"
@@ -653,6 +683,8 @@ class PhPhiusLightingExterior(PhEquipment):
     Attributes:
         frac_high_efficiency (float): Fraction of high-efficiency fixtures. Default: 1.
     """
+
+    DEFAULT_REFERENCE_QUANTITY = 6
 
     def __init__(self, _defaults={}):
         # type: (dict[str, Any]) -> None
@@ -699,6 +731,8 @@ class PhPhiusLightingGarage(PhEquipment):
         frac_high_efficiency (float): Fraction of high-efficiency fixtures. Default: 1.
     """
 
+    DEFAULT_REFERENCE_QUANTITY = 2  # Zone occupants
+
     def __init__(self, _defaults={}):
         super(PhPhiusLightingGarage, self).__init__()
         self.display_name = "PHIUS+ Garage Lighting"
@@ -731,6 +765,8 @@ class PhPhiusLightingGarage(PhEquipment):
 class PhCustomAnnualElectric(PhEquipment):
     """User-defined annual electric equipment load."""
 
+    DEFAULT_REFERENCE_QUANTITY = 5  # User defined
+
     def __init__(self, _defaults={}):
         super(PhCustomAnnualElectric, self).__init__()
         self.display_name = "User defined"
@@ -759,6 +795,8 @@ class PhCustomAnnualElectric(PhEquipment):
 class PhCustomAnnualLighting(PhEquipment):
     """User-defined annual lighting load."""
 
+    DEFAULT_REFERENCE_QUANTITY = 5  # User defined
+
     def __init__(self, _defaults={}):
         super(PhCustomAnnualLighting, self).__init__()
         self.display_name = "User defined - lighting"
@@ -786,6 +824,8 @@ class PhCustomAnnualLighting(PhEquipment):
 
 class PhCustomAnnualMEL(PhEquipment):
     """User-defined annual miscellaneous electric load."""
+
+    DEFAULT_REFERENCE_QUANTITY = 5  # User defined
 
     def __init__(self, _defaults={}):
         super(PhCustomAnnualMEL, self).__init__()
@@ -817,6 +857,11 @@ class PhCustomAnnualMEL(PhEquipment):
 
 class PhElevatorHydraulic(PhEquipment):
     """Hydraulic elevator (up to ~6 stories) per Phius/RESNET."""
+
+    # -- No 'ph_default_equip' entry for the elevators. The energy demand is an absolute
+    # -- whole-building annual total, so it is normalized the same way as PhCustomAnnualMEL
+    # -- rather than against an occupant count.
+    DEFAULT_REFERENCE_QUANTITY = 5  # User defined
 
     def __init__(self, _num_dwellings=1):
         super(PhElevatorHydraulic, self).__init__()
@@ -858,6 +903,11 @@ class PhElevatorHydraulic(PhEquipment):
 class PhElevatorGearedTraction(PhEquipment):
     """Geared traction elevator (7-20 stories) per Phius/RESNET."""
 
+    # -- No 'ph_default_equip' entry for the elevators. The energy demand is an absolute
+    # -- whole-building annual total, so it is normalized the same way as PhCustomAnnualMEL
+    # -- rather than against an occupant count.
+    DEFAULT_REFERENCE_QUANTITY = 5  # User defined
+
     def __init__(self, _num_dwellings=1):
         super(PhElevatorGearedTraction, self).__init__()
         self.display_name = "User defined - Misc electric loads"
@@ -897,6 +947,11 @@ class PhElevatorGearedTraction(PhEquipment):
 
 class PhElevatorGearlessTraction(PhEquipment):
     """Gearless traction elevator (21+ stories) per Phius/RESNET."""
+
+    # -- No 'ph_default_equip' entry for the elevators. The energy demand is an absolute
+    # -- whole-building annual total, so it is normalized the same way as PhCustomAnnualMEL
+    # -- rather than against an occupant count.
+    DEFAULT_REFERENCE_QUANTITY = 5  # User defined
 
     def __init__(self, _num_dwellings=1):
         super(PhElevatorGearlessTraction, self).__init__()
