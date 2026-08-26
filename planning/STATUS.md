@@ -8,6 +8,7 @@ _Last updated: 2026-08-25_
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| `phius_default()` hands out a shared mutable singleton | Bug (data model) | **Scoped** — investigated, not implemented. Every caller gets the same object and there is no `duplicate()`; mutations bleed across callers and persist for the whole Rhino session. The obvious fix multiplies appliance/MEL/lighting energy by the room count — read §4 first | [`bug_fixes/phius-default-shared-singleton.md`](bug_fixes/phius-default-shared-singleton.md) |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
 
