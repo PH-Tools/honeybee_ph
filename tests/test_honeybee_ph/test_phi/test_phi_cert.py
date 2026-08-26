@@ -88,7 +88,35 @@ def test_phi_cert_serialization_default_v10():
     default_cert = phi_cert.to_dict()
     new_obj = phi.PhiCertification.from_dict(default_cert)
 
-    assert new_obj.attributes.phpp_version == phi_cert_attributes.phpp_version  # test default serialization
+    assert new_obj.phpp_version == 10  # verify top level phpp_version=10 rebuilds
+    assert new_obj.attributes.phpp_version == phi_cert_attributes.phpp_version
+    assert new_obj.phpp_version == phi_cert.phpp_version
+
+
+def test_phi_cert_serialization_legacy_v10_without_top_level_version():
+    phi_cert = phi.PhiCertification(phpp_version=10)
+    legacy_cert = phi_cert.to_dict()
+    del legacy_cert["phpp_version"]
+
+    new_obj = phi.PhiCertification.from_dict(legacy_cert)
+
+    assert (
+        new_obj.phpp_version == 10
+    )  # fall back test: rebuild cert from dictionary with no top level phpp version based on its .attributes phpp version.
+    assert new_obj.attributes.phpp_version == 10
+
+
+def test_phi_cert_serialization_legacy_v10_with_malformed_top_level_version():
+    phi_cert = phi.PhiCertification(phpp_version=10)
+    legacy_cert = phi_cert.to_dict()
+    legacy_cert["phpp_version"] = "phppv10"
+
+    new_obj = phi.PhiCertification.from_dict(legacy_cert)
+
+    assert (
+        new_obj.phpp_version == 10
+    )  # fall back test: rebuild cert from dictionary with no top level phpp version based on its .attributes phpp version.
+    assert new_obj.attributes.phpp_version == 10
 
 
 def test_phi_cert_serialization_customized_v10():
@@ -141,7 +169,7 @@ def test_phi_cert_none_type_v10():
 
     """phi_cert_attributes.ihg_type = "0"
     zero_cert = phi_cert.to_dict()
-    assert zero_cert == default_cert"""  # Currently Fails: zero value not behaving the same as empty string and None type inputs. needs further investigation
+    assert zero_cert == default_cert"""  # Currently Fails: zero value not behaving the same as empty string and None type inputs. GH Component returns default enum on canvas output as expected, but Phi.py serialization loops around to last enum value on the allowed enums
 
     phi_cert_attributes.ihg_type = None
     none_cert = phi_cert.to_dict()
