@@ -94,6 +94,10 @@ class PhEquipment(_base._Base):
     # -- labeled in the phi-rules or wufi-xml corpora.
     DEFAULT_REFERENCE_QUANTITY = 2  # Zone Occupants
 
+    # -- Cached, per-subclass "prototype" instances built from 'ph_default_equip'. They
+    # -- are never handed to a caller: 'phi_default()' / 'phius_default()' return a
+    # -- duplicate. Caching them is what keeps the returned 'identifier' stable for the
+    # -- life of the process, which the PHX export depends on -- see 'duplicate()'.
     _phi_default = None
     _phius_default = None
 
@@ -176,6 +180,32 @@ class PhEquipment(_base._Base):
                 pass
         return None
 
+    def duplicate(self, new_host=None):
+        # type: (ProcessPhProperties | None) -> PhEquipment
+        """Return a new, independent copy of this equipment.
+
+        NOTE: the copy deliberately keeps the SAME 'identifier' as the original. That is
+        unusual for a duplicate() and it is on purpose: PHX keys each PhxZone's device
+        collection by the device identifier, and the Phius multi-family builders hand one
+        device to every Room in the building with the demand already divided by the room
+        count. The shared identifier is what collapses those N per-room devices back to
+        one device per zone so the N zones sum to the building total. Re-keying the copy
+        would multiply the exported appliance, MEL and lighting energy by the number of
+        rooms. See context/decisions/0008-ph-equipment-duplicate-preserves-identifier.md
+
+        Arguments:
+        ----------
+            * new_host (ProcessPhProperties | None): Optional host for the new copy. If
+                None, the original's host is carried over.
+
+        Returns:
+        --------
+            * (PhEquipment) A new copy of the equipment, carrying the same identifier.
+        """
+        new_obj = self.__class__.from_dict(self.to_dict())
+        new_obj.host = new_host or self.host
+        return new_obj
+
     def merge(self, other, weighting_1=1.0, weighting_2=1.0):
         # type: (PhEquipment, float, float) -> PhEquipment
         """ "Merge together two pieces of PhEquipment.
@@ -245,18 +275,26 @@ class PhEquipment(_base._Base):
     @classmethod
     def phius_default(cls):
         # type: () -> 'PhEquipment'
-        """Return the default instance of the object."""
-        if not cls._phius_default:
+        """Return a new PhEquipment with the PHIUS default attribute values.
+
+        Each call returns an independent object which is safe to modify, but every one of
+        them carries the same 'identifier' for the life of the process. See 'duplicate()'.
+        """
+        if cls._phius_default is None:
             cls._phius_default = cls(_defaults=ph_default_equip[cls.__name__]["PHIUS"])
-        return cls._phius_default
+        return cls._phius_default.duplicate()
 
     @classmethod
     def phi_default(cls):
         # type: () -> 'PhEquipment'
-        """Return the default instance of the object."""
-        if not cls._phi_default:
+        """Return a new PhEquipment with the PHI default attribute values.
+
+        Each call returns an independent object which is safe to modify, but every one of
+        them carries the same 'identifier' for the life of the process. See 'duplicate()'.
+        """
+        if cls._phi_default is None:
             cls._phi_default = cls(_defaults=ph_default_equip[cls.__name__]["PHI"])
-        return cls._phi_default
+        return cls._phi_default.duplicate()
 
 
 # -----------------------------------------------------------------------------
@@ -1163,7 +1201,10 @@ class PhEquipmentCollection(object):
 
         new_obj = self.__class__(host)
         for k, v in self._equipment_set.items():
-            new_obj.add_equipment(v, k)
+            # -- Duplicate the equipment so two rooms never share one mutable object.
+            # -- The key is re-used as-is, and PhEquipment.duplicate() keeps the
+            # -- identifier, so the collection keys are unchanged by the copy.
+            new_obj.add_equipment(v.duplicate(), k)
 
         return new_obj
 

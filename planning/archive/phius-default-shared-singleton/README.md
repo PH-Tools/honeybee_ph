@@ -1,15 +1,17 @@
 # Bug: `phius_default()` / `phi_default()` hand out a shared mutable singleton
 
-**Status:** Scoped — investigated, not implemented
+**Status:** Complete — implemented 2026-08-25, option A. See §9.
 **Kind:** Bug (data model; fix ships from this repo)
 **Date:** 2026-08-25
 **Author:** Ed May + Claude
 **Origin:** §7 of
-[`archive/ph-equipment-reference-quantity-defaults/`](../archive/ph-equipment-reference-quantity-defaults/README.md)
+[`ph-equipment-reference-quantity-defaults/`](../ph-equipment-reference-quantity-defaults/README.md)
 
-> **Read §4 before designing a fix.** The obvious fix — return a fresh copy — multiplies
-> appliance, MEL and lighting energy by the room count. The shared identity is
-> load-bearing downstream.
+> **Outcome:** fixed by option A — `PhEquipment.duplicate()` preserves the identifier and
+> the default factories return copies. §4 explains why the obvious fix (a fresh copy with
+> a fresh identifier) would have multiplied appliance, MEL and lighting energy by the room
+> count. Settled in
+> [decision 0008](../../../context/decisions/0008-ph-equipment-duplicate-preserves-identifier.md).
 
 ---
 
@@ -75,7 +77,7 @@ serialization**.
 3. **No supported escape.** Without `duplicate()`, a caller who needs an independent copy
    must reach for `copy.deepcopy` or rebuild from `ph_default_equip` by hand — which is
    exactly the transcription pattern that produced the
-   [`reference_quantity`](../archive/phius-mf-custom-load-reference-quantity/README.md) defect.
+   [`reference_quantity`](../phius-mf-custom-load-reference-quantity/README.md) defect.
 4. **Silent drop on collection add.** `PhEquipmentCollection.add_equipment` keys by
    `identifier` and returns early on a duplicate key, so adding the same singleton twice
    yields a collection of one.
@@ -127,7 +129,7 @@ its own round-trip verification.
 `phius_default()` alone as a "read-only prototype", document it as such, and have
 `set_phius_mf_res.py` call `.duplicate()`. Smallest blast radius, but it leaves a
 loaded gun for the next caller — the same reasoning that made
-[decision 0007](../../context/decisions/0007-reference-quantity-is-equipment-type-data.md)
+[decision 0007](../../../context/decisions/0007-reference-quantity-is-equipment-type-data.md)
 reject a base-class default nobody should accept.
 
 Recommendation: **A**, with the identifier semantics written into a decision record. It
@@ -146,7 +148,7 @@ keying is ever revisited on its own merits.
    nothing but the shared identifier.
 4. HBJSON round trip preserves whatever identity contract is chosen.
 5. Appliance `reference_quantity` values still hold (1 / 4 per
-   [decision 0007](../../context/decisions/0007-reference-quantity-is-equipment-type-data.md)).
+   [decision 0007](../../../context/decisions/0007-reference-quantity-is-equipment-type-data.md)).
 
 ## 7. Files
 
@@ -164,3 +166,55 @@ keying is ever revisited on its own merits.
 
 The stray `frac_high_efficiency` attribute that `apply_default_attr_values` sets on the
 three classes that do not declare it. Pre-existing, not serialized, harmless.
+
+---
+
+## 9. What was implemented (2026-08-25)
+
+Option A, on branch `fix/phius-default-shared-singleton` (honeybee-ph) and
+`test/phius-mf-room-count-invariant` (PHX). Settled in
+[decision 0008](../../../context/decisions/0008-ph-equipment-duplicate-preserves-identifier.md).
+
+**`honeybee_ph`**
+
+| Change | File |
+|---|---|
+| `PhEquipment.duplicate(new_host=None)` — a `to_dict()`/`from_dict()` round trip that keeps the identifier | `honeybee_energy_ph/load/ph_equipment.py` |
+| `phius_default()` / `phi_default()` keep the per-class prototype cache but return `prototype.duplicate()`; the prototype is never handed out | `honeybee_energy_ph/load/ph_equipment.py` |
+| `PhEquipmentCollection.__copy__` duplicates its equipment instead of re-using the references (same keys, since `duplicate()` does not re-key) | `honeybee_energy_ph/load/ph_equipment.py` |
+| `ProcessPhProperties.__copy__` / `LightingPhProperties.__copy__` now call the supported `duplicate()` instead of hand-rolling the same dict round trip | `honeybee_energy_ph/properties/load/process.py`, `.../lighting.py` |
+
+**`PHX`** — no production code changed. Added the room-count invariant test the
+verification list said was missing from both repos:
+`tests/test_from_HBJSON/test_create_variant/test_elec_equip_room_count_invariant.py`.
+
+## 10. Verification
+
+Against §6:
+
+| # | Requirement | Evidence |
+|---|---|---|
+| 1 | Two `phius_default()` calls return independent objects | `test_default_factories_return_independent_objects`, `test_mutating_a_default_does_not_affect_the_next_one` |
+| 2 | The identifier contract is asserted by a test | `test_default_factories_keep_a_stable_identifier`, `test_duplicate_preserves_the_identifier`, and the PHX guard `test_a_re_keyed_device_would_multiply_the_total_by_the_room_count` |
+| 3 | Room-count invariant for N = 1, 2, 10 | PHX `test_the_exported_demand_equals_the_building_total` (3 equipment types × 3 room counts) and `test_each_zone_holds_exactly_one_device`; honeybee-ph `test_the_room_count_invariant_holds` |
+| 4 | HBJSON round trip preserves the identity contract | `test_the_identifier_survives_an_hbjson_round_trip` (N = 1, 2, 10) |
+| 5 | Appliance `reference_quantity` values still hold | The decision-0007 tests still pass unchanged; `test_duplicate_preserves_every_serialized_attribute` covers every subclass |
+
+Commands:
+
+- honeybee-ph: `python3 -m coverage run && python3 -m coverage report` — **1,050 passed, 81%** (floor 75%); `black --check` clean.
+- PHX: `python -m pytest tests/` — **1,076 passed, 3 skipped**, with the changed honeybee-ph deployed into the PHX venv. This is the evidence that the export path is unaffected.
+
+## 11. Deliberately not done
+
+- **Option B** (drop the cache; have PHX key its zone device collection by something
+  explicit rather than by whichever identifier arrives) stays available. It is the
+  cleaner separation of concerns, but it is a change to a working export path and should
+  be taken on its own merits. Decision 0008 records what would reopen it.
+- The stray `frac_high_efficiency` attribute of §8 — still pre-existing, still harmless.
+  It survives `duplicate()` on the classes that declare it and is dropped on the three
+  that do not, which matches its serialization behavior today.
+- Honeybee's own `Room.duplicate()` shares the `Process` load objects between the
+  original and the copy, so a duplicated Room still points at the same equipment. That is
+  honeybee-core/energy behavior, not something this repo controls; the honeybee-ph layer
+  (`Process.duplicate()`) now copies correctly.

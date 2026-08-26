@@ -55,7 +55,7 @@ class LightingPhProperties(object):
         new_obj.target_lux = self.target_lux
         new_obj.target_lux_height = self.target_lux_height
         if self._ph_equipment:
-            new_obj.ph_equipment = PhEquipmentBuilder.from_dict(self._ph_equipment.to_dict(), _host=new_obj)
+            new_obj.ph_equipment = self._ph_equipment.duplicate(new_host=new_obj)
 
         return new_obj
 

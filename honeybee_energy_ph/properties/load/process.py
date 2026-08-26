@@ -93,7 +93,7 @@ class ProcessPhProperties(object):
         host = new_host or self._host
         new_obj = self.__class__(host)
         if self._ph_equipment:
-            new_obj.ph_equipment = PhEquipmentBuilder.from_dict(self._ph_equipment.to_dict(), _host=new_obj)
+            new_obj.ph_equipment = self._ph_equipment.duplicate(new_host=new_obj)
         return new_obj
 
     def duplicate(self, new_host=None):
