@@ -578,3 +578,114 @@ def test_reference_quantity_survives_a_round_trip():
     e1.reference_quantity = 1
     e2 = ph_equipment.PhEquipmentBuilder.from_dict(e1.to_dict())
     assert e2.reference_quantity == 1
+
+
+# -- Default factories hand out independent objects
+
+
+def test_default_factories_return_independent_objects():
+    """Two calls must not return the same object.
+
+    They used to: the factories cached one instance per class and handed that same
+    object to every caller for the life of the process, so anything one caller wrote
+    to a default was visible to every later caller -- across Grasshopper solutions and
+    across .3dm files opened in one Rhino session.
+    """
+    for cls in _all_equipment_subclasses():
+        if cls.__name__ not in ph_default_equip:
+            continue  # -- the elevators have no standards entry
+        for factory_name in ("phi_default", "phius_default"):
+            a = getattr(cls, factory_name)()
+            b = getattr(cls, factory_name)()
+            assert a is not b, "{}.{}() handed out the same object twice".format(cls.__name__, factory_name)
+
+
+def test_mutating_a_default_does_not_affect_the_next_one():
+    """A caller writing to a default must not corrupt it for the next caller."""
+    a = ph_equipment.PhCooktop.phius_default()
+    original_demand = a.energy_demand
+    a.energy_demand = 999.0
+    a.display_name = "MUTATED BY CALLER A"
+    a.comment = "MUTATED BY CALLER A"
+
+    b = ph_equipment.PhCooktop.phius_default()
+    assert b.energy_demand == original_demand
+    assert b.display_name != "MUTATED BY CALLER A"
+    assert b.comment == "default"
+
+
+def test_default_factories_keep_a_stable_identifier():
+    """The identifier must stay the same across calls -- this is load-bearing.
+
+    PHX keys each PhxZone's device collection by the device identifier and upserts, so
+    the N per-room devices the Phius MF builders create collapse to one device per zone
+    and the N zones sum back to the building total. Handing every room a distinct
+    identifier would multiply the exported energy by the room count.
+    """
+    for cls in _all_equipment_subclasses():
+        if cls.__name__ not in ph_default_equip:
+            continue  # -- the elevators have no standards entry
+        for factory_name in ("phi_default", "phius_default"):
+            a = getattr(cls, factory_name)()
+            b = getattr(cls, factory_name)()
+            assert a.identifier == b.identifier, "{}.{}() re-keyed the default".format(cls.__name__, factory_name)
+
+
+def test_phi_and_phius_defaults_are_distinct():
+    """The two standards must not collapse onto one cached object or one identifier."""
+    phi = ph_equipment.PhDishwasher.phi_default()
+    phius = ph_equipment.PhDishwasher.phius_default()
+    assert phi.identifier != phius.identifier
+
+
+# -- PhEquipment.duplicate()
+
+
+def test_duplicate_returns_an_independent_object():
+    e1 = ph_equipment.PhDishwasher()
+    e1.energy_demand = 123.4
+    e2 = e1.duplicate()
+
+    assert e1 is not e2
+    e2.energy_demand = 0.0
+    assert e1.energy_demand == 123.4
+
+
+def test_duplicate_preserves_the_identifier():
+    """duplicate() deliberately does NOT re-key. See decision 0008."""
+    e1 = ph_equipment.PhCustomAnnualMEL()
+    assert e1.duplicate().identifier == e1.identifier
+
+
+def test_duplicate_preserves_every_serialized_attribute():
+    """A duplicate must be indistinguishable from its original once serialized."""
+    for cls in _all_equipment_subclasses():
+        e1 = cls()
+        assert e1.duplicate().to_dict() == e1.to_dict(), "{}.duplicate() lost an attribute".format(cls.__name__)
+
+
+def test_duplicate_does_not_share_nested_type_objects():
+    """The enum-style sub-objects must be copies too, not shared references."""
+    e1 = ph_equipment.PhCooktop()
+    e2 = e1.duplicate()
+    assert e1.cooktop_type is not e2.cooktop_type
+    assert e1.cooktop_type.value == e2.cooktop_type.value
+
+
+def test_duplicate_takes_a_new_host():
+    e1 = ph_equipment.PhDishwasher()
+    new_host = object()
+    assert e1.duplicate(new_host=new_host).host is new_host
+
+
+def test_duplicating_a_collection_copies_the_equipment():
+    """Duplicating a Room's equipment collection must not share the equipment objects."""
+    collection = ph_equipment.PhEquipmentCollection()
+    equip = ph_equipment.PhDishwasher.phius_default()
+    collection.add_equipment(equip)
+
+    duplicated = collection.duplicate()
+
+    assert list(duplicated.keys()) == list(collection.keys())
+    assert duplicated[equip.identifier] is not collection[equip.identifier]
+    assert duplicated[equip.identifier].to_dict() == collection[equip.identifier].to_dict()

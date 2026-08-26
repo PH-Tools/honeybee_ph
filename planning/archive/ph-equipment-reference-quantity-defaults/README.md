@@ -110,9 +110,10 @@ their stored value; the change appears when a model is rebuilt.
   the answer belongs in the `wufi-xml` corpus.
 - **`phius_default()` returns a cached class-level singleton.** `PhEquipment` has no
   `duplicate()`, so callers share one mutable object — `set_phius_mf_res.py` appends the
-  singleton straight into per-room equipment collections. **Filed 2026-08-25** as
-  [`bug_fixes/phius-default-shared-singleton.md`](../../bug_fixes/phius-default-shared-singleton.md).
-  Note the finding there: the shared *identifier* is load-bearing in the PHX export, so
-  the obvious fix multiplies appliance and MEL energy by the room count.
+  singleton straight into per-room equipment collections. **Filed and fixed 2026-08-25** —
+  see [`phius-default-shared-singleton/`](../phius-default-shared-singleton/README.md) and
+  [decision 0008](../../../context/decisions/0008-ph-equipment-duplicate-preserves-identifier.md).
+  The shared *identifier* turned out to be load-bearing in the PHX export, so the fix adds a
+  `duplicate()` that deliberately does not re-key.
 - **The stray `frac_high_efficiency` attribute** set by `apply_default_attr_values` on
   the three classes that do not declare it. Pre-existing, not serialized, harmless.

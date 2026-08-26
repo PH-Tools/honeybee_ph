@@ -17,3 +17,4 @@ research (e.g. `planning/refactor/`).
 | [0005](0005-repository-coverage-floor-is-75-percent.md) | Enforce a truthful 75% repository-wide coverage floor while retaining focused contract tests for new behavior | Decided 2026-08-14 |
 | [0006](0006-explicit-ventilation-system-states.md) | Use explicit ventilation-system states and selected equipment; do not invent nominal HRV performance or ducts | Decided 2026-08-14 |
 | [0007](0007-reference-quantity-is-equipment-type-data.md) | `reference_quantity` is equipment-type data: every `PhEquipment` subclass declares its own `DEFAULT_REFERENCE_QUANTITY`, never inherits one | Decided 2026-08-25 |
+| [0008](0008-ph-equipment-duplicate-preserves-identifier.md) | `PhEquipment.duplicate()` preserves the identifier and the default factories return copies: the shared identity is load-bearing for the PHX export, the shared mutable state was the bug | Decided 2026-08-25 |
