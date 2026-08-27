@@ -1,9 +1,9 @@
 ---
 title: Honeybee-PH
 subtitle: "Passive House extensions for Ladybug Tools — add PHI and Phius data to Honeybee models."
-version: "1.33.57"
+version: "1.33.58"
 pills:
-  - "v1.33.57 — latest"
+  - "v1.33.58 — latest"
   - "PHI · Phius"
   - "IronPython 2.7 · Python 3.10+"
 ---
