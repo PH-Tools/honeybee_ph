@@ -32,6 +32,10 @@ jobs:
         run: python -m black --check --diff .
       - name: isort
         run: python -m isort --check-only --diff .
+      - name: uv.lock is in sync with pyproject.toml
+        run: |
+          pip install uv
+          uv lock --check
 
   bump-and-release:
     name: Bump version and publish
