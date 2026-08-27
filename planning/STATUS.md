@@ -6,10 +6,11 @@ _Last updated: 2026-08-25_
 
 ## Active / current work
 
-| Item | Kind | Status | Pointer |
-|------|------|--------|---------|
-| Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
-| Multiple ventilation systems per room | Refactor | Deferred — decided NOT to implement | [`refactor/multiple-ventilation-systems.md`](refactor/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
+| Item | Kind | Status | Issue | Pointer |
+|------|------|--------|-------|---------|
+| Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [#112](https://github.com/PH-Tools/honeybee_ph/issues/112) | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
+| Mechanical cooling flag (`Verification!N30`) | Feature (cross-repo, **primary**; filed from PHX) | **Requested** — not started here; see the Cross-repo section below | [#110](https://github.com/PH-Tools/honeybee_ph/issues/110) | `PHX/planning/bug-fix/phpp-writer-input-gaps/06-verification-mechanical-cooling.md` |
+| Foundation shape for PHPP 10.x `Ground` | Feature (cross-repo, **primary**; filed from PHX) | **Scoped** — gap table and required fields in the PHX packet; blocks PHX [#104](https://github.com/PH-Tools/PHX/issues/104) and OpenPH foundations | [#111](https://github.com/PH-Tools/honeybee_ph/issues/111) | `PHX/planning/features/foundation-phpp10-shape/PRD.md` §4, §6 |
 
 ## Recommended execution order
 
@@ -22,6 +23,7 @@ one and gate PHX's `Ground` writer and OpenPH's foundation objects.
 
 | Item | Kind | Status | Pointer |
 |------|------|--------|---------|
+| Multiple ventilation systems per room | Refactor (investigated, declined) | **Archived 2026-08-27** — decided NOT to implement; closed as not-planned in [#113](https://github.com/PH-Tools/honeybee_ph/issues/113) | [`archive/multiple-ventilation-systems.md`](archive/multiple-ventilation-systems.md) → [decision 0001](../context/decisions/0001-no-multiple-ventilation-systems-per-room.md) |
 | `phius_default()` handed out a shared mutable singleton | Bug fix (data model) | **Complete** — `PhEquipment.duplicate()` added, identifier-preserving on purpose; the default factories now return copies of a cached prototype. 1,050 tests pass at 81% coverage, and PHX's 1,076 pass against the change. The room-count invariant (N = 1, 2, 10) is now asserted in both repos — it was held up by nothing before | [`archive/phius-default-shared-singleton/`](archive/phius-default-shared-singleton/README.md) → [decision 0008](../context/decisions/0008-ph-equipment-duplicate-preserves-identifier.md) |
 | `PhEquipment.__init__` gave every type the same `reference_quantity` | Bug fix (data model) | **Complete** — all 17 subclasses now declare `DEFAULT_REFERENCE_QUANTITY`; 1,028 tests pass at 80% coverage and the value is verified end-to-end into the WUFI `<ReferenceQuantity>` node. Elevators moved 2 → 5, the one change that reaches existing models | [`archive/ph-equipment-reference-quantity-defaults/`](archive/ph-equipment-reference-quantity-defaults/README.md) → [decision 0007](../context/decisions/0007-reference-quantity-is-equipment-type-data.md) |
 | Phius MF custom MEL/Lighting export `reference_quantity = 2` | Bug fix (cross-repo; fix landed in `honeybee_grasshopper_ph`) | **Complete** — merged in [honeybee_grasshopper_ph#69](https://github.com/PH-Tools/honeybee_grasshopper_ph/pull/69); all six MF builders now construct from the PHIUS defaults dict. Follow-ups (canvas export check, GH release, and the open WUFI `ReferenceQuantity = 2` import question) tracked downstream — see the packet §10 | [`archive/phius-mf-custom-load-reference-quantity/`](archive/phius-mf-custom-load-reference-quantity/README.md) |

@@ -8,6 +8,8 @@ pytest-coverage.txt
 .DS_Store
 .vscode
 _coverage_html
+.coverage
+.coverage.*
 dist/*
 *.egg-*
 *.eggs*

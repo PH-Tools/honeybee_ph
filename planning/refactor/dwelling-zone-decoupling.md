@@ -3,6 +3,7 @@
 **Status:** Released in honeybee-ph v1.33.30 (2026-07-21). Downstream
 Ladybug Tools installation and PHX/GH completion remain tracked in their
 companion docs. See §6.
+**Issue:** [#112](https://github.com/PH-Tools/honeybee_ph/issues/112) (companions: [GH #74](https://github.com/PH-Tools/honeybee_grasshopper_ph/issues/74), [PHX #112](https://github.com/PH-Tools/PHX/issues/112))
 **Date:** 2026-07-21
 **Author:** Ed May + Claude
 **Kind:** Cross-repo refactor. This repo (`honeybee_ph`) is the **primary** — it owns the
