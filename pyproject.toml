@@ -76,6 +76,21 @@ filename = "pyproject.toml"
 search = "version = \"{current_version}\""
 replace = "version = \"{new_version}\""
 
+# -- 'uv.lock' records the project's own version; keep it in lockstep so
+# -- 'uv lock --check' in CI stays green after a release bump.
+[[tool.bumpversion.files]]
+filename = "uv.lock"
+search = '''
+name = "honeybee-ph"
+version = "{current_version}"
+source = {{ editable = "." }}
+'''
+replace = '''
+name = "honeybee-ph"
+version = "{new_version}"
+source = {{ editable = "." }}
+'''
+
 [[tool.bumpversion.files]]
 filename = "docs/index.md"
 search = "version: \"{current_version}\""
