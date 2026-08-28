@@ -297,6 +297,7 @@ class SetPoints(_base._Base):
     def ToString(self):
         return str(self)
 
+
 ## --------------------------------------------------------------------------------------
 ## -- Building Segment Class
 
