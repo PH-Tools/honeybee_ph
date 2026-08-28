@@ -286,6 +286,7 @@ class SetPoints(_base._Base):
         return self.__copy__()
 
     def __eq__(self, other):
+        # type: (Any) -> bool
         if not isinstance(other, SetPoints):
             return False
         return (
@@ -293,6 +294,9 @@ class SetPoints(_base._Base):
             and self.summer == other.summer
             and self.mechanical_cooling == other.mechanical_cooling
         )
+
+    def __hash__(self):
+        return hash((self.winter, self.summer, self.mechanical_cooling))
 
     def ToString(self):
         return str(self)

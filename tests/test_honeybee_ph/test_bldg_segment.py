@@ -60,6 +60,18 @@ def test_set_points_equality_includes_mechanical_cooling():
     assert o1 != o2
 
 
+def test_set_points_hash_matches_equality_values():
+    o1 = SetPoints()
+    o2 = o1.duplicate()
+    assert o1 == o2
+    assert hash(o1) == hash(o2)
+
+    o3 = SetPoints()
+    o3.winter = 18.0
+    assert o1 != o3
+    assert hash(o1) != hash(o3)
+
+
 # -- SummerVentilation ---------------------------------------------------------
 
 
