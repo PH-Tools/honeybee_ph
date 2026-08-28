@@ -26,6 +26,7 @@ def test_set_points_round_trip():
     # -- customize attrs
     o1.winter = 22.3
     o1.summer = 134.8
+    o1.mechanical_cooling = True
     d3 = o1.to_dict()
     o3 = SetPoints.from_dict(d3)
 
@@ -37,6 +38,26 @@ def test_set_points_duplicate():
     o2 = o1.duplicate()
 
     assert o1.to_dict() == o2.to_dict()
+
+
+def test_set_points_mechanical_cooling_default_and_legacy_default():
+    o1 = SetPoints()
+    assert o1.mechanical_cooling is False
+
+    legacy_dict = o1.to_dict()
+    del legacy_dict["mechanical_cooling"]
+    o2 = SetPoints.from_dict(legacy_dict)
+
+    assert o2.mechanical_cooling is False
+
+
+def test_set_points_equality_includes_mechanical_cooling():
+    o1 = SetPoints()
+    o2 = o1.duplicate()
+    assert o1 == o2
+
+    o2.mechanical_cooling = True
+    assert o1 != o2
 
 
 # -- SummerVentilation ---------------------------------------------------------
