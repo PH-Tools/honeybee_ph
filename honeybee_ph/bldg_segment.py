@@ -234,19 +234,22 @@ class SetPoints(_base._Base):
     Attributes:
         winter (float): Winter heating setpoint in degrees Celsius. Default: 20.0.
         summer (float): Summer cooling setpoint in degrees Celsius. Default: 25.0.
+        mechanical_cooling (bool): Whether the building has mechanical cooling. Default: False.
     """
 
     def __init__(self):
         super(SetPoints, self).__init__()
         self.winter = 20.0
         self.summer = 25.0
+        self.mechanical_cooling = False
 
     def to_dict(self):
-        # type: () -> Dict[str, float]
+        # type: () -> Dict[str, Any]
         d = {}
 
         d["winter"] = self.winter
         d["summer"] = self.summer
+        d["mechanical_cooling"] = self.mechanical_cooling
         d["identifier"] = self.identifier
         d["user_data"] = copy(self.user_data)
         d["display_name"] = self.display_name
@@ -260,6 +263,7 @@ class SetPoints(_base._Base):
 
         obj.winter = _dict.get("winter", 20.0)
         obj.summer = _dict.get("summer", 25.0)
+        obj.mechanical_cooling = _dict.get("mechanical_cooling", False)
         obj.identifier = _dict.get("identifier")
         obj.user_data = _dict.get("user_data", {})
         obj.display_name = _dict.get("display_name")
@@ -272,6 +276,7 @@ class SetPoints(_base._Base):
         obj.set_base_attrs_from_source(self)
         obj.winter = self.winter
         obj.summer = self.summer
+        obj.mechanical_cooling = self.mechanical_cooling
         obj.user_data = self.user_data
 
         return obj
@@ -279,6 +284,27 @@ class SetPoints(_base._Base):
     def duplicate(self):
         # type: () -> SetPoints
         return self.__copy__()
+
+    def __eq__(self, other):
+        # type: (Any) -> bool
+        # -- Compares the setpoint values only. The base-attrs (identifier,
+        # -- display_name, user_data) are deliberately ignored.
+        if not isinstance(other, SetPoints):
+            return False
+        return (
+            self.winter == other.winter
+            and self.summer == other.summer
+            and self.mechanical_cooling == other.mechanical_cooling
+        )
+
+    def __ne__(self, other):
+        # type: (Any) -> bool
+        # -- Python-2 (IronPython) does not derive '__ne__' from '__eq__'
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        # type: () -> int
+        return hash((self.winter, self.summer, self.mechanical_cooling))
 
 
 ## --------------------------------------------------------------------------------------
