@@ -55,9 +55,12 @@ def test_set_points_equality_includes_mechanical_cooling():
     o1 = SetPoints()
     o2 = o1.duplicate()
     assert o1 == o2
+    # -- '__ne__' is explicit for IronPython-2.7, so check it directly
+    assert not (o1 != o2)
 
     o2.mechanical_cooling = True
     assert o1 != o2
+    assert not (o1 == o2)
 
 
 def test_set_points_hash_matches_equality_values():

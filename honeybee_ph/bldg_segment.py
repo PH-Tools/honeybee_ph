@@ -244,7 +244,7 @@ class SetPoints(_base._Base):
         self.mechanical_cooling = False
 
     def to_dict(self):
-        # type: () -> Dict[str, float]
+        # type: () -> Dict[str, Any]
         d = {}
 
         d["winter"] = self.winter
@@ -287,6 +287,8 @@ class SetPoints(_base._Base):
 
     def __eq__(self, other):
         # type: (Any) -> bool
+        # -- Compares the setpoint values only. The base-attrs (identifier,
+        # -- display_name, user_data) are deliberately ignored.
         if not isinstance(other, SetPoints):
             return False
         return (
@@ -295,11 +297,14 @@ class SetPoints(_base._Base):
             and self.mechanical_cooling == other.mechanical_cooling
         )
 
-    def __hash__(self):
-        return hash((self.winter, self.summer, self.mechanical_cooling))
+    def __ne__(self, other):
+        # type: (Any) -> bool
+        # -- Python-2 (IronPython) does not derive '__ne__' from '__eq__'
+        return not self.__eq__(other)
 
-    def ToString(self):
-        return str(self)
+    def __hash__(self):
+        # type: () -> int
+        return hash((self.winter, self.summer, self.mechanical_cooling))
 
 
 ## --------------------------------------------------------------------------------------
