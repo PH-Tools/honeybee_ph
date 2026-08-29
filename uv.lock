@@ -253,7 +253,7 @@ wheels = [
 
 [[package]]
 name = "honeybee-ph"
-version = "1.33.58"
+version = "1.33.59"
 source = { editable = "." }
 dependencies = [
     { name = "honeybee-core" },
