@@ -39,7 +39,7 @@ dev = [
     "GH-IO-stubs",
     "GH-Util-stubs",
     "Grasshopper-stubs",
-    "isort==8.0.1",
+    "isort==9.0.1",
     "pytest",
     "pytest-cov",
     "Rhino-stubs",
