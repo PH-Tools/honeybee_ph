@@ -48,6 +48,7 @@ Dev extras (`[project.optional-dependencies] dev`): `black`, `coverage`, `pytest
 ## Versioning & release
 
 - Managed by **`bump-my-version`** (`[tool.bumpversion]`). Current version lives in `pyproject.toml` → `[project] version`.
+- Every **shippable** push to `main` auto-releases a patch (`bump:minor`/`bump:major` PR labels raise the level). Pushes touching only `planning/`, `context/`, `docs/`, `.github/`, or markdown skip the release (gated in `ci.yml`, 2026-09-02).
 - A version bump also rewrites the version pill in `docs/index.md` (see the `[[tool.bumpversion.files]]` entries) — that is why `docs/index.md` carries the version string.
 - Tags: `v{version}`. Bump commits use `[skip ci]`.
 

@@ -64,6 +64,25 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
+            // No release when the push changed nothing shippable (planning
+            // docs, context, markdown, CI config). On any doubt (compare
+            // fails, file list truncated) fall through to releasing.
+            const NON_RELEASE = [/^planning\//, /^context\//, /^docs\//, /^\.github\//, /\.md$/i, /^\.gitignore$/];
+            try {
+              const { data: cmp } = await github.rest.repos.compareCommits({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                base: context.payload.before,
+                head: context.payload.after,
+              });
+              const files = (cmp.files || []).map(f => f.filename);
+              if (files.length > 0 && files.every(f => NON_RELEASE.some(rx => rx.test(f)))) {
+                core.setOutput('level', 'none');
+                return;
+              }
+            } catch (e) {
+              core.info(`compare failed (${e.message}); defaulting to release`);
+            }
             const commits = context.payload.commits || [];
             const mergeCommit = commits.find(c => c.message.startsWith('Merge pull request'));
             if (mergeCommit) {
@@ -88,6 +107,7 @@ jobs:
             core.setOutput('level', 'patch');
 
       - name: Bump version
+        if: steps.bump_level.outputs.level != 'none'
         id: bump
         run: |
           git config user.name "github-actions[bot]"
@@ -96,15 +116,19 @@ jobs:
           echo "new_version=$(bump-my-version show current_version)" >> "$GITHUB_OUTPUT"
 
       - name: Push version commit and tag
+        if: steps.bump_level.outputs.level != 'none'
         run: git push --follow-tags
 
       - name: Build package
+        if: steps.bump_level.outputs.level != 'none'
         run: python -m build
 
       - name: Publish to PyPI
+        if: steps.bump_level.outputs.level != 'none'
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Create GitHub Release
+        if: steps.bump_level.outputs.level != 'none'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump.outputs.new_version }}
