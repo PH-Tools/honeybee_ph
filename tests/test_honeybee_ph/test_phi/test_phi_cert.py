@@ -175,3 +175,29 @@ def test_phi_cert_none_type_v10():
     none_cert = phi_cert.to_dict()
 
     assert none_cert == default_cert  # none value returns default value
+
+
+def test_rejected_enum_assignment_leaves_previous_value_intact_v10():
+    phi_cert = phi.PhiCertification(phpp_version=10)
+    phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings10
+
+    starting_value = phi_cert_attributes.building_use_type.value
+
+    with pytest.raises(Exception):
+        phi_cert_attributes.building_use_type = 1  # a '_' padding slot in the allowed list
+
+    assert phi_cert_attributes.building_use_type.value == starting_value
+    assert phi_cert.to_dict()["attributes"]["building_use_type"] == starting_value
+
+
+def test_falsy_assignment_after_rejected_assignment_v10():
+    phi_cert = phi.PhiCertification(phpp_version=10)
+    phi_cert_attributes = phi_cert.attributes  # type: phi.PHPPSettings10
+
+    default_cert = phi_cert.to_dict()
+
+    with pytest.raises(Exception):
+        phi_cert_attributes.building_use_type = 1  # a '_' padding slot in the allowed list
+
+    phi_cert_attributes.building_use_type = None  # an un-connected GH input
+    assert phi_cert.to_dict() == default_cert
