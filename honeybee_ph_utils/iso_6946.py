@@ -39,7 +39,7 @@ except ImportError as e:
 
 
 # -- A pathological model would otherwise expand the cartesian product without bound. Real
-# -- assemblies have at most two or three layers with a division grid.
+# -- constructions have at most two or three layers with a division grid.
 MAX_HEAT_FLOW_PATHS = 10000
 
 
@@ -154,21 +154,21 @@ def _r_value_upper_limit_from_paths(_paths_by_layer, _r_si, _r_se):
     The surface resistances are carried inside each path, as ISO 6946 6.7.1 requires.
     """
     # -- Each element is one path through the layers built so far: (r-value, area-fraction)
-    assembly_paths = [(_r_si + _r_se, 1.0)]  # type: List[Tuple[float, float]]
+    construction_paths = [(_r_si + _r_se, 1.0)]  # type: List[Tuple[float, float]]
 
     for layer_number, layer_paths in enumerate(_paths_by_layer):
-        path_count = len(assembly_paths) * len(layer_paths)
+        path_count = len(construction_paths) * len(layer_paths)
         if path_count > MAX_HEAT_FLOW_PATHS:
             raise TooManyHeatFlowPathsError(layer_number, path_count)
 
-        new_assembly_paths = []  # type: List[Tuple[float, float]]
-        for path_r_value, path_area_fraction in assembly_paths:
+        new_construction_paths = []  # type: List[Tuple[float, float]]
+        for path_r_value, path_area_fraction in construction_paths:
             for area_fraction, r_value in layer_paths:
-                new_assembly_paths.append((path_r_value + r_value, path_area_fraction * area_fraction))
-        assembly_paths = new_assembly_paths
+                new_construction_paths.append((path_r_value + r_value, path_area_fraction * area_fraction))
+        construction_paths = new_construction_paths
 
     total_u_value = 0.0
-    for path_r_value, path_area_fraction in assembly_paths:
+    for path_r_value, path_area_fraction in construction_paths:
         if path_r_value > 0:
             total_u_value += path_area_fraction / path_r_value
 
@@ -177,13 +177,22 @@ def _r_value_upper_limit_from_paths(_paths_by_layer, _r_si, _r_se):
     return 0.0
 
 
+def _r_value_limits_from_paths(_paths_by_layer, _r_si, _r_se):
+    # type: (List[List[Tuple[float, float]]], float, float) -> Tuple[float, float]
+    """Return both ISO 6946 limit R-values as (upper, lower) from pre-computed layer paths."""
+    return (
+        _r_value_upper_limit_from_paths(_paths_by_layer, _r_si, _r_se),
+        _r_value_lower_limit_from_paths(_paths_by_layer, _r_si, _r_se),
+    )
+
+
 def get_r_value_lower_limit(_hb_materials, _r_si=0.0, _r_se=0.0):
     # type: (Iterable[Any], float, float) -> float
     """Return the ISO 6946 LOWER-limit (isothermal planes) R-value of a stack of layers.
 
     Each layer is combined in parallel by area, and the layer resistances are summed in series.
     This is the value a consumer gets when it reads the area-weighted equivalent conductivity of
-    each hybrid layer and sums the layers, and it is the pessimistic bound on a framed assembly.
+    each hybrid layer and sums the layers, and it is the pessimistic bound on a construction with framed layers.
 
     Arguments:
     ----------
@@ -227,7 +236,7 @@ def get_r_value_mean_of_limits(_hb_materials, _r_si=0.0, _r_se=0.0):
     # type: (Iterable[Any], float, float) -> float
     """Return the ISO 6946 mean-of-limits R-value of a stack of layers.
 
-    This is the value designPH and PHPP report for an assembly with framed layers.
+    This is the value designPH and PHPP report for a construction with framed layers.
 
     Arguments:
     ----------
@@ -239,9 +248,7 @@ def get_r_value_mean_of_limits(_hb_materials, _r_si=0.0, _r_se=0.0):
     --------
         * float: The mean of the upper- and lower-limit R-values (m2k/W).
     """
-    paths_by_layer = _get_paths_by_layer(_hb_materials)
-    r_value_upper = _r_value_upper_limit_from_paths(paths_by_layer, _r_si, _r_se)
-    r_value_lower = _r_value_lower_limit_from_paths(paths_by_layer, _r_si, _r_se)
+    r_value_upper, r_value_lower = _r_value_limits_from_paths(_get_paths_by_layer(_hb_materials), _r_si, _r_se)
     return (r_value_upper + r_value_lower) / 2.0
 
 
@@ -260,9 +267,7 @@ def get_error_percent(_hb_materials, _r_si=0.0, _r_se=0.0):
         * float: (R-upper - R-lower) / (2 * R-mean) * 100. Zero for a construction with no
             thermally inhomogeneous layers.
     """
-    paths_by_layer = _get_paths_by_layer(_hb_materials)
-    r_value_upper = _r_value_upper_limit_from_paths(paths_by_layer, _r_si, _r_se)
-    r_value_lower = _r_value_lower_limit_from_paths(paths_by_layer, _r_si, _r_se)
+    r_value_upper, r_value_lower = _r_value_limits_from_paths(_get_paths_by_layer(_hb_materials), _r_si, _r_se)
     r_value_mean = (r_value_upper + r_value_lower) / 2.0
 
     if r_value_mean <= 0:

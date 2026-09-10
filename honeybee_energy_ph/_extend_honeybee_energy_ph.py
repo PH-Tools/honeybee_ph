@@ -93,7 +93,8 @@ def schedule_ruleset_ph_properties(self):
 
 def opaque_construction_ph_properties(self):
     if self._ph is None:
-        self._ph = OpaqueConstructionPhProperties()
+        # -- The host is needed for the ISO 6946 limits, which read the whole layer-stack.
+        self._ph = OpaqueConstructionPhProperties(self.host)
     return self._ph
 
 

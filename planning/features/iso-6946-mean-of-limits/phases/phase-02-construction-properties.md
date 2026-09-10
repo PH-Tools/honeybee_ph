@@ -1,6 +1,6 @@
 ---
 DATE: 2026-09-10
-STATUS: Scoped
+STATUS: Implemented on branch
 AUTHOR: BLDGTYP
 ISSUE: https://github.com/PH-Tools/honeybee_ph/issues/116
 ---
@@ -57,11 +57,27 @@ Added to the existing file, sized like its neighbors:
 5. HBJSON round-trip of a construction carrying a framed layer returns the same three values —
    the additive-change guarantee.
 
-## Cross-check against the SketchUp editor
+## The host was never wired
 
-Not a committed test: a scratch run comparing `u_value_mean_of_limits` plus films against
-`Bldgtyp::PhNavigatorSketchup::Assemblies::Thermal.effective` on the PRD's assembly. Record the two
-numbers in this file when it passes.
+Found while building: `_extend_honeybee_energy_ph.opaque_construction_ph_properties()` constructed
+`OpaqueConstructionPhProperties()` with no host, unlike the schedule and window-construction
+equivalents beside it in the same file. honeybee's own `_duplicate_extension_attr` and
+`_load_extension_attr_from_dict` already pass `self.host`, so only the lazy first construction
+missed it. Fixed by passing `self.host`; the phase cannot work without it, since every one of these
+properties reads the whole layer stack.
+
+## Cross-check against the SketchUp editor — passed
+
+Scratch run of `Bldgtyp::PhNavigatorSketchup::Assemblies::Thermal.effective` on the PRD's assembly
+(38 mm stud at 406.4 o.c. in 140 mm mineral wool, 12.7 gypsum / 12.7 OSB / 50 EPS, wall exposed to
+outdoor air):
+
+| | SketchUp editor | `OpaqueConstructionPhProperties` |
+| --- | --- | --- |
+| R construction | 4.729468 | 4.729468 |
+| U construction | 0.211440 | 0.211440 |
+
+Identical to six decimals. Not committed as a test: it needs the SketchUp repo on disk.
 
 ## Closeout
 

@@ -80,6 +80,10 @@ from how the modeler chose to split Rooms. See [decision 0002](decisions/0002-dw
 | ---- | ---------- | ---------------- |
 | **Construction** | The Honeybee-Energy layered build-up that a PH property set decorates. | assembly, build-up, detail |
 | **Assembly** | Reference (library) construction data shipped in `honeybee_ph_standards`. | construction (when referring to library data), template |
+| **Division Grid** | The in-plane subdivision of one Construction layer into cells (columns are widths, rows are heights), which makes that layer a hybrid of several materials. Every cell is a parallel path; nothing in a grid is in series. | mixed material, framing grid, layer segments |
+| **Upper Limit** | The ISO 6946 6.7 parallel-path R-value of a Construction: each path runs through every layer, and the paths are combined in parallel by area. | parallel path (as a noun for the value) |
+| **Lower Limit** | The ISO 6946 6.7 isothermal-planes R-value of a Construction: each layer is combined in parallel by area first, then the layers are summed in series. This is what a plain series sum of equivalent-conductivity layers gives. | isothermal planes (as a noun for the value), equivalent-conductivity R |
+| **Mean of Limits** | The average of the Upper and Lower Limits, which is the R-value designPH and PHPP report for a Construction with framed layers. | ISO 6946 value, corrected R |
 | **Window Frame** | The four-sided frame of a window construction, composed of four Frame Elements. | sash, frame profile |
 | **Frame Element** | One side (top, right, bottom, left) of a Window Frame with its own width, U-value, psi-glazing, chi, absorptance, and emissivity. | frame side, member, profile |
 | **Glazing** | The center-of-glass U-value and g-value of a window construction. | glass, IGU, pane |
