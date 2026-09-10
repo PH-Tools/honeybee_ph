@@ -2,7 +2,7 @@
 
 Master index of active planning work in honeybee-ph. Update the table when a unit of work is added, changes status, or is folded back into `context/`.
 
-_Last updated: 2026-08-25_
+_Last updated: 2026-09-10_
 
 ## Active / current work
 
@@ -10,6 +10,7 @@ _Last updated: 2026-08-25_
 |------|------|--------|-------|---------|
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [#112](https://github.com/PH-Tools/honeybee_ph/issues/112) | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Mechanical cooling flag (`Verification!N30`) | Feature (cross-repo, **primary**; filed from PHX) | **Requested** — not started here; see the Cross-repo section below | [#110](https://github.com/PH-Tools/honeybee_ph/issues/110) | `PHX/planning/bug-fix/phpp-writer-input-gaps/06-verification-mechanical-cooling.md` |
+| ISO 6946 mean-of-limits U-value for opaque constructions | Feature (filed from PH-Navigator SketchUp) | **Implemented on branch** `feature/iso-6946-mean-of-limits` — issue #116 as filed cannot be built (a single layer's two ISO 6946 limits are the same number); the calculation shipped one level up, on the construction | [#116](https://github.com/PH-Tools/honeybee_ph/issues/116) | [`features/iso-6946-mean-of-limits/`](features/iso-6946-mean-of-limits/STATUS.md) |
 | Foundation shape for PHPP 10.x `Ground` | Feature (cross-repo, **primary**; filed from PHX) | **Scoped** — gap table and required fields in the PHX packet; blocks PHX [#104](https://github.com/PH-Tools/PHX/issues/104) and OpenPH foundations | [#111](https://github.com/PH-Tools/honeybee_ph/issues/111) | `PHX/planning/features/foundation-phpp10-shape/PRD.md` §4, §6 |
 
 ## Recommended execution order

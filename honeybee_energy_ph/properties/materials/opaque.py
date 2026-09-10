@@ -272,7 +272,16 @@ class PhDivisionGrid(object):
 
     def get_equivalent_conductivity(self):
         # type: () -> float
-        """Return an area-weighted average of the conductivities of all materials in the grid."""
+        """Return an area-weighted average of the conductivities of all materials in the grid.
+
+        This IS the layer's ISO 6946 value: every cell in the grid is a parallel in-plane path
+        (columns are widths, rows are heights), so for a single layer the upper (parallel-path)
+        and lower (isothermal-planes) limits are the same number, `d / sum(f_j * lambda_j)`.
+
+        The two limits only diverge across a stack of layers. For the assembly-level mean of
+        limits that designPH and PHPP report, use
+        `OpaqueConstructionPhProperties.r_value_mean_of_limits`.
+        """
         total_area = 0.0
         total_conductivity = 0.0
         for cell in self.cells:
