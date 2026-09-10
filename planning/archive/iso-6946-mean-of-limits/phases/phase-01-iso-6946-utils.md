@@ -1,6 +1,6 @@
 ---
 DATE: 2026-09-10
-STATUS: Implemented on branch
+STATUS: Complete
 AUTHOR: BLDGTYP
 ISSUE: https://github.com/PH-Tools/honeybee_ph/issues/116
 ---

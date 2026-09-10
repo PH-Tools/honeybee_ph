@@ -1,6 +1,6 @@
 ---
 DATE: 2026-09-10
-STATUS: Scoped
+STATUS: Complete
 AUTHOR: BLDGTYP
 ISSUE: https://github.com/PH-Tools/honeybee_ph/issues/116
 ---

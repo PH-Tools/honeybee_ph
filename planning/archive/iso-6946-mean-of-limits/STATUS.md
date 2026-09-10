@@ -1,6 +1,6 @@
 ---
 DATE: 2026-09-10
-STATUS: Implemented on branch
+STATUS: Complete
 AUTHOR: BLDGTYP
 ISSUE: https://github.com/PH-Tools/honeybee_ph/issues/116
 ---
@@ -11,13 +11,16 @@ Read order: [`PRD.md`](PRD.md) → [`phases/`](phases/).
 
 | Phase | Title | Status |
 |---|---|---|
-| 01 | [`honeybee_ph_utils/iso_6946.py`](phases/phase-01-iso-6946-utils.md) | Implemented on branch |
-| 02 | [Construction properties and docstring correction](phases/phase-02-construction-properties.md) | Implemented on branch |
+| 01 | [`honeybee_ph_utils/iso_6946.py`](phases/phase-01-iso-6946-utils.md) | Complete |
+| 02 | [Construction properties and docstring correction](phases/phase-02-construction-properties.md) | Complete |
+
+Merged to `main` 2026-09-10 as [#117](https://github.com/PH-Tools/honeybee_ph/pull/117); issue #116
+retitled and closed with the redirect recorded on it.
 
 ## Next step
 
-Review and merge `feature/iso-6946-mean-of-limits`, then comment on and retitle issue #116. A
-follow-up in `ph-navigator-sketchup` (E4-1) can drop its local mean-of-limits math once released.
+None here. A follow-up in `ph-navigator-sketchup` (E4-1) can drop both exporters' local
+mean-of-limits math once this is released to PyPI.
 
 ## Verification
 
