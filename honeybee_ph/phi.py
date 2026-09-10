@@ -253,7 +253,10 @@ class EnumProperty(object):
 
     def __set__(self, instance, value):
         # type: (Any, Optional[Union[str, int]]) -> None
-        """Set the enum with the input value on the instance __dict__.
+        """Validate the input value and, if it is allowed, set the enum on the instance __dict__.
+
+        An empty input (None | "" | 0) is ignored and leaves the existing value in place.
+        A rejected input raises, and also leaves the existing value in place.
 
         Arguments:
         ----------
@@ -261,12 +264,15 @@ class EnumProperty(object):
             * value (Optional[Union[str, int]]): The value to validate and set.
         """
 
-        if value:
-            instance.__dict__[self.attribute_name] = self.enum(value)
+        if not value:
+            return
 
-        if instance.__dict__[self.attribute_name].value == "_":
+        new_value = self.enum(value)
+        if new_value.value == "_":
             msg = "Error: Input value: '{}' for '{}' is not allowed. Check inputs.".format(value, self.attribute_name)
             raise Exception(msg)
+
+        instance.__dict__[self.attribute_name] = new_value
 
     def __get__(self, instance, owner):
         # type: (Any, Any) -> enumerables.CustomEnum
