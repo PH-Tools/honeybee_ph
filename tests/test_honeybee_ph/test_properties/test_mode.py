@@ -38,11 +38,44 @@ def test_ModelPhProperties_unabridged_dict_round_trip():
     model_ph_properties = ModelPhProperties(host)
     model_ph_properties.id_num = 1
     model_ph_properties.team = ProjectTeam()
+    d1 = model_ph_properties.to_dict(abridged=False)
+    new_model_ph_properties = ModelPhProperties.from_dict(d1["ph"], host)
+    assert new_model_ph_properties.host == host
+    assert new_model_ph_properties.id_num == 1
+    assert new_model_ph_properties.team != None
+
+
+def test_ModelPhProperties_abridged_dict_round_trip():
+    host = FakeHost()
+    model_ph_properties = ModelPhProperties(host)
+    model_ph_properties.id_num = 1
+    model_ph_properties.team = ProjectTeam()
     d1 = model_ph_properties.to_dict(abridged=True)
     new_model_ph_properties = ModelPhProperties.from_dict(d1["ph"], host)
     assert new_model_ph_properties.host == host
     assert new_model_ph_properties.id_num == 1
     assert new_model_ph_properties.team != None
+
+
+def test_ModelPhProperties_to_dict_type_names_match_abridged_flag():
+    host = FakeHost()
+    model_ph_properties = ModelPhProperties(host)
+
+    assert model_ph_properties.to_dict(abridged=False)["ph"]["type"] == "ModelPhProperties"
+    assert model_ph_properties.to_dict(abridged=True)["ph"]["type"] == "ModelPhPropertiesAbridged"
+
+
+def test_ModelPhProperties_from_dict_accepts_legacy_reversed_type_name():
+    """HBJSON written before the Issue #73 fix carries the reversed 'type' name."""
+    host = FakeHost()
+    model_ph_properties = ModelPhProperties(host)
+    model_ph_properties.id_num = 1
+
+    legacy_dict = model_ph_properties.to_dict(abridged=False)["ph"]
+    legacy_dict["type"] = "ModelPhPropertiesAbridged"
+
+    new_model_ph_properties = ModelPhProperties.from_dict(legacy_dict, host)
+    assert new_model_ph_properties.id_num == 1
 
 
 def test_ModelPhProperties_load_properties_from_dict():
