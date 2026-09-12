@@ -244,6 +244,11 @@ class PhUnheatedBasement(PhFoundation):
         floor_slab_u_value (float): Floor slab U-value in W/(m2K). Default: 1.0.
         basement_volume_m3 (float): Basement air volume in cubic meters.
         basement_ventilation_ach (float): Basement ventilation rate in ACH.
+        interior_wall_to_heated_area_m2 (float): Area of the interior wall
+            towards the heated part of the building in m2. PHPP 10 only
+            (Ground!H36). Default: 0.0.
+        interior_wall_to_heated_u_value (float): U-value of that interior wall
+            in W/(m2K). PHPP 10 only (Ground!P36). Default: 0.0.
     """
 
     def __init__(self):
@@ -259,6 +264,8 @@ class PhUnheatedBasement(PhFoundation):
         self.floor_slab_u_value = 1.0
         self.basement_volume_m3 = 0.0
         self.basement_ventilation_ach = 0.0
+        self.interior_wall_to_heated_area_m2 = 0.0
+        self.interior_wall_to_heated_u_value = 0.0
 
     def __copy__(self):
         # type: () -> PhUnheatedBasement
@@ -277,6 +284,8 @@ class PhUnheatedBasement(PhFoundation):
         obj.floor_slab_u_value = self.floor_slab_u_value
         obj.basement_volume_m3 = self.basement_volume_m3
         obj.basement_ventilation_ach = self.basement_ventilation_ach
+        obj.interior_wall_to_heated_area_m2 = self.interior_wall_to_heated_area_m2
+        obj.interior_wall_to_heated_u_value = self.interior_wall_to_heated_u_value
         return obj
 
     def duplicate(self):
@@ -297,6 +306,8 @@ class PhUnheatedBasement(PhFoundation):
         d["floor_slab_u_value"] = self.floor_slab_u_value
         d["basement_volume_m3"] = self.basement_volume_m3
         d["basement_ventilation_ach"] = self.basement_ventilation_ach
+        d["interior_wall_to_heated_area_m2"] = self.interior_wall_to_heated_area_m2
+        d["interior_wall_to_heated_u_value"] = self.interior_wall_to_heated_u_value
         return d
 
     @classmethod
@@ -314,6 +325,9 @@ class PhUnheatedBasement(PhFoundation):
         new_obj.floor_slab_u_value = _input_dict["floor_slab_u_value"]
         new_obj.basement_volume_m3 = _input_dict["basement_volume_m3"]
         new_obj.basement_ventilation_ach = _input_dict["basement_ventilation_ach"]
+        # -- Added after the class shipped, so absent from older HBJSON.
+        new_obj.interior_wall_to_heated_area_m2 = _input_dict.get("interior_wall_to_heated_area_m2", 0.0)
+        new_obj.interior_wall_to_heated_u_value = _input_dict.get("interior_wall_to_heated_u_value", 0.0)
         return new_obj
 
 
@@ -326,11 +340,16 @@ class PhSlabOnGrade(PhFoundation):
             None if not set.
         floor_slab_exposed_perimeter_m (float): Exposed perimeter length in meters.
         perim_insulation_width_or_depth_m (float): Insulation width or depth in
-            meters. Default: 0.300.
+            meters. Default: 0.0 (no perimeter insulation, matching PHPP).
         perim_insulation_thickness_m (float): Insulation thickness in meters.
-            Default: 0.050.
+            Default: 0.0 (no perimeter insulation, matching PHPP).
         perim_insulation_conductivity (float): Insulation thermal conductivity
-            in W/(mK). Default: 0.04.
+            in W/(mK). Default: 0.0 (no perimeter insulation, matching PHPP).
+        interior_wall_to_heated_area_m2 (float): Area of the interior wall
+            towards the heated part of the building in m2. PHPP 10 only
+            (Ground!H28). Default: 0.0.
+        interior_wall_to_heated_u_value (float): U-value of that interior wall
+            in W/(m2K). PHPP 10 only (Ground!P28). Default: 0.0.
     """
 
     def __init__(self):
@@ -340,9 +359,11 @@ class PhSlabOnGrade(PhFoundation):
         self.floor_slab_u_value = None  # type: Union[float, None]
         self.floor_slab_exposed_perimeter_m = 0.0
         self._perim_insulation_position = PhSlabEdgeInsulationPosition("3-VERTICAL")
-        self.perim_insulation_width_or_depth_m = 0.300
-        self.perim_insulation_thickness_m = 0.050
-        self.perim_insulation_conductivity = 0.04
+        self.perim_insulation_width_or_depth_m = 0.0
+        self.perim_insulation_thickness_m = 0.0
+        self.perim_insulation_conductivity = 0.0
+        self.interior_wall_to_heated_area_m2 = 0.0
+        self.interior_wall_to_heated_u_value = 0.0
 
     @property
     def perim_insulation_position(self):
@@ -368,6 +389,8 @@ class PhSlabOnGrade(PhFoundation):
         obj.perim_insulation_width_or_depth_m = self.perim_insulation_width_or_depth_m
         obj.perim_insulation_thickness_m = self.perim_insulation_thickness_m
         obj.perim_insulation_conductivity = self.perim_insulation_conductivity
+        obj.interior_wall_to_heated_area_m2 = self.interior_wall_to_heated_area_m2
+        obj.interior_wall_to_heated_u_value = self.interior_wall_to_heated_u_value
         return obj
 
     def duplicate(self):
@@ -385,6 +408,8 @@ class PhSlabOnGrade(PhFoundation):
         d["perim_insulation_width_or_depth_m"] = self.perim_insulation_width_or_depth_m
         d["perim_insulation_thickness_m"] = self.perim_insulation_thickness_m
         d["perim_insulation_conductivity"] = self.perim_insulation_conductivity
+        d["interior_wall_to_heated_area_m2"] = self.interior_wall_to_heated_area_m2
+        d["interior_wall_to_heated_u_value"] = self.interior_wall_to_heated_u_value
         return d
 
     @classmethod
@@ -399,6 +424,9 @@ class PhSlabOnGrade(PhFoundation):
         new_obj.perim_insulation_width_or_depth_m = _input_dict["perim_insulation_width_or_depth_m"]
         new_obj.perim_insulation_thickness_m = _input_dict["perim_insulation_thickness_m"]
         new_obj.perim_insulation_conductivity = _input_dict["perim_insulation_conductivity"]
+        # -- Added after the class shipped, so absent from older HBJSON.
+        new_obj.interior_wall_to_heated_area_m2 = _input_dict.get("interior_wall_to_heated_area_m2", 0.0)
+        new_obj.interior_wall_to_heated_u_value = _input_dict.get("interior_wall_to_heated_u_value", 0.0)
         return new_obj
 
 
@@ -410,7 +438,7 @@ class PhVentedCrawlspace(PhFoundation):
         ceiling_above_crawlspace_u_value (float): Ceiling U-value above
             crawlspace in W/(m2K). Default: 1.0.
         crawlspace_floor_exposed_perimeter_m (float): Exposed perimeter in meters.
-            Default: 2.5.
+            Default: 0.0.
         crawlspace_wall_height_above_grade_m (float): Crawlspace wall height
             above grade in meters.
         crawlspace_floor_u_value (float): Crawlspace floor U-value in W/(m2K).
@@ -418,6 +446,18 @@ class PhVentedCrawlspace(PhFoundation):
         crawlspace_vent_opening_are_m2 (float): Ventilation opening area in m2.
         crawlspace_wall_u_value (float): Crawlspace wall U-value in W/(m2K).
             Default: 1.0.
+        wind_velocity_at_10m_m_s (float): Average site wind velocity at 10m
+            height in m/s (Ground!P42). Default: 4.0, the PHPP value.
+        wind_shield_factor (float): Wind-shield factor for the crawlspace
+            ventilation openings (Ground!P43). A free float, not an enum:
+            PHPP accepts any number. [[P17]] Table 12 gives guideline values
+            for protected, average and exposed sites. Default: 0.05, the
+            PHPP value.
+        interior_wall_to_heated_area_m2 (float): Area of the interior wall
+            towards the heated part of the building in m2. PHPP 10 only
+            (Ground!H44). Default: 0.0.
+        interior_wall_to_heated_u_value (float): U-value of that interior wall
+            in W/(m2K). PHPP 10 only (Ground!P44). Default: 0.0.
     """
 
     def __init__(self):
@@ -425,11 +465,15 @@ class PhVentedCrawlspace(PhFoundation):
         self.foundation_type = PhFoundationType("4-VENTED_CRAWLSPACE")
         self.crawlspace_floor_slab_area_m2 = 0.0
         self.ceiling_above_crawlspace_u_value = 1.0
-        self.crawlspace_floor_exposed_perimeter_m = 2.5
+        self.crawlspace_floor_exposed_perimeter_m = 0.0
         self.crawlspace_wall_height_above_grade_m = 0.0
         self.crawlspace_floor_u_value = 1.0
         self.crawlspace_vent_opening_are_m2 = 0.0
         self.crawlspace_wall_u_value = 1.0
+        self.wind_velocity_at_10m_m_s = 4.0
+        self.wind_shield_factor = 0.05
+        self.interior_wall_to_heated_area_m2 = 0.0
+        self.interior_wall_to_heated_u_value = 0.0
 
     def __copy__(self):
         # type: () -> PhVentedCrawlspace
@@ -445,6 +489,10 @@ class PhVentedCrawlspace(PhFoundation):
         obj.crawlspace_floor_u_value = self.crawlspace_floor_u_value
         obj.crawlspace_vent_opening_are_m2 = self.crawlspace_vent_opening_are_m2
         obj.crawlspace_wall_u_value = self.crawlspace_wall_u_value
+        obj.wind_velocity_at_10m_m_s = self.wind_velocity_at_10m_m_s
+        obj.wind_shield_factor = self.wind_shield_factor
+        obj.interior_wall_to_heated_area_m2 = self.interior_wall_to_heated_area_m2
+        obj.interior_wall_to_heated_u_value = self.interior_wall_to_heated_u_value
         return obj
 
     def duplicate(self):
@@ -462,6 +510,10 @@ class PhVentedCrawlspace(PhFoundation):
         d["crawlspace_floor_u_value"] = self.crawlspace_floor_u_value
         d["crawlspace_vent_opening_are_m2"] = self.crawlspace_vent_opening_are_m2
         d["crawlspace_wall_u_value"] = self.crawlspace_wall_u_value
+        d["wind_velocity_at_10m_m_s"] = self.wind_velocity_at_10m_m_s
+        d["wind_shield_factor"] = self.wind_shield_factor
+        d["interior_wall_to_heated_area_m2"] = self.interior_wall_to_heated_area_m2
+        d["interior_wall_to_heated_u_value"] = self.interior_wall_to_heated_u_value
         return d
 
     @classmethod
@@ -476,6 +528,11 @@ class PhVentedCrawlspace(PhFoundation):
         new_obj.crawlspace_floor_u_value = _input_dict["crawlspace_floor_u_value"]
         new_obj.crawlspace_vent_opening_are_m2 = _input_dict["crawlspace_vent_opening_are_m2"]
         new_obj.crawlspace_wall_u_value = _input_dict["crawlspace_wall_u_value"]
+        # -- Added after the class shipped, so absent from older HBJSON.
+        new_obj.wind_velocity_at_10m_m_s = _input_dict.get("wind_velocity_at_10m_m_s", 4.0)
+        new_obj.wind_shield_factor = _input_dict.get("wind_shield_factor", 0.05)
+        new_obj.interior_wall_to_heated_area_m2 = _input_dict.get("interior_wall_to_heated_area_m2", 0.0)
+        new_obj.interior_wall_to_heated_u_value = _input_dict.get("interior_wall_to_heated_u_value", 0.0)
         return new_obj
 
 
