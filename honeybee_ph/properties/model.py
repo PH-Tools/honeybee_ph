@@ -87,22 +87,25 @@ class ModelPhProperties(object):
 
         d = {}
         if abridged == False:
-            d["type"] = "ModelPhPropertiesAbridged"
-            d["id_num"] = self.id_num
-            d["bldg_segments"] = self._get_bldg_segment_dicts()
-            d["team"] = self.team.to_dict()
-        else:
             d["type"] = "ModelPhProperties"
-            d["id_num"] = self.id_num
-            d["bldg_segments"] = []
-            d["team"] = self.team.to_dict()
+        else:
+            d["type"] = "ModelPhPropertiesAbridged"
+
+        # -- The Model-level is the authority for the BldgSegments on both paths: the
+        # -- 'Abridged' Rooms carry only a 'ph_bldg_segment_id' pointing back at this list.
+        d["id_num"] = self.id_num
+        d["bldg_segments"] = self._get_bldg_segment_dicts()
+        d["team"] = self.team.to_dict()
 
         return {"ph": d}
 
     @classmethod
     def from_dict(cls, _dict, host):
         # type: (dict[str, Any], Any) -> ModelPhProperties
-        assert _dict["type"] == "ModelPhProperties", "Expected ModelPhProperties. Got {}.".format(_dict["type"])
+        # -- Note: HBJSON written before the Issue #73 fix has the two 'type' names
+        # -- reversed, so both spellings are accepted here.
+        valid_types = ("ModelPhProperties", "ModelPhPropertiesAbridged")
+        assert _dict["type"] in valid_types, "Expected one of {}. Got {}.".format(valid_types, _dict["type"])
 
         new_prop = cls(host)
         new_prop.id_num = _dict.get("id_num", 0)
