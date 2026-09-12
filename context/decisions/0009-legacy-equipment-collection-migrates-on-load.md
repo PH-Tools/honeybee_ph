@@ -51,6 +51,11 @@ Verified by round-tripping legacy models written with the pre-change writer:
    a ProgramType's load is shared.
 6. `to_dict()` stops writing `equipment_collection`. The attribute stays until PHX has
    dropped its reads and released; removing it is a later step of #79.
+7. **Step 3 (2026-09-12, after PHX 1.56.108):** the public attribute and
+   `PhEquipmentCollection` are removed. `from_dict()` holds legacy devices in the private
+   `ElectricEquipmentPhProperties._legacy_equipment` dict (keyed as stored, copied by
+   `duplicate()`, never serialized) until `migrate_legacy_equipment_collections` consumes
+   and clears it.
 
 ## Rationale
 

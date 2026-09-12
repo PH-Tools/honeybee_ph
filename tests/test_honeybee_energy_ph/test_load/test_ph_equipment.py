@@ -676,16 +676,3 @@ def test_duplicate_takes_a_new_host():
     e1 = ph_equipment.PhDishwasher()
     new_host = object()
     assert e1.duplicate(new_host=new_host).host is new_host
-
-
-def test_duplicating_a_collection_copies_the_equipment():
-    """Duplicating a Room's equipment collection must not share the equipment objects."""
-    collection = ph_equipment.PhEquipmentCollection()
-    equip = ph_equipment.PhDishwasher.phius_default()
-    collection.add_equipment(equip)
-
-    duplicated = collection.duplicate()
-
-    assert list(duplicated.keys()) == list(collection.keys())
-    assert duplicated[equip.identifier] is not collection[equip.identifier]
-    assert duplicated[equip.identifier].to_dict() == collection[equip.identifier].to_dict()
