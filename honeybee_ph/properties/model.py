@@ -29,6 +29,11 @@ try:
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph:\n\t{}".format(e))
 
+try:
+    from honeybee_energy_ph.properties.load.equipment import migrate_legacy_equipment_collections
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
+
 
 class ModelPhProperties(object):
     def __init__(self, _host):
@@ -191,6 +196,8 @@ class ModelPhProperties(object):
 
         # re-build all of the .ph property objects from the HB-Model dict as python objects
         bldg_segments, self.team = self.load_properties_from_dict(data)
+
+        migrate_legacy_equipment_collections(self.host.rooms)
 
         # apply the .ph properties to all the sub-model objects in the HB-Model
         for room, room_dict in zip(self.host.rooms, room_ph_dicts):

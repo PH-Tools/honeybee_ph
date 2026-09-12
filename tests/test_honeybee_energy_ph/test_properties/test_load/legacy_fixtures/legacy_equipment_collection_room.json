@@ -1,0 +1,876 @@
+{
+  "type": "Room",
+  "identifier": "Standalone_0",
+  "display_name": "Standalone_0",
+  "properties": {
+    "type": "RoomProperties",
+    "energy": {
+      "type": "RoomEnergyProperties",
+      "electric_equipment": {
+        "type": "ElectricEquipment",
+        "identifier": "Legacy_EE_Standalone",
+        "watts_per_area": 5.0,
+        "radiant_fraction": 0.0,
+        "latent_fraction": 0.0,
+        "lost_fraction": 0.0,
+        "schedule": {
+          "type": "ScheduleRuleset",
+          "identifier": "Always On",
+          "day_schedules": [
+            {
+              "type": "ScheduleDay",
+              "identifier": "Always On_Day Schedule",
+              "values": [
+                1.0
+              ],
+              "times": [
+                [
+                  0,
+                  0
+                ]
+              ],
+              "interpolate": false
+            }
+          ],
+          "default_day_schedule": "Always On_Day Schedule",
+          "schedule_type_limit": {
+            "type": "ScheduleTypeLimit",
+            "identifier": "Fractional",
+            "lower_limit": 0.0,
+            "upper_limit": 1.0,
+            "numeric_type": "Continuous",
+            "unit_type": "Dimensionless"
+          },
+          "properties": {
+            "type": "ScheduleRulesetProperties",
+            "ph": {
+              "type": "ScheduleRulesetPhProperties",
+              "id_num": 0,
+              "operating_weeks_year": 52.1429,
+              "operating_days_wk": 7.0,
+              "operating_periods": {
+                "collection": []
+              }
+            }
+          }
+        },
+        "properties": {
+          "type": "ElectricEquipmentProperties",
+          "ph": {
+            "type": "ElectricEquipmentPhProperties",
+            "equipment_collection": {
+              "equipment_set": {
+                "0d293209-e673-4e2f-bc82-106f77da53e8": {
+                  "display_name": "Kitchen dishwasher",
+                  "identifier": "0d293209-e673-4e2f-bc82-106f77da53e8",
+                  "user_data": {},
+                  "equipment_type": "PhDishwasher",
+                  "comment": "default",
+                  "reference_quantity": 1,
+                  "quantity": 2,
+                  "in_conditioned_space": true,
+                  "reference_energy_norm": 2,
+                  "energy_demand": 269,
+                  "energy_demand_per_use": 0,
+                  "combined_energy_factor": 0,
+                  "ihg_utilization_factor": 0.3,
+                  "capacity_type": 1,
+                  "capacity": 12,
+                  "_water_connection": {
+                    "value": "2-COLD WATER CONNECTION"
+                  }
+                },
+                "c02a3103-188f-41fb-aa41-7747f69726c1": {
+                  "display_name": "PHIUS+ MELS",
+                  "identifier": "c02a3103-188f-41fb-aa41-7747f69726c1",
+                  "user_data": {},
+                  "equipment_type": "PhPhiusMEL",
+                  "comment": "default",
+                  "reference_quantity": 3,
+                  "quantity": 1,
+                  "in_conditioned_space": true,
+                  "reference_energy_norm": 1,
+                  "energy_demand": 0,
+                  "energy_demand_per_use": 0,
+                  "combined_energy_factor": 0,
+                  "ihg_utilization_factor": 1.0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ph": {
+      "spaces": [],
+      "specific_heat_capacity": "1-LIGHTWEIGHT",
+      "specific_heat_capacity_wh_m2k": null,
+      "type": "RoomPhProperties",
+      "id_num": 0,
+      "ph_bldg_segment": {
+        "identifier": "4ae5d369-e3ca-4481-98a9-98ea925667d1",
+        "user_data": {},
+        "display_name": "Unnamed_Bldg_Segment",
+        "name": "Unnamed_Bldg_Segment",
+        "num_floor_levels": 1,
+        "num_dwelling_units": 1,
+        "site": {
+          "location": {
+            "display_name": "dd179827-dd7c-4152-a7d0-3bfdc8fe0f17",
+            "identifier": "dd179827-dd7c-4152-a7d0-3bfdc8fe0f17",
+            "user_data": {},
+            "latitude": 40.6,
+            "longitude": -73.8,
+            "site_elevation": null,
+            "climate_zone": 1,
+            "hours_from_UTC": -4
+          },
+          "climate": {
+            "display_name": "New York",
+            "identifier": "9aaa557e-6ad3-4c57-b52a-2907628221db",
+            "user_data": {},
+            "station_elevation": 0.0,
+            "summer_daily_temperature_swing": 8.0,
+            "average_wind_speed": 4.0,
+            "ground": {
+              "display_name": "1fc41e17-b0fa-4f68-8ab4-a29ae1650fe6",
+              "identifier": "1fc41e17-b0fa-4f68-8ab4-a29ae1650fe6",
+              "user_data": {},
+              "ground_thermal_conductivity": 2,
+              "ground_heat_capacity": 1000,
+              "ground_density": 2000,
+              "depth_groundwater": 3,
+              "flow_rate_groundwater": 0.05
+            },
+            "monthly_temps": {
+              "display_name": "23322218-4281-488a-a182-6f76731ce187",
+              "identifier": "23322218-4281-488a-a182-6f76731ce187",
+              "user_data": {},
+              "air_temps": {
+                "display_name": "9087bb80-9cfc-4558-a1eb-7e5a2dd00b4f",
+                "identifier": "9087bb80-9cfc-4558-a1eb-7e5a2dd00b4f",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "dewpoints": {
+                "display_name": "730e0570-982b-42ee-adaf-026f72f35ff7",
+                "identifier": "730e0570-982b-42ee-adaf-026f72f35ff7",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "sky_temps": {
+                "display_name": "40d48ea8-7299-43a6-991e-82c51aadffad",
+                "identifier": "40d48ea8-7299-43a6-991e-82c51aadffad",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "ground_temps": {
+                "display_name": "9fd1fa6e-da3e-4700-8025-f17ed66092fb",
+                "identifier": "9fd1fa6e-da3e-4700-8025-f17ed66092fb",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              }
+            },
+            "monthly_radiation": {
+              "display_name": "37f19bfd-389d-45dd-84cc-64e5f5ada10f",
+              "identifier": "37f19bfd-389d-45dd-84cc-64e5f5ada10f",
+              "user_data": {},
+              "north": {
+                "display_name": "52d982e0-7760-443d-b653-3e8377bcef1e",
+                "identifier": "52d982e0-7760-443d-b653-3e8377bcef1e",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "east": {
+                "display_name": "bbd7a1d6-0785-4aa1-89d6-ca1df7a5c762",
+                "identifier": "bbd7a1d6-0785-4aa1-89d6-ca1df7a5c762",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "south": {
+                "display_name": "11ee0022-5ace-4eb2-9c8c-d08e19b821b1",
+                "identifier": "11ee0022-5ace-4eb2-9c8c-d08e19b821b1",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "west": {
+                "display_name": "af5a3563-7c9d-48d1-8d78-06262e2be4ae",
+                "identifier": "af5a3563-7c9d-48d1-8d78-06262e2be4ae",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              },
+              "glob": {
+                "display_name": "c8c7e88a-7e31-4187-b760-a865c5ab198a",
+                "identifier": "c8c7e88a-7e31-4187-b760-a865c5ab198a",
+                "user_data": {},
+                "january": 0.0,
+                "february": 0.0,
+                "march": 0.0,
+                "april": 0.0,
+                "may": 0.0,
+                "june": 0.0,
+                "july": 0.0,
+                "august": 0.0,
+                "september": 0.0,
+                "october": 0.0,
+                "november": 0.0,
+                "december": 0.0
+              }
+            },
+            "peak_loads": {
+              "display_name": "cbf2897f-62f0-427f-811e-6e28c5aee46d",
+              "identifier": "cbf2897f-62f0-427f-811e-6e28c5aee46d",
+              "user_data": {},
+              "heat_load_1": {
+                "display_name": "1da918c0-bfdb-4b47-ba6c-cdcf051b6456",
+                "identifier": "1da918c0-bfdb-4b47-ba6c-cdcf051b6456",
+                "user_data": {},
+                "temp": 0.0,
+                "rad_north": 0.0,
+                "rad_east": 0.0,
+                "rad_south": 0.0,
+                "rad_west": 0.0,
+                "rad_global": 0.0,
+                "dewpoint": null,
+                "sky_temp": null,
+                "ground_temp": null
+              },
+              "heat_load_2": {
+                "display_name": "b3593480-e75d-4c0e-9f04-428803d0dc6e",
+                "identifier": "b3593480-e75d-4c0e-9f04-428803d0dc6e",
+                "user_data": {},
+                "temp": 0.0,
+                "rad_north": 0.0,
+                "rad_east": 0.0,
+                "rad_south": 0.0,
+                "rad_west": 0.0,
+                "rad_global": 0.0,
+                "dewpoint": null,
+                "sky_temp": null,
+                "ground_temp": null
+              },
+              "cooling_load_1": {
+                "display_name": "5a8c8eac-7b65-4fcb-b7e7-81183a9e1c1f",
+                "identifier": "5a8c8eac-7b65-4fcb-b7e7-81183a9e1c1f",
+                "user_data": {},
+                "temp": 0.0,
+                "rad_north": 0.0,
+                "rad_east": 0.0,
+                "rad_south": 0.0,
+                "rad_west": 0.0,
+                "rad_global": 0.0,
+                "dewpoint": null,
+                "sky_temp": null,
+                "ground_temp": null
+              },
+              "cooling_load_2": {
+                "display_name": "f46fcc05-0642-4c29-920f-03f78d439daa",
+                "identifier": "f46fcc05-0642-4c29-920f-03f78d439daa",
+                "user_data": {},
+                "temp": 0.0,
+                "rad_north": 0.0,
+                "rad_east": 0.0,
+                "rad_south": 0.0,
+                "rad_west": 0.0,
+                "rad_global": 0.0,
+                "dewpoint": null,
+                "sky_temp": null,
+                "ground_temp": null
+              }
+            }
+          },
+          "phpp_library_codes": {
+            "country_code": "US-United States of America",
+            "region_code": "New York",
+            "dataset_name": "US0055c-New York",
+            "display_name": "US0055c-New York",
+            "identifier": "04a9a998-925b-4f33-8509-fd745ed8e229",
+            "user_data": {}
+          },
+          "display_name": "64e14805-71ea-4264-80a2-e4ae3b61fdfe",
+          "identifier": "64e14805-71ea-4264-80a2-e4ae3b61fdfe",
+          "user_data": {}
+        },
+        "source_energy_factors": {
+          "factors": []
+        },
+        "co2e_factors": {
+          "factors": []
+        },
+        "phius_certification": {
+          "localization_selection_type": 2,
+          "certification_program": {
+            "value": "7-PHIUS 2021 CORE"
+          },
+          "building_category_type": {
+            "value": "1-RESIDENTIAL BUILDING"
+          },
+          "building_use_type": {
+            "value": "1-RESIDENTIAL"
+          },
+          "building_status": {
+            "value": "1-IN_PLANNING"
+          },
+          "building_type": {
+            "value": "1-NEW_CONSTRUCTION"
+          },
+          "PHIUS2021_heating_demand": 15.0,
+          "PHIUS2021_cooling_demand": 15.0,
+          "PHIUS2021_heating_load": 10.0,
+          "PHIUS2021_cooling_load": 10.0,
+          "int_gains_evap_per_person": 15,
+          "int_gains_flush_heat_loss": true,
+          "int_gains_num_toilets": 1,
+          "int_gains_toilet_room_util_pat": null,
+          "int_gains_use_school_defaults": false,
+          "int_gains_dhw_marginal_perf_ratio": null,
+          "identifier": "5e9c3c71-5d71-4c0d-a299-ea68d900c8f3",
+          "user_data": {},
+          "display_name": "5e9c3c71-5d71-4c0d-a299-ea68d900c8f3",
+          "icfa_override": null
+        },
+        "phi_certification": {
+          "phpp_version": 9,
+          "attributes": {
+            "phpp_version": 9,
+            "building_category_type": "1-RESIDENTIAL BUILDING",
+            "building_use_type": "10-DWELLING",
+            "ihg_type": "2-STANDARD",
+            "occupancy_type": "1-STANDARD (ONLY FOR RESIDENTIAL BUILDINGS)",
+            "certification_type": "1-PASSIVE HOUSE",
+            "certification_class": "1-CLASSIC",
+            "primary_energy_type": "2-PER (RENEWABLE)",
+            "enerphit_type": "2-ENERGY DEMAND METHOD",
+            "retrofit_type": "1-NEW BUILDING",
+            "tfa_override": null
+          },
+          "identifier": "b773c1a7-14dc-456b-9e91-140387abb178",
+          "user_data": {},
+          "display_name": "b773c1a7-14dc-456b-9e91-140387abb178"
+        },
+        "set_points": {
+          "winter": 20.0,
+          "summer": 25.0,
+          "mechanical_cooling": false,
+          "identifier": "f4b2a18d-8c09-4f8e-8e43-de0278c60245",
+          "user_data": {},
+          "display_name": "f4b2a18d-8c09-4f8e-8e43-de0278c60245"
+        },
+        "mech_room_temp": 20.0,
+        "non_combustible_materials": false,
+        "thermal_bridges": {},
+        "summer_ventilation": {
+          "identifier": "a2680669-d854-45db-9d6c-96b816e50789",
+          "user_data": {},
+          "display_name": "a2680669-d854-45db-9d6c-96b816e50789",
+          "summer_bypass_mode": {
+            "value": "4-ALWAYS"
+          },
+          "ventilation_system_ach": null,
+          "daytime_extract_system_ach": 0.0,
+          "daytime_extract_system_fan_power_wh_m3": 0.0,
+          "daytime_window_ach": 0.0,
+          "nighttime_extract_system_ach": 0.0,
+          "nighttime_extract_system_fan_power_wh_m3": 0.0,
+          "nighttime_extract_system_heat_fraction": 0.0,
+          "nighttime_extract_system_control": {
+            "value": "1-TEMPERATURE_CONTROLLED"
+          },
+          "nighttime_window_ach": 0.0,
+          "nighttime_minimum_indoor_temp_C": 0.0
+        },
+        "wind_exposure_type": {
+          "value": "1-SEVERAL_SIDES_EXPOSED_NO_SCREENING"
+        }
+      },
+      "ph_foundations": []
+    }
+  },
+  "faces": [
+    {
+      "type": "Face",
+      "identifier": "Standalone_0_Bottom",
+      "display_name": "Standalone_0_Bottom",
+      "properties": {
+        "type": "FaceProperties",
+        "energy": {
+          "type": "FaceEnergyProperties"
+        },
+        "ph": {
+          "type": "FacePhProperties",
+          "id_num": 0
+        }
+      },
+      "geometry": {
+        "type": "Face3D",
+        "boundary": [
+          [
+            5.0,
+            5.0,
+            0.0
+          ],
+          [
+            5.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            5.0,
+            0.0
+          ]
+        ],
+        "plane": {
+          "type": "Plane",
+          "n": [
+            -0.0,
+            -0.0,
+            -1.0
+          ],
+          "o": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "face_type": "Floor",
+      "boundary_condition": {
+        "type": "Ground"
+      }
+    },
+    {
+      "type": "Face",
+      "identifier": "Standalone_0_Front",
+      "display_name": "Standalone_0_Front",
+      "properties": {
+        "type": "FaceProperties",
+        "energy": {
+          "type": "FaceEnergyProperties"
+        },
+        "ph": {
+          "type": "FacePhProperties",
+          "id_num": 0
+        }
+      },
+      "geometry": {
+        "type": "Face3D",
+        "boundary": [
+          [
+            5.0,
+            5.0,
+            3.0
+          ],
+          [
+            5.0,
+            5.0,
+            0.0
+          ],
+          [
+            0.0,
+            5.0,
+            0.0
+          ],
+          [
+            0.0,
+            5.0,
+            3.0
+          ]
+        ],
+        "plane": {
+          "type": "Plane",
+          "n": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "o": [
+            5.0,
+            5.0,
+            0.0
+          ],
+          "x": [
+            1.0,
+            -0.0,
+            0.0
+          ]
+        }
+      },
+      "face_type": "Wall",
+      "boundary_condition": {
+        "type": "Outdoors",
+        "sun_exposure": true,
+        "wind_exposure": true,
+        "view_factor": {
+          "type": "Autocalculate"
+        }
+      }
+    },
+    {
+      "type": "Face",
+      "identifier": "Standalone_0_Right",
+      "display_name": "Standalone_0_Right",
+      "properties": {
+        "type": "FaceProperties",
+        "energy": {
+          "type": "FaceEnergyProperties"
+        },
+        "ph": {
+          "type": "FacePhProperties",
+          "id_num": 0
+        }
+      },
+      "geometry": {
+        "type": "Face3D",
+        "boundary": [
+          [
+            5.0,
+            0.0,
+            3.0
+          ],
+          [
+            5.0,
+            0.0,
+            0.0
+          ],
+          [
+            5.0,
+            5.0,
+            0.0
+          ],
+          [
+            5.0,
+            5.0,
+            3.0
+          ]
+        ],
+        "plane": {
+          "type": "Plane",
+          "n": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "o": [
+            5.0,
+            5.0,
+            3.0
+          ],
+          "x": [
+            0.0,
+            -1.0,
+            0.0
+          ]
+        }
+      },
+      "face_type": "Wall",
+      "boundary_condition": {
+        "type": "Outdoors",
+        "sun_exposure": true,
+        "wind_exposure": true,
+        "view_factor": {
+          "type": "Autocalculate"
+        }
+      }
+    },
+    {
+      "type": "Face",
+      "identifier": "Standalone_0_Back",
+      "display_name": "Standalone_0_Back",
+      "properties": {
+        "type": "FaceProperties",
+        "energy": {
+          "type": "FaceEnergyProperties"
+        },
+        "ph": {
+          "type": "FacePhProperties",
+          "id_num": 0
+        }
+      },
+      "geometry": {
+        "type": "Face3D",
+        "boundary": [
+          [
+            0.0,
+            0.0,
+            3.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            5.0,
+            0.0,
+            0.0
+          ],
+          [
+            5.0,
+            0.0,
+            3.0
+          ]
+        ],
+        "plane": {
+          "type": "Plane",
+          "n": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "o": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            -1.0,
+            -0.0,
+            0.0
+          ]
+        }
+      },
+      "face_type": "Wall",
+      "boundary_condition": {
+        "type": "Outdoors",
+        "sun_exposure": true,
+        "wind_exposure": true,
+        "view_factor": {
+          "type": "Autocalculate"
+        }
+      }
+    },
+    {
+      "type": "Face",
+      "identifier": "Standalone_0_Left",
+      "display_name": "Standalone_0_Left",
+      "properties": {
+        "type": "FaceProperties",
+        "energy": {
+          "type": "FaceEnergyProperties"
+        },
+        "ph": {
+          "type": "FacePhProperties",
+          "id_num": 0
+        }
+      },
+      "geometry": {
+        "type": "Face3D",
+        "boundary": [
+          [
+            0.0,
+            5.0,
+            3.0
+          ],
+          [
+            0.0,
+            5.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            3.0
+          ]
+        ],
+        "plane": {
+          "type": "Plane",
+          "n": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "o": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        }
+      },
+      "face_type": "Wall",
+      "boundary_condition": {
+        "type": "Outdoors",
+        "sun_exposure": true,
+        "wind_exposure": true,
+        "view_factor": {
+          "type": "Autocalculate"
+        }
+      }
+    },
+    {
+      "type": "Face",
+      "identifier": "Standalone_0_Top",
+      "display_name": "Standalone_0_Top",
+      "properties": {
+        "type": "FaceProperties",
+        "energy": {
+          "type": "FaceEnergyProperties"
+        },
+        "ph": {
+          "type": "FacePhProperties",
+          "id_num": 0
+        }
+      },
+      "geometry": {
+        "type": "Face3D",
+        "boundary": [
+          [
+            0.0,
+            5.0,
+            3.0
+          ],
+          [
+            0.0,
+            0.0,
+            3.0
+          ],
+          [
+            5.0,
+            0.0,
+            3.0
+          ],
+          [
+            5.0,
+            5.0,
+            3.0
+          ]
+        ],
+        "plane": {
+          "type": "Plane",
+          "n": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "o": [
+            0.0,
+            0.0,
+            3.0
+          ],
+          "x": [
+            1.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "face_type": "RoofCeiling",
+      "boundary_condition": {
+        "type": "Outdoors",
+        "sun_exposure": true,
+        "wind_exposure": true,
+        "view_factor": {
+          "type": "Autocalculate"
+        }
+      }
+    }
+  ]
+}

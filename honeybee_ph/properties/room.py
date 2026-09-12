@@ -31,6 +31,11 @@ try:
 except ImportError as e:
     raise ImportError("\nFailed to import honeybee_ph_utils:\n\t{}".format(e))
 
+try:
+    from honeybee_energy_ph.properties.load.equipment import migrate_legacy_equipment_collections
+except ImportError as e:
+    raise ImportError("\nFailed to import honeybee_energy_ph:\n\t{}".format(e))
+
 """
 room.Room
     ├─ properties: RoomProperties
@@ -175,6 +180,8 @@ class RoomPhProperties(object):
 
         for f_dict in _input_dict["ph_foundations"]:
             new_prop.add_foundation(PhFoundationFactory.from_dict(f_dict))
+
+        migrate_legacy_equipment_collections([host])
 
         return new_prop
 
