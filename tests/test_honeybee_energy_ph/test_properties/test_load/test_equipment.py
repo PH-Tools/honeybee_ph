@@ -89,12 +89,11 @@ def test_migrated_processes_are_zero_watt_and_keep_the_legacy_schedule():
             assert process.schedule.identifier == expected_schedule
 
 
-def test_model_load_empties_override_and_program_type_legacy_collections():
+def test_model_load_empties_override_and_program_type_legacy_equipment():
     _, model = _load_model()
 
     for hb_room in model.rooms:
-        collection = hb_room.properties.energy.electric_equipment.properties.ph.equipment_collection
-        assert list(collection.keys()) == []
+        assert hb_room.properties.energy.electric_equipment.properties.ph._legacy_equipment == {}
 
 
 def test_migrated_rooms_do_not_share_process_or_equipment_objects():
@@ -147,4 +146,18 @@ def test_legacy_collection_is_not_written_and_round_trip_does_not_duplicate():
 def test_electric_equipment_properties_from_dict_accepts_missing_collection():
     properties = ElectricEquipmentPhProperties.from_dict({"type": "ElectricEquipmentPhProperties"}, _host="test")
 
-    assert list(properties.equipment_collection.keys()) == []
+    assert properties._legacy_equipment == {}
+
+
+def test_public_equipment_collection_attribute_is_removed():
+    assert not hasattr(ElectricEquipmentPhProperties(_host="test"), "equipment_collection")
+
+
+def test_duplicate_copies_unmigrated_legacy_equipment():
+    ph_dict = _room_fixture_electric_equipment(_load_fixture(ROOM_FIXTURE))["properties"]["ph"]
+    properties = ElectricEquipmentPhProperties.from_dict(ph_dict, _host="test")
+
+    duplicated = properties.duplicate()
+
+    assert sorted(duplicated._legacy_equipment) == sorted(properties._legacy_equipment)
+    assert all(duplicated._legacy_equipment[key] is not item for key, item in properties._legacy_equipment.items())

@@ -6,14 +6,9 @@
 import sys
 
 try:
-    from typing import Any, ItemsView, Iterator, KeysView, Type, ValuesView
+    from typing import Any, Type
 except ImportError:
     pass  # IronPython
-
-try:
-    from honeybee import room
-except ImportError as e:
-    raise ImportError("Failed to import room: {}".format(e))
 
 try:
     from honeybee_energy.schedule.ruleset import ScheduleRuleset
@@ -29,7 +24,6 @@ try:
     from typing import TYPE_CHECKING
 
     if TYPE_CHECKING:
-        from honeybee_energy_ph.properties.load.equipment import ElectricEquipmentPhProperties
         from honeybee_energy_ph.properties.load.lighting import LightingPhProperties
         from honeybee_energy_ph.properties.load.process import ProcessPhProperties
 except ImportError:
@@ -1070,147 +1064,6 @@ class PhEquipmentBuilder(object):
     def __str__(self):
         # type: () -> str
         return "{}()".format(self.__class__.__name__)
-
-    def __repr__(self):
-        # type: () -> str
-        return str(self)
-
-    def ToString(self):
-        # type: () -> str
-        return str(self)
-
-
-class PhEquipmentCollection(object):
-    """A collection of PH appliances stored on a Honeybee-Room's energy properties.
-
-    Provides dict-like access (items, keys, values, iteration) to PhEquipment
-    instances keyed by their identifier.
-
-    Attributes:
-        host (ElectricEquipmentPhProperties | None): The parent properties object.
-    """
-
-    def __init__(self, _host=None):
-        # type: (ElectricEquipmentPhProperties | None) -> None
-        self._equipment_set = {}  # type: dict[str, PhEquipment]
-        self._host = _host
-
-    @property
-    def host(self):
-        # type: () -> ElectricEquipmentPhProperties | None
-        return self._host
-
-    def items(self):
-        # type: () -> ItemsView[str, PhEquipment]
-        return self._equipment_set.items()
-
-    def keys(self):
-        # type: () -> KeysView[str]
-        return self._equipment_set.keys()
-
-    def values(self):
-        # type: () -> ValuesView[PhEquipment]
-        return self._equipment_set.values()
-
-    def duplicate(self, new_host=None):
-        # type: (Any) -> PhEquipmentCollection
-        return self.__copy__(new_host)
-
-    def add_equipment(self, _new_equipment, _key=None):
-        # type: (PhEquipment, Any) -> None
-        """Adds a new piece of Ph-Equipment to the collection.
-
-        Arguments:
-        ----------
-            * _new_equipment (PhEquipment): The new Ph Equipment to add to the set.
-            * _key (Any): Optional key to use for storing the equipment. If None, the
-                equipment's "identifier" will be used as the key.
-
-        Returns:
-        --------
-            * None
-        """
-
-        key = _key or _new_equipment.identifier
-
-        if key in self._equipment_set.keys():
-            _new_equipment = self._equipment_set[key]
-            return
-
-        self._equipment_set[key] = _new_equipment
-        return None
-
-    def remove_all_equipment(self):
-        # type: () -> None
-        """Reset the Collection to an empty set."""
-        self._equipment_set = {}
-
-    def total_collection_wattage(self, _hb_room):
-        # type: (room.Room) -> float
-        """Returns the total annual-average-wattage of the appliances.
-
-        This value assumes constant 24/7 operation (PH-Style modeling).
-
-        Arguments:
-        ----------
-            * _hb_room (room.Room): The reference Honeybee-Room to get occupancy from.
-
-        Returns:
-        --------
-            * (float): total Wattage of all installed PH-Equipment in the collection.
-        """
-        return sum(equip.annual_avg_wattage(_hb_room) for equip in self.values())  # type: ignore
-
-    def to_dict(self):
-        # type: () -> dict
-        d = {}
-
-        d["equipment_set"] = {}
-        for key, device in self._equipment_set.items():
-            d["equipment_set"][key] = device.to_dict()
-
-        return d
-
-    @classmethod
-    def from_dict(cls, _input_dict, _host):
-        # type: (dict, Any) -> PhEquipmentCollection
-        new_obj = cls(_host)
-
-        for k, device in _input_dict["equipment_set"].items():
-            if k not in new_obj._equipment_set.keys():
-                new_obj.add_equipment(PhEquipmentBuilder.from_dict(device), k)
-
-        return new_obj
-
-    def __iter__(self):
-        # type: () -> Iterator[tuple[str, PhEquipment]]
-        for _ in self._equipment_set.items():
-            yield _
-
-    def __setitem__(self, key, attr):
-        # type: (str, PhEquipment) -> None
-        self._equipment_set[key] = attr
-
-    def __getitem__(self, key):
-        # type: (str) -> PhEquipment
-        return self._equipment_set[key]
-
-    def __copy__(self, new_host=None):
-        # type: (Any) -> PhEquipmentCollection
-        host = new_host or self._host
-
-        new_obj = self.__class__(host)
-        for k, v in self._equipment_set.items():
-            # -- Duplicate the equipment so two rooms never share one mutable object.
-            # -- The key is re-used as-is, and PhEquipment.duplicate() keeps the
-            # -- identifier, so the collection keys are unchanged by the copy.
-            new_obj.add_equipment(v.duplicate(), k)
-
-        return new_obj
-
-    def __str__(self):
-        # type: () -> str
-        return "{}({} pieces of equipment)".format(self.__class__.__name__, len(self._equipment_set.keys()))
 
     def __repr__(self):
         # type: () -> str

@@ -4,7 +4,7 @@
 """Electric Equipment"""
 
 try:
-    from typing import TYPE_CHECKING, Iterable
+    from typing import TYPE_CHECKING, Dict, Iterable
 
     if TYPE_CHECKING:
         from honeybee.room import Room
@@ -47,8 +47,8 @@ def migrate_legacy_equipment_collections(_hb_rooms):
     --------
         * None
     """
-    legacy_collections = []
-    legacy_collection_ids = set()
+    legacy_equipment_sets = []
+    legacy_equipment_set_ids = set()
 
     for hb_room in _hb_rooms:
         room_properties = getattr(hb_room, "properties", None)
@@ -63,11 +63,10 @@ def migrate_legacy_equipment_collections(_hb_rooms):
         if electric_equipment is None:
             continue
 
-        equipment_collection = electric_equipment.properties.ph.equipment_collection
-        collection_id = id(equipment_collection)
-        if collection_id not in legacy_collection_ids:
-            legacy_collections.append(equipment_collection)
-            legacy_collection_ids.add(collection_id)
+        legacy_equipment = electric_equipment.properties.ph._legacy_equipment
+        if id(legacy_equipment) not in legacy_equipment_set_ids:
+            legacy_equipment_sets.append(legacy_equipment)
+            legacy_equipment_set_ids.add(id(legacy_equipment))
 
         migrated_identifiers = set()
         for process_load in energy_properties.process_loads:
@@ -75,8 +74,8 @@ def migrate_legacy_equipment_collections(_hb_rooms):
             if equipment is not None:
                 migrated_identifiers.add(equipment.identifier)
 
-        for equipment_key in sorted(equipment_collection.keys()):
-            equipment = equipment_collection[equipment_key]
+        for equipment_key in sorted(legacy_equipment.keys()):
+            equipment = legacy_equipment[equipment_key]
             if equipment.identifier in migrated_identifiers:
                 continue
 
@@ -95,8 +94,8 @@ def migrate_legacy_equipment_collections(_hb_rooms):
             energy_properties.add_process_load(process)
             migrated_identifiers.add(equipment.identifier)
 
-    for equipment_collection in legacy_collections:
-        equipment_collection.remove_all_equipment()
+    for legacy_equipment in legacy_equipment_sets:
+        legacy_equipment.clear()
 
 
 class ElectricEquipmentPhProperties_FromDictError(Exception):
@@ -109,8 +108,9 @@ class ElectricEquipmentPhProperties(object):
     def __init__(self, _host):
         self._host = _host
 
-        # Migration-only legacy attribute; removal is a later issue #79 step (decision 0009).
-        self.equipment_collection = ph_equipment.PhEquipmentCollection(self)
+        # -- PH Equipment read from a legacy HBJSON 'equipment_collection', keyed as stored. Held
+        # -- only until migrate_legacy_equipment_collections moves it onto Process loads (decision 0009).
+        self._legacy_equipment = {}  # type: Dict[str, ph_equipment.PhEquipment]
 
     @property
     def host(self):
@@ -139,10 +139,9 @@ class ElectricEquipmentPhProperties(object):
 
         new_prop = cls(_host)
 
-        if "equipment_collection" in _input_dict:
-            new_prop.equipment_collection = ph_equipment.PhEquipmentCollection.from_dict(
-                _input_dict["equipment_collection"], _host=new_prop
-            )
+        legacy_collection = _input_dict.get("equipment_collection", {})
+        for key, device_dict in legacy_collection.get("equipment_set", {}).items():
+            new_prop._legacy_equipment[key] = ph_equipment.PhEquipmentBuilder.from_dict(device_dict)
 
         return new_prop
 
@@ -153,7 +152,8 @@ class ElectricEquipmentPhProperties(object):
         # type: (Any) -> ElectricEquipmentPhProperties
         host = new_host or self._host
         new_obj = self.__class__(host)
-        new_obj.equipment_collection = self.equipment_collection.duplicate(host)
+        for key, equipment in self._legacy_equipment.items():
+            new_obj._legacy_equipment[key] = equipment.duplicate()
         return new_obj
 
     def duplicate(self, new_host=None):
@@ -161,7 +161,7 @@ class ElectricEquipmentPhProperties(object):
         return self.__copy__(new_host)
 
     def __str__(self):
-        return "{}(equipment_collection={})".format(self.__class__.__name__, self.equipment_collection)
+        return "{}()".format(self.__class__.__name__)
 
     def __repr__(self):
         return str(self)
