@@ -580,6 +580,37 @@ def test_reference_quantity_survives_a_round_trip():
     assert e2.reference_quantity == 1
 
 
+# -- Quantity
+
+
+def test_bare_constructor_quantity_is_one():
+    """A device present in the model counts as one unit unless told otherwise (#129)."""
+    for cls in _all_equipment_subclasses():
+        assert cls().quantity == 1, "{}() quantity is not 1".format(cls.__name__)
+
+
+def test_custom_annual_energy_is_per_unit_times_quantity():
+    """'energy_demand' is per unit: 400 kWh/a at quantity 2 is 800 kWh/a."""
+    for cls in (
+        ph_equipment.PhCustomAnnualElectric,
+        ph_equipment.PhCustomAnnualLighting,
+        ph_equipment.PhCustomAnnualMEL,
+    ):
+        e = cls()
+        e.energy_demand = 400.0
+        e.quantity = 2
+        assert e.annual_energy_kWh() == approx(800.0), cls.__name__
+
+
+def test_explicit_quantity_survives_a_round_trip():
+    """from_dict keeps the stored value, including a legacy 0."""
+    for quantity in (0, 3):
+        e1 = ph_equipment.PhCustomAnnualMEL()
+        e1.quantity = quantity
+        e2 = ph_equipment.PhEquipmentBuilder.from_dict(e1.to_dict())
+        assert e2.quantity == quantity
+
+
 # -- Default factories hand out independent objects
 
 

@@ -66,11 +66,11 @@ class PhEquipment(_base._Base):
         comment (str): Optional user comment.
         reference_quantity (int): WUFI 'Reference Quantity' selector value.
             Initialized from the subclass's ``DEFAULT_REFERENCE_QUANTITY``.
-        quantity (int): Number of this appliance installed.
+        quantity (int): Number of this appliance installed. Default: 1.
         in_conditioned_space (bool): Whether the appliance is inside the
             thermal envelope. Default: True.
         reference_energy_norm (int): Energy normalization period (2 = year).
-        energy_demand (float): Annual energy demand (kWh).
+        energy_demand (float): Annual energy demand (kWh), per unit.
         energy_demand_per_use (float): Energy per use cycle (kWh/use).
         combined_energy_factor (float): Combined energy factor (CEF).
         ihg_utilization_factor (float): Fraction of energy that becomes
@@ -103,7 +103,7 @@ class PhEquipment(_base._Base):
         self.display_name = "_unnamed_equipment_"
         self.comment = ""
         self.reference_quantity = self.DEFAULT_REFERENCE_QUANTITY
-        self.quantity = 0
+        self.quantity = 1
         self.in_conditioned_space = True
         self.reference_energy_norm = 2  # Year
         self.energy_demand = 0.0  # kwh
@@ -132,7 +132,7 @@ class PhEquipment(_base._Base):
         d["equipment_type"] = self.__class__.__name__
         d["comment"] = self.comment
         d["reference_quantity"] = self.reference_quantity
-        d["quantity"] = self.quantity  # = 0
+        d["quantity"] = self.quantity
         d["in_conditioned_space"] = self.in_conditioned_space
         d["reference_energy_norm"] = self.reference_energy_norm
         d["energy_demand"] = self.energy_demand
@@ -821,7 +821,7 @@ class PhCustomAnnualElectric(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        return self.energy_demand
+        return self.energy_demand * self.quantity
 
 
 class PhCustomAnnualLighting(PhEquipment):
@@ -851,7 +851,7 @@ class PhCustomAnnualLighting(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        return self.energy_demand
+        return self.energy_demand * self.quantity
 
 
 class PhCustomAnnualMEL(PhEquipment):
@@ -881,7 +881,7 @@ class PhCustomAnnualMEL(PhEquipment):
 
     def annual_energy_kWh(self, *args, **kwargs):
         # type: (*Any, **Any) -> float
-        return self.energy_demand
+        return self.energy_demand * self.quantity
 
 
 # -- Elevator classes
