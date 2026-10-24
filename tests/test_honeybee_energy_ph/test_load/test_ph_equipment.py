@@ -31,6 +31,24 @@ def test_PhClothesDryer_round_trip():
     assert e2.to_dict() == d1
 
 
+def test_PhClothesDryer_heat_pump_type_round_trip():
+    e1 = ph_equipment.PhClothesDryer()
+    e1.dryer_type = 7
+    d1 = e1.to_dict()
+    e2 = ph_equipment.PhEquipmentBuilder.from_dict(d1)
+
+    assert d1["_dryer_type"]["value"] == "7-HEAT PUMP DRYER"
+    assert e2.dryer_type.number == 7
+
+
+def test_PhClothesDryer_from_dict_keeps_existing_type_number():
+    d1 = ph_equipment.PhClothesDryer().to_dict()
+    d1["_dryer_type"] = {"value": "5-ELECTRIC EXHAUST AIR DRYER"}
+    e2 = ph_equipment.PhEquipmentBuilder.from_dict(d1)
+
+    assert e2.dryer_type.number == 5
+
+
 def test_PhRefrigerator_round_trip():
     e1 = ph_equipment.PhRefrigerator()
     d1 = e1.to_dict()

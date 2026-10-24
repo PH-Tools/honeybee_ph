@@ -43,6 +43,7 @@ class PhClothesDryerType(enumerables.CustomEnum):
         "4-CONDENSATION DRYER",
         "5-ELECTRIC EXHAUST AIR DRYER",
         "6-GAS EXHAUST AIR DRYER",
+        "7-HEAT PUMP DRYER",
     ]
 
     def __init__(self, _value=1):
