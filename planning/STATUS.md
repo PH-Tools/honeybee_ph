@@ -2,12 +2,13 @@
 
 Master index of active planning work in honeybee-ph. Update the table when a unit of work is added, changes status, or is folded back into `context/`.
 
-_Last updated: 2026-09-12_
+_Last updated: 2026-10-24_
 
 ## Active / current work
 
 | Item | Kind | Status | Issue | Pointer |
 |------|------|--------|-------|---------|
+| Clothes-dryer type 7 (METr heat pump) | Feature (cross-repo; packet owned by PHX) | **Scoped** (2026-10-24) — stage 3 here: append a seventh value to `PhClothesDryerType.allowed`; existing six strings unchanged | [PHX#160](https://github.com/PH-Tools/PHX/issues/160) | `PHX/planning/features/dryer-type-metr.md` |
 | Decouple "Dwelling" from `Room.zone` | Refactor (cross-repo, **primary**) | **Released** in v1.33.30 — downstream install/PHX status remains in companion docs | [#112](https://github.com/PH-Tools/honeybee_ph/issues/112) | [`refactor/dwelling-zone-decoupling.md`](refactor/dwelling-zone-decoupling.md) → [decision 0002](../context/decisions/0002-dwelling-identity-not-room-zone.md) |
 | Mechanical cooling flag (`Verification!N30`) | Feature (cross-repo, **primary**; filed from PHX) | **Requested** — not started here; see the Cross-repo section below | [#110](https://github.com/PH-Tools/honeybee_ph/issues/110) | `PHX/planning/bug-fix/phpp-writer-input-gaps/06-verification-mechanical-cooling.md` |
 | Foundation shape for PHPP 10.x `Ground` | Feature (cross-repo, **primary**; filed from PHX) | **Scoped** — gap table and required fields in the PHX packet; blocks PHX [#104](https://github.com/PH-Tools/PHX/issues/104) and OpenPH foundations | [#111](https://github.com/PH-Tools/honeybee_ph/issues/111) | `PHX/planning/features/foundation-phpp10-shape/PRD.md` §4, §6 |
